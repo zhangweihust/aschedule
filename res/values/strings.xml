@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <string name="hello">Hello World, MainActivity!</string>
+    <string name="app_name">Schedule</string>
+    <string name="tab_name_schedule">日程</string>
+    <string name="tab_name_dynamic">动态</string>
+    <string name="tab_name_friend">好友</string>
+    <string name="three_days_before">前三天</string>
+    <string name="today">今天</string>
+    <string name="tomorrow">明天</string>
+    <string name="this_week">本周</string>
+    <string name="xlistview_header_hint_normal">下拉刷新</string>
+    <string name="xlistview_header_hint_ready">松开刷新数据</string>
+    <string name="xlistview_header_hint_loading">正在加载...</string>
+    <string name="xlistview_header_last_time">上次更新时间：</string>
+    <string name="xlistview_footer_hint_normal">查看更多</string>
+    <string name="xlistview_footer_hint_ready">松开载入更多</string>
+
+</resources>
