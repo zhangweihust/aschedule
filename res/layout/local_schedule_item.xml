@@ -83,8 +83,8 @@
                 android:layout_height="wrap_content"
                 android:background="@drawable/pm"
                 android:text="6:30"
-                android:textSize="12sp" 
-                android:textColor="#252524" />
+                android:textColor="#252524"
+                android:textSize="12sp" />
 
             <ImageView
                 android:id="@+id/alarm"
@@ -92,8 +92,8 @@
                 android:layout_height="wrap_content"
                 android:layout_alignBottom="@id/time"
                 android:layout_alignTop="@id/time"
-                android:layout_toRightOf="@id/time"
                 android:layout_margin="1dip"
+                android:layout_toRightOf="@id/time"
                 android:src="@drawable/alarm" />
 
             <ImageView
@@ -102,8 +102,8 @@
                 android:layout_height="wrap_content"
                 android:layout_alignBottom="@id/time"
                 android:layout_alignTop="@id/time"
-                android:layout_toRightOf="@id/alarm"
                 android:layout_margin="1dip"
+                android:layout_toRightOf="@id/alarm"
                 android:src="@drawable/share" />
 
             <ImageView
@@ -120,6 +120,12 @@
                 android:layout_below="@id/important"
                 android:text="have a good time!"
                 android:textColor="#252524" />
+
+            <include
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_below="@id/content"
+                layout="@layout/feed_comments" />
         </RelativeLayout>
     </RelativeLayout>
 

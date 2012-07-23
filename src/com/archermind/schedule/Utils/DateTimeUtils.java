@@ -16,10 +16,10 @@ public class DateTimeUtils {
 		return dateTime;
 	}
 	
-	public static long getDayOfWeek(int week) {
+	public static long getDayOfWeek(int week, long timeInMillis) {
 		SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd hh:mm:ss a EEEE"); 
 		Calendar time = Calendar.getInstance(Locale.CHINA); 
-		time.setTimeInMillis(System.currentTimeMillis());
+		time.setTimeInMillis(timeInMillis);
 		ScheduleApplication.LogD(DateTimeUtils.class, "当前时间:"+sdf.format(time.getTime()));
 		if(week == Calendar.SUNDAY){
 			int nowDay = time.get(Calendar.DAY_OF_MONTH); 
@@ -38,10 +38,10 @@ public class DateTimeUtils {
 		return time.getTimeInMillis();
 	}
 	
-	public static long getThreeDaysBefore() {
+	public static long getThreeDaysBefore(long timeInMillis) {
 		SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd hh:mm:ss a EEEE"); 
 		Calendar time = Calendar.getInstance(Locale.CHINA); 
-		time.setTimeInMillis(System.currentTimeMillis());
+		time.setTimeInMillis(timeInMillis);
 		ScheduleApplication.LogD(DateTimeUtils.class, "当前时间:"+sdf.format(time.getTime()));
 		int nowDay = time.get(Calendar.DAY_OF_MONTH);
 		time.set(Calendar.DATE, nowDay - 3);
@@ -52,10 +52,10 @@ public class DateTimeUtils {
 		return time.getTimeInMillis();
 	}
 	
-	public static long getYesterdayEnd() {
+	public static long getYesterdayEnd(long timeInMillis) {
 		SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd hh:mm:ss a EEEE"); 
 		Calendar time = Calendar.getInstance(Locale.CHINA); 
-		time.setTimeInMillis(System.currentTimeMillis());
+		time.setTimeInMillis(timeInMillis);
 		ScheduleApplication.LogD(DateTimeUtils.class, "当前时间:"+sdf.format(time.getTime()));
 		int nowDay = time.get(Calendar.DAY_OF_MONTH);
 		time.set(Calendar.DATE, nowDay - 1);
@@ -67,10 +67,10 @@ public class DateTimeUtils {
 	}
 	
 	
-	public static long getToday(int amORpm) {
+	public static long getToday(int amORpm, long timeInMillis) {
 		SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd hh:mm:ss a EEEE"); 
 		Calendar time = Calendar.getInstance(Locale.CHINA); 
-		time.setTimeInMillis(System.currentTimeMillis());
+		time.setTimeInMillis(timeInMillis);
 		ScheduleApplication.LogD(DateTimeUtils.class, "当前时间:"+sdf.format(time.getTime()));
 		if(amORpm == Calendar.AM){
 			time.set(Calendar.HOUR_OF_DAY,0);
@@ -86,10 +86,10 @@ public class DateTimeUtils {
 		return time.getTimeInMillis();
 	}
 	
-	public static long getTomorrow(int amORpm) {
+	public static long getTomorrow(int amORpm, long timeInMillis) {
 		SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd hh:mm:ss a EEEE"); 
 		Calendar time = Calendar.getInstance(Locale.CHINA); 
-		time.setTimeInMillis(System.currentTimeMillis());
+		time.setTimeInMillis(timeInMillis);
 		ScheduleApplication.LogD(DateTimeUtils.class, "当前时间:"+sdf.format(time.getTime()));
 		int nowDay = time.get(Calendar.DAY_OF_MONTH);
 		time.set(Calendar.DATE, nowDay + 1);

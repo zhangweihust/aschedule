@@ -37,49 +37,64 @@ public class DatabaseManager {
 				null, null, null);
 	}
 
-	public boolean deleteLocalSchedules(int id) {
-		return database.delete(DatabaseHelper.TAB_SCHEDULE,
+	public void deleteLocalSchedules(int id, boolean firstFlag , long timeInMillis) {
+	   database.delete(DatabaseHelper.TAB_SCHEDULE,
 				DatabaseHelper.COLUMN_SCHEDULE_ID + " =? ",
-				new String[] { String.valueOf(id) }) >= 0;
+				new String[] { String.valueOf(id) });
+	   if(firstFlag){//如果该日程是一天的第一条日程，则修改该天的第二条日程的标志位
+			Cursor c = queryTodayLocalSchedules(timeInMillis);
+			if(c.getCount() > 0){
+				c.moveToFirst();
+				int _id = c.getInt(c.getColumnIndex(DatabaseHelper.COLUMN_SCHEDULE_ID));
+				ContentValues values = new ContentValues();
+				values.put(DatabaseHelper.COLUMN_SCHEDULE_FIRST_FLAG, true);
+				updateLocalSchedules(values, _id);
+				c.close();
+			}
+		}
+	}
+	
+	public void updateLocalSchedules(ContentValues values, int id){
+	    database.update(DatabaseHelper.TAB_SCHEDULE, values, DatabaseHelper.COLUMN_SCHEDULE_ID + " =? ", new String[] { String.valueOf(id)});
 	}
 
-	public Cursor queryWeekLocalSchedules() {
+	public Cursor queryWeekLocalSchedules(long timeInMillis) {
 		return database
 				.query(DatabaseHelper.TAB_SCHEDULE,
 						null,
 						DatabaseHelper.COLUMN_SCHEDULE_START_TIME
 								+ " BETWEEN ? AND ? ",
-						new String[] { String.valueOf(DateTimeUtils.getDayOfWeek(Calendar.MONDAY)), String.valueOf(DateTimeUtils.getDayOfWeek(Calendar.SUNDAY)) },
+						new String[] { String.valueOf(DateTimeUtils.getDayOfWeek(Calendar.MONDAY, timeInMillis)), String.valueOf(DateTimeUtils.getDayOfWeek(Calendar.SUNDAY, timeInMillis)) },
 						null, null, DatabaseHelper.COLUMN_SCHEDULE_START_TIME + " ASC");
 	}
 	
-	public Cursor queryTodayLocalSchedules() {
+	public Cursor queryTodayLocalSchedules(long timeInMillis) {
 		return database
 				.query(DatabaseHelper.TAB_SCHEDULE,
 						null,
 						DatabaseHelper.COLUMN_SCHEDULE_START_TIME
 								+ " BETWEEN ? AND ? ",
-						new String[] { String.valueOf(DateTimeUtils.getToday(Calendar.AM)), String.valueOf(DateTimeUtils.getToday(Calendar.PM)) },
-						null, null, null);
+						new String[] { String.valueOf(DateTimeUtils.getToday(Calendar.AM, timeInMillis)), String.valueOf(DateTimeUtils.getToday(Calendar.PM, timeInMillis)) },
+						null, null, DatabaseHelper.COLUMN_SCHEDULE_START_TIME + " ASC");
 	}
 	
-	public Cursor queryTomorrowLocalSchedules() {
+	public Cursor queryTomorrowLocalSchedules(long timeInMillis) {
 		return database
 				.query(DatabaseHelper.TAB_SCHEDULE,
 						null,
 						DatabaseHelper.COLUMN_SCHEDULE_START_TIME
 								+ " BETWEEN ? AND ? ",
-						new String[] { String.valueOf(DateTimeUtils.getTomorrow(Calendar.AM)), String.valueOf(DateTimeUtils.getTomorrow(Calendar.PM)) },
-						null, null, null);
+						new String[] { String.valueOf(DateTimeUtils.getTomorrow(Calendar.AM, timeInMillis)), String.valueOf(DateTimeUtils.getTomorrow(Calendar.PM, timeInMillis)) },
+						null, null, DatabaseHelper.COLUMN_SCHEDULE_START_TIME + " ASC");
 	}
 
-	public Cursor query3DaysBeforeLocalSchedules() {
+	public Cursor query3DaysBeforeLocalSchedules(long timeInMillis) {
 		return database
 				.query(DatabaseHelper.TAB_SCHEDULE,
 						null,
 						DatabaseHelper.COLUMN_SCHEDULE_START_TIME
 								+ " BETWEEN ? AND ? ",
-						new String[] { String.valueOf(DateTimeUtils.getThreeDaysBefore()), String.valueOf(DateTimeUtils.getYesterdayEnd()) },
+						new String[] { String.valueOf(DateTimeUtils.getThreeDaysBefore(timeInMillis)), String.valueOf(DateTimeUtils.getYesterdayEnd(timeInMillis)) },
 						null, null, DatabaseHelper.COLUMN_SCHEDULE_START_TIME + " ASC");
 	}
 

@@ -17,18 +17,57 @@
             android:paddingRight="10dip" >
 
             <Button
+                android:id="@+id/title_bar_menu_button"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_gravity="left|center_vertical"
                 android:background="@drawable/title_bar_menu_selector" />
 
             <ImageView
+                android:id="@+id/title_bar_title_image"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center"
                 android:background="@drawable/top_title" />
+            
+            <TextView
+                android:id="@+id/title_bar_title_text"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:textSize="23sp"
+                android:textStyle="bold"
+                 />
+
+            <RadioGroup   
+                android:id="@+id/title_bar_tab_widget"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:orientation="horizontal" >
+                <RadioButton
+                    android:id="@+id/tab_widget_my_dynamic"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="我的动态"
+                    android:padding="5dip"
+                    android:button="@null"
+                    android:gravity="center"
+                    android:background="@drawable/tabwidget_left_selector" />
+
+                <RadioButton
+                    android:id="@+id/tab_widget_friends_dynamic"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="好友动态"
+                    android:padding="5dip"
+                    android:button="@null"
+                     android:gravity="center"
+                    android:background="@drawable/tabwidget_right_selector" />
+            </RadioGroup>
 
             <Button
+                android:id="@+id/title_bar_add_button"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_gravity="right|center_vertical"

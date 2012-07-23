@@ -22,6 +22,8 @@
             </intent-filter>
         </activity>
         <activity android:name=".Screens.DynamicScreen"/>
+        <activity android:name=".Screens.MyDynamicScreen"/>
+        <activity android:name=".Screens.FriendsDyamicScreen"/>
         <activity android:name=".Screens.FriendScreen"/>
         <activity android:name=".Screens.ScheduleScreen"/>
         <service android:name=".Services.ServiceManager" />

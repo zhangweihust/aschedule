@@ -10,6 +10,7 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.archermind.schedule.R;
+import com.archermind.schedule.Events.EventArgs;
 import com.archermind.schedule.Provider.DatabaseHelper;
 import com.archermind.schedule.Utils.DateTimeUtils;
 
@@ -23,12 +24,13 @@ public class LocalScheduleAdapter  extends CursorAdapter {
 
 	@Override
 	public void bindView(View view, Context context, Cursor cursor) {
-		final ScheduleItem item = (ScheduleItem) view.getTag();
+		final ScheduleItem item = (ScheduleItem) view.getTag(R.layout.local_schedule_item);
 		String content = cursor.getString(cursor.getColumnIndex(DatabaseHelper.COLUMN_SCHEDULE_NOTICE_CONTENT));
 		long time = cursor.getLong(cursor.getColumnIndex(DatabaseHelper.COLUMN_SCHEDULE_START_TIME));
-		int share = cursor.getInt(cursor.getColumnIndex(DatabaseHelper.COLUMN_SCHEDULE_SHARE));
+		boolean share = cursor.getInt(cursor.getColumnIndex(DatabaseHelper.COLUMN_SCHEDULE_SHARE)) == 1;
+		boolean important = cursor.getInt(cursor.getColumnIndex(DatabaseHelper.COLUMN_SCHEDULE_IMPORTANT)) == 1;
 		int type = cursor.getInt(cursor.getColumnIndex(DatabaseHelper.COLUMN_SCHEDULE_TYPE));
-		boolean fist = cursor.getInt(cursor.getColumnIndex(DatabaseHelper.COLUMN_SCHEDULE_FIRST_FLAG)) == 1;
+		boolean first = cursor.getInt(cursor.getColumnIndex(DatabaseHelper.COLUMN_SCHEDULE_FIRST_FLAG)) == 1;
 		item.content.setText(content);
 		item.time.setText(DateTimeUtils.time2String("hh:mm", time));
 		String amORpm = DateTimeUtils.time2String("a", time);
@@ -37,15 +39,27 @@ public class LocalScheduleAdapter  extends CursorAdapter {
 		} else if("下午".equals(amORpm)){
 			item.time.setBackgroundResource(R.drawable.pm);
 		}
-		if(fist){
+		if(first){
 			item.dateLayout.setVisibility(View.VISIBLE);
 			item.week.setText(DateTimeUtils.time2String("EEEE", time));
 			item.date.setText(DateTimeUtils.time2String("dd", time));
 		} else {
 			item.dateLayout.setVisibility(View.INVISIBLE);
 		}
-		
-		
+		if(share){
+			item.share.setVisibility(View.VISIBLE);
+		} else {
+			item.share.setVisibility(View.GONE);
+		}
+		if(important){
+			item.important.setVisibility(View.VISIBLE);
+		} else {
+			item.important.setVisibility(View.INVISIBLE);
+		}
+		EventArgs args = new EventArgs();
+		args.putExtra("time", time);
+		args.putExtra("first", first);
+		view.setTag(args);
 	}
 
 	@Override
@@ -62,7 +76,7 @@ public class LocalScheduleAdapter  extends CursorAdapter {
 		item.share = (ImageView) view.findViewById(R.id.share);
 		item.important = (ImageView) view.findViewById(R.id.important);
 		item.dateLayout = view.findViewById(R.id.date_layout);
-		view.setTag(item);
+		view.setTag(R.layout.local_schedule_item,item);
 		return view;
 	}
 	

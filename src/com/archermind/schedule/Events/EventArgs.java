@@ -25,13 +25,23 @@ import java.util.HashMap;
 
 public class EventArgs {
 	private final HashMap<String, Object> extra;
-	private final EventTypes type;
+	private EventTypes type;
 	
 	public EventArgs(EventTypes type){
 		this.type = type;
 		this.extra = new HashMap<String, Object>();
 	}
 	
+	public EventArgs(){
+		this.extra = new HashMap<String, Object>();
+	}
+	
+	
+	
+	public void setType(EventTypes type) {
+		this.type = type;
+	}
+
 	public Object getExtra(String key){
 		return this.extra.get(key);
 	}

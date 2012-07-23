@@ -13,6 +13,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 	public static final String COLUMN_SCHEDULE_ID = "_id";//日程ID
 	public static final String COLUMN_SCHEDULE_USER_ID = "user_id";//用户ID
 	public static final String COLUMN_SCHEDULE_SHARE = "share";//是否分享
+	public static final String COLUMN_SCHEDULE_IMPORTANT = "important";//是否重要
 	public static final String COLUMN_SCHEDULE_TYPE = "type";//日程类别
 	public static final String COLUMN_SCHEDULE_START_TIME = "start_time";//日程开始时间
 	public static final String COLUMN_SCHEDULE_OPER_FLAG = "oper_flag";//日程操作标志
@@ -32,7 +33,9 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 			+ COLUMN_SCHEDULE_USER_ID
 			+ " INTEGER, "
 			+ COLUMN_SCHEDULE_SHARE
-			+ " INTEGER, "
+			+ " BOOLEAN, "
+			+ COLUMN_SCHEDULE_IMPORTANT
+			+ " BOOLEAN, "
 			+ COLUMN_SCHEDULE_TYPE
 			+ " INTEGER, "
 			+ COLUMN_SCHEDULE_START_TIME
