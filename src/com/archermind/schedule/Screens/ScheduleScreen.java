@@ -1,15 +1,12 @@
 package com.archermind.schedule.Screens;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import android.content.ContentValues;
-import android.database.Cursor;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.view.View;
 import android.view.View.OnClickListener;
-import android.widget.ArrayAdapter;
+import android.widget.AdapterView;
+import android.widget.AdapterView.OnItemClickListener;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.ListView;
@@ -24,7 +21,7 @@ import com.archermind.schedule.Views.VerticalScrollView;
 import com.archermind.schedule.Views.XListView;
 import com.archermind.schedule.Views.XListView.IXListViewListener;
 
-public class ScheduleScreen extends Screen implements IXListViewListener {
+public class ScheduleScreen extends Screen implements IXListViewListener, OnItemClickListener {
 	
 	 private ImageView mListHeader;
 	 private TextView tv1;
@@ -42,6 +39,7 @@ public class ScheduleScreen extends Screen implements IXListViewListener {
 		private ListView list3;
 		private ListView list4;
 		
+		
 
 	@Override
 	    public void onCreate(Bundle savedInstanceState) {
@@ -49,8 +47,7 @@ public class ScheduleScreen extends Screen implements IXListViewListener {
 	        setContentView(R.layout.schedule_screen);
 	        final VerticalScrollView pager = (VerticalScrollView) findViewById(R.id.pager);
 	        insert();
-	        Cursor c = ServiceManager.getDbManager().queryLocalSchedules();
-	        setupView(c);
+	        setupView();
 	        mListHeader = (ImageView) findViewById(R.id.list_header);
 	        mListHeader.setBackgroundResource(R.drawable.listview_header_up);
 	        mListHeader.setTag(R.drawable.listview_header_up);
@@ -99,7 +96,7 @@ public class ScheduleScreen extends Screen implements IXListViewListener {
 	        });
 	 }
 	
-	private void setupView(Cursor c) {
+	private void setupView() {
 		tv1 =(TextView) findViewById(R.id.tv01);
 		tv2 =(TextView) findViewById(R.id.tv02);
 		tv3 =(TextView) findViewById(R.id.tv03);
@@ -115,11 +112,15 @@ public class ScheduleScreen extends Screen implements IXListViewListener {
 		list3 = (ListView)findViewById(R.id.list03);
 		list4 = (ListView)findViewById(R.id.list04);
 		list2.setXListViewListener(this);
+		list1.setOnItemClickListener(this);
+		list2.setOnItemClickListener(this);
+		list3.setOnItemClickListener(this);
+		list4.setOnItemClickListener(this);
 		
-		list1.setAdapter(new ArrayAdapter<String>(this, android.R.layout.simple_expandable_list_item_1,getData())); 
-		list2.setAdapter(new LocalScheduleAdapter(this, c)); 
-		list3.setAdapter(new ArrayAdapter<String>(this, android.R.layout.simple_expandable_list_item_1,getData()));
-		list4.setAdapter(new ArrayAdapter<String>(this, android.R.layout.simple_expandable_list_item_1,getData())); 
+		list1.setAdapter(new LocalScheduleAdapter(this, ServiceManager.getDbManager().query3DaysBeforeLocalSchedules()));
+		list2.setAdapter(new LocalScheduleAdapter(this, ServiceManager.getDbManager().queryTodayLocalSchedules())); 
+		list3.setAdapter(new LocalScheduleAdapter(this, ServiceManager.getDbManager().queryTomorrowLocalSchedules())); 
+		list4.setAdapter(new LocalScheduleAdapter(this, ServiceManager.getDbManager().queryWeekLocalSchedules()));
 
 		layout1.setVisibility(View.GONE);
 		layout2.setVisibility(View.VISIBLE);
@@ -200,32 +201,23 @@ public class ScheduleScreen extends Screen implements IXListViewListener {
 		});
 	}
 	
-	private List<String> getData(){
-		List<String> data = new ArrayList<String>();
-		data.add("测试数据1");
-		data.add("测试数据2");
-		data.add("测试数据3");
-		data.add("测试数据4");
-		data.add("测试数据1");
-		data.add("测试数据2");
-		data.add("测试数据3");
-		data.add("测试数据4");
-		data.add("测试数据1");
-		data.add("测试数据2");
-		data.add("测试数据3");
-		data.add("测试数据4");
-		return data;
-	}
 	
 	private void insert(){
+		//DateTimeUtils.getDayOfWeek(Calendar.SUNDAY);
 		ContentValues contentValues = new ContentValues();
 		contentValues.put(DatabaseHelper.COLUMN_SCHEDULE_NOTICE_CONTENT, "happy new year!");
+		contentValues.put(DatabaseHelper.COLUMN_SCHEDULE_START_TIME, System.currentTimeMillis());
+		contentValues.put(DatabaseHelper.COLUMN_SCHEDULE_FIRST_FLAG, true);
 		ServiceManager.getDbManager().insertLocalSchedules(contentValues);
 		contentValues = new ContentValues();
 		contentValues.put(DatabaseHelper.COLUMN_SCHEDULE_NOTICE_CONTENT, "hello everyone 如果背景的大小不一样，一般需要为每种大小都 制作一张图片，这在button中尤为明显。当然我们也可以一小块一小块水平重复的画，也可 以垂直的话。在android中专门有一种叫nine patch图片（以 9.png结尾）来解决背景大小不一样时，只用一张背景图片");
+		contentValues.put(DatabaseHelper.COLUMN_SCHEDULE_START_TIME, System.currentTimeMillis());
+		contentValues.put(DatabaseHelper.COLUMN_SCHEDULE_FIRST_FLAG, false);
 		ServiceManager.getDbManager().insertLocalSchedules(contentValues);
 		contentValues = new ContentValues();
 		contentValues.put(DatabaseHelper.COLUMN_SCHEDULE_NOTICE_CONTENT, "you are a bad men!");
+		contentValues.put(DatabaseHelper.COLUMN_SCHEDULE_START_TIME, System.currentTimeMillis());
+		contentValues.put(DatabaseHelper.COLUMN_SCHEDULE_FIRST_FLAG, false);
 		ServiceManager.getDbManager().insertLocalSchedules(contentValues);
 	}
 
@@ -248,6 +240,19 @@ public class ScheduleScreen extends Screen implements IXListViewListener {
 		list2.stopRefresh();
 		list2.stopLoadMore();
 		list2.setRefreshTime("刚刚");
+	}
+
+	@Override
+	public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+		if(parent.getId() == list1.getId()){
+			Toast.makeText(ScheduleScreen.this, "list1=" + id, Toast.LENGTH_SHORT).show();
+		} else if(parent.getId() == list2.getId()){
+			Toast.makeText(ScheduleScreen.this, "list2=" + id, Toast.LENGTH_SHORT).show();
+		} else if(parent.getId() == list3.getId()){
+			Toast.makeText(ScheduleScreen.this, "list3=" + id, Toast.LENGTH_SHORT).show();
+		} else if(parent.getId() == list4.getId()){
+			Toast.makeText(ScheduleScreen.this, "list4=" + id, Toast.LENGTH_SHORT).show();
+		}
 	}
 	
 }

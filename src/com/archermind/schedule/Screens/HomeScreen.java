@@ -5,9 +5,10 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
+import android.view.ViewGroup;
 import android.view.animation.TranslateAnimation;
 import android.widget.ImageView;
-import android.widget.LinearLayout;
+import android.widget.RelativeLayout;
 import android.widget.TabHost;
 import android.widget.TabHost.OnTabChangeListener;
 import android.widget.TabHost.TabSpec;
@@ -20,7 +21,7 @@ public class HomeScreen extends TabActivity implements OnTabChangeListener {
 	private TabHost mTabHost;
 	private int mCurSelectTabIndex = 0;
 	private final int INIT_SELECT = 0;
-	private View tabSpecView;
+	private RelativeLayout tabSpecView;
 	private View tabSelect ;
 	private boolean flag = false;
     @Override
@@ -38,7 +39,7 @@ public class HomeScreen extends TabActivity implements OnTabChangeListener {
     
       
       private TabSpec buildTabSpec(String tag, int iconId, Intent intent) {
-  		tabSpecView = (LinearLayout) LayoutInflater.from(this).inflate(
+  		tabSpecView = (RelativeLayout) LayoutInflater.from(this).inflate(
   				R.layout.tab_item_view, null);
   		ImageView icon = (ImageView) tabSpecView.findViewById(R.id.imageview);
   		icon.setImageResource(iconId);
@@ -73,9 +74,9 @@ public class HomeScreen extends TabActivity implements OnTabChangeListener {
 	
 	 public void moveTopSelect(int selectIndex) {
 	        // 起始位置中心点
-	        int startMid = ((View) getTabWidget().getChildAt(mCurSelectTabIndex)).getLeft() + ((View) getTabWidget().getChildAt(mCurSelectTabIndex)).getWidth() / 2;
+	        int startMid = ((View) getTabWidget().getChildAt(mCurSelectTabIndex)).getLeft() + ((ViewGroup)getTabWidget().getChildAt(mCurSelectTabIndex)).getChildAt(0).getLeft() + ((ViewGroup)getTabWidget().getChildAt(mCurSelectTabIndex)).getChildAt(0).getWidth()/7;
 	        // 目标位置中心点
-	        int endMid = ((View) getTabWidget().getChildAt(selectIndex)).getLeft() + ((View) getTabWidget().getChildAt(selectIndex)).getWidth() / 2;
+	        int endMid = ((View) getTabWidget().getChildAt(selectIndex)).getLeft() + ((ViewGroup)getTabWidget().getChildAt(selectIndex)).getChildAt(0).getLeft()+ ((ViewGroup)getTabWidget().getChildAt(selectIndex)).getChildAt(0).getWidth()/7;
 	        TranslateAnimation animation = new TranslateAnimation(startMid, endMid, 0, 0);
 	        animation.setDuration(200);
 	        animation.setFillAfter(true);

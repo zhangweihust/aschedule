@@ -4,7 +4,7 @@
     android:layout_height="wrap_content" >
 
     <RelativeLayout
-        android:id="@+id/mixed_feed_track"
+        android:id="@+id/date_layout"
         android:layout_width="52.0dip"
         android:layout_height="wrap_content" >
 
@@ -59,7 +59,7 @@
         android:layout_width="fill_parent"
         android:layout_height="fill_parent"
         android:layout_alignParentRight="true"
-        android:layout_toRightOf="@id/mixed_feed_track"
+        android:layout_toRightOf="@id/date_layout"
         android:orientation="horizontal" >
 
         <ImageView
@@ -93,6 +93,7 @@
                 android:layout_alignBottom="@id/time"
                 android:layout_alignTop="@id/time"
                 android:layout_toRightOf="@id/time"
+                android:layout_margin="1dip"
                 android:src="@drawable/alarm" />
 
             <ImageView
@@ -102,6 +103,7 @@
                 android:layout_alignBottom="@id/time"
                 android:layout_alignTop="@id/time"
                 android:layout_toRightOf="@id/alarm"
+                android:layout_margin="1dip"
                 android:src="@drawable/share" />
 
             <ImageView

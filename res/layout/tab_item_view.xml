@@ -1,40 +1,23 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:layout_width="wrap_content"
-    android:layout_height="fill_parent"
-    android:gravity="center_vertical"
-    android:orientation="horizontal">
-    <RelativeLayout
-        android:layout_width="fill_parent"
-        android:layout_height="wrap_content"
-        android:gravity="center" >
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="fill_parent"
+    android:layout_height="wrap_content"
+    android:gravity="center" >
 
-        <ImageView
-            android:id="@+id/imageview"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_centerInParent="true"
-            android:focusable="false"
-            >
-        </ImageView>
-
-        <ImageView
-            android:id="@+id/tab_icon_num"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_alignTop="@id/imageview"
-            android:layout_centerHorizontal="true"
-            android:background="@drawable/tab_tips"
-            />
-    </RelativeLayout>
-    <TextView
-        android:id="@+id/textview"
+    <ImageView
+        android:id="@+id/imageview"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:gravity="center"
-        android:textColor="#ffffffff"
-        android:text="test"
-        android:visibility="gone"
-        android:textSize="15sp" >
-    </TextView>
-</LinearLayout>
+        android:layout_centerInParent="true"
+        android:focusable="false" >
+    </ImageView>
+
+    <ImageView
+        android:id="@+id/tab_icon_num"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignTop="@id/imageview"
+        android:layout_centerHorizontal="true"
+        android:background="@drawable/tab_tips" />
+
+</RelativeLayout>

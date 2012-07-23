@@ -23,6 +23,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 	public static final String COLUMN_SCHEDULE_NOTICE_START = "notice_start";//日程开始时间
 	public static final String COLUMN_SCHEDULE_NOTICE_END = "notice_end";//日程结束时间
 	public static final String COLUMN_SCHEDULE_NOTICE_CONTENT = "content";//日程内容
+	public static final String COLUMN_SCHEDULE_FIRST_FLAG = "first_flag";//一天的第一条日程
 	private static final String CRETAE_TAB_SCHEDULE = " CREATE TABLE IF NOT EXISTS "
 			+ TAB_SCHEDULE
 			+ " ( "
@@ -35,7 +36,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 			+ COLUMN_SCHEDULE_TYPE
 			+ " INTEGER, "
 			+ COLUMN_SCHEDULE_START_TIME
-			+ " TEXT, "
+			+ " BIGINT, "
 			+ COLUMN_SCHEDULE_OPER_FLAG
 			+ " TEXT, "
 			+ COLUMN_SCHEDULE_UPDATE_TIME
@@ -50,6 +51,8 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 			+ " TEXT, "
 			+ COLUMN_SCHEDULE_NOTICE_END
 			+ " TEXT, "
+			+ COLUMN_SCHEDULE_FIRST_FLAG
+			+ " BOOLEAN, "
 			+ COLUMN_SCHEDULE_NOTICE_CONTENT
 			+ " TEXT "
 			+ ")";
