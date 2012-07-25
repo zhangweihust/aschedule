@@ -16,7 +16,7 @@ import android.view.Window;
 import android.widget.Button;
 import android.widget.LinearLayout;
 
-public class settingmenu extends Activity implements OnTouchListener,OnGestureListener,OnClickListener{
+public class MenuScreen extends Activity implements OnTouchListener,OnGestureListener,OnClickListener{
 	private Button gotonext;
 	private Button menu_account;
 	private Button menu_expiredlog;
@@ -86,7 +86,7 @@ public class settingmenu extends Activity implements OnTouchListener,OnGestureLi
 		// TODO Auto-generated method stub  
 		if(e1.getX() - e2.getX() > FLING_MIN_DISTANCE && Math.abs(velocityX) > FLING_MIN_VELOCITY)  
 		{  
-			Intent intent = new Intent(settingmenu.this, register.class);  
+			Intent intent = new Intent(MenuScreen.this, RegisterScreen.class);  
 			startActivity(intent);  
 			overridePendingTransition(R.anim.left_in,R.anim.left_out);
 //			this.finish();
@@ -124,7 +124,7 @@ public class settingmenu extends Activity implements OnTouchListener,OnGestureLi
 		{
 		case R.id.gotonext:
 			Intent it = new Intent();
-			it.setClass(settingmenu.this, register.class);
+			it.setClass(MenuScreen.this, RegisterScreen.class);
 			startActivity(it);
 			overridePendingTransition(R.anim.left_in,R.anim.left_out);
 			break;

@@ -74,7 +74,7 @@ public class HomeScreen extends TabActivity implements OnTabChangeListener {
 		menuBtn.setOnClickListener(new View.OnClickListener() {
 			@Override
 			public void onClick(View v) {
-				startActivity(new Intent(HomeScreen.this,register.class));
+				startActivity(new Intent(HomeScreen.this,RegisterScreen.class));
 			}
 		});
 		

@@ -26,9 +26,9 @@
         <activity android:name=".Screens.FriendsDyamicScreen"/>
         <activity android:name=".Screens.FriendScreen"/>
         <activity android:name=".Screens.ScheduleScreen"/>
-        <activity android:name=".Screens.settingmenu" android:launchMode="singleTask"/>
-		<activity android:name=".Screens.register" android:launchMode="singleTask"/>
-		<activity android:name=".Screens.login" android:launchMode="singleTask"/>
+        <activity android:name=".Screens.MenuScreen" android:launchMode="singleTask"/>
+		<activity android:name=".Screens.RegisterScreen" android:launchMode="singleTask"/>
+		<activity android:name=".Screens.LoginScreen" android:launchMode="singleTask"/>
 		<service android:name=".Services.ServiceManager"/>
 		</application>
 		<uses-permission android:name="android.permission.INTERNET"/>

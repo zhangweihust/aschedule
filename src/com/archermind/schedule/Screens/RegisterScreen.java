@@ -24,7 +24,7 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.Toast;
 
-public class register extends Activity implements OnTouchListener,OnGestureListener,OnClickListener {
+public class RegisterScreen extends Activity implements OnTouchListener,OnGestureListener,OnClickListener {
 	private GestureDetector gd;
 	private LinearLayout ll;
 	
@@ -123,7 +123,7 @@ public class register extends Activity implements OnTouchListener,OnGestureListe
 		if (e2.getX()-e1.getX() > FLING_MIN_DISTANCE && Math.abs(velocityX) >FLING_MIN_VELOCITY) {  
             
 		//切换Activity  
-		Intent intent = new Intent(register.this, settingmenu.class);  
+		Intent intent = new Intent(RegisterScreen.this, MenuScreen.class);  
 		startActivity(intent);  
 //		overridePendingTransition(android.R.anim.slide_in_left,android.R.anim.slide_out_right);
 		overridePendingTransition(R.anim.right_in,R.anim.right_out);
@@ -133,7 +133,7 @@ public class register extends Activity implements OnTouchListener,OnGestureListe
 		else if (e1.getX()-e2.getX() > FLING_MIN_DISTANCE && Math.abs(velocityX) >FLING_MIN_VELOCITY) 
 		{  
 			//切换Activity  
-			Intent intent = new Intent(register.this, login.class);  
+			Intent intent = new Intent(RegisterScreen.this, LoginScreen.class);  
 			startActivity(intent);  
 			overridePendingTransition(R.anim.left_in,R.anim.left_out);
 		} 
@@ -206,7 +206,7 @@ public class register extends Activity implements OnTouchListener,OnGestureListe
 			return;
 		}
 		
-		TelephonyManager tm = (TelephonyManager) (register.this).getSystemService(Context.TELEPHONY_SERVICE);
+		TelephonyManager tm = (TelephonyManager) (RegisterScreen.this).getSystemService(Context.TELEPHONY_SERVICE);
 		final String imsi = tm.getSubscriberId();
 		
 		new Thread()

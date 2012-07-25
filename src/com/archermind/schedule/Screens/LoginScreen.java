@@ -24,7 +24,7 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.LinearLayout;
 
-public class login extends Activity implements OnTouchListener,OnGestureListener,OnClickListener{
+public class LoginScreen extends Activity implements OnTouchListener,OnGestureListener,OnClickListener{
 	private GestureDetector gd;
 	private Handler handler;
 	
@@ -71,11 +71,11 @@ public class login extends Activity implements OnTouchListener,OnGestureListener
 				
 				if (msg.what == LOGIN_SUCCESS)
 				{
-					register.ToastShow("登录成功!");
+					RegisterScreen.ToastShow("登录成功!");
 				}
 				else if (msg.what == LOGIN_FAILED)
 				{
-					register.ToastShow("登录失败!");
+					RegisterScreen.ToastShow("登录失败!");
 				}
 			}
         };
@@ -124,7 +124,7 @@ public class login extends Activity implements OnTouchListener,OnGestureListener
 		if (e2.getX()-e1.getX() > FLING_MIN_DISTANCE && Math.abs(velocityX) >FLING_MIN_VELOCITY) {  
 	              
 			//切换Activity  
-			Intent intent = new Intent(login.this, register.class);  
+			Intent intent = new Intent(LoginScreen.this, RegisterScreen.class);  
 			startActivity(intent);  
 			overridePendingTransition(R.anim.right_in,R.anim.right_out);
 //			Toast.makeText(this, "向右手势", Toast.LENGTH_SHORT).show();  
@@ -177,18 +177,18 @@ public class login extends Activity implements OnTouchListener,OnGestureListener
 	
 	public void loginSubmit()
 	{
-		TelephonyManager tm = (TelephonyManager) (login.this).getSystemService(Context.TELEPHONY_SERVICE);
+		TelephonyManager tm = (TelephonyManager) (LoginScreen.this).getSystemService(Context.TELEPHONY_SERVICE);
 		final String imsi = tm.getSubscriberId();
 		final String username = login_username.getText().toString();
 		final String password = login_password.getText().toString();
 		if (username.length() == 0)
 		{
-			register.ToastShow("用户名不能为空!");
+			RegisterScreen.ToastShow("用户名不能为空!");
 			return;
 		}
 		if (password.length() == 0)
 		{
-			register.ToastShow("密码不能为空");
+			RegisterScreen.ToastShow("密码不能为空");
 			return;
 		}
 		new Thread()

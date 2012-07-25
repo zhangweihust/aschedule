@@ -28,7 +28,7 @@
             android:layout_width="wrap_content"
             android:layout_height="25dip"
             android:layout_marginLeft="100dip"
-            android:background="@drawable/menu_goback_bg" />
+            android:background="@drawable/menu_goback_selector" />
     </LinearLayout>
     
      <TextView 
