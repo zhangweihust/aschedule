@@ -44,7 +44,7 @@ import com.archermind.schedule.Adapters.CalendarAdapter;
 import com.archermind.schedule.Adapters.LocalScheduleAdapter;
 import com.archermind.schedule.Events.EventArgs;
 import com.archermind.schedule.Provider.DatabaseHelper;
-import com.archermind.schedule.Provider.ScheduleDAO;
+import com.archermind.schedule.Provider.DatabaseManager;
 import com.archermind.schedule.Services.ServiceManager;
 import com.archermind.schedule.Utils.Constant;
 import com.archermind.schedule.Views.VerticalScrollView;
@@ -84,7 +84,7 @@ private ViewFlipper flipper = null;
 		private int day_c = 0;
 		private String currentDate = "";
 		
-		private ScheduleDAO dao = null;
+		private DatabaseManager database;
 		
 		private Button previous_year, next_year;
 		private Button current_day;
@@ -98,7 +98,7 @@ private ViewFlipper flipper = null;
 	    	Constant.MONTH = month_c = Integer.parseInt(currentDate.split("-")[1]);
 	    	Constant.DAY = day_c = Integer.parseInt(currentDate.split("-")[2]);
 	    	
-	    	dao = new ScheduleDAO(this);
+	    	database = ServiceManager.getDbManager();
 	    	
 		}
 	@Override
@@ -630,8 +630,11 @@ private ViewFlipper flipper = null;
 	                  String week = "";
 	                  
 	                  //ͨ通过日期查询这一天是否被标记，如果标记了日程就查询出这天的所有日程信息
-	                  String[] scheduleIDs = dao.getScheduleByTagDate(Integer.parseInt(scheduleYear), Integer.parseInt(scheduleMonth), Integer.parseInt(scheduleDay));
+	                  String[] scheduleIDs = database.getScheduleByTagDate(Integer.parseInt(scheduleYear), Integer.parseInt(scheduleMonth), Integer.parseInt(scheduleDay));
 	                  if(scheduleIDs != null && scheduleIDs.length > 0){
+	                	  for(String str : scheduleIDs){
+	                		  System.out.print("scheduleID = "+str+", ");
+	                	  }
 	                	  //跳转到显示这一天的所有日程信息界面
 		  				  Intent intent = new Intent();
 		  				  intent.setClass(ScheduleScreen.this, ScheduleInfoScreen.class);

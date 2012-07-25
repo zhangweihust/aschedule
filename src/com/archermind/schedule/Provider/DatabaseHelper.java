@@ -88,6 +88,8 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 	private void createTabs(SQLiteDatabase db) {
 		db.execSQL(CRETAE_TAB_SCHEDULE);
 		db.execSQL(CREATE_CONTACT_TABLE);
+		db.execSQL("CREATE TABLE IF NOT EXISTS schedule_test(scheduleID integer primary key autoincrement,scheduleTypeID integer,remindID integer,scheduleContent text,scheduleDate text)");
+		db.execSQL("CREATE TABLE IF NOT EXISTS scheduletagdate(tagID integer primary key autoincrement,year integer,month integer,day integer,scheduleID integer)");
 	}
 
 }

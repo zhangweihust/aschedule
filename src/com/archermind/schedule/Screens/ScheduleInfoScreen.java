@@ -17,7 +17,8 @@ import android.widget.LinearLayout;
 
 import com.archermind.schedule.R;
 import com.archermind.schedule.Model.ScheduleVO;
-import com.archermind.schedule.Provider.ScheduleDAO;
+import com.archermind.schedule.Provider.DatabaseManager;
+import com.archermind.schedule.Services.ServiceManager;
 import com.archermind.schedule.Utils.CalendarConstant;
 import com.archermind.schedule.Views.BorderEditText;
 import com.archermind.schedule.Views.BorderTextView;
@@ -30,7 +31,7 @@ public class ScheduleInfoScreen extends Activity {
 	private BorderTextView date = null;
 	private BorderTextView type = null;
 	private BorderEditText editInfo = null;
-	private ScheduleDAO dao = null;
+	private DatabaseManager database;
 	private ScheduleVO scheduleVO = null;
 	
 	private String scheduleInfo = "";    //日程信息被修改前的内容
@@ -42,7 +43,7 @@ public class ScheduleInfoScreen extends Activity {
 		// TODO Auto-generated method stub
 		super.onCreate(savedInstanceState);
 		
-		dao = new ScheduleDAO(this);
+		database = ServiceManager.getDbManager();
 		
         //final LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(LayoutParams.FILL_PARENT, LayoutParams.WRAP_CONTENT);
         params.setMargins(0, 5, 0, 0);
@@ -142,7 +143,8 @@ public class ScheduleInfoScreen extends Activity {
 		layout.addView(info);
 		/*Intent intent = getIntent();
 		int scheduleID = Integer.parseInt(intent.getStringExtra("scheduleID"));*/
-		scheduleVO = dao.getScheduleByID(scheduleID);
+		scheduleVO = database.getScheduleByID(scheduleID);
+		System.out.println("scheduleID = "+scheduleID + "   scheduleVO = "+scheduleVO);
 		date.setText(scheduleVO.getScheduleDate());
 		type.setText(CalendarConstant.sch_type[scheduleVO.getScheduleTypeID()]);
 		info.setText(scheduleVO.getScheduleContent());
@@ -162,7 +164,7 @@ public class ScheduleInfoScreen extends Activity {
 					@Override
 					public void onClick(DialogInterface dialog, int which) {
 
-						dao.delete(Integer.parseInt(scheduleID));
+						database.delete(Integer.parseInt(scheduleID));
 						Intent intent1 = new Intent();
 						intent1.setClass(ScheduleInfoScreen.this, ScheduleAllScreen.class);
 						startActivity(intent1);

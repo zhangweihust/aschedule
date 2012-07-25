@@ -22,7 +22,8 @@ import android.widget.TimePicker;
 import com.archermind.schedule.R;
 import com.archermind.schedule.Model.ScheduleDateTag;
 import com.archermind.schedule.Model.ScheduleVO;
-import com.archermind.schedule.Provider.ScheduleDAO;
+import com.archermind.schedule.Provider.DatabaseManager;
+import com.archermind.schedule.Services.ServiceManager;
 import com.archermind.schedule.Utils.CalendarConstant;
 import com.archermind.schedule.Views.BorderTextView;
 import com.archermind.schedule.calendar.LunarCalendar;
@@ -35,7 +36,7 @@ import com.archermind.schedule.calendar.LunarCalendar;
 public class ScheduleAddScreen extends Activity {
 
 	private LunarCalendar lc = null;
-	private ScheduleDAO dao = null;
+	private DatabaseManager database = null;
 	private BorderTextView scheduleType = null;
 	private BorderTextView dateText = null;
 	private BorderTextView scheduleTop = null;
@@ -64,7 +65,7 @@ public class ScheduleAddScreen extends Activity {
     
 	public ScheduleAddScreen() {
 		lc = new LunarCalendar();
-		dao = new ScheduleDAO(this);
+		database = ServiceManager.getDbManager();
 	}
 
 	@Override
@@ -145,7 +146,7 @@ public class ScheduleAddScreen extends Activity {
 	                schedulevo.setRemindID(remindID);
 	                schedulevo.setScheduleDate(showDate);
 	                schedulevo.setScheduleContent(scheduleText.getText().toString());
-					int scheduleID = dao.save(schedulevo);
+					int scheduleID = database.save(schedulevo);
 					//将scheduleId保存到数组中（因为在CalendarActivity中点击gridview中的一个Item可能会对应多个标记日程（scheduleId)
 					String [] scheduleIDs = new String[]{String.valueOf(scheduleID)};
 					Intent intent = new Intent();
@@ -230,7 +231,7 @@ public class ScheduleAddScreen extends Activity {
 			}
 		}
 		//将标记日期存入数据库中
-		dao.saveTagDate(dateTagList);
+		database.saveTagDate(dateTagList);
 	}
 	
 	/**

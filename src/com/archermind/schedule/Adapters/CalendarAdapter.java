@@ -25,7 +25,8 @@ import android.widget.TextView;
 
 import com.archermind.schedule.R;
 import com.archermind.schedule.Model.ScheduleDateTag;
-import com.archermind.schedule.Provider.ScheduleDAO;
+import com.archermind.schedule.Provider.DatabaseManager;
+import com.archermind.schedule.Services.ServiceManager;
 import com.archermind.schedule.calendar.LunarCalendar;
 import com.archermind.schedule.calendar.SpecialCalendar;
 
@@ -36,7 +37,7 @@ import com.archermind.schedule.calendar.SpecialCalendar;
  */
 public class CalendarAdapter extends BaseAdapter {
 
-	private ScheduleDAO dao = null;
+	private DatabaseManager database;
 	private boolean isLeapyear = false;  //是否为闰年
 	private int daysOfMonth = 0;      //某月的天数
 	private int dayOfWeek = 0;        //具体某一天是星期几
@@ -248,8 +249,8 @@ public class CalendarAdapter extends BaseAdapter {
 		int flag = 0;
 		String lunarDay = "";
 		//得到当前月的所有日程日期（这些日期需要标记）
-		dao = new ScheduleDAO(context);
-		ArrayList<ScheduleDateTag> dateTagList = dao.getTagDate(year,month);
+		database = ServiceManager.getDbManager();
+		ArrayList<ScheduleDateTag> dateTagList = database.getTagDate(year,month);
 		if(dateTagList != null && dateTagList.size() > 0){
 			schDateTagFlag = new int[dateTagList.size()];
 		}

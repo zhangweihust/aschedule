@@ -17,7 +17,8 @@ import android.widget.ScrollView;
 
 import com.archermind.schedule.R;
 import com.archermind.schedule.Model.ScheduleVO;
-import com.archermind.schedule.Provider.ScheduleDAO;
+import com.archermind.schedule.Provider.DatabaseManager;
+import com.archermind.schedule.Services.ServiceManager;
 import com.archermind.schedule.Utils.CalendarConstant;
 import com.archermind.schedule.Views.BorderTextView;
 
@@ -31,7 +32,7 @@ public class ScheduleAllScreen extends Activity {
 	private ScrollView sv = null;
 	private LinearLayout layout = null;
 	private BorderTextView textTop = null;
-	private ScheduleDAO dao = null;
+	private DatabaseManager database;
 	private ScheduleVO scheduleVO = null;
 	private ArrayList<ScheduleVO> schList = new ArrayList<ScheduleVO>();
 	private String scheduleInfo = "";
@@ -44,7 +45,7 @@ public class ScheduleAllScreen extends Activity {
 		// TODO Auto-generated method stub
 		super.onCreate(savedInstanceState);
 		
-		dao = new ScheduleDAO(this);
+		database = ServiceManager.getDbManager();
 		sv = new ScrollView(this);
 		
 		params.setMargins(0, 5, 0, 0);
@@ -72,7 +73,7 @@ public class ScheduleAllScreen extends Activity {
 	 * 得到所有的日程信息
 	 */
 	public void getScheduleAll(){
-		schList = dao.getAllSchedule();
+		schList = database.getAllSchedule();
 		if(schList != null){
 			for (ScheduleVO vo : schList) {
 				String content = vo.getScheduleContent();
