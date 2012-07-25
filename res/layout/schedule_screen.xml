@@ -11,18 +11,135 @@
         android:layout_height="wrap_content"
         android:layout_weight="1" >
 
-        <ViewFlipper
-            android:id="@+id/flipper"
+        <RelativeLayout
             android:layout_width="fill_parent"
             android:layout_height="fill_parent"
-            android:background="#0a0"
-            android:focusable="true"
-            android:gravity="center" >
-               <Button
+            android:orientation="vertical" >
+
+            <ViewFlipper
+                android:id="@+id/flipper"
                 android:layout_width="fill_parent"
                 android:layout_height="fill_parent"
-                android:text="OK" />
-            </ViewFlipper>
+                android:gravity="center_horizontal"
+                android:layout_marginTop="@dimen/flipper_marginTop" />
+
+            <LinearLayout
+                android:layout_width="fill_parent"
+                android:layout_height="@dimen/calendar_level1_height"
+                android:background="@drawable/date"
+                android:orientation="vertical" >
+
+                <RelativeLayout
+                    android:layout_width="fill_parent"
+                    android:layout_height="@dimen/calendar_level2_height" >
+
+                    <LinearLayout
+                        android:layout_width="fill_parent"
+                        android:layout_height="fill_parent"
+                        android:gravity="center_horizontal" >
+
+                        <Button
+                            android:id="@+id/previous_year"
+                            android:layout_width="@dimen/previous_year_width"
+                            android:layout_height="@dimen/previous_year_height"
+                            android:background="@drawable/previous_year" />
+
+                        <TextView
+                            android:id="@+id/current_date"
+                            android:layout_width="@dimen/current_date_width"
+                            android:layout_height="fill_parent"
+                            android:gravity="center"
+                            android:text="2012.12"
+                            android:textSize="15sp" />
+
+                        <Button
+                            android:id="@+id/next_year"
+                            android:layout_width="@dimen/previous_year_width"
+                            android:layout_height="@dimen/previous_year_height"
+                            android:background="@drawable/next_year" />
+                    </LinearLayout>
+
+                    <LinearLayout
+                        android:layout_width="wrap_content"
+                        android:layout_height="@dimen/calendar_level2_height"
+                        android:layout_alignParentRight="true"
+                        android:layout_marginRight="@dimen/current_day_marginRight"
+                        android:gravity="center_vertical" >
+
+                        <Button
+                            android:id="@+id/current_day"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:background="@drawable/today_button_selector"
+                            android:gravity="center"
+                            android:text="今天" />
+                    </LinearLayout>
+                </RelativeLayout>
+
+                <LinearLayout
+                    android:layout_width="fill_parent"
+                    android:layout_height="wrap_content"
+                    android:gravity="center_horizontal"
+                    android:orientation="horizontal" >
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="fill_parent"
+                        android:layout_weight="1"
+                        android:gravity="center"
+                        android:text="周一"
+                        android:textColor="@android:color/black" />
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="fill_parent"
+                        android:layout_weight="1"
+                        android:gravity="center"
+                        android:text="周二"
+                        android:textColor="@android:color/black" />
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="fill_parent"
+                        android:layout_weight="1"
+                        android:gravity="center"
+                        android:text="周三"
+                        android:textColor="@android:color/black" />
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="fill_parent"
+                        android:layout_weight="1"
+                        android:gravity="center"
+                        android:text="周四"
+                        android:textColor="@android:color/black" />
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="fill_parent"
+                        android:layout_weight="1"
+                        android:gravity="center"
+                        android:text="周五"
+                        android:textColor="@android:color/black" />
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="fill_parent"
+                        android:layout_weight="1"
+                        android:gravity="center"
+                        android:text="周六"
+                        android:textColor="@android:color/black" />
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="fill_parent"
+                        android:layout_weight="1"
+                        android:gravity="center"
+                        android:text="周日"
+                        android:textColor="@android:color/black" />
+                </LinearLayout>
+            </LinearLayout>
+        </RelativeLayout>
 
         <LinearLayout
             android:layout_width="fill_parent"

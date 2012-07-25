@@ -9,4 +9,30 @@
 	<dimen name="login_Microblogging_commonmargin">30dip</dimen>
 	<dimen name="login_sinaMicroblogging_margintop">30dip</dimen>
 	<dimen name="login_otherMicroblogging_margintop">10dip</dimen>
+	
+	<dimen name="calendar_level1_height">73dp</dimen>
+	<dimen name="calendar_level2_height">38dp</dimen>
+	<dimen name="current_date_width">130dp</dimen>
+	<dimen name="flipper_marginTop">63dp</dimen>	
+	<dimen name="previous_year_width">45dp</dimen>
+	<dimen name="previous_year_height">33dp</dimen>
+	<dimen name="current_day_marginRight">8dp</dimen>
+	
+	<dimen name="calendar_number_width">46dp</dimen>	
+	<dimen name="calendar_number_height">49dp</dimen>
+	<dimen name="calendar_schedule_number_width">16dp</dimen>
+	<dimen name="calendar_schedule_number_height">25dp</dimen>
+	
+	    
+ 	<dimen name="time_select_marginTop">10dp</dimen>
+	<dimen name="wheelView_layout_height">210dp</dimen>
+	<dimen name="wheelView_year_width">80dp</dimen>
+	<dimen name="wheelView_month_width">57dp</dimen>	
+	<dimen name="wheelView_min_width">57px</dimen>
+	<dimen name="wheelView_layout_marginLeft">6dp</dimen>
+	<dimen name="wheelView_layout_marginRight">6dp</dimen>
+	
+	<dimen name="time_select_layout_button_height">60dp</dimen>
+	<dimen name="time_select_button_width">100dp</dimen>
+	<dimen name="time_select_button_marginLeft">20dp</dimen>
 </resources>

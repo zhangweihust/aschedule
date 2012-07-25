@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<resources>
+ 	<dimen name="time_select_marginTop">6px</dimen>
+	<dimen name="wheelView_layout_height">160px</dimen>
+	<dimen name="wheelView_year_width">60px</dimen>
+	<dimen name="wheelView_month_width">41px</dimen>	
+	<dimen name="wheelView_min_width">41px</dimen>
+	<dimen name="wheelView_layout_marginLeft">6px</dimen>
+	<dimen name="wheelView_layout_marginRight">6px</dimen>
+	
+	<dimen name="time_select_layout_button_height">45px</dimen>
+	<dimen name="time_select_button_width">60px</dimen>
+	<dimen name="time_select_button_marginLeft">12px</dimen>
+</resources>

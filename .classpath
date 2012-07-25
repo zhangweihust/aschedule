@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<classpath>
+	<classpathentry kind="src" path="src"/>
+	<classpathentry kind="src" path="gen"/>
+	<classpathentry kind="con" path="com.android.ide.eclipse.adt.ANDROID_FRAMEWORK"/>
+	<classpathentry kind="con" path="com.android.ide.eclipse.adt.LIBRARIES"/>
+	<classpathentry kind="lib" path="libs/gdata-calendar-2.0.jar"/>
+	<classpathentry kind="lib" path="libs/gdata-calendar-meta-2.0.jar"/>
+	<classpathentry kind="lib" path="libs/gdata-client-1.0.jar"/>
+	<classpathentry kind="lib" path="libs/gdata-client-meta-1.0.jar"/>
+	<classpathentry kind="lib" path="libs/gdata-core-1.0.jar"/>
+	<classpathentry kind="lib" path="libs/guava-11.0.2.jar"/>
+	<classpathentry kind="output" path="bin/classes"/>
+</classpath>

@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout
+  xmlns:android="http://schemas.android.com/apk/res/android"
+  android:background="@drawable/gridview_bk"
+  android:layout_width="fill_parent"
+  android:layout_height="fill_parent">
+  
+  <TextView 
+      android:id="@+id/calendar_number"
+	  android:gravity="center"
+	  android:layout_width="fill_parent"
+	  android:layout_height="wrap_content"
+	  android:text="20"
+	  />
+  
+  <TextView 
+      android:id="@+id/calendar_schedule_number"
+	  android:gravity="center"
+	  android:layout_width="@dimen/calendar_schedule_number_width"
+	  android:layout_height="@dimen/calendar_schedule_number_height"
+	  android:text="2"
+	  android:textColor="@android:color/white"
+	  android:visibility="gone"/>
+  
+  <ImageView 
+      android:id="@+id/calendar_holiday"
+      android:layout_width="wrap_content"
+	  android:layout_height="wrap_content"
+	  android:layout_alignParentRight="true"/>
+</RelativeLayout>
