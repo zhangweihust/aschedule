@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+	<!-- 布局文件中用到的尺寸大小 -->
+    <!--login_layout.xml.xml -->
+	<dimen name="login_goback_marginleft">3dip</dimen>
+	<dimen name="login_title_marginleft">85dip</dimen>
+	<dimen name="login_schedule_margintop">20dip</dimen>
+	<dimen name="login_schedule_marginleft">25dip</dimen>
+	<dimen name="login_Microblogging_commonmargin">30dip</dimen>
+	<dimen name="login_sinaMicroblogging_margintop">30dip</dimen>
+	<dimen name="login_otherMicroblogging_margintop">10dip</dimen>
+</resources>

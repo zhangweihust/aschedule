@@ -3,11 +3,11 @@ package com.archermind.schedule.Provider;
 import java.util.Calendar;
 
 import com.archermind.schedule.Utils.DateTimeUtils;
-
 import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
+import android.provider.ContactsContract;
 
 public class DatabaseManager {
 	private Context context;
@@ -98,4 +98,47 @@ public class DatabaseManager {
 						null, null, DatabaseHelper.COLUMN_SCHEDULE_START_TIME + " ASC");
 	}
 
+	public int deleteContact()
+	{
+		return database.delete(DatabaseHelper.ASCHEDULE_CONTACT, null, null);
+	}
+	
+	public long insertContact(ContentValues values)
+	{
+		return database.insert(DatabaseHelper.ASCHEDULE_CONTACT, null, values);
+	}
+	
+	public Cursor getAScheduleContacts()
+	{
+		return database.query(DatabaseHelper.ASCHEDULE_CONTACT, 
+											null, 
+											null, 
+											null, 
+											null, 
+											null, 
+											null);
+	}
+	
+	public Cursor getLocalContacts()
+	{
+		return context.getContentResolver().query(ContactsContract.CommonDataKinds.Phone.CONTENT_URI,  
+	    		null,null, null,null);
+	}
+	
+	public boolean hasData(int contactid,String number)
+	{
+		Cursor cursor = database.query(DatabaseHelper.ASCHEDULE_CONTACT, 
+				null, 
+				DatabaseHelper.COLUMN_CONTACT_ID + " = ? and " + DatabaseHelper.ASCHEDULE_CONTACT_NUM + " = ?", 
+				new String[] {String.valueOf(contactid),number}, 
+				null, 
+				null, 
+				null);
+		
+		int count = cursor.getCount();
+		cursor.close();
+		
+		return count > 0 ? true:false;
+	}
+	
 }

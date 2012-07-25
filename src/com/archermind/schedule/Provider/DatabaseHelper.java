@@ -60,6 +60,16 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 			+ " TEXT "
 			+ ")";
 
+	public static final String ASCHEDULE_CONTACT = "schedule_contact";	/* 微日程联系人表 */
+	public static final String COLUMN_CONTACT_ID = "contact_id";			/* 微日程联系人表 */
+	public static final String ASCHEDULE_CONTACT_NUM = "number";			/* 微日程联系人表 */
+//	public static final String ASCHEDULE_CONTACT_FLAG = "flag";			/* 微日程联系人表 */
+	private static final String CREATE_CONTACT_TABLE = " CREATE TABLE IF NOT EXISTS " + ASCHEDULE_CONTACT +
+	" ( " + COLUMN_CONTACT_ID + " INTEGER PRIMARY KEY, " 
+	+ ASCHEDULE_CONTACT_NUM + " TEXT "
+//	+ ASCHEDULE_CONTACT_FLAG + " INTEGER DEFAULT '0' "
+	+ " ); ";
+	
 	public DatabaseHelper(Context context) {
 		super(context, NAME, null, version);
 	}
@@ -77,6 +87,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 	
 	private void createTabs(SQLiteDatabase db) {
 		db.execSQL(CRETAE_TAB_SCHEDULE);
+		db.execSQL(CREATE_CONTACT_TABLE);
 	}
 
 }

@@ -1,0 +1,180 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/myline"
+    android:layout_width="fill_parent"
+    android:layout_height="fill_parent"
+    android:orientation="vertical" >
+
+    <LinearLayout
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:background="@drawable/top_bg"
+        android:orientation="horizontal" >
+        
+        <Button 
+            android:id="@+id/register_goback"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="5dip"
+            android:layout_gravity="center_vertical"
+            style="@style/bar_allbtn_style"
+            android:textSize="13sp"
+            android:text="返回"
+            android:background="@drawable/register_goback_bg" />  
+            
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="90dip"
+            android:layout_gravity="center"
+            style="@style/bar_allbtn_style"
+            android:textColor="#ffffff"
+            android:textSize="18sp"
+            android:text="注册"
+             />
+	</LinearLayout>
+	
+        
+    <LinearLayout 
+        android:layout_width="fill_parent"
+        android:layout_height="fill_parent"
+        android:background="@drawable/repeat_register_bg"
+        android:orientation="vertical" >
+        
+        <ImageView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="15dip"
+            android:layout_marginLeft="15dip"
+            android:src="@drawable/register_schedule" />
+        
+        <LinearLayout
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="30dip"
+            android:layout_marginRight="30dip"
+            android:background="@drawable/register_line"
+            android:orientation="vertical" >
+            
+            <LinearLayout
+		        android:focusableInTouchMode="true"
+		        android:layout_width="0px" 
+		        android:layout_height="0px">
+		        <requestFocus />
+		    </LinearLayout>
+		    
+            <LinearLayout
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="25dip"
+                android:layout_marginBottom="35dip"
+                android:gravity="center" >
+                
+                <ImageView 
+                    android:id="@+id/register_photoselect"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:src="@drawable/register_icon" />
+                
+                <EditText
+                    android:id="@+id/register_username"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginLeft="5dip"
+                    android:background="#ffffffff"
+                    android:textSize="12sp"
+                    android:hint="输入您的昵称" />
+            </LinearLayout>
+            
+            <TextView 
+                android:layout_width="fill_parent"
+                android:layout_height="1px"
+                style="@style/register_dividing" />
+            
+            <EditText
+                    android:id="@+id/register_email"
+                    android:layout_width="fill_parent"
+                    android:layout_height="20dip"
+                    android:layout_marginLeft="30dip"
+                    android:layout_marginRight="3dip"
+                    android:background="#ffffffff"
+                    android:textSize="12sp"
+                    android:hint="您的邮箱" />
+            
+            <TextView 
+                android:layout_width="fill_parent"
+                android:layout_height="1px"
+                style="@style/register_dividing" />
+            
+            <EditText
+                    android:id="@+id/register_pswd"
+                    android:layout_width="fill_parent"
+                    android:layout_height="20dip"
+                    android:layout_marginLeft="30dip"
+                    android:layout_marginRight="3dip"
+                    android:background="#ffffffff"
+                    android:textSize="12sp"
+                    android:password="true"
+                    android:hint="密码" />
+            
+            <TextView 
+                android:layout_width="fill_parent"
+                android:layout_height="1px"
+                style="@style/register_dividing" />         
+        </LinearLayout>
+        <Button
+            android:id="@+id/register_submit"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="5dip"
+            android:layout_marginLeft="30dip"
+            android:layout_marginRight="30dip"
+            android:text="注    册"
+            android:background="@drawable/register_btn_bg" />
+        
+        <TextView 
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_margin="10dip"
+            android:layout_gravity="center"
+            android:textColor="#000000"
+            android:textSize="12sp"
+            android:text="也可以用以下帐号注册哦" />
+        
+        <LinearLayout
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="30dip"
+            android:layout_marginRight="30dip"
+            android:weightSum="2"
+            android:gravity="center" >
+            
+            <Button
+                android:id="@+id/register_sina"
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:drawableLeft="@drawable/icon_register_sina"
+                android:drawablePadding="0dip"
+                android:textColor="#815024"
+                android:textSize="12sp"
+                android:text="新浪微博"
+                android:background="@drawable/register_btn_bg" />
+            
+            <Button
+                android:id="@+id/register_tencent"
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:layout_marginLeft="10dip"
+                android:drawableLeft="@drawable/icon_register_tencent"
+                android:drawablePadding="0dip"
+                android:textColor="#815024"
+                android:textSize="12sp"
+                android:text="腾讯QQ"
+                android:background="@drawable/register_btn_bg" />
+            
+        </LinearLayout>
+    </LinearLayout>
+
+</LinearLayout>

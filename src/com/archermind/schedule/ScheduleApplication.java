@@ -5,19 +5,27 @@ import android.content.Context;
 import android.util.Log;
 
 import com.archermind.schedule.Services.ServiceManager;
+import com.archermind.schedule.Utils.ServerInterface;
 
 public class ScheduleApplication extends Application{
 	
 	private static ScheduleApplication instance;
 	private final static String TAG = "Schedule";
+	private ServerInterface serverinterface;
 	
 	public ScheduleApplication(){
 		ScheduleApplication.instance = this;
+		serverinterface = new ServerInterface();
 	}
 	
 	 public static Context getContext() {
 	        return ScheduleApplication.instance;
 	    }
+	 
+	 public ServerInterface getServerInterface()
+	 {
+		 return serverinterface;
+	 }
 	 
 	 @Override
 		public void onCreate() {
