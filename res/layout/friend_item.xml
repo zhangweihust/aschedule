@@ -1,34 +1,63 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:id="@+id/relativeLayout1"
     android:layout_width="fill_parent"
-    android:layout_height="wrap_content"
-    android:maxHeight="11dip"
-    android:gravity="center">
+    android:layout_height="wrap_content" >
+
+    <LinearLayout
+        android:id="@+id/friend_layout"
+        android:layout_width="fill_parent"
+        android:layout_height="60dip"
+        android:background="@android:color/white"
+        android:gravity="center"
+        android:maxHeight="60dip" >
+
         <ImageView
-        android:id="@+id/search_download_group_Indicator"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignParentLeft="true"
-        android:layout_marginRight="10dip"
-        android:layout_weight="0" 
-        android:src="@drawable/friend_group_icon"/>
-    <TextView
-        android:id="@+id/screen_search_download_above"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:ellipsize="marquee"
-        android:singleLine="true"
-        android:textColor="#ffffff" 
-        android:layout_weight="1"
-        android:textAppearance="?android:attr/textAppearanceSmall"
-        android:text="fjoeijfoeis"/>
-    <TextView
-        android:id="@+id/search_download_group_Indicator"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignParentRight="true"
-        android:layout_marginRight="10dip"
-        android:layout_weight="0" 
-        android:src="@drawable/friend_group_expand"/>
+            android:id="@+id/head_image"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentLeft="true"
+            android:layout_marginLeft="10dip"
+            android:layout_weight="0"
+            android:src="@drawable/friend_item_img" />
+
+        <TextView
+            android:id="@+id/name"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="30dp"
+            android:layout_weight="1"
+            android:ellipsize="marquee"
+            android:singleLine="true"
+            android:text="fjoeijfoeis"
+            android:textAppearance="?android:attr/textAppearanceSmall"
+            android:textColor="@android:color/black" />
+
+        <Button
+            android:id="@+id/friend_button1"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginRight="10dip"
+            android:layout_weight="0"
+            android:background="@drawable/friend_item_button_bg"
+            android:paddingBottom="5dp"
+            android:paddingLeft="5dp"
+            android:paddingRight="5dp"
+            android:paddingTop="5dp"
+            android:text="foejoifeji" />
+
+        <Button
+            android:id="@+id/friend_button2"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentRight="true"
+            android:layout_marginRight="10dip"
+            android:layout_weight="0"
+            android:background="@drawable/friend_item_button_bg"
+            android:paddingBottom="5dp"
+            android:paddingLeft="5dp"
+            android:paddingRight="5dp"
+            android:paddingTop="5dp"
+            android:text="foejoifeji" />
+    </LinearLayout>
+
 </LinearLayout>

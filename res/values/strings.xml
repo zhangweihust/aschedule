@@ -34,4 +34,13 @@
     <string name="schedule_edit_title">编辑</string>
     <string name="schedule_edit_delete">删除</string>
 
+    <string name="friend_add">加为好友</string>
+    <string name="friend_invite">邀请</string>
+    
+    <string name="friend_show">我的好友</string>
+    <string name="friend_contact_show">查找联系人中的好友</string>
+        <string name="contact_show">联系人</string>
+    <string name="contact_use_show">正在使用 微日程 的好友</string>
+
+        
 </resources>

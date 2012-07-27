@@ -5,6 +5,7 @@ import java.util.Calendar;
 
 import com.archermind.schedule.Model.ScheduleDateTag;
 import com.archermind.schedule.Model.ScheduleVO;
+import com.archermind.schedule.Utils.Constant;
 import com.archermind.schedule.Utils.DateTimeUtils;
 import android.content.ContentValues;
 import android.content.Context;
@@ -157,6 +158,29 @@ public class DatabaseManager {
 		return count > 0 ? true : false;
 	}
 
+	
+	public void ignoreFriend(int id){
+		ContentValues values = new ContentValues();
+		values.put(DatabaseHelper.ASCHEDULE_CONTACT_TYPE, Constant.FriendType.friend_Ignore);
+		database.update(DatabaseHelper.ASCHEDULE_CONTACT, values, DatabaseHelper.COLUMN_CONTACT_ID + " =? ", new String[] { String.valueOf(id)});
+	}
+	public void deleteFriendUse(int id){
+		ContentValues values = new ContentValues();
+		values.put(DatabaseHelper.ASCHEDULE_CONTACT_TYPE, Constant.FriendType.friend_contact_use);
+		database.update(DatabaseHelper.ASCHEDULE_CONTACT, values, DatabaseHelper.COLUMN_CONTACT_ID + " =? ", new String[] { String.valueOf(id)});
+	}
+	public void deleteFriend(int id){
+		ContentValues values = new ContentValues();
+		values.put(DatabaseHelper.ASCHEDULE_CONTACT_TYPE, Constant.FriendType.friend_contact);
+		database.update(DatabaseHelper.ASCHEDULE_CONTACT, values, DatabaseHelper.COLUMN_CONTACT_ID + " =? ", new String[] { String.valueOf(id)});
+	}
+	public void addFriend(int id){
+		ContentValues values = new ContentValues();
+		values.put(DatabaseHelper.ASCHEDULE_CONTACT_TYPE, Constant.FriendType.friend_yes);
+		database.update(DatabaseHelper.ASCHEDULE_CONTACT, values, DatabaseHelper.COLUMN_CONTACT_ID + " =? ", new String[] { String.valueOf(id)});
+	}
+	
+	
 	/**
 	 * �����ճ���Ϣ
 	 * 

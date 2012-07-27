@@ -427,111 +427,6 @@ private ViewFlipper flipper = null;
 		return false;
 	}
 	
-	/**
-	 * 创建菜单
-	 */
-	@Override
-	public boolean onCreateOptionsMenu(Menu menu) {
-
-		menu.add(0, menu.FIRST, menu.FIRST, "今天");
-		menu.add(0, menu.FIRST+1, menu.FIRST+1, "跳转");
-		menu.add(0, menu.FIRST+2, menu.FIRST+2, "日程");
-		menu.add(0, menu.FIRST+3, menu.FIRST+3, "日期转换");
-		return super.onCreateOptionsMenu(menu);
-	}
-	
-	/**
-	 * 选择菜单
-	 */
-	@Override
-	public boolean onMenuItemSelected(int featureId, MenuItem item) {
-        switch (item.getItemId()){
-        case Menu.FIRST:
-//        	跳转到今天
-        	int xMonth = jumpMonth;
-        	int xYear = jumpYear;
-        	int gvFlag =0;
-        	jumpMonth = 0;
-        	jumpYear = 0;
-        	addGridView();   //添加一个gridview
-        	year_c = Integer.parseInt(currentDate.split("-")[0]);
-        	month_c = Integer.parseInt(currentDate.split("-")[1]);
-        	day_c = Integer.parseInt(currentDate.split("-")[2]);
-        	calV = new CalendarAdapter(this, getResources(),jumpMonth,jumpYear,year_c,month_c,day_c,1,flipper.getHeight(),Constant.flagType);
-	        gridView.setAdapter(calV);
-	        addTextToTopTextView(current_date);
-	        gvFlag++;
-	        flipper.addView(gridView,gvFlag);
-	        if(xMonth == 0 && xYear == 0){
-	        	//nothing to do
-	        }else if((xYear == 0 && xMonth >0) || xYear >0){
-	        	this.flipper.setInAnimation(AnimationUtils.loadAnimation(this,R.anim.push_left_in));
-				this.flipper.setOutAnimation(AnimationUtils.loadAnimation(this,R.anim.push_left_out));
-				this.flipper.showNext();
-	        }else{
-	        	this.flipper.setInAnimation(AnimationUtils.loadAnimation(this,R.anim.push_right_in));
-				this.flipper.setOutAnimation(AnimationUtils.loadAnimation(this,R.anim.push_right_out));
-				this.flipper.showPrevious();
-	        }
-			flipper.removeViewAt(0);
-        	
-        	break;
-        case Menu.FIRST+1:
-        	
-        	new DatePickerDialog(this, new OnDateSetListener() {
-				
-				@Override
-				public void onDateSet(DatePicker view, int year, int monthOfYear,
-						int dayOfMonth) {
-					//1901-1-1 ----> 2049-12-31
-					if(year < 1901 || year > 2049){
-						//不在查询范围内
-						new AlertDialog.Builder(ScheduleScreen.this).setTitle("错误日期").setMessage("跳转日期范围(1901/1/1-2049/12/31)").setPositiveButton("确认", null).show();
-					}else{
-						int gvFlag = 0;
-						addGridView();   //添加一个gridview
-			        	calV = new CalendarAdapter(ScheduleScreen.this, ScheduleScreen.this.getResources(),year,monthOfYear+1,dayOfMonth,Constant.flagType);
-				        gridView.setAdapter(calV);
-				        addTextToTopTextView(current_date);
-				        gvFlag++;
-				        flipper.addView(gridView,gvFlag);
-				        if(year == year_c && monthOfYear+1 == month_c){
-				        	//nothing to do
-				        }
-				        if((year == year_c && monthOfYear+1 > month_c) || year > year_c ){
-				        	ScheduleScreen.this.flipper.setInAnimation(AnimationUtils.loadAnimation(ScheduleScreen.this,R.anim.push_left_in));
-				        	ScheduleScreen.this.flipper.setOutAnimation(AnimationUtils.loadAnimation(ScheduleScreen.this,R.anim.push_left_out));
-				        	ScheduleScreen.this.flipper.showNext();
-				        }else{
-				        	ScheduleScreen.this.flipper.setInAnimation(AnimationUtils.loadAnimation(ScheduleScreen.this,R.anim.push_right_in));
-				        	ScheduleScreen.this.flipper.setOutAnimation(AnimationUtils.loadAnimation(ScheduleScreen.this,R.anim.push_right_out));
-				        	ScheduleScreen.this.flipper.showPrevious();
-				        }
-				        flipper.removeViewAt(0);
-				        //跳转之后将跳转之后的日期设置为当前日期
-				        year_c = year;
-						month_c = monthOfYear+1;
-						day_c = dayOfMonth;
-						jumpMonth = 0;
-						jumpYear = 0;
-					}
-				}
-			},year_c, month_c-1, day_c).show();
-        	break;
-        case Menu.FIRST+2:
-        	Intent intent = new Intent();
-			intent.setClass(ScheduleScreen.this, ScheduleAllScreen.class);
-			startActivity(intent);
-        	break;
-        case Menu.FIRST+3:
-        	Intent intent1 = new Intent();
-        	intent1.setClass(ScheduleScreen.this, CalendarConvertScreen.class);
-        	intent1.putExtra("date", new int[]{year_c,month_c,day_c});
-        	startActivity(intent1);
-        	break;
-        }
-		return super.onMenuItemSelected(featureId, item);
-	}
 
 	@Override
 	public boolean onDown(MotionEvent e) {
@@ -621,7 +516,7 @@ private ViewFlipper flipper = null;
             //gridView中的每一个item的点击事件
 			@Override
 			public void onItemClick(AdapterView<?> arg0, View arg1, int position,
-					long arg3) {
+					long arg3) {/*
 				  //点击任何一个item，得到这个item的日期（排除点击的是周日到周六（点击不响应））
 				  int startPosition = calV.getStartPositon();
 				  int endPosition = calV.getEndPosition();
@@ -686,7 +581,7 @@ private ViewFlipper flipper = null;
 		                  startActivity(intent);
 	                  }
 				  }
-			}
+			*/}
 		});
 		gridView.setLayoutParams(params);
 
