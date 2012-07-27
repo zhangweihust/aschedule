@@ -153,8 +153,10 @@ public class TimeSelectorDialog implements OnClickListener {
 		// TODO Auto-generated method stub
 		switch(v.getId()){
 		case R.id.wheelView_cancel:
+			dismiss();
 			break;
 		case R.id.wheelView_ok:
+			dismiss();
 			break;
 		}
 	}

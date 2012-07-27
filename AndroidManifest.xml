@@ -12,6 +12,7 @@
         android:theme="@style/ActivityNoTitle"
         android:name="ScheduleApplication" >
         <activity
+            android:launchMode="singleTask"
             android:name=".Screens.HomeScreen"
             android:screenOrientation="portrait"
             android:label="@string/app_name" >
@@ -37,6 +38,9 @@
 		<activity android:name=".Screens.RegisterScreen" android:launchMode="singleTask"/>
 		<activity android:name=".Screens.LoginScreen" android:launchMode="singleTask"/>
 		<service android:name=".Services.ServiceManager"/>
+		<activity android:name=".Screens.NewScheduleScreen"/>
+        <activity android:name=".Screens.EditScheduleScreen"></activity>
+        
 		</application>
 		<uses-permission android:name="android.permission.INTERNET"/>
 		<uses-permission android:name="android.permission.READ_PHONE_STATE"/>

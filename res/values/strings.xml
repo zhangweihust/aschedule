@@ -16,5 +16,22 @@
     <string name="xlistview_header_last_time">上次更新时间：</string>
     <string name="xlistview_footer_hint_normal">查看更多</string>
     <string name="xlistview_footer_hint_ready">松开载入更多</string>
+    <!-- newSchedule_screen -->
+    <string name="schedule_new_title">添加日程</string>
+    <string name="schedule_new_back">返回</string>
+    <string name="schedule_new_save">保存</string>
+    <string name="notice">注意</string>
+    <string name="activity">活动</string>
+    <string name="appointment">约会</string>
+    <string name="travel">出行</string>
+    <string name="entertainment">娱乐</string>
+    <string name="eat">吃饭</string>
+    <string name="work">工作</string>
+    <string name="share">分享</string>
+    <string name="remind">提醒</string>
+    <string name="important">重要</string>
+    <!-- editSchedule_screen -->
+    <string name="schedule_edit_title">编辑</string>
+    <string name="schedule_edit_delete">删除</string>
 
 </resources>

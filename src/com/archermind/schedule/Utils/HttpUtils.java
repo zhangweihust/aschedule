@@ -1,6 +1,5 @@
 package com.archermind.schedule.Utils;
 
-
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Iterator;
@@ -20,7 +19,7 @@ import android.util.Log;
 public class HttpUtils implements Runnable{
     public static Map<String,String> mparmas=null;
     public static String murl ="";
-	public static int doPost(Map<String,String> parmas, String url) {
+	public static String doPost(Map<String,String> parmas, String url) {
 		DefaultHttpClient client = new DefaultHttpClient();
 		HttpPost httpPost = new HttpPost(url);
 
@@ -29,7 +28,7 @@ public class HttpUtils implements Runnable{
 			Set<String> keys = parmas.keySet();
 			for (Iterator<String> i = keys.iterator(); i.hasNext();) {
 				String key = (String) i.next();
-				pairs.add(new BasicNameValuePair(key, parmas.get(key)));
+				pairs.add(new BasicNameValuePair(key,  parmas.get(key)));
 			}
 		}
 
@@ -45,9 +44,10 @@ public class HttpUtils implements Runnable{
 				String strResult = EntityUtils.toString(response.getEntity());
 				strResult = strResult.replace("\"", "");
 				Log.e("HttpUtils", "strResult:"+strResult);
-				return (strResult.equals("")||strResult.equals("true"))? 0:Integer.parseInt(strResult);
+				return strResult;
+				//return strResult.equals("")? 0:Integer.parseInt(strResult);
 			}
-			return response.getStatusLine().getStatusCode();
+			return Integer.toString(response.getStatusLine().getStatusCode());
 			
 		} catch (IllegalStateException e) {
 			e.printStackTrace();
@@ -56,7 +56,7 @@ public class HttpUtils implements Runnable{
 		} catch (NumberFormatException e){
 			e.printStackTrace();
 		}
-		return ServerInterface.ERROR_SERVER_INTERNAL;
+		return Integer.toString(ServerInterface.ERROR_SERVER_INTERNAL);
 	}
 	public void SetMap(Map<String,String> parmas){
 		mparmas = parmas;
@@ -65,6 +65,6 @@ public class HttpUtils implements Runnable{
 		murl =url;
 	}
 	public void run(){
-		int res=doPost(mparmas,murl);
+		doPost(mparmas,murl);
 	}
 }

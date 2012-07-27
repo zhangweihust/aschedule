@@ -1,8 +1,10 @@
 package com.archermind.schedule.Utils;
 
+import java.io.File;
 import java.io.IOException;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.GregorianCalendar;
@@ -12,6 +14,12 @@ import java.util.Map;
 import java.util.TimeZone;
 import java.util.regex.Pattern;
 
+import android.content.ContentValues;
+import android.database.Cursor;
+import android.database.sqlite.SQLiteDatabase;
+
+import com.archermind.schedule.Provider.DatabaseHelper;
+import com.archermind.schedule.Services.ServiceManager;
 import com.google.gdata.client.calendar.CalendarQuery;
 import com.google.gdata.client.calendar.CalendarService;
 import com.google.gdata.data.DateTime;
@@ -49,6 +57,7 @@ public class ServerInterface {
 	public static final int ERROR_PASSWORD_WRONG   = 201;
 	public static final int ERROR_USER_NOT_EXIST   = 202;
 	public static final int ERROR_USER_NOT_BIND   = 203;
+//	public static DatabaseManager mDatabaseManager= new DatabaseManager(ServerInterfaceActivity.getContext());;
 
 //----------------- 静 态 方 法、工 具 函 数  -----------------
 	
@@ -144,9 +153,6 @@ public class ServerInterface {
 //    	HttpUtils mhttp =new HttpUtils();
 //    	mhttp.SetMap(map);
 //    	mhttp.Seturl("http://player.archermind.com/ci/index.php/aschedule/register");
-        int ret = HttpUtils.doPost(map, "http://player.archermind.com/ci/index.php/aschedule/register");
-    	
-		return (ret != 0) ? ret : SUCCESS;
 //    	new Thread(mhttp).start();
 //		查询数据库看该用户名是否被注册
 //		if(被注册){
@@ -156,6 +162,13 @@ public class ServerInterface {
 //		if(不成功){
 //			return ERROR_WEB_ERROR;
 //		}
+       	String ret = HttpUtils.doPost(map, "http://player.archermind.com/ci/index.php/aschedule/register");
+    	if(Integer.parseInt(ret) >=0){
+    		return SUCCESS;
+    	}else{
+    		System.out.println("login-----"+ret);
+    		return -1;
+    	}
 		//return SUCCESS;
 	}
 	/*用户修改密码函数
@@ -181,13 +194,11 @@ public class ServerInterface {
 		map.put("user", username);
     	map.put("password", oldpassword);
     	map.put("newpass", newpassword);
-        int ret = HttpUtils.doPost(map, "http://player.archermind.com/ci/index.php/aschedule/pswdModify");    	
-		return (ret != 0) ? ret : SUCCESS;
-//    	HttpUtils mhttp =new HttpUtils();
-//    	mhttp.SetMap(map);
-//    	mhttp.Seturl("http://player.archermind.com/ci/index.php/aschedule/pswdModify");
-//    	new Thread(mhttp).start();
-//		return SUCCESS;
+    	HttpUtils mhttp =new HttpUtils();
+    	mhttp.SetMap(map);
+    	mhttp.Seturl("http://player.archermind.com/ci/index.php/aschedule/pswdModify");
+    	new Thread(mhttp).start();
+		return SUCCESS;
 	}
 	/*用户登录函数
 	 * 输入参数：用户名，用户密码，imsi号
@@ -204,8 +215,6 @@ public class ServerInterface {
 		Map<String,String> map = new HashMap<String, String>();
 		map.put("user", username);
     	map.put("password", password);
-        int ret = HttpUtils.doPost(map, "http://player.archermind.com/ci/index.php/aschedule/login");    	
-		return (ret != 0) ? ret : SUCCESS;
 //    	HttpUtils mhttp =new HttpUtils();
 //    	mhttp.SetMap(map);
 //    	mhttp.Seturl("http://player.archermind.com/ci/index.php/aschedule/login");
@@ -224,7 +233,14 @@ public class ServerInterface {
 //		if(不成功){
 //			return ERROR_WEB_ERROR;
 //		}
-//		return SUCCESS;
+    	String ret = HttpUtils.doPost(map, "http://player.archermind.com/ci/index.php/aschedule/login");
+    	if(ret.equals("0")||ret.length() >20){
+    		return SUCCESS;
+    	}else{
+    		System.out.println("login-----"+ret);
+    		return -1;
+    	}
+    	//return SUCCESS;
 	}
 	/**************************************
 	*   找回密码
@@ -277,9 +293,14 @@ public class ServerInterface {
 //    	mhttp.SetMap(map);
 //    	mhttp.Seturl("http://player.archermind.com/ci/index.php/aschedule/uploadContact");
 //    	new Thread(mhttp).start();
-    	int ret = HttpUtils.doPost(map, "http://player.archermind.com/ci/index.php/aschedule/uploadContact");
-    	
-		return (ret != 0) ? ret : SUCCESS;
+    	String ret = HttpUtils.doPost(map, "http://player.archermind.com/ci/index.php/aschedule/uploadContact");
+    	if(ret.equals("0")){
+    		return SUCCESS;
+    	}else{
+    		System.out.println("uploadContact-----"+ret);
+    		return -1;
+    	}
+		//return (ret != 0) ? ret : SUCCESS;
     	//return SUCCESS;
 	}
 	
@@ -287,9 +308,143 @@ public class ServerInterface {
 		String telList = null;
 		return telList;
 	}
-	
-	public int uploadSchedule(String userID, int share/*,...*/){
-		return SUCCESS;
+
+	public static int uploadSchedule(/*String userID, int share,type, start_time, update_time, city, notice_time, notice_period, notice_week, notice_start, notice_end, content...*/){
+		int userID=3;
+		int share=1;
+		int type=4;
+		String start_time="13311111111";
+		String update_time="";
+		String city="";
+		int notice_time=0;
+		String notice_period="";
+		String notice_week="";
+		String notice_start="";
+		String notice_end="";
+		String content="xiaopashu test!";
+		String oper_flag="A"; 
+//		ContentValues initialValues = new ContentValues(); 
+//		initialValues.put(DatabaseHelper.COLUMN_SCHEDULE_USER_ID, userID);  
+//		initialValues.put(DatabaseHelper.COLUMN_SCHEDULE_SHARE, share); 
+//		initialValues.put(DatabaseHelper.COLUMN_SCHEDULE_TYPE,type);
+//		initialValues.put(DatabaseHelper.COLUMN_SCHEDULE_START_TIME,start_time);
+//		initialValues.put(DatabaseHelper.COLUMN_SCHEDULE_UPDATE_TIME,update_time);
+//		initialValues.put(DatabaseHelper.COLUMN_SCHEDULE_NOTICE_TIME,notice_time);
+//		initialValues.put(DatabaseHelper.COLUMN_SCHEDULE_NOTICE_PERIOD,notice_period);
+//		initialValues.put(DatabaseHelper.COLUMN_SCHEDULE_NOTICE_WEEK,notice_week);
+//		initialValues.put(DatabaseHelper.COLUMN_SCHEDULE_NOTICE_START,notice_start);
+//		initialValues.put(DatabaseHelper.COLUMN_SCHEDULE_NOTICE_END,notice_end);
+//		initialValues.put(DatabaseHelper.COLUMN_SCHEDULE_NOTICE_CONTENT,content);
+//		initialValues.put(DatabaseHelper.COLUMN_SCHEDULE_OPER_FLAG,oper_flag);
+//		
+//		 //得到数据库文件  
+//		mDatabaseManager.open();
+//		mDatabaseManager.insertLocalSchedules(initialValues);
+		int result=0;
+		int tid =0;
+		int flag =0;
+		Cursor cursor =ServiceManager.getDbManager().queryLocalSchedules();
+		if(cursor !=null){
+		if (cursor.moveToFirst()){
+			do{
+
+			Map<String,String> map = new HashMap<String, String>();			
+			map.put("user_id", Integer.toString(cursor.getInt(cursor.getColumnIndex(DatabaseHelper.COLUMN_SCHEDULE_USER_ID))));
+	    	map.put("share", Integer.toString(cursor.getInt(cursor.getColumnIndex(DatabaseHelper.COLUMN_SCHEDULE_SHARE))));
+	    	map.put("type", Integer.toString(cursor.getInt(cursor.getColumnIndex(DatabaseHelper.COLUMN_SCHEDULE_TYPE))));
+	    	map.put("start_time", cursor.getString(cursor.getColumnIndex(DatabaseHelper.COLUMN_SCHEDULE_START_TIME)));
+	    	map.put("city", "武汉");
+	    	map.put("notice_time", Integer.toString(cursor.getInt(cursor.getColumnIndex(DatabaseHelper.COLUMN_SCHEDULE_NOTICE_TIME))));
+	    	map.put("notice_period", cursor.getString(cursor.getColumnIndex(DatabaseHelper.COLUMN_SCHEDULE_NOTICE_PERIOD)));
+	    	map.put("notice_week", cursor.getString(cursor.getColumnIndex(DatabaseHelper.COLUMN_SCHEDULE_NOTICE_WEEK)));
+	    	map.put("notice_start", cursor.getString(cursor.getColumnIndex(DatabaseHelper.COLUMN_SCHEDULE_NOTICE_START)));
+	    	map.put("notice_end", cursor.getString(cursor.getColumnIndex(DatabaseHelper.COLUMN_SCHEDULE_NOTICE_END)));
+	    	map.put("content", cursor.getString(cursor.getColumnIndex(DatabaseHelper.COLUMN_SCHEDULE_NOTICE_CONTENT)));
+	    	map.put("tid", Integer.toString(cursor.getInt(cursor.getColumnIndex(DatabaseHelper.COLUMN_SCHEDULE_T_ID))));
+
+	    	//回帖。。。。
+	    	map.put("num", "1");
+	    	map.put("host", "197");
+	    	String text ="";
+	    	text=cursor.getString(cursor.getColumnIndex(DatabaseHelper.COLUMN_SCHEDULE_OPER_FLAG));
+	    	System.out.println("+++++++++++++++++++"+cursor.getString(cursor.getColumnIndex(DatabaseHelper.COLUMN_SCHEDULE_OPER_FLAG)));
+	    	map.put("action", cursor.getString(cursor.getColumnIndex(DatabaseHelper.COLUMN_SCHEDULE_OPER_FLAG)));
+	    	 
+			if(text!=null&&text.equals("A")){
+				Cursor cursor1 =	ServiceManager.getDbManager().queryMaxTid();
+				
+				if(cursor1 !=null){
+					if(cursor1.moveToFirst())
+					tid =cursor1.getInt(0);
+					//tid =tid +flag;
+				}
+		    	map.put("tid", Integer.toString(tid));
+				System.out.println("++++++++++++++ tid="+tid);
+		    	cursor1.close();
+				String ret = HttpUtils.doPost(map, "http://player.archermind.com/ci/index.php/aschedule/uploadSchedule");
+				//ContentValues cv = new ContentValues();
+				System.out.println("xiaopashu test!======="+ret);
+				if(Integer.parseInt(ret)>0  ){
+					if(Integer.parseInt(ret)==101){
+						break;
+					}
+					ContentValues cv = new ContentValues();
+					System.out.println("------------ tid="+tid);
+					cv.put(DatabaseHelper.COLUMN_SCHEDULE_T_ID, ret);
+					cv.put(DatabaseHelper.COLUMN_SCHEDULE_OPER_FLAG, "N");
+					ServiceManager.getDbManager().updateScheduleById(cursor.getInt(cursor.getColumnIndex(DatabaseHelper.COLUMN_SCHEDULE_ID)),cv);
+					flag++;
+				}else{
+					result= -1;
+					break;
+				}
+				
+			}
+			else if (text != null && text.equals("M")) {
+				String ret = HttpUtils
+						.doPost(map,
+								"http://player.archermind.com/ci/index.php/aschedule/uploadSchedule");
+
+				if (Integer.parseInt(ret) >=0) {
+					if (Integer.parseInt(ret) == 101) {
+						break;
+					} else {
+						ContentValues cv = new ContentValues();
+						cv.put(DatabaseHelper.COLUMN_SCHEDULE_UPDATE_TIME,
+								System.currentTimeMillis());
+						cv.put(DatabaseHelper.COLUMN_SCHEDULE_OPER_FLAG,
+								"N");
+						ServiceManager.getDbManager()
+								.updateScheduleById(
+										cursor.getInt(cursor
+												.getColumnIndex(DatabaseHelper.COLUMN_SCHEDULE_USER_ID)),
+										cv);
+					}
+				}
+			}
+			else if (text != null && text.equals("D")) {
+				String ret = HttpUtils
+						.doPost(map,
+								"http://player.archermind.com/ci/index.php/aschedule/uploadSchedule");
+
+				if (Integer.parseInt(ret) >= 0) {
+					if (Integer.parseInt(ret) == 101) {
+						break;
+					} else {
+						//删除当前记录
+						ServiceManager.getDbManager()
+						.deleteScheduleById(
+								cursor.getInt(cursor
+										.getColumnIndex(DatabaseHelper.COLUMN_SCHEDULE_ID))
+								);
+					}
+				}
+			}
+			}while(cursor.moveToNext());
+		  }
+		}
+		cursor.close();
+		return result;
 	}
 	
 	public String syncSchedule(){
@@ -335,7 +490,7 @@ public class ServerInterface {
 			for (int i = 0; i < resultFeed.getEntries().size(); i++) {
 				CalendarEventEntry entry = resultFeed.getEntries().get(i);
 				allevents.add(i, entry);
-				System.out.println("\t" + entry.getTitle().getPlainText());
+				//System.out.println("\t" + entry.getTitle().getPlainText());
 			}
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
@@ -355,10 +510,16 @@ public class ServerInterface {
 		DateTime time = new DateTime(c.getTime(), TimeZone.getDefault()); // 这里设置时区
 		return time;
 	}
+	public static DateTime getInstanceTime(){
+	    Calendar c=Calendar.getInstance();//获得系统当前日期 
+	    DateTime time = new DateTime(c.getTime(), TimeZone.getDefault()); // 这里设置时区
+	    return time;
+	}
+
 
 	// 读取日历数据
-	public static  String[] readCalendars(String userName, String userPassword)
-			{
+	public static  String readCalendars(String userName, String userPassword,DateTime starttime,DateTime endtime)
+	{
 		String s = "http://www.google.com/calendar/feeds/default";
 		URL url=null;
 		try {
@@ -408,10 +569,15 @@ public class ServerInterface {
 		// 仅简单的返回 标题，其余数据被忽略
 		String[] state = new String[list.size()];
 		state = list.toArray(state);
-		DateTime starttime;
-		starttime = createtime(2012, 7, 4, 11, 30, 30);
-		DateTime endtime;
-		endtime = createtime(2012, 7, 6, 11, 30, 30);
+//		DateTime starttime;
+//		starttime = createtime(2012, 7, 4, 11, 30, 30);
+//		System.out.println("++++++++++++++++++++++++"+starttime);
+//		DateTime endtime;
+//		endtime = createtime(2012, 7, 24, 11, 30, 30);
+//		System.out.println("++++++++++++++++++++++++"+endtime);
+		if(endtime ==null){
+			endtime =getInstanceTime();
+		}
 		List<CalendarEventEntry> entrys1 = null;
 		try {
 			entrys1 = dateRangeQuery(myService, starttime,
@@ -420,6 +586,7 @@ public class ServerInterface {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
+		String res ="";
 		for (CalendarEventEntry entry1 : entrys1) {
 			// 活动事件名称
 			String title = entry1.getTitle().getPlainText();
@@ -434,8 +601,9 @@ public class ServerInterface {
 				where += "," + w.getValueString();
 			}
 			// 活动时间；
-			When when = entry1.getTimes().get(0);
+			When when = entry1.getTimes().get(0);			
 			String time = when.getStartTime() + "～" + when.getEndTime();
+			System.out.println("++++++++++++++++++++++++"+time);
 			// 参与者
 			List<EventWho> whos = entry1.getParticipants();
 			String who = "";
@@ -443,15 +611,20 @@ public class ServerInterface {
 				who += p.getValueString();
 				System.out.println(who);
 			}
+			if(res.length() ==0){
+				res = time + " " + title + " " + memo + "\r\n";
+			}else{
+			    res =res + time + " " + title + " " + memo + "\r\n";
+			}
 		}
-
-		return state;
+		System.out.println(res);
+		return res;
 	}
 	public static void gettest(){
 		 CalendarService myService = new CalendarService("CalendarTest-1");
 	        try {
 	              myService.setUserCredentials("username", "password");
-	              System.out.println("Printing all events");
+	              //System.out.println("Printing all events");
 	              
    
 	} catch (AuthenticationException e) {

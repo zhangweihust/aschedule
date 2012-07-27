@@ -35,6 +35,7 @@ public class HomeScreen extends TabActivity implements OnTabChangeListener {
 	private TextView titleText;
 	private ImageView titleImage;
 	private static TabHost mChildTabHost;
+	private Button titleAddBtn;
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -46,6 +47,17 @@ public class HomeScreen extends TabActivity implements OnTabChangeListener {
         mTabHost.setCurrentTab(0);
         mTabHost.setOnTabChangedListener(this);
         tabSelect = (View) findViewById(R.id.tabselect_cursor);
+        titleAddBtn= (Button) findViewById(R.id.title_bar_add_button);
+        titleAddBtn.setOnClickListener(new View.OnClickListener() {
+			
+			@Override
+			public void onClick(View v) {
+				// TODO Auto-generated method stub
+				Intent mIntent = new Intent(HomeScreen.this,NewScheduleScreen.class);
+				startActivity(mIntent);
+			}
+		});
+        
     }
     
     private void initView(){

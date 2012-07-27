@@ -1,0 +1,426 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="fill_parent"
+    android:layout_height="fill_parent"
+    android:orientation="vertical" >
+
+    <TextView
+        android:id="@+id/remind_selector"
+        android:layout_width="fill_parent"
+        android:layout_height="5dp"
+        android:background="@drawable/schedule_alarm_remind_select" />
+
+    <LinearLayout
+        android:layout_width="fill_parent"
+        android:layout_height="fill_parent"
+        android:background="@drawable/grid_repeat_bg"
+        android:orientation="vertical" >
+
+        <LinearLayout
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:gravity="center_vertical" >
+
+            <LinearLayout
+                android:layout_width="100dp"
+                android:layout_height="wrap_content"
+                android:background="@drawable/schedule_alarm_remind_title_bg"
+                android:gravity="center_vertical"
+                android:orientation="horizontal" >
+
+                <TextView
+                    android:id="@+id/time_remind_title"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:text="提醒" />
+
+                <Button
+                    android:id="@+id/time_remind_option"
+                    android:layout_width="14dp"
+                    android:layout_height="14dp"
+                    android:layout_marginRight="5dp"
+                    android:background="@drawable/schedule_alarm_remind_option_select" />
+            </LinearLayout>
+        </LinearLayout>
+
+        <LinearLayout
+            android:id="@+id/time_remind_content"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:gravity="center_vertical"
+            android:orientation="horizontal" >
+
+            <RadioGroup
+                android:id="@+id/time_remind_group"
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:gravity="center_vertical"
+                android:orientation="horizontal" >
+
+                <RadioButton
+                    android:id="@+id/time_remind_on_time"
+                    style="@style/CustomLeftRadioBtn"
+                    android:layout_width="fill_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:checked="true"
+                    android:text="准时提醒" />
+
+                <RadioButton
+                    android:id="@+id/time_remind_five_min"
+                    style="@style/CustomLeftRadioBtn"
+                    android:layout_width="fill_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:text="5分钟前" />
+
+                <RadioButton
+                    android:id="@+id/time_remind_fifteen_min"
+                    style="@style/CustomLeftRadioBtn"
+                    android:layout_width="fill_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:text="15分钟前" />
+
+                <RadioButton
+                    android:id="@+id/time_remind_one_hour"
+                    style="@style/CustomLeftRadioBtn"
+                    android:layout_width="fill_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:text="一个小时前" />
+            </RadioGroup>
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:background="@drawable/schedule_alarm_remind_bg"
+            android:gravity="center_vertical"
+            android:orientation="vertical" >
+
+            <LinearLayout
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:gravity="center_vertical"
+                android:orientation="vertical" >
+
+                <LinearLayout
+                    android:layout_width="100dp"
+                    android:layout_height="wrap_content"
+                    android:background="@drawable/schedule_alarm_remind_title_bg"
+                    android:gravity="center_vertical"
+                    android:orientation="horizontal" >
+
+                    <TextView
+                        android:id="@+id/repeat_remind_title"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:text="重复提醒" />
+
+                    <Button
+                        android:id="@+id/repeat_remind_option"
+                        android:layout_width="14dp"
+                        android:layout_height="14dp"
+                        android:layout_marginRight="5dp"
+                        android:background="@drawable/schedule_alarm_remind_option_unselect" />
+                </LinearLayout>
+            </LinearLayout>
+
+            <LinearLayout
+                android:id="@+id/repeat_remind_content"
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:gravity="center_vertical"
+                android:orientation="vertical"
+                android:visibility="gone" >
+
+                <LinearLayout
+                    android:layout_width="fill_parent"
+                    android:layout_height="fill_parent"
+                    android:layout_weight="1"
+                    android:gravity="center_vertical"
+                    android:orientation="horizontal" >
+
+                    <RadioButton
+                        android:id="@+id/repeat_remind_none"
+                        style="@style/CustomLeftRadioBtn"
+                        android:layout_width="fill_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:checked="true"
+                        android:text="无" />
+
+                    <RadioButton
+                        android:id="@+id/repeat_remind_day"
+                        style="@style/CustomLeftRadioBtn"
+                        android:layout_width="fill_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:text="每天" />
+
+                    <RadioButton
+                        android:id="@+id/repeat_remind_month"
+                        style="@style/CustomLeftRadioBtn"
+                        android:layout_width="fill_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:text="每月" />
+
+                    <RadioButton
+                        android:id="@+id/repeat_remind_year"
+                        style="@style/CustomLeftRadioBtn"
+                        android:layout_width="fill_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:text="每年" />
+                </LinearLayout>
+
+                <LinearLayout
+                    android:id="@+id/repeat_remind_week"
+                    android:layout_width="fill_parent"
+                    android:layout_height="fill_parent"
+                    android:layout_weight="1"
+                    android:gravity="center"
+                    android:orientation="horizontal" >
+
+                    <RadioButton
+                        android:id="@+id/repeat_remind_week_radiobtn"
+                        style="@style/CustomLeftRadioBtn"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:gravity="center" />
+
+                    <LinearLayout
+                        android:layout_width="fill_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:gravity="center" >
+
+                        <CheckBox
+                            android:id="@+id/repeat_remind_sunday"
+                            style="@style/CustomCheckBox"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="周日" />
+                    </LinearLayout>
+
+                    <LinearLayout
+                        android:layout_width="fill_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:gravity="center" >
+
+                        <CheckBox
+                            android:id="@+id/repeat_remind_monday"
+                            style="@style/CustomCheckBox"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="周一" />
+                    </LinearLayout>
+
+                    <LinearLayout
+                        android:layout_width="fill_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:gravity="center" >
+
+                        <CheckBox
+                            android:id="@+id/repeat_remind_tuesday"
+                            style="@style/CustomCheckBox"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="周二" />
+                    </LinearLayout>
+
+                    <LinearLayout
+                        android:layout_width="fill_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:gravity="center" >
+
+                        <CheckBox
+                            android:id="@+id/repeat_remind_wednesday"
+                            style="@style/CustomCheckBox"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="周三" />
+                    </LinearLayout>
+
+                    <LinearLayout
+                        android:layout_width="fill_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:gravity="center" >
+
+                        <CheckBox
+                            android:id="@+id/repeat_remind_thursday"
+                            style="@style/CustomCheckBox"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="周四" />
+                    </LinearLayout>
+
+                    <LinearLayout
+                        android:layout_width="fill_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:gravity="center" >
+
+                        <CheckBox
+                            android:id="@+id/repeat_remind_friday"
+                            style="@style/CustomCheckBox"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="周五" />
+                    </LinearLayout>
+
+                    <LinearLayout
+                        android:layout_width="fill_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:gravity="center" >
+
+                        <CheckBox
+                            android:id="@+id/repeat_remind_saturday"
+                            style="@style/CustomCheckBox"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="周六" />
+                    </LinearLayout>
+                </LinearLayout>
+            </LinearLayout>
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:gravity="center_vertical"
+            android:orientation="vertical" >
+
+            <LinearLayout
+                android:layout_width="100dp"
+                android:layout_height="wrap_content"
+                android:background="@drawable/schedule_alarm_remind_title_bg"
+                android:gravity="center_vertical"
+                android:orientation="horizontal" >
+
+                <TextView
+                    android:id="@+id/stage_remind_title"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:text="阶段提醒" />
+
+                <Button
+                    android:id="@+id/stage_remind_option"
+                    android:layout_width="14dp"
+                    android:layout_height="14dp"
+                    android:layout_marginRight="5dp"
+                    android:background="@drawable/schedule_alarm_remind_option_select" />
+            </LinearLayout>
+        </LinearLayout>
+
+        <LinearLayout
+            android:id="@+id/stage_remind_content"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:gravity="center_vertical"
+            android:orientation="horizontal"
+            android:visibility="gone" >
+
+            <CheckBox
+                android:id="@+id/stage_remind_checkbox"
+                style="@style/CustomLeftRadioBtn"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:gravity="center" />
+
+            <LinearLayout
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:gravity="center" >
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:paddingRight="5dp"
+                    style="@style/remindText"
+                    android:text="由" />
+
+                <TextView
+                    android:id="@+id/stage_remind_start_date"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:background="@drawable/schedule_alarm_remind_week_checkbox_unselect"
+                    android:text="2012-07-13" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:paddingLeft="5dp"
+                    android:paddingRight="5dp"
+                    style="@style/remindText"
+                    android:text="开始至" />
+
+                <TextView
+                    android:id="@+id/stage_remind_end_date"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:background="@drawable/schedule_alarm_remind_week_checkbox_unselect"
+                    android:text="2012-07-13" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:paddingLeft="5dp"
+                    style="@style/remindText"
+                    android:text="结束" />
+            </LinearLayout>
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:layout_weight="8"
+            android:background="@drawable/schedule_alarm_remind_bg"
+            android:gravity="center"
+            android:orientation="horizontal"
+            android:paddingLeft="10dp"
+            android:paddingRight="10dp" >
+
+            <Button
+                android:id="@+id/remind_ok"
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:layout_weight="1"
+                android:background="@drawable/schedule_alarm_remind_title_bg"
+                android:text="确定"
+                android:textColor="#FFFFFF" />
+            <TextView 
+                android:layout_width="5dp"
+                android:layout_height="fill_parent"
+                />
+            <Button
+                android:id="@+id/remind_cancel"
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:background="@drawable/schedule_alarm_remind_title_bg"
+                android:text="取消"
+                android:textColor="#FFFFFF" />
+        </LinearLayout>
+    </LinearLayout>
+
+</LinearLayout>

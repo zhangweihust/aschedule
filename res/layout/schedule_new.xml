@@ -1,0 +1,269 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="fill_parent"
+    android:layout_height="fill_parent"
+    android:orientation="vertical" >
+
+    <LinearLayout
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:background="@drawable/top"
+        android:orientation="horizontal"
+        android:paddingLeft="10dip"
+        android:paddingRight="10dip" >
+
+        <Button
+            android:id="@+id/schedule_new_back"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="left|center_vertical"
+            android:background="@drawable/schedule_new_back_selector"
+            android:text="@string/schedule_new_back"
+            android:textColor="#FFFFFF"
+            android:textSize="12sp" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:layout_weight="1"
+            android:gravity="center"
+            android:text="@string/schedule_new_title"
+            android:textColor="#FFFFFF"
+            android:textSize="20sp" />
+
+        <Button
+            android:id="@+id/schedule_new_save"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="right|center_vertical"
+            android:background="@drawable/schedule_new_save_selector"
+            android:text="@string/schedule_new_save"
+            android:textColor="#FFFFFF"
+            android:textSize="12sp" />
+    </LinearLayout>
+
+    <RelativeLayout
+        android:id="@+id/event_item"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:background="@drawable/grid_repeat_bg" >
+
+        <TextView
+            android:layout_width="fill_parent"
+            android:layout_height="5dp"
+            android:layout_alignParentTop="true"
+            android:background="@drawable/schedule_new_background_top" />
+
+        <GridView
+            android:id="@+id/mygridview"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:horizontalSpacing="10dp"
+            android:listSelector="@drawable/schedule_new_gridview_selector"
+            android:numColumns="7"
+            android:stretchMode="columnWidth" >
+        </GridView>
+
+        <ImageView
+            android:id="@+id/img_selector"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignLeft="@+id/mygridview"
+            android:src="@drawable/schedule_new_gridview_item_select"
+            android:visibility="invisible" />
+    </RelativeLayout>
+
+    <LinearLayout
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:background="#ececec"
+        android:orientation="vertical" >
+
+        <LinearLayout
+            android:id="@+id/event_addtion"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:background="#ececec"
+            android:orientation="horizontal" >
+
+            <TextView
+                android:layout_width="5dp"
+                android:layout_height="fill_parent"
+                android:background="@drawable/schedule_new_left_line" />
+
+            <LinearLayout
+                android:id="@+id/schedule_new_date"
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:layout_weight="1.2"
+                android:background="@drawable/schedule_new_bg_selector"
+                android:orientation="horizontal" >
+
+                <LinearLayout
+                    android:layout_width="fill_parent"
+                    android:layout_height="fill_parent"
+                    android:layout_gravity="right"
+                    android:layout_weight="1.3"
+                    android:gravity="bottom"
+                    android:orientation="horizontal" >
+
+                    <TextView
+                        android:id="@+id/schedule_new_month"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:gravity="right"
+                        android:text="6"
+                        android:textSize="25sp" />
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:gravity="bottom"
+                        android:text="月"
+                        android:textSize="10sp" />
+
+                    <TextView
+                        android:id="@+id/schedule_new_day"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="27"
+                        android:textSize="25sp" />
+                </LinearLayout>
+
+                <LinearLayout
+                    android:layout_width="fill_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:orientation="vertical" >
+
+                    <TextView
+                        android:id="@+id/schedule_new_week"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:text="星期三" />
+
+                    <TextView
+                        android:id="@+id/schedule_new_time"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:text="AM 11:25" />
+                </LinearLayout>
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="fill_parent"
+                android:layout_height="fill_parent"
+                android:layout_weight="1"
+                android:gravity="center" >
+
+                <LinearLayout
+                    android:layout_width="fill_parent"
+                    android:layout_height="wrap_content"
+                    android:gravity="center"
+                    android:orientation="horizontal" >
+
+                    <LinearLayout
+                        android:id="@+id/schedule_new_share"
+                        android:layout_width="fill_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:gravity="center"
+                        android:orientation="vertical" >
+
+                        <ImageView
+                            android:id="@+id/schedule_new_share_img"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:src="@drawable/schedule_new_share" />
+
+                        <TextView
+                            android:id="@+id/schedule_new_share_title"
+                            android:layout_width="fill_parent"
+                            android:layout_height="wrap_content"
+                            android:gravity="center"
+                            android:text="@string/share"
+                            android:textSize="12sp" />
+                    </LinearLayout>
+
+                    <TextView
+                        android:layout_width="1dp"
+                        android:layout_height="fill_parent"
+                        android:background="@drawable/schedule_new_line" />
+
+                    <LinearLayout
+                        android:id="@+id/schedule_new_remind"
+                        android:layout_width="fill_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:gravity="center"
+                        android:orientation="vertical" >
+
+                        <ImageView
+                            android:id="@+id/schedule_new_remind_img"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:src="@drawable/schedule_new_remind" />
+
+                        <TextView
+                            android:id="@+id/schedule_new_remind_title"
+                            android:layout_width="fill_parent"
+                            android:layout_height="wrap_content"
+                            android:gravity="center"
+                            android:text="@string/remind"
+                            android:textSize="12sp" />
+                    </LinearLayout>
+
+                    <TextView
+                        android:layout_width="1dp"
+                        android:layout_height="fill_parent"
+                        android:background="@drawable/schedule_new_line" />
+
+                    <LinearLayout
+                        android:id="@+id/schedule_new_important"
+                        android:layout_width="fill_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:gravity="center"
+                        android:orientation="vertical" >
+
+                        <ImageView
+                            android:id="@+id/schedule_new_important_img"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:src="@drawable/schedule_new_important" />
+
+                        <TextView
+                            android:id="@+id/schedule_new_improtant_title"
+                            android:layout_width="fill_parent"
+                            android:layout_height="wrap_content"
+                            android:gravity="center"
+                            android:text="@string/important"
+                            android:textSize="12sp" />
+                    </LinearLayout>
+                </LinearLayout>
+            </LinearLayout>
+        </LinearLayout>
+
+        <TextView
+            android:id="@+id/line"
+            android:layout_width="fill_parent"
+            android:layout_height="1dp"
+            android:background="@drawable/schedule_new_line" />
+    </LinearLayout>
+
+    <com.archermind.schedule.Views.ScheduleEditText
+        android:id="@+id/schedule_note"
+        android:layout_width="fill_parent"
+        android:layout_height="fill_parent"
+        android:background="#ececec"
+        android:capitalize="sentences"
+        android:fadingEdge="vertical"
+        android:gravity="top"
+        android:padding="5dip"
+        android:scrollbars="vertical"
+        android:textSize="22px" />
+
+</LinearLayout>

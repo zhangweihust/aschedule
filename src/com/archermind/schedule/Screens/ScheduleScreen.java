@@ -106,7 +106,7 @@ private ViewFlipper flipper = null;
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.schedule_screen);
 		final VerticalScrollView pager = (VerticalScrollView) findViewById(R.id.pager);
-		insert();
+//		insert();
 		setupView();
 		mListHeader = (ImageView) findViewById(R.id.list_header);
 		mListHeader.setBackgroundResource(R.drawable.listview_header_up);
@@ -379,6 +379,9 @@ private ViewFlipper flipper = null;
 							+ (Long) args.getExtra("time"), Toast.LENGTH_SHORT)
 					.show();
 		}
+		Intent mIntent =new Intent(ScheduleScreen.this,EditScheduleScreen.class);
+		mIntent.putExtra("id", id);
+		ScheduleScreen.this.startActivity(mIntent);
 	}
 	
 	@Override
