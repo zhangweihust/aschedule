@@ -24,33 +24,40 @@
         <item name="android:windowEnterAnimation">@anim/dialog_enter_anim</item>
         <item name="android:windowExitAnimation">@anim/dialog_exit_anim</item>
     </style>
-
-    <style name="settingmenubtn_style">
-        <item name="android:background">#00000000</item>
-        <item name="android:drawablePadding">3dip</item>
-        <item name="android:gravity">center_vertical</item>
-        <item name="android:textColor">#ffffff</item>
-    </style>
-
-    <style name="register_dividing">
-        <item name="android:background">#4f9bbfcf</item>
-    </style>
-
-    <style name="login_Microblog_text">
-        <item name="android:textColor">#815024</item>
-        <item name="android:textSize">16sp</item>
-        <item name="android:background">@drawable/login_btn_selector</item>
-    </style>
-
-    <style name="bar_allbtn_style">
-        <item name="android:gravity">center</item>
-        <item name="android:shadowColor">#4a5e17</item>
-        <item name="android:shadowRadius">1.0</item>
-        <item name="android:shadowDx">1.0</item>
-        <item name="android:shadowDy">1.0</item>
-        <item name="android:textColor">#ffffff</item>
-    </style>
-
+	<style name="settingmenubtn_style">
+	<item name="android:background">#00000000</item>
+	<item name="android:drawablePadding">3dip</item>
+	<item name="android:gravity">center_vertical</item>
+	<item name="android:textColor">#ffffff</item>
+	</style>
+	<style name="register_dividing">
+	<item name="android:background">#4f9bbfcf</item>
+	</style>
+	<style name="login_Microblog_text">
+	<item name="android:textColor">#815024</item>
+	<item name="android:textSize">16sp</item>
+	<item name="android:background">@drawable/login_btn_selector</item>
+	</style>
+	<style name="bar_allbtn_style">
+	<item name="android:gravity">center</item>
+	<item name="android:shadowColor">#4a5e17</item>
+	<item name="android:shadowRadius">1.0</item>
+	<item name="android:shadowDx">1.0</item>
+	<item name="android:shadowDy">1.0</item>
+	<item name="android:textColor">#ffffff</item>
+	</style>
+	<style name="AScheduleDialog" parent="@android:style/Theme.Dialog" >
+	    <item name="android:windowBackground">@drawable/sync_alert_bg</item>
+		<item name="android:windowFrame">@null</item>
+		<item name="android:backgroundDimEnabled">true</item>
+		<item name="android:windowIsTranslucent">true</item>
+		<item name="android:windowNoTitle">false</item>
+		<item name="android:windowFullscreen">false</item>
+		<item name="android:windowTitleStyle">@style/DialogTitle</item>
+	</style>
+	<style name="DialogTitle" parent="@android:style/TextAppearance.DialogWindowTitle" > 
+        <item name="android:gravity">center</item> 
+    </style> 
     <style mce_bogus="1" name="CustomLeftRadioBtn">
         <item name="android:button">@null</item>
         <item name="android:drawableLeft">@drawable/schedule_alarm_remind_radio_btn_selector</item>
@@ -71,5 +78,4 @@
         <item name="android:textSize">12sp</item>
         <item name="android:textColor">#FFFFFF</item>
     </style>
-
 </resources>

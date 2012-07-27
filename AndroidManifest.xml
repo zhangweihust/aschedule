@@ -37,12 +37,18 @@
         <activity android:name=".Screens.MenuScreen" android:launchMode="singleTask"/>
 		<activity android:name=".Screens.RegisterScreen" android:launchMode="singleTask"/>
 		<activity android:name=".Screens.LoginScreen" android:launchMode="singleTask"/>
+		<activity android:name=".Screens.ContactSyncAlertScreen" 
+		    	  android:launchMode="singleTask"
+		    	  android:label="HI~ 通讯录有更新"
+		    	  android:theme="@style/AScheduleDialog" />
 		<service android:name=".Services.ServiceManager"/>
 		<activity android:name=".Screens.NewScheduleScreen"/>
         <activity android:name=".Screens.EditScheduleScreen"></activity>
         
 		</application>
 		<uses-permission android:name="android.permission.INTERNET"/>
+		<uses-permission android:name="android.permission.ACCESS_NETWORK_STATE"/>
+		<uses-permission android:name="android.permission.ACCESS_WIFI_STATE"/>
 		<uses-permission android:name="android.permission.READ_PHONE_STATE"/>
 		<uses-permission android:name="android.permission.READ_CONTACTS"/>
 </manifest>

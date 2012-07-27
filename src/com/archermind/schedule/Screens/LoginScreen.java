@@ -3,7 +3,6 @@ package com.archermind.schedule.Screens;
 
 import com.archermind.schedule.R;
 import com.archermind.schedule.ScheduleApplication;
-import com.archermind.schedule.Utils.contact;
 
 import android.app.Activity;
 import android.content.Context;
@@ -12,7 +11,6 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
 import android.telephony.TelephonyManager;
-import android.util.Log;
 import android.view.GestureDetector;
 import android.view.MotionEvent;
 import android.view.View;
@@ -163,8 +161,6 @@ public class LoginScreen extends Activity implements OnTouchListener,OnGestureLi
 		case R.id.login_tencent:
 			break;
 		case R.id.login_renren:
-			int serverret = ((ScheduleApplication)getApplication()).getServerInterface().uploadContact("1111",(new contact()).getContactString());
-			Log.e("---lqf---","serverret = " + serverret);
 			break;
 		case R.id.login_submit:
 			loginSubmit();
@@ -196,7 +192,6 @@ public class LoginScreen extends Activity implements OnTouchListener,OnGestureLi
 			public void run() 
 			{
 				int ret = ((ScheduleApplication)getApplication()).getServerInterface().login(username, password, imsi);
-				Log.e("---lqf---","ret = " + ret);
 				if (ret == 0)
 				{
 					handler.sendEmptyMessage(LOGIN_SUCCESS);

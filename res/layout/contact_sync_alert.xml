@@ -1,0 +1,67 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="fill_parent"
+    android:layout_height="fill_parent"
+    android:orientation="vertical" >
+
+    <TextView
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="6dip"
+        android:layout_marginRight="6dip"
+        android:textSize="12sp"
+        android:textColor="#ffffff"
+        android:gravity="center_vertical"
+        android:text="将通讯录同步到服务器，在微日程与更多好友互动" />
+    
+    <TextView
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="6dip"
+        android:layout_marginRight="6dip"
+        android:layout_marginTop="3dip"
+        android:layout_marginBottom="3dip"
+        android:textSize="12sp"
+        android:textColor="#ffffff"
+        android:gravity="center_vertical"
+        android:text="微日程是基于熟人的社区" />
+    
+    <TextView
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="6dip"
+        android:layout_marginRight="6dip"
+        android:textSize="12sp"
+        android:textColor="#ffffff"
+        android:gravity="center_vertical"
+        android:text="您的通讯录不会用于任何商业途径" />
+    
+    <LinearLayout 
+        android:layout_width="fill_parent"
+        android:layout_height="fill_parent"
+        android:layout_marginTop="20dip"
+        android:gravity="center"
+        android:weightSum="2"
+        android:orientation="horizontal" >
+        <Button
+            android:id="@+id/contactsyncalert_sync"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="30dip"
+            android:layout_marginRight="10dip"
+            android:layout_weight="1"
+            android:background="@drawable/time_button_selector"
+            android:text="同步" />
+        <Button
+            android:id="@+id/contactsyncalert_cancel"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="10dip"
+            android:layout_marginRight="30dip"
+            android:layout_weight="1"
+            android:background="@drawable/time_button_selector"
+            android:text="取消" />        
+    </LinearLayout>
+    
+
+</LinearLayout>

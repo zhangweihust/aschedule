@@ -52,11 +52,11 @@
 	        android:layout_marginLeft="35dip"
 	        android:layout_marginTop="55dip"
 	        android:drawableLeft="@drawable/menu_account"
-	        android:background="#00000000"
 	        android:drawablePadding="3dip"
 	        android:gravity="center_vertical"
 	        android:textColor="#ffffff"
-	        android:text="账户" />
+	        android:text="账户"
+	        android:background="@drawable/menu_btn_selector" />
 	    
 	    <Button
 	        android:id="@+id/menu_expiredlog_btn"
@@ -66,11 +66,11 @@
 	        android:layout_alignTop="@id/menu_account_btn"
 	        android:layout_marginLeft="50dip"
 	        android:drawableLeft="@drawable/menu_expiredlog"
-	        android:background="#00000000"
 	        android:drawablePadding="3dip"
 	        android:gravity="center_vertical"
 	        android:textColor="#ffffff"
-	        android:text="过期日志" />
+	        android:text="过期日志"
+	        android:background="@drawable/menu_btn_selector" />
     
    
 	    <Button
@@ -81,11 +81,11 @@
 	        android:layout_marginTop="65dip"
 	        android:layout_alignLeft="@id/menu_account_btn"
 	        android:drawableLeft="@drawable/menu_weather"
-	        android:background="#00000000"
 	        android:drawablePadding="3dip"
 	        android:gravity="center_vertical"
 	        android:textColor="#ffffff"
-	        android:text="天气" />
+	        android:text="天气"
+	        android:background="@drawable/menu_btn_selector" />
 	    
 	    <Button
 	        android:id="@+id/menu_setting_btn"
@@ -95,11 +95,11 @@
 	        android:layout_marginTop="65dip"
 	        android:layout_alignLeft="@id/menu_expiredlog_btn"
 	        android:drawableLeft="@drawable/menu_setting"
-	        android:background="#00000000"
 	        android:drawablePadding="3dip"
 	        android:gravity="center_vertical"
 	        android:textColor="#ffffff"
-	        android:text="设置" />
+	        android:text="设置"
+	        android:background="@drawable/menu_btn_selector" />
     
     
         <Button
@@ -110,11 +110,11 @@
 	        android:layout_marginTop="65dip"
 	        android:layout_alignLeft="@id/menu_weather_btn"
             android:drawableLeft="@drawable/menu_feedback"
-            android:background="#00000000"
 	        android:drawablePadding="3dip"
 	        android:gravity="center_vertical"
 	        android:textColor="#ffffff"
-		    android:text="意见反馈" />
+		    android:text="意见反馈"
+		    android:background="@drawable/menu_btn_selector" />
        
         <Button
             android:id="@+id/menu_about_btn"
@@ -124,11 +124,11 @@
 	        android:layout_marginTop="65dip"
 	        android:layout_alignLeft="@id/menu_setting_btn"
             android:drawableLeft="@drawable/menu_about"
-            android:background="#00000000"
 	        android:drawablePadding="3dip"
 	        android:gravity="center_vertical"
 	        android:textColor="#ffffff"
-		    android:text="关于" />
+		    android:text="关于"
+		    android:background="@drawable/menu_btn_selector" />
         
     </RelativeLayout>
         

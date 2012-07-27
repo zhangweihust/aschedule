@@ -10,7 +10,6 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
 import android.telephony.TelephonyManager;
-import android.util.Log;
 import android.view.GestureDetector;
 import android.view.GestureDetector.OnGestureListener;
 import android.view.MotionEvent;
@@ -214,7 +213,6 @@ public class RegisterScreen extends Activity implements OnTouchListener,OnGestur
 			public void run() 
 			{
 				int ret = ((ScheduleApplication)getApplication()).getServerInterface().register(email,pswd,imsi,null,null,null);
-				Log.e("---lqf---","ret = " + ret);
 				if (ret == 0)
 				{
 					handler.sendEmptyMessage(REGISTER_SUCCESS);

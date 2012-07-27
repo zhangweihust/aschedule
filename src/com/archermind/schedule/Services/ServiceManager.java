@@ -6,12 +6,14 @@ import android.os.IBinder;
 
 import com.archermind.schedule.ScheduleApplication;
 import com.archermind.schedule.Provider.DatabaseManager;
+import com.archermind.schedule.Utils.Contact;
 
 public class ServiceManager extends Service {
 
 	private static final EventService eventService = new EventService();
 	private static boolean started;
 	private static DatabaseManager dbManager = new DatabaseManager(ScheduleApplication.getContext());
+	private static Contact contact = new Contact();
 	
 	@Override
 	public IBinder onBind(Intent intent) {
@@ -43,6 +45,7 @@ public class ServiceManager extends Service {
 		}
 		
 		ServiceManager.started = true;
+		
 		return true;
 	}
 	
@@ -66,6 +69,13 @@ public class ServiceManager extends Service {
 		return success;
 	}
 	
+	@Override
+	public void onDestroy() {
+		// TODO Auto-generated method stub
+		exit();
+		super.onDestroy();
+	}
+	
 	public static EventService getEventservice() {
 		return eventService;
 	}
@@ -74,6 +84,11 @@ public class ServiceManager extends Service {
 		return dbManager;
 	}
 
+	public static Contact getContact()
+	{
+		return contact;
+	}
+	
 	public static boolean isStarted() {
 		return started;
 	}
@@ -84,5 +99,4 @@ public class ServiceManager extends Service {
 		//mainActivity.finish();
 		System.exit(0);
 	}
-
 }
