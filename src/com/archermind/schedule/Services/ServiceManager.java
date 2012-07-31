@@ -7,14 +7,15 @@ import android.os.IBinder;
 import com.archermind.schedule.ScheduleApplication;
 import com.archermind.schedule.Provider.DatabaseManager;
 import com.archermind.schedule.Utils.Contact;
+import com.archermind.schedule.Utils.ServerInterface;
 
 public class ServiceManager extends Service {
 
 	private static final EventService eventService = new EventService();
 	private static boolean started;
 	private static DatabaseManager dbManager = new DatabaseManager(ScheduleApplication.getContext());
-	private static Contact contact = new Contact();
-	
+	private static  ServerInterface serverInerface = new ServerInterface();
+    private static Contact contact = new Contact();
 	@Override
 	public IBinder onBind(Intent intent) {
 		// TODO Auto-generated method stub
@@ -45,7 +46,6 @@ public class ServiceManager extends Service {
 		}
 		
 		ServiceManager.started = true;
-		
 		return true;
 	}
 	
@@ -92,6 +92,10 @@ public class ServiceManager extends Service {
 	public static boolean isStarted() {
 		return started;
 	}
+	
+	public static  ServerInterface getServerInterface(){
+		return serverInerface;
+	}
 
 	
 	public static void exit() {
@@ -99,4 +103,5 @@ public class ServiceManager extends Service {
 		//mainActivity.finish();
 		System.exit(0);
 	}
+
 }

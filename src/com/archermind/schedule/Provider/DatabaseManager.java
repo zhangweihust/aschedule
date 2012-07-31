@@ -1,21 +1,26 @@
 package com.archermind.schedule.Provider;
 
-import java.util.ArrayList;
 import java.util.Calendar;
 
-import com.archermind.schedule.Utils.Constant;
-import com.archermind.schedule.Utils.DateTimeUtils;
 import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.provider.ContactsContract;
 
+import com.archermind.schedule.Events.EventArgs;
+import com.archermind.schedule.Events.EventTypes;
+import com.archermind.schedule.Services.EventService;
+import com.archermind.schedule.Services.ServiceManager;
+import com.archermind.schedule.Utils.Constant;
+import com.archermind.schedule.Utils.DateTimeUtils;
+
 public class DatabaseManager {
 	private Context context;
 	private DatabaseHelper databaseHelper;
 	private SQLiteDatabase database;
-
+	EventService eventService;
+	
 	public DatabaseManager(Context context) {
 		this.context = context;
 	}
@@ -23,6 +28,7 @@ public class DatabaseManager {
 	public void open() {
 		databaseHelper = new DatabaseHelper(context);
 		database = databaseHelper.getWritableDatabase();
+		eventService = ServiceManager.getEventservice();
 	}
 
 	public void close() {
@@ -30,18 +36,49 @@ public class DatabaseManager {
 		database.close();
 	}
 
-	public boolean insertLocalSchedules(ContentValues values) {
-		return database.insert(DatabaseHelper.TAB_SCHEDULE, null, values) > 0;
+	public void insertLocalSchedules(ContentValues values, long timeInMillis) {
+		Cursor c = queryTodayLocalSchedules(timeInMillis);
+		if (c.getCount() == 0) {
+			values.put(DatabaseHelper.COLUMN_SCHEDULE_FIRST_FLAG, true);
+		} else {
+			values.put(DatabaseHelper.COLUMN_SCHEDULE_FIRST_FLAG, false);
+		}
+		c.close();
+		database.insert(DatabaseHelper.TAB_LOCAL_SCHEDULE, null, values);
+		eventService.onUpdateEvent(new EventArgs(EventTypes.LOCAL_SCHEDULE_UPDATE));
+	}
+	
+	public void insertShareSchedules(ContentValues values) {
+		database.insert(DatabaseHelper.TAB_SHARE_SCHEDULE, null, values);
+	}
+	
+	public boolean isInShareSchedules(String t_id){
+		Cursor cursor = database.query(DatabaseHelper.TAB_SHARE_SCHEDULE, new String[] { DatabaseHelper.COLUMN_SCHEDULE_ID },
+				DatabaseHelper.COLUMN_SCHEDULE_T_ID + " =? ",  new String[] { t_id }, null, null, null);
+		boolean result = false;
+		if (cursor.getCount() > 0) {
+			result = true;
+		}
+		cursor.close();
+		return result;
+	}
+	
+	public void updateShareSchedules(ContentValues values, String t_id) {
+		database.update(DatabaseHelper.TAB_SHARE_SCHEDULE, values,
+				DatabaseHelper.COLUMN_SCHEDULE_T_ID + " =? ",
+				new String[] { t_id });
 	}
 
 	public Cursor queryLocalSchedules() {
-		return database.query(DatabaseHelper.TAB_SCHEDULE, null, null, null,
+		return database.query(DatabaseHelper.TAB_LOCAL_SCHEDULE, null, null, null,
 				null, null, null);
 	}
 
 	public void deleteLocalSchedules(int id, boolean firstFlag,
 			long timeInMillis) {
-		database.delete(DatabaseHelper.TAB_SCHEDULE,
+		ContentValues contentvalues = new ContentValues();
+		contentvalues.put(DatabaseHelper.COLUMN_SCHEDULE_OPER_FLAG, DatabaseHelper.SCHEDULE_OPER_DELETE);
+		database.update(DatabaseHelper.TAB_LOCAL_SCHEDULE, contentvalues,
 				DatabaseHelper.COLUMN_SCHEDULE_ID + " =? ",
 				new String[] { String.valueOf(id) });
 		if (firstFlag) {// 如果该日程是一天的第一条日程，则修改该天的第二条日程的标志位
@@ -56,20 +93,23 @@ public class DatabaseManager {
 				c.close();
 			}
 		}
+		eventService.onUpdateEvent(new EventArgs(EventTypes.LOCAL_SCHEDULE_UPDATE));
 	}
+	
+	
 
 	public void updateLocalSchedules(ContentValues values, int id) {
-		database.update(DatabaseHelper.TAB_SCHEDULE, values,
+		database.update(DatabaseHelper.TAB_LOCAL_SCHEDULE, values,
 				DatabaseHelper.COLUMN_SCHEDULE_ID + " =? ",
 				new String[] { String.valueOf(id) });
 	}
 
 	public Cursor queryWeekLocalSchedules(long timeInMillis) {
 		return database
-				.query(DatabaseHelper.TAB_SCHEDULE,
+				.query(DatabaseHelper.TAB_LOCAL_SCHEDULE,
 						null,
 						DatabaseHelper.COLUMN_SCHEDULE_START_TIME
-								+ " BETWEEN ? AND ? ",
+								+ " BETWEEN ? AND ? AND " + DatabaseHelper.COLUMN_SCHEDULE_OPER_FLAG + " != 'D'",
 						new String[] {
 								String.valueOf(DateTimeUtils.getDayOfWeek(
 										Calendar.MONDAY, timeInMillis)),
@@ -81,10 +121,10 @@ public class DatabaseManager {
 
 	public Cursor queryTodayLocalSchedules(long timeInMillis) {
 		return database
-				.query(DatabaseHelper.TAB_SCHEDULE,
+				.query(DatabaseHelper.TAB_LOCAL_SCHEDULE,
 						null,
 						DatabaseHelper.COLUMN_SCHEDULE_START_TIME
-								+ " BETWEEN ? AND ? ",
+								+ " BETWEEN ? AND ?  AND " + DatabaseHelper.COLUMN_SCHEDULE_OPER_FLAG + " != 'D'",
 						new String[] {
 								String.valueOf(DateTimeUtils.getToday(
 										Calendar.AM, timeInMillis)),
@@ -93,13 +133,15 @@ public class DatabaseManager {
 						null, DatabaseHelper.COLUMN_SCHEDULE_START_TIME
 								+ " ASC");
 	}
+	
+	
 
 	public Cursor queryTomorrowLocalSchedules(long timeInMillis) {
 		return database
-				.query(DatabaseHelper.TAB_SCHEDULE,
+				.query(DatabaseHelper.TAB_LOCAL_SCHEDULE,
 						null,
 						DatabaseHelper.COLUMN_SCHEDULE_START_TIME
-								+ " BETWEEN ? AND ? ",
+								+ " BETWEEN ? AND ? AND " + DatabaseHelper.COLUMN_SCHEDULE_OPER_FLAG + " != 'D'",
 						new String[] {
 								String.valueOf(DateTimeUtils.getTomorrow(
 										Calendar.AM, timeInMillis)),
@@ -111,10 +153,10 @@ public class DatabaseManager {
 
 	public Cursor query3DaysBeforeLocalSchedules(long timeInMillis) {
 		return database
-				.query(DatabaseHelper.TAB_SCHEDULE,
+				.query(DatabaseHelper.TAB_LOCAL_SCHEDULE,
 						null,
 						DatabaseHelper.COLUMN_SCHEDULE_START_TIME
-								+ " BETWEEN ? AND ? ",
+								+ " BETWEEN ? AND ? AND " + DatabaseHelper.COLUMN_SCHEDULE_OPER_FLAG + " != 'D'",
 						new String[] {
 								String.valueOf(DateTimeUtils
 										.getThreeDaysBefore(timeInMillis)),
@@ -123,6 +165,30 @@ public class DatabaseManager {
 						null, null, DatabaseHelper.COLUMN_SCHEDULE_START_TIME
 								+ " ASC");
 	}
+	
+	
+	public Cursor queryShareSchedules(int size) {
+		return database
+				.query(DatabaseHelper.TAB_SHARE_SCHEDULE,
+						null,
+						DatabaseHelper.COLUMN_SCHEDULE_ORDER + " =? ",
+						new String[] { "0", "0", String.valueOf(size) }, 
+						null,
+						null,
+						DatabaseHelper.COLUMN_SCHEDULE_START_TIME + " ASC " + " LIMIT ? , ? ");
+	}
+	
+	public Cursor querySlaveShareSchedules(int t_id) {
+		return database
+				.query(DatabaseHelper.TAB_SHARE_SCHEDULE,
+						null,
+						DatabaseHelper.COLUMN_SCHEDULE_SLAVE_ID + " =? ",
+						new String[] {String.valueOf(t_id)}, 
+						null,
+						null,
+						DatabaseHelper.COLUMN_SCHEDULE_START_TIME + " ASC ");
+	}
+	
 
 	public int deleteContact() {
 		return database.delete(DatabaseHelper.ASCHEDULE_CONTACT, null, null);
@@ -142,7 +208,6 @@ public class DatabaseManager {
 				ContactsContract.CommonDataKinds.Phone.CONTENT_URI, null, null,
 				null, null);
 	}
-	
 	public Cursor queryContactIdByTel(String tel){
 		return database.query(DatabaseHelper.ASCHEDULE_CONTACT, null, DatabaseHelper.ASCHEDULE_CONTACT_NUM + " =? ", new String[]{tel}, null, null, null);
 	}
@@ -198,24 +263,26 @@ public class DatabaseManager {
 	public Cursor queryFriendTel(int id){
 		return database.query(DatabaseHelper.ASCHEDULE_FRIEND, new String[]{DatabaseHelper.ASCHEDULE_FRIEND_NUM}, DatabaseHelper.ASCHEDULE_FRIEND_ID + " =? ", new String[] { String.valueOf(id)}, null, null, null);
 	}
+
 	
 
-	public boolean updateScheduleById(int id, ContentValues cv) {
-		return database.update(DatabaseHelper.TAB_SCHEDULE, cv,
+	public void updateScheduleById(int id, ContentValues cv) {
+		 database.update(DatabaseHelper.TAB_LOCAL_SCHEDULE, cv,
 				DatabaseHelper.COLUMN_SCHEDULE_ID + " =? ",
-				new String[] { String.valueOf(id) }) > 0;
+				new String[] { String.valueOf(id) });
+		eventService.onUpdateEvent(new EventArgs(EventTypes.LOCAL_SCHEDULE_UPDATE));
 
 	}
 
 	public Cursor queryScheduleById(int id) {
-		return database.query(DatabaseHelper.TAB_SCHEDULE, null,
+		return database.query(DatabaseHelper.TAB_LOCAL_SCHEDULE, null,
 				DatabaseHelper.COLUMN_SCHEDULE_ID + " = ?",
 				new String[] { String.valueOf(id) }, null, null, null);
 
 	}
 
 	public boolean deleteScheduleById(int id) {
-		return database.delete(DatabaseHelper.TAB_SCHEDULE,
+		return database.delete(DatabaseHelper.TAB_LOCAL_SCHEDULE,
 				DatabaseHelper.COLUMN_SCHEDULE_ID + " =? ",
 				new String[] { String.valueOf(id) }) > 0;
 
@@ -223,7 +290,7 @@ public class DatabaseManager {
 
 	public Cursor queryMaxTid() {
 		return database.rawQuery("SELECT MAX(tid) FROM "
-				+ DatabaseHelper.TAB_SCHEDULE, null);
+				+ DatabaseHelper.TAB_LOCAL_SCHEDULE, null);
 	}
 
 }

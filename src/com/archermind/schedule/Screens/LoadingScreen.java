@@ -35,7 +35,7 @@ public class LoadingScreen extends Screen implements IEventHandler{
 			
 			@Override
 			public void onClick(View v) {
-				eventService.onUpdateEvent(new EventArgs(EventTypes.EVENT_TEST).putExtra("message", "TEST"));
+				eventService.onUpdateEvent(new EventArgs(EventTypes.LOCAL_SCHEDULE_UPDATE).putExtra("message", "TEST"));
 			}
 		});
     }
@@ -43,7 +43,7 @@ public class LoadingScreen extends Screen implements IEventHandler{
 	@Override
 	public boolean onEvent(Object sender, final EventArgs e) {
 		switch(e.getType()){
-		case EVENT_TEST:
+		case LOCAL_SCHEDULE_UPDATE:
 			LoadingScreen.this.runOnUiThread(new Runnable(){
 				@Override
 				public void run() {

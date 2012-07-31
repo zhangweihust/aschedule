@@ -41,8 +41,8 @@ public class HttpUtils implements Runnable{
 			HttpResponse response = client.execute(httpPost);
 			
 			if(response.getStatusLine().getStatusCode() == 200){
-				String strResult = EntityUtils.toString(response.getEntity());
-				strResult = strResult.replace("\"", "");
+				String strResult = EntityUtils.toString(response.getEntity(),HTTP.UTF_8);
+				//strResult = strResult.replace("\"", "");
 				Log.e("HttpUtils", "strResult:"+strResult);
 				return strResult;
 				//return strResult.equals("")? 0:Integer.parseInt(strResult);

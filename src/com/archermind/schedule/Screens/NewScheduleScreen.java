@@ -2,20 +2,7 @@ package com.archermind.schedule.Screens;
 
 import java.util.ArrayList;
 import java.util.Calendar;
-import java.util.HashMap;
-import java.util.List;
-import com.archermind.schedule.R;
-import com.archermind.schedule.Adapters.EventTypeItem;
-import com.archermind.schedule.Adapters.EventTypeItemAdapter;
-import com.archermind.schedule.Provider.DatabaseHelper;
 
-import com.archermind.schedule.Services.ServiceManager;
-import com.archermind.schedule.Utils.ServerInterface;
-import com.archermind.schedule.Views.ScheduleEditText;
-import com.archermind.schedule.dialog.TimeSelectorDialog;
-
-import android.app.Activity;
-import android.app.AlarmManager;
 import android.app.Notification;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
@@ -23,39 +10,36 @@ import android.content.ContentValues;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.drawable.BitmapDrawable;
-import android.graphics.drawable.Drawable;
-import android.opengl.Visibility;
 import android.os.Bundle;
-import android.os.Looper;
-import android.sax.RootElement;
-import android.text.Html;
-import android.text.Html.ImageGetter;
-import android.text.SpannableString;
 import android.util.Log;
 import android.view.Display;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.View.OnClickListener;
-import android.view.ViewGroup;
 import android.view.animation.TranslateAnimation;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
-import android.widget.CheckBox;
-import android.widget.PopupWindow.OnDismissListener;
-import android.widget.BaseAdapter;
 import android.widget.Button;
+import android.widget.CheckBox;
 import android.widget.CompoundButton;
 import android.widget.GridView;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
-import android.widget.ListView;
 import android.widget.PopupWindow;
 import android.widget.RadioButton;
 import android.widget.RadioGroup;
 import android.widget.RadioGroup.OnCheckedChangeListener;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
-import android.widget.Toast;
+
+import com.archermind.schedule.R;
+import com.archermind.schedule.Adapters.EventTypeItem;
+import com.archermind.schedule.Adapters.EventTypeItemAdapter;
+import com.archermind.schedule.Dialog.TimeSelectorDialog;
+import com.archermind.schedule.Provider.DatabaseHelper;
+import com.archermind.schedule.Services.ServiceManager;
+import com.archermind.schedule.Utils.ServerInterface;
+import com.archermind.schedule.Views.ScheduleEditText;
 
 public class NewScheduleScreen extends Screen implements OnClickListener {
 	/** Called when the activity is first created. */
@@ -80,14 +64,6 @@ public class NewScheduleScreen extends Screen implements OnClickListener {
 			R.drawable.schedule_new_work
 
 	};
-	private static int SCHEDULE_EVENT_TYPE_NONE = 0;
-	private static int SCHEDULE_EVENT_TYPE_NOTICE = 1;
-	private static int SCHEDULE_EVENT_TYPE_ACTIVE = 2;
-	private static int SCHEDULE_EVENT_TYPE_APPOINTMENT = 3;
-	private static int SCHEDULE_EVENT_TYPE_TRAVEL = 4;
-	private static int SCHEDULE_EVENT_TYPE_ENTERTAINMENT = 5;
-	private static int SCHEDULE_EVENT_TYPE_EAT = 6;
-	private static int SCHEDULE_EVENT_TYPE_WORK = 7;
 
 	private View remind_root_view;
 	private LayoutInflater inflater;
@@ -124,7 +100,7 @@ public class NewScheduleScreen extends Screen implements OnClickListener {
 	private boolean mShare = false;
 	private boolean mImportant = false;
 	private boolean mRemind = false;
-	private int mType;
+	private int mType = -1;
 	private long aHeadTime;
 	private long scheduleTime;
 	private String oper_flag = "N";
@@ -134,12 +110,13 @@ public class NewScheduleScreen extends Screen implements OnClickListener {
 	private int[] weekvalue = new int[7];
 	private Calendar mCalendar = Calendar.getInstance();
 	private int currentMonth, currentDay, currentWeek, currentTime;
-	private ServerInterface si = new ServerInterface();
+	private ServerInterface si;
 	private TimeSelectorDialog timeselectordialog;
 
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
+		si = ServiceManager.getServerInterface();
 		setContentView(R.layout.schedule_new);
 		init();
 	}
@@ -230,28 +207,28 @@ public class NewScheduleScreen extends Screen implements OnClickListener {
 				img_selector.setVisibility(View.VISIBLE);
 				moveTopSelect(position);
 				switch (position) {
+//				case 0:
+//					mType = DatabaseHelper.SCHEDULE_EVENT_TYPE_NONE;
 				case 0:
-					mType = SCHEDULE_EVENT_TYPE_NONE;
+					mType = DatabaseHelper.SCHEDULE_EVENT_TYPE_NOTICE;
+					break;
 				case 1:
-					mType = SCHEDULE_EVENT_TYPE_NOTICE;
+					mType = DatabaseHelper.SCHEDULE_EVENT_TYPE_ACTIVE;
 					break;
 				case 2:
-					mType = SCHEDULE_EVENT_TYPE_ACTIVE;
+					mType = DatabaseHelper.SCHEDULE_EVENT_TYPE_APPOINTMENT;
 					break;
 				case 3:
-					mType = SCHEDULE_EVENT_TYPE_APPOINTMENT;
+					mType = DatabaseHelper.SCHEDULE_EVENT_TYPE_TRAVEL;
 					break;
 				case 4:
-					mType = SCHEDULE_EVENT_TYPE_TRAVEL;
+					mType = DatabaseHelper.SCHEDULE_EVENT_TYPE_ENTERTAINMENT;
 					break;
 				case 5:
-					mType = SCHEDULE_EVENT_TYPE_ENTERTAINMENT;
+					mType = DatabaseHelper.SCHEDULE_EVENT_TYPE_EAT;
 					break;
 				case 6:
-					mType = SCHEDULE_EVENT_TYPE_EAT;
-					break;
-				case 7:
-					mType = SCHEDULE_EVENT_TYPE_WORK;
+					mType = DatabaseHelper.SCHEDULE_EVENT_TYPE_WORK;
 					break;
 				}
 			}
@@ -672,8 +649,8 @@ public class NewScheduleScreen extends Screen implements OnClickListener {
 		Log.d("newschedulescreen", "-------weekType=" + weekType);
 		cv.put(DatabaseHelper.COLUMN_SCHEDULE_NOTICE_WEEK, weekType.toString());
 		String scheduleText = schedule_text.getText().toString();
-		cv.put(DatabaseHelper.COLUMN_SCHEDULE_NOTICE_CONTENT, scheduleText);
-		ServiceManager.getDbManager().insertLocalSchedules(cv);
+		cv.put(DatabaseHelper.COLUMN_SCHEDULE_CONTENT, scheduleText);
+		ServiceManager.getDbManager().insertLocalSchedules(cv, scheduleTime);
 		si.uploadSchedule();
 	}
 

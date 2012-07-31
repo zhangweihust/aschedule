@@ -1,9 +1,6 @@
 package com.archermind.schedule.Screens;
 
 
-import com.archermind.schedule.R;
-import com.archermind.schedule.ScheduleApplication;
-
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
@@ -12,15 +9,18 @@ import android.os.Handler;
 import android.os.Message;
 import android.telephony.TelephonyManager;
 import android.view.GestureDetector;
+import android.view.GestureDetector.OnGestureListener;
 import android.view.MotionEvent;
 import android.view.View;
-import android.view.Window;
-import android.view.GestureDetector.OnGestureListener;
 import android.view.View.OnClickListener;
 import android.view.View.OnTouchListener;
+import android.view.Window;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.LinearLayout;
+
+import com.archermind.schedule.R;
+import com.archermind.schedule.Services.ServiceManager;
 
 public class LoginScreen extends Activity implements OnTouchListener,OnGestureListener,OnClickListener{
 	private GestureDetector gd;
@@ -191,7 +191,7 @@ public class LoginScreen extends Activity implements OnTouchListener,OnGestureLi
 		{
 			public void run() 
 			{
-				int ret = ((ScheduleApplication)getApplication()).getServerInterface().login(username, password, imsi);
+				int ret = ServiceManager.getServerInterface().login(username, password, imsi);
 				if (ret == 0)
 				{
 					handler.sendEmptyMessage(LOGIN_SUCCESS);

@@ -1,8 +1,5 @@
 package com.archermind.schedule.Screens;
 
-import com.archermind.schedule.R;
-import com.archermind.schedule.ScheduleApplication;
-
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
@@ -15,13 +12,16 @@ import android.view.GestureDetector.OnGestureListener;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.View.OnClickListener;
-import android.view.Window;
 import android.view.View.OnTouchListener;
+import android.view.Window;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.Toast;
+
+import com.archermind.schedule.R;
+import com.archermind.schedule.Services.ServiceManager;
 
 public class RegisterScreen extends Activity implements OnTouchListener,OnGestureListener,OnClickListener {
 	private GestureDetector gd;
@@ -212,7 +212,7 @@ public class RegisterScreen extends Activity implements OnTouchListener,OnGestur
 		{
 			public void run() 
 			{
-				int ret = ((ScheduleApplication)getApplication()).getServerInterface().register(email,pswd,imsi,null,null,null);
+				int ret = ServiceManager.getServerInterface().register(email,pswd,imsi,null,null,null);
 				if (ret == 0)
 				{
 					handler.sendEmptyMessage(REGISTER_SUCCESS);

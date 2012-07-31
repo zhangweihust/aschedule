@@ -1,20 +1,42 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/layout1"
     android:layout_width="fill_parent"
     android:layout_height="fill_parent"
-    android:orientation="vertical" >
+    android:layout_weight="1" >
 
-    <TextView
-        android:id="@+id/text1"
+    <RelativeLayout
+        android:layout_width="wrap_content"
+        android:layout_height="fill_parent" >
+
+        <ImageView
+            android:layout_width="4dip"
+            android:layout_height="fill_parent"
+            android:layout_marginLeft="72.0dip"
+            android:background="#ffff0000"
+            android:scaleType="fitXY"
+            android:src="@drawable/feed_item_track" />
+    </RelativeLayout>
+
+    <com.archermind.schedule.Views.XListView
+        android:id="@+id/list"
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
-        android:text="friends" />
+        android:cacheColorHint="#00000000"
+        android:divider="@drawable/listview_divider"
+        android:listSelector="@drawable/listview_selector" />
 
-    <Button
-        android:id="@+id/button1"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Button" />
+    <RelativeLayout
+        android:id="@+id/loading"
+        android:layout_width="fill_parent"
+        android:layout_height="fill_parent"
+        android:background="#f6f6f6"
+        android:gravity="center">
+        <ProgressBar
+            style="@style/rotateProgress"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center" />
+    </RelativeLayout>
 
-    
-</LinearLayout>
+</FrameLayout>

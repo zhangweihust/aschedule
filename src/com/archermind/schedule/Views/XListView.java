@@ -124,8 +124,10 @@ public class XListView extends ListView implements OnScrollListener {
 	public void setHeaderGone(boolean isShow){
 		if(isShow){
 			mHeaderView.setVisibility(View.VISIBLE);
+			mFooterView.setVisibility(View.VISIBLE);
 		} else {
 			mHeaderView.setVisibility(View.GONE);
+			mFooterView.setVisibility(View.GONE);
 		}
 	}
 

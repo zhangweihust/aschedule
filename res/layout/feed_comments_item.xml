@@ -13,14 +13,14 @@
         android:paddingRight="6.0dip"
         android:paddingTop="6.0dip" >
 
-        <ImageView
+        <com.archermind.schedule.Image.SmartImageView
             android:id="@+id/comment_profile_photo"
             android:layout_width="38.0dip"
             android:layout_height="38.0dip"
             android:layout_alignParentLeft="true"
             android:layout_alignParentTop="true"
             android:layout_marginRight="6.0dip"
-            android:src="@drawable/ic_launcher" />
+            android:src="@drawable/avatar" />
 
         <ImageView
             android:layout_width="0.0dip"
@@ -40,7 +40,7 @@
             android:text="Gauss:这是什么非哦哦" />
 
         <TextView
-            android:id="@+id/comment_sub"
+            android:id="@+id/comment_time"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_below="@id/comment_body"

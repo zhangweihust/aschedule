@@ -25,7 +25,7 @@ public class LocalScheduleAdapter  extends CursorAdapter {
 	@Override
 	public void bindView(View view, Context context, Cursor cursor) {
 		final ScheduleItem item = (ScheduleItem) view.getTag(R.layout.local_schedule_item);
-		String content = cursor.getString(cursor.getColumnIndex(DatabaseHelper.COLUMN_SCHEDULE_NOTICE_CONTENT));
+		String content = cursor.getString(cursor.getColumnIndex(DatabaseHelper.COLUMN_SCHEDULE_CONTENT));
 		long time = cursor.getLong(cursor.getColumnIndex(DatabaseHelper.COLUMN_SCHEDULE_START_TIME));
 		boolean share = cursor.getInt(cursor.getColumnIndex(DatabaseHelper.COLUMN_SCHEDULE_SHARE)) == 1;
 		boolean important = cursor.getInt(cursor.getColumnIndex(DatabaseHelper.COLUMN_SCHEDULE_IMPORTANT)) == 1;
@@ -56,6 +56,31 @@ public class LocalScheduleAdapter  extends CursorAdapter {
 		} else {
 			item.important.setVisibility(View.INVISIBLE);
 		}
+		switch (type) {
+		case DatabaseHelper.SCHEDULE_EVENT_TYPE_NONE:
+			item.typeView.setBackgroundResource(R.drawable.type_notice);
+		case DatabaseHelper.SCHEDULE_EVENT_TYPE_NOTICE:
+			item.typeView.setBackgroundResource(R.drawable.type_notice);
+			break;
+		case DatabaseHelper.SCHEDULE_EVENT_TYPE_ACTIVE:
+			item.typeView.setBackgroundResource(R.drawable.type_active);
+			break;
+		case DatabaseHelper.SCHEDULE_EVENT_TYPE_APPOINTMENT:
+			item.typeView.setBackgroundResource(R.drawable.type_appointment);
+			break;
+		case DatabaseHelper.SCHEDULE_EVENT_TYPE_TRAVEL:
+			item.typeView.setBackgroundResource(R.drawable.type_travel);
+			break;
+		case DatabaseHelper.SCHEDULE_EVENT_TYPE_ENTERTAINMENT:
+			item.typeView.setBackgroundResource(R.drawable.type_entertainment);
+			break;
+		case DatabaseHelper.SCHEDULE_EVENT_TYPE_EAT:
+			item.typeView.setBackgroundResource(R.drawable.type_eat);
+			break;
+		case DatabaseHelper.SCHEDULE_EVENT_TYPE_WORK:
+			item.typeView.setBackgroundResource(R.drawable.type_work);
+			break;
+		}
 		EventArgs args = new EventArgs();
 		args.putExtra("time", time);
 		args.putExtra("first", first);
@@ -72,6 +97,7 @@ public class LocalScheduleAdapter  extends CursorAdapter {
 		item.location = (TextView) view.findViewById(R.id.location);
 		item.content = (TextView) view.findViewById(R.id.content);
 		item.weather = (ImageView) view.findViewById(R.id.weather);
+		item.typeView = (ImageView) view.findViewById(R.id.type);
 		item.alarm = (ImageView) view.findViewById(R.id.alarm);
 		item.share = (ImageView) view.findViewById(R.id.share);
 		item.important = (ImageView) view.findViewById(R.id.important);
@@ -87,6 +113,7 @@ public class LocalScheduleAdapter  extends CursorAdapter {
 		private TextView time;
 		private TextView content;
 		private ImageView weather;
+		private ImageView typeView;
 		private ImageView alarm;
 		private ImageView share;
 		private ImageView important;

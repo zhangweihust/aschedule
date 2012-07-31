@@ -2,7 +2,6 @@ package com.archermind.schedule.Adapters;
 
 
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
 import java.util.Date;
 
 import android.content.Context;
@@ -17,17 +16,14 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.ViewGroup.LayoutParams;
 import android.widget.BaseAdapter;
 import android.widget.ImageView;
-import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.archermind.schedule.R;
+import com.archermind.schedule.Calendar.LunarCalendar;
+import com.archermind.schedule.Calendar.SpecialCalendar;
 import com.archermind.schedule.Provider.DatabaseManager;
-import com.archermind.schedule.Services.ServiceManager;
-import com.archermind.schedule.calendar.LunarCalendar;
-import com.archermind.schedule.calendar.SpecialCalendar;
 
 /**
  * 日历gridview中的每一个item显示的textview

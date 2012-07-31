@@ -46,6 +46,17 @@
                 android:layout_gravity="center"
                 android:orientation="horizontal" >
                 <RadioButton
+                    style="@style/shadowText"
+                    android:id="@+id/tab_widget_friends_dynamic"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="好友动态"
+                    android:padding="5dip"
+                    android:button="@null"
+                    android:gravity="center"
+                    android:background="@drawable/tabwidget_left_selector" />
+                <RadioButton
+                    style="@style/shadowText"
                     android:id="@+id/tab_widget_my_dynamic"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
@@ -53,16 +64,6 @@
                     android:padding="5dip"
                     android:button="@null"
                     android:gravity="center"
-                    android:background="@drawable/tabwidget_left_selector" />
-
-                <RadioButton
-                    android:id="@+id/tab_widget_friends_dynamic"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="好友动态"
-                    android:padding="5dip"
-                    android:button="@null"
-                     android:gravity="center"
                     android:background="@drawable/tabwidget_right_selector" />
             </RadioGroup>
 

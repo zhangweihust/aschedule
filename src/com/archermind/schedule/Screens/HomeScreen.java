@@ -71,15 +71,15 @@ public class HomeScreen extends TabActivity implements OnTabChangeListener {
         tabWidget = (RadioGroup) findViewById(R.id.title_bar_tab_widget);
         tabWidget.setVisibility(View.INVISIBLE);
         titleText.setVisibility(View.INVISIBLE);
-        myDynamicBtn.setChecked(true);
+        friendsDynamicBtn.setChecked(true);
 		tabWidget.setOnCheckedChangeListener(new OnCheckedChangeListener() {
 
 			@Override
 			public void onCheckedChanged(RadioGroup group, int checkId) {
 				if (checkId == myDynamicBtn.getId()) {
-					mChildTabHost.setCurrentTab(0);
-				} else if (checkId == friendsDynamicBtn.getId()){
 					mChildTabHost.setCurrentTab(1);
+				} else if (checkId == friendsDynamicBtn.getId()){
+					mChildTabHost.setCurrentTab(0);
 				}
 			}
 		});

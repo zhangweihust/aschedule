@@ -287,15 +287,15 @@ public class VerticalScrollView extends ViewGroup {
     
     
     
-    
-    @Override
-	public boolean dispatchTouchEvent(MotionEvent ev) {
-    	if(mCurrentPage == 0 && this.getChildAt(0).onTouchEvent(ev)){
-    		return true;
-    	} else {
-    		return super.dispatchTouchEvent(ev);
-    	}
-	}
+//    
+//    @Override
+//	public boolean dispatchTouchEvent(MotionEvent ev) {
+//    	if(mCurrentPage == 0 && this.getChildAt(0).onTouchEvent(ev)){
+//    		return true;
+//    	} else {
+//    		return super.dispatchTouchEvent(ev);
+//    	}
+//	}
 
 
 	@Override
@@ -313,57 +313,58 @@ public class VerticalScrollView extends ViewGroup {
          * state and he is moving his finger.  We want to intercept this
          * motion.
          */
-    	if(mCurrentPage == 1){
-    		return false;
-    	}
-        final int action = ev.getAction();
-        if ((action == MotionEvent.ACTION_MOVE) && (mTouchState != TOUCH_STATE_REST)) {
-            //Log.d(TAG, "onInterceptTouchEvent::shortcut=true");
-            return true;
-        }
-
-        final float y = ev.getY();
-        final float x = ev.getX();
-
-        switch (action) {
-            case MotionEvent.ACTION_MOVE:
-                /*
-                 * mIsBeingDragged == false, otherwise the shortcut would have caught it. Check
-                 * whether the user has moved far enough from his original down touch.
-                 */
-                if (mTouchState == TOUCH_STATE_REST) {
-                    checkStartScroll(x, y);
-                }
-
-                break;
-
-            case MotionEvent.ACTION_DOWN:
-                // Remember location of down touch
-                mLastMotionX = x;
-                mLastMotionY = y;
-                mAllowLongPress = true;
-
-                /*
-                 * If being flinged and user touches the screen, initiate drag;
-                 * otherwise don't.  mScroller.isFinished should be false when
-                 * being flinged.
-                 */
-                mTouchState = mScroller.isFinished() ? TOUCH_STATE_REST : TOUCH_STATE_SCROLLING;
-                break;
-
-            case MotionEvent.ACTION_CANCEL:
-            case MotionEvent.ACTION_UP:
-                // Release the drag
-                clearChildrenCache();
-                mTouchState = TOUCH_STATE_REST;
-                break;
-        }
-
-        /*
-         * The only time we want to intercept motion events is if we are in the
-         * drag mode.
-         */
-        return mTouchState != TOUCH_STATE_REST;
+//    	if(mCurrentPage == 1 ){
+//    		return false;
+//    	}
+//        final int action = ev.getAction();
+//        if ((action == MotionEvent.ACTION_MOVE) && (mTouchState != TOUCH_STATE_REST)) {
+//            //Log.d(TAG, "onInterceptTouchEvent::shortcut=true");
+//            return true;
+//        }
+//
+//        final float y = ev.getY();
+//        final float x = ev.getX();
+//
+//        switch (action) {
+//            case MotionEvent.ACTION_MOVE:
+//                /*
+//                 * mIsBeingDragged == false, otherwise the shortcut would have caught it. Check
+//                 * whether the user has moved far enough from his original down touch.
+//                 */
+//                if (mTouchState == TOUCH_STATE_REST) {
+//                    checkStartScroll(x, y);
+//                }
+//
+//                break;
+//
+//            case MotionEvent.ACTION_DOWN:
+//                // Remember location of down touch
+//                mLastMotionX = x;
+//                mLastMotionY = y;
+//                mAllowLongPress = true;
+//
+//                /*
+//                 * If being flinged and user touches the screen, initiate drag;
+//                 * otherwise don't.  mScroller.isFinished should be false when
+//                 * being flinged.
+//                 */
+//                mTouchState = mScroller.isFinished() ? TOUCH_STATE_REST : TOUCH_STATE_SCROLLING;
+//                break;
+//
+//            case MotionEvent.ACTION_CANCEL:
+//            case MotionEvent.ACTION_UP:
+//                // Release the drag
+//                clearChildrenCache();
+//                mTouchState = TOUCH_STATE_REST;
+//                break;
+//        }
+//
+//        /*
+//         * The only time we want to intercept motion events is if we are in the
+//         * drag mode.
+//         */
+//        return mTouchState != TOUCH_STATE_REST;
+		return false;
     }
 
     private void checkStartScroll(float x, float y) {
@@ -405,99 +406,99 @@ public class VerticalScrollView extends ViewGroup {
         setChildrenDrawnWithCacheEnabled(false);
     }
 
-    @Override
-    public boolean onTouchEvent(MotionEvent ev) {
-        if (mVelocityTracker == null) {
-            mVelocityTracker = VelocityTracker.obtain();
-        }
-        mVelocityTracker.addMovement(ev);
-
-        final int action = ev.getAction();
-        final float x = ev.getX();
-        final float y = ev.getY();
-
-        switch (action) {
-            case MotionEvent.ACTION_DOWN:
-                /*
-                * If being flinged and user touches, stop the fling. isFinished
-                * will be false if being flinged.
-                */
-                if (!mScroller.isFinished()) {
-                    mScroller.abortAnimation();
-                }
-
-                // Remember where the motion event started
-                mLastMotionY = y;
-                break;
-            case MotionEvent.ACTION_MOVE:
-                if (mTouchState == TOUCH_STATE_REST) {
-                    checkStartScroll(y, x);
-                } else if (mTouchState == TOUCH_STATE_SCROLLING) {
-                    // Scroll to follow the motion event
-                    int deltaY = (int) (mLastMotionY - y);
-                    mLastMotionY = y;
-
-                    // Apply friction to scrolling past boundaries.
-                    final int count = getChildCount();
-                    if (getScrollY() < 0 || getScrollY() + pageHeight > getChildAt(count - 1).getBottom()) {
-                    	deltaY /= 2;
-                    }
-
-                    scrollBy(0, deltaY);
-                }
-                break;
-            case MotionEvent.ACTION_UP:
-                if (mTouchState == TOUCH_STATE_SCROLLING) {
-                    final VelocityTracker velocityTracker = mVelocityTracker;
-                    velocityTracker.computeCurrentVelocity(1000, mMaximumVelocity);
-                    int velocityY = (int) velocityTracker.getYVelocity();
-
-                    final int count = getChildCount();
-
-                    // check scrolling past first or last page?
-                    if(getScrollY() < 0) {
-                    	snapToPage(0);
-                    } else if(getScrollY() > measuredHeight - pageHeight) {
-                    	snapToPage(count - 1, BOTTOM);
-                    } else {
-	                    for(int i = 0; i < count; i++) {
-	                    	final View child = getChildAt(i);
-	                    	if(child.getTop() < getScrollY() &&
-	                    			child.getBottom() > getScrollY() + pageHeight) {
-	                    		// we're inside a page, fling that bitch
-	                    		mNextPage = i;
-	                    		mScroller.fling(getScrollX(), getScrollY(), 0, -velocityY, 0, 0, child.getTop(), child.getBottom() - getHeight());
-	                			invalidate();
-	                			break;
-	                    	} else if(child.getBottom() > getScrollY() && child.getBottom() < getScrollY() + getHeight()) {
-	                    		// stuck in between pages, oh snap!
-		                    	if(velocityY < -SNAP_VELOCITY) {
-	                    			snapToPage(i + 1);
-		                    	} else if(velocityY > SNAP_VELOCITY) {
-	                    			snapToPage(i, BOTTOM);
-		                    	} else if(getScrollY() + pageHeight/2 > child.getBottom()) {
-	                    			snapToPage(i + 1);
-	                    		} else {
-	                    			snapToPage(i, BOTTOM);
-	                    		}
-	                    		break;
-	                    	}
-	                    }
-                    }
-
-                    if (mVelocityTracker != null) {
-                        mVelocityTracker.recycle();
-                        mVelocityTracker = null;
-                    }
-                }
-                mTouchState = TOUCH_STATE_REST;
-                break;
-            case MotionEvent.ACTION_CANCEL:
-                mTouchState = TOUCH_STATE_REST;
-        }
-
-        return true;
-    }
+//    @Override
+//    public boolean onTouchEvent(MotionEvent ev) {
+//        if (mVelocityTracker == null) {
+//            mVelocityTracker = VelocityTracker.obtain();
+//        }
+//        mVelocityTracker.addMovement(ev);
+//
+//        final int action = ev.getAction();
+//        final float x = ev.getX();
+//        final float y = ev.getY();
+//
+//        switch (action) {
+//            case MotionEvent.ACTION_DOWN:
+//                /*
+//                * If being flinged and user touches, stop the fling. isFinished
+//                * will be false if being flinged.
+//                */
+//                if (!mScroller.isFinished()) {
+//                    mScroller.abortAnimation();
+//                }
+//
+//                // Remember where the motion event started
+//                mLastMotionY = y;
+//                break;
+//            case MotionEvent.ACTION_MOVE:
+//                if (mTouchState == TOUCH_STATE_REST) {
+//                    checkStartScroll(y, x);
+//                } else if (mTouchState == TOUCH_STATE_SCROLLING) {
+//                    // Scroll to follow the motion event
+//                    int deltaY = (int) (mLastMotionY - y);
+//                    mLastMotionY = y;
+//
+//                    // Apply friction to scrolling past boundaries.
+//                    final int count = getChildCount();
+//                    if (getScrollY() < 0 || getScrollY() + pageHeight > getChildAt(count - 1).getBottom()) {
+//                    	deltaY /= 2;
+//                    }
+//
+//                    scrollBy(0, deltaY);
+//                }
+//                break;
+//            case MotionEvent.ACTION_UP:
+//                if (mTouchState == TOUCH_STATE_SCROLLING) {
+//                    final VelocityTracker velocityTracker = mVelocityTracker;
+//                    velocityTracker.computeCurrentVelocity(1000, mMaximumVelocity);
+//                    int velocityY = (int) velocityTracker.getYVelocity();
+//
+//                    final int count = getChildCount();
+//
+//                    // check scrolling past first or last page?
+//                    if(getScrollY() < 0) {
+//                    	snapToPage(0);
+//                    } else if(getScrollY() > measuredHeight - pageHeight) {
+//                    	snapToPage(count - 1, BOTTOM);
+//                    } else {
+//	                    for(int i = 0; i < count; i++) {
+//	                    	final View child = getChildAt(i);
+//	                    	if(child.getTop() < getScrollY() &&
+//	                    			child.getBottom() > getScrollY() + pageHeight) {
+//	                    		// we're inside a page, fling that bitch
+//	                    		mNextPage = i;
+//	                    		mScroller.fling(getScrollX(), getScrollY(), 0, -velocityY, 0, 0, child.getTop(), child.getBottom() - getHeight());
+//	                			invalidate();
+//	                			break;
+//	                    	} else if(child.getBottom() > getScrollY() && child.getBottom() < getScrollY() + getHeight()) {
+//	                    		// stuck in between pages, oh snap!
+//		                    	if(velocityY < -SNAP_VELOCITY) {
+//	                    			snapToPage(i + 1);
+//		                    	} else if(velocityY > SNAP_VELOCITY) {
+//	                    			snapToPage(i, BOTTOM);
+//		                    	} else if(getScrollY() + pageHeight/2 > child.getBottom()) {
+//	                    			snapToPage(i + 1);
+//	                    		} else {
+//	                    			snapToPage(i, BOTTOM);
+//	                    		}
+//	                    		break;
+//	                    	}
+//	                    }
+//                    }
+//
+//                    if (mVelocityTracker != null) {
+//                        mVelocityTracker.recycle();
+//                        mVelocityTracker = null;
+//                    }
+//                }
+//                mTouchState = TOUCH_STATE_REST;
+//                break;
+//            case MotionEvent.ACTION_CANCEL:
+//                mTouchState = TOUCH_STATE_REST;
+//        }
+//
+//        return true;
+//    }
 
     private void snapToPage(final int whichPage, final int where) {
         enableChildrenCache();

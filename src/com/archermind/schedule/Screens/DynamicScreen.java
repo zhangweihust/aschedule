@@ -19,8 +19,8 @@ public class DynamicScreen extends TabActivity implements OnTabChangeListener{
 	        super.onCreate(savedInstanceState);
 	        setContentView(R.layout.dynamic_screen);
 	        mTabHost = this.getTabHost();
-	        mTabHost.addTab(buildTabSpec("my_dynamic", new Intent(this, MyDynamicScreen.class)));
 	        mTabHost.addTab(buildTabSpec("friends_dynamic", new Intent(this, FriendsDyamicScreen.class)));
+	        mTabHost.addTab(buildTabSpec("my_dynamic", new Intent(this, MyDynamicScreen.class)));
 	        mTabHost.setCurrentTab(0);
 	        mTabHost.setOnTabChangedListener(this);
 	        HomeScreen.setmChildTabHost(mTabHost);

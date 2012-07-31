@@ -47,8 +47,8 @@ import android.widget.Scroller;
 import com.archermind.schedule.R;
 import com.archermind.schedule.ScheduleApplication;
 import com.archermind.schedule.Adapters.WheelAdapter;
+import com.archermind.schedule.Calendar.SpecialCalendar;
 import com.archermind.schedule.Utils.Constant;
-import com.archermind.schedule.calendar.SpecialCalendar;
 
 /**
  * Numeric wheel view.

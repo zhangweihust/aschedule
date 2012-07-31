@@ -1,8 +1,5 @@
 package com.archermind.schedule.Screens;
 
-import com.archermind.schedule.R;
-import com.archermind.schedule.Services.ServiceManager;
-
 import android.app.Activity;
 import android.os.Bundle;
 import android.os.Handler;
@@ -10,6 +7,9 @@ import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.Button;
 import android.widget.Toast;
+
+import com.archermind.schedule.R;
+import com.archermind.schedule.Services.ServiceManager;
 
 public class ContactSyncAlertScreen extends Activity implements OnClickListener{
 

@@ -191,7 +191,7 @@
                         android:layout_width="fill_parent"
                         android:layout_height="wrap_content"
                         android:cacheColorHint="#00000000"
-                        android:listSelector="@drawable/listview_item_selector"
+                        android:listSelector="@drawable/listview_selector"
                         android:divider="@drawable/listview_divider" />
                 </FrameLayout>
 
@@ -233,7 +233,7 @@
                         android:layout_width="fill_parent"
                         android:layout_height="wrap_content"
                         android:cacheColorHint="#00000000"
-                        android:listSelector="@drawable/listview_item_selector"
+                        android:listSelector="@drawable/listview_selector"
                         android:divider="@drawable/listview_divider" />
                 </FrameLayout>
 
@@ -276,7 +276,7 @@
                         android:layout_width="fill_parent"
                         android:layout_height="wrap_content"
                         android:cacheColorHint="#00000000"
-                        android:listSelector="@drawable/listview_item_selector"
+                        android:listSelector="@drawable/listview_selector"
                         android:divider="@drawable/listview_divider" />
                 </FrameLayout>
 
@@ -319,7 +319,7 @@
                         android:layout_width="fill_parent"
                         android:layout_height="wrap_content"
                         android:cacheColorHint="#00000000"
-                        android:listSelector="@drawable/listview_item_selector"
+                        android:listSelector="@drawable/listview_selector"
                         android:divider="@drawable/listview_divider" />
                 </FrameLayout>
             </LinearLayout>

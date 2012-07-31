@@ -7,20 +7,20 @@ import java.util.Date;
 import android.app.AlertDialog;
 import android.app.DatePickerDialog;
 import android.app.DatePickerDialog.OnDateSetListener;
-import android.content.ContentValues;
 import android.content.Intent;
+import android.database.Cursor;
 import android.graphics.Color;
 import android.graphics.Typeface;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.view.Display;
 import android.view.GestureDetector;
+import android.view.GestureDetector.OnGestureListener;
 import android.view.Gravity;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.MotionEvent;
 import android.view.View;
-import android.view.GestureDetector.OnGestureListener;
 import android.view.View.OnClickListener;
 import android.view.View.OnTouchListener;
 import android.view.ViewGroup.LayoutParams;
@@ -43,8 +43,7 @@ import com.archermind.schedule.R;
 import com.archermind.schedule.Adapters.CalendarAdapter;
 import com.archermind.schedule.Adapters.LocalScheduleAdapter;
 import com.archermind.schedule.Events.EventArgs;
-import com.archermind.schedule.Provider.DatabaseHelper;
-import com.archermind.schedule.Provider.DatabaseManager;
+import com.archermind.schedule.Events.IEventHandler;
 import com.archermind.schedule.Services.ServiceManager;
 import com.archermind.schedule.Utils.Constant;
 import com.archermind.schedule.Views.VerticalScrollView;
@@ -52,7 +51,7 @@ import com.archermind.schedule.Views.XListView;
 import com.archermind.schedule.Views.XListView.IXListViewListener;
 
 public class ScheduleScreen extends Screen implements IXListViewListener,
-		OnItemClickListener ,OnGestureListener,OnClickListener{
+		OnItemClickListener ,OnGestureListener, OnClickListener, IEventHandler{
 
 	private ImageView mListHeader;
 	private TextView tv1;
@@ -69,6 +68,12 @@ public class ScheduleScreen extends Screen implements IXListViewListener,
 	private XListView list2;
 	private ListView list3;
 	private ListView list4;
+	
+	private Cursor c1;
+	private Cursor c2;
+	private Cursor c3;
+	private Cursor c4;
+	
 
 private ViewFlipper flipper = null;
 		private GestureDetector gestureDetector = null;
@@ -84,8 +89,6 @@ private ViewFlipper flipper = null;
 		private int day_c = 0;
 		private String currentDate = "";
 		
-		private DatabaseManager database;
-		
 		private Button previous_year, next_year;
 		private Button current_day;
 		private EventArgs args;
@@ -97,17 +100,14 @@ private ViewFlipper flipper = null;
 	    	Constant.YEAR = year_c = Integer.parseInt(currentDate.split("-")[0]);
 	    	Constant.MONTH = month_c = Integer.parseInt(currentDate.split("-")[1]);
 	    	Constant.DAY = day_c = Integer.parseInt(currentDate.split("-")[2]);
-	    	
-	    	database = ServiceManager.getDbManager();
-	    	
 		}
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.schedule_screen);
 		final VerticalScrollView pager = (VerticalScrollView) findViewById(R.id.pager);
-//		insert();
 		setupView();
+		eventService.add(this);
 		mListHeader = (ImageView) findViewById(R.id.list_header);
 		mListHeader.setBackgroundResource(R.drawable.listview_header_up);
 		mListHeader.setTag(R.drawable.listview_header_up);
@@ -179,18 +179,22 @@ private ViewFlipper flipper = null;
 		list3.setOnItemClickListener(this);
 		list4.setOnItemClickListener(this);
 
-		list1.setAdapter(new LocalScheduleAdapter(this, ServiceManager
-				.getDbManager().query3DaysBeforeLocalSchedules(
-						System.currentTimeMillis())));
-		list2.setAdapter(new LocalScheduleAdapter(this, ServiceManager
-				.getDbManager().queryTodayLocalSchedules(
-						System.currentTimeMillis())));
-		list3.setAdapter(new LocalScheduleAdapter(this, ServiceManager
-				.getDbManager().queryTomorrowLocalSchedules(
-						System.currentTimeMillis())));
-		list4.setAdapter(new LocalScheduleAdapter(this, ServiceManager
-				.getDbManager().queryWeekLocalSchedules(
-						System.currentTimeMillis())));
+		c1 = ServiceManager.getDbManager().query3DaysBeforeLocalSchedules(
+				System.currentTimeMillis());
+		
+		c2 = ServiceManager.getDbManager().queryTodayLocalSchedules(
+				System.currentTimeMillis());
+		
+		c3 = ServiceManager.getDbManager().queryTomorrowLocalSchedules(
+				System.currentTimeMillis());
+		
+		c4 = ServiceManager.getDbManager().queryWeekLocalSchedules(
+				System.currentTimeMillis());
+		
+		list1.setAdapter(new LocalScheduleAdapter(this, c1));
+		list2.setAdapter(new LocalScheduleAdapter(this, c2));
+		list3.setAdapter(new LocalScheduleAdapter(this, c3));
+		list4.setAdapter(new LocalScheduleAdapter(this, c4));
 
 		layout1.setVisibility(View.GONE);
 		layout2.setVisibility(View.VISIBLE);
@@ -297,33 +301,6 @@ private ViewFlipper flipper = null;
 			next_year.setOnClickListener(this);
 			current_day.setOnClickListener(this);
 	}
-	private void insert() {
-		// DateTimeUtils.getDayOfWeek(Calendar.SUNDAY);
-		ContentValues contentValues = new ContentValues();
-		contentValues.put(DatabaseHelper.COLUMN_SCHEDULE_NOTICE_CONTENT,
-				"happy new year!");
-		contentValues.put(DatabaseHelper.COLUMN_SCHEDULE_START_TIME,
-				System.currentTimeMillis());
-		contentValues.put(DatabaseHelper.COLUMN_SCHEDULE_FIRST_FLAG, true);
-		contentValues.put(DatabaseHelper.COLUMN_SCHEDULE_SHARE, true);
-		contentValues.put(DatabaseHelper.COLUMN_SCHEDULE_IMPORTANT, true);
-		ServiceManager.getDbManager().insertLocalSchedules(contentValues);
-		contentValues = new ContentValues();
-		contentValues
-				.put(DatabaseHelper.COLUMN_SCHEDULE_NOTICE_CONTENT,
-						"hello everyone 如果背景的大小不一样，一般需要为每种大小都 制作一张图片，这在button中尤为明显。当然我们也可以一小块一小块水平重复的画，也可 以垂直的话。在android中专门有一种叫nine patch图片（以 9.png结尾）来解决背景大小不一样时，只用一张背景图片");
-		contentValues.put(DatabaseHelper.COLUMN_SCHEDULE_START_TIME,
-				System.currentTimeMillis());
-		contentValues.put(DatabaseHelper.COLUMN_SCHEDULE_FIRST_FLAG, false);
-		ServiceManager.getDbManager().insertLocalSchedules(contentValues);
-		contentValues = new ContentValues();
-		contentValues.put(DatabaseHelper.COLUMN_SCHEDULE_NOTICE_CONTENT,
-				"you are a bad men!");
-		contentValues.put(DatabaseHelper.COLUMN_SCHEDULE_START_TIME,
-				System.currentTimeMillis());
-		contentValues.put(DatabaseHelper.COLUMN_SCHEDULE_FIRST_FLAG, false);
-		ServiceManager.getDbManager().insertLocalSchedules(contentValues);
-	}
 
 	@Override
 	public void onRefresh() {
@@ -381,6 +358,8 @@ private ViewFlipper flipper = null;
 		}
 		Intent mIntent =new Intent(ScheduleScreen.this,EditScheduleScreen.class);
 		mIntent.putExtra("id", id);
+		mIntent.putExtra("first", (Boolean) args.getExtra("first"));
+		mIntent.putExtra("time", (Long) args.getExtra("time"));
 		ScheduleScreen.this.startActivity(mIntent);
 	}
 	
@@ -655,7 +634,32 @@ private ViewFlipper flipper = null;
 			break;
 		}
 		
+	}
+	@Override
+	public boolean onEvent(Object sender, EventArgs e) {
+		switch(e.getType()){
+		case LOCAL_SCHEDULE_UPDATE:
+			ScheduleScreen.this.runOnUiThread(new Runnable(){
+				@Override
+				public void run() {
+				    c1.requery();
+				    c2.requery();
+				    c3.requery();
+				    c4.requery();
+				}});
+			break;
+		}
+		return true;
+	}
+	
+	
+	@Override
+	protected void onDestroy() {
+		super.onDestroy();
+		eventService.remove(this);
 	}	
+	
+	
 	
 }
 
