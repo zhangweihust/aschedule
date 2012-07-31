@@ -66,16 +66,33 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 	public static final String ASCHEDULE_CONTACT_NUM = "number"; /* 微日程联系人表 */
 	// public static final String ASCHEDULE_CONTACT_FLAG = "flag"; /* 微日程联系人表 */
 	public static final String ASCHEDULE_CONTACT_NAME = "name";
+	public static final String ASCHEDULE_CONTACT_IMGPATH = "img_path";
 	public static final String ASCHEDULE_CONTACT_TYPE = "type";
 	private static final String CREATE_CONTACT_TABLE = " CREATE TABLE IF NOT EXISTS "
 	+ ASCHEDULE_CONTACT +
 	" ( "
 	+ COLUMN_CONTACT_ID + " INTEGER PRIMARY KEY, " 
-	+ ASCHEDULE_CONTACT_NUM + " TEXT "
-	+ ASCHEDULE_CONTACT_NAME + " TEXT "
+	+ ASCHEDULE_CONTACT_NUM + " TEXT, "
+	+ ASCHEDULE_CONTACT_NAME + " TEXT, "
+	+ ASCHEDULE_CONTACT_IMGPATH + " TEXT, "
 	+ ASCHEDULE_CONTACT_TYPE + " INTEGER DEFAULT '0' "
 //	+ ASCHEDULE_CONTACT_FLAG + " INTEGER DEFAULT '0' "
 	+ " ); ";
+	
+	public static final String ASCHEDULE_FRIEND = "schedule_friend";
+	public static final String ASCHEDULE_FRIEND_ID = "friend_id";
+	public static final String ASCHEDULE_FRIEND_NUM = "number";
+	public static final String ASCHEDULE_FRIEND_NAME = "name";
+	public static final String ASCHEDULE_FRIEND_TYPE = "type";
+	
+	private static final String CREATE_FRIEND_TABLE = " CREATE TABLE IF NOT EXISTS "
+		+ ASCHEDULE_FRIEND +
+		" ( "
+		+ ASCHEDULE_FRIEND_ID + " INTEGER PRIMARY KEY, " 
+		+ ASCHEDULE_FRIEND_NUM + " TEXT, "
+		+ ASCHEDULE_FRIEND_NAME + " TEXT, "
+		+ ASCHEDULE_FRIEND_TYPE + " INTEGER DEFAULT '0' "
+		+ " ); ";
 	
 	public DatabaseHelper(Context context) {
 		super(context, NAME, null, version);
@@ -94,6 +111,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 
 	private void createTabs(SQLiteDatabase db) {
 		db.execSQL(CRETAE_TAB_SCHEDULE);
-		db.execSQL(CREATE_CONTACT_TABLE);		
+		db.execSQL(CREATE_CONTACT_TABLE);	
+      db.execSQL(CREATE_FRIEND_TABLE);	
 	}
 }

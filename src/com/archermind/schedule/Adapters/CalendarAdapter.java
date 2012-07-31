@@ -24,7 +24,6 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.archermind.schedule.R;
-import com.archermind.schedule.Model.ScheduleDateTag;
 import com.archermind.schedule.Provider.DatabaseManager;
 import com.archermind.schedule.Services.ServiceManager;
 import com.archermind.schedule.calendar.LunarCalendar;
@@ -249,11 +248,11 @@ public class CalendarAdapter extends BaseAdapter {
 		int flag = 0;
 		String lunarDay = "";
 		//得到当前月的所有日程日期（这些日期需要标记）
-		database = ServiceManager.getDbManager();
-		ArrayList<ScheduleDateTag> dateTagList = database.getTagDate(year,month);
-		if(dateTagList != null && dateTagList.size() > 0){
-			schDateTagFlag = new int[dateTagList.size()];
-		}
+//		database = ServiceManager.getDbManager();
+//		ArrayList<ScheduleDateTag> dateTagList = database.getTagDate(year,month);
+//		if(dateTagList != null && dateTagList.size() > 0){
+//			schDateTagFlag = new int[dateTagList.size()];
+//		}
 		
 		for (int i = 0; i < dayNumber.length; i++) {
 			int k = 1;
@@ -276,18 +275,18 @@ public class CalendarAdapter extends BaseAdapter {
 				}
 				
 				//标记日程日期
-				if(dateTagList != null && dateTagList.size() > 0){
-					for(int m = 0; m < dateTagList.size(); m++){
-						ScheduleDateTag dateTag = dateTagList.get(m);
-						int matchYear = dateTag.getYear();
-						int matchMonth = dateTag.getMonth();
-						int matchDay = dateTag.getDay();
-						if(matchYear == year && matchMonth == month && matchDay == Integer.parseInt(day)){
-							schDateTagFlag[flag] = i;
-							flag++;
-						}
-					}
-				}
+//				if(dateTagList != null && dateTagList.size() > 0){
+//					for(int m = 0; m < dateTagList.size(); m++){
+//						ScheduleDateTag dateTag = dateTagList.get(m);
+//						int matchYear = dateTag.getYear();
+//						int matchMonth = dateTag.getMonth();
+//						int matchDay = dateTag.getDay();
+//						if(matchYear == year && matchMonth == month && matchDay == Integer.parseInt(day)){
+//							schDateTagFlag[flag] = i;
+//							flag++;
+//						}
+//					}
+//				}
 				
 				setShowYear(String.valueOf(year));
 				setShowMonth(String.valueOf(month));
