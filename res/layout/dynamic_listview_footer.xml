@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/login_layout"
+    android:layout_width="fill_parent"
+    android:layout_height="wrap_content"
+     android:background="#f6f6f6"
+     android:paddingBottom="15dip"
+     >
+
+    <TextView
+        android:layout_marginTop="8dip"
+        android:id="@+id/notice"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerHorizontal="true"
+        android:gravity="center_horizontal"
+        android:text="快登录，和朋友一起玩转日程吧 ~"
+        android:textColor="#ff000000" />
+
+    <LinearLayout
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/notice"
+        android:gravity="center_horizontal"
+        android:orientation="horizontal" 
+        android:layout_marginTop="8dip"
+        android:layout_marginBottom="12dip">
+
+        <Button
+            android:id="@+id/login"
+            android:layout_width="70dip"
+            android:layout_height="wrap_content"
+            android:layout_marginRight="5dip"
+            android:background="@drawable/button_bg"
+            android:text="登录"
+            android:textColor="#ffffffff" />
+
+        <Button
+            android:id="@+id/register"
+            android:layout_width="70dip"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="5dip"
+            android:layout_toRightOf="@id/login"
+            android:background="@drawable/button_bg"
+            android:text="注册"
+            android:textColor="#ffffffff" />
+    </LinearLayout>
+
+</RelativeLayout>

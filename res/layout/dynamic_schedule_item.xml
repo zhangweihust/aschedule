@@ -1,0 +1,147 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="fill_parent"
+    android:layout_height="wrap_content"
+    android:background="@drawable/listview_item_selector"
+    android:descendantFocusability="blocksDescendants" >
+
+    <RelativeLayout
+        android:id="@+id/avatar_layout"
+        android:layout_width="52.0dip"
+        android:layout_height="wrap_content" 
+        android:gravity="center_horizontal"
+        android:layout_marginLeft="10dip"
+       >
+
+        <com.archermind.schedule.Image.SmartImageView
+            android:id="@+id/avatar"
+            android:layout_width="@android:dimen/app_icon_size"
+            android:layout_height="@android:dimen/app_icon_size"
+            android:layout_centerHorizontal="true"
+            android:layout_marginTop="12.0dip"
+            android:gravity="center"
+            android:scaleType="fitCenter" />
+
+        <ImageView
+            android:layout_width="0.0dip"
+            android:layout_height="0.0dip"
+            android:layout_alignBottom="@id/avatar"
+            android:layout_alignLeft="@id/avatar"
+            android:layout_alignRight="@id/avatar"
+            android:layout_alignTop="@id/avatar"
+            android:background="@drawable/comment_avatar" />
+
+        <TextView
+            android:id="@+id/name"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/avatar"
+            android:layout_centerHorizontal="true"
+            android:layout_gravity="center"
+            android:gravity="center"
+            android:textColor="#252524"
+            android:textSize="10sp" />
+
+        <ImageView
+            android:id="@+id/weather"
+            android:layout_width="20dip"
+            android:layout_height="20dip"
+            android:layout_below="@id/name"
+            android:layout_marginLeft="4.0dip"
+            android:src="@drawable/sun" />
+
+        <TextView
+            android:id="@+id/location"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignBottom="@id/weather"
+            android:layout_alignTop="@id/weather"
+            android:layout_below="@id/name"
+            android:layout_marginLeft="2.0dip"
+            android:layout_toRightOf="@id/weather"
+            android:gravity="center"
+            android:text="武汉"
+            android:textColor="#252524"
+            android:textSize="10sp" />
+    </RelativeLayout>
+
+    <RelativeLayout
+        android:layout_width="fill_parent"
+        android:layout_height="fill_parent"
+        android:layout_alignParentRight="true"
+        android:layout_toRightOf="@id/avatar_layout"
+        android:orientation="horizontal" >
+
+        <ImageView
+            android:id="@+id/type"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="2dip"
+            android:layout_marginTop="12.0dip"
+            />
+
+        <RelativeLayout
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:layout_alignTop="@id/type"
+            android:layout_marginLeft="4.0dip"
+            android:layout_toRightOf="@id/type" 
+            >
+
+            <TextView
+                android:id="@+id/date"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="2012.6.12"
+                android:textColor="#252524"
+                android:textSize="12sp" />
+
+            <TextView
+                android:id="@+id/time"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_toRightOf="@id/date"
+                android:background="@drawable/pm"
+                android:text="6:30"
+                android:textColor="#252524"
+                android:textSize="12sp" />
+
+            <TextView
+                android:id="@+id/partner"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignBottom="@id/time"
+                android:layout_alignTop="@id/time"
+                android:layout_marginLeft="2dip"
+                android:layout_toRightOf="@id/time"
+                android:background="@drawable/partner"
+                android:text="3"
+                android:textColor="#ffffffff" />
+
+            <Button
+                android:id="@+id/message"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentRight="true"
+                android:background="@drawable/message_selector"
+                android:text="留言"
+                android:textColor="#ffffffff" />
+
+            <TextView
+                android:id="@+id/content"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_below="@id/message"
+                android:text="have a good time!"
+                android:textColor="#252524" />
+
+            <include
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_below="@id/content"
+                layout="@layout/feed_comments"
+                android:layout_marginRight="10dip" />
+        </RelativeLayout>
+    </RelativeLayout>
+
+</RelativeLayout>

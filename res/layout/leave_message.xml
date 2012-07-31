@@ -1,0 +1,67 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="fill_parent"
+    android:layout_height="wrap_content"
+    android:background="@drawable/leave_message_bg" >
+
+    <TextView
+        android:id="@+id/textView1"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentTop="true"
+        android:layout_marginTop="10dp"
+        android:textColor="#252524"
+        android:textSize="14sp"
+        android:layout_marginLeft="10dip"
+        android:layout_marginRight="5dip"
+        android:text="留言" />
+
+    <EditText
+        android:id="@+id/editText1"
+        android:background="@drawable/message_edit"
+        android:layout_width="wrap_content"
+        android:layout_height="90dip"
+        android:layout_alignLeft="@+id/joinBtn"
+        android:layout_alignRight="@+id/publishBtn"
+        android:layout_alignTop="@+id/textView1"
+        android:layout_toRightOf="@id/textView1"
+        >
+    </EditText>
+
+    <Button
+        android:id="@+id/joinBtn"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentLeft="true"
+        android:layout_below="@+id/editText1"
+        android:layout_marginLeft="50dp"
+        android:layout_marginTop="17dp"
+        android:layout_toRightOf="@id/textView1"
+        android:background="@null"
+        android:drawableTop="@drawable/join_selector"
+        android:text="参加活动" />
+
+    <Button
+        android:id="@+id/forwardBtn"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignTop="@+id/joinBtn"
+        android:layout_marginLeft="22dp"
+        android:layout_toRightOf="@+id/joinBtn"
+        android:background="@null"
+        android:drawableTop="@drawable/forward_selector"
+        android:text="转发活动" />
+
+    <Button
+        android:id="@+id/publishBtn"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignBottom="@+id/forwardBtn"
+        android:layout_alignParentRight="true"
+        android:layout_marginRight="18dp"
+        android:textColor="#ffffffff"
+        android:background="@drawable/button_selector"
+        android:text="发布" />
+
+</RelativeLayout>
