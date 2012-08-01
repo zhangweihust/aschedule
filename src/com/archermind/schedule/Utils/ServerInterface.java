@@ -1,8 +1,10 @@
 package com.archermind.schedule.Utils;
 
+import java.io.File;
 import java.io.IOException;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.GregorianCalendar;
@@ -15,6 +17,7 @@ import java.util.regex.Pattern;
 
 import android.content.ContentValues;
 import android.database.Cursor;
+import android.database.sqlite.SQLiteDatabase;
 
 import com.archermind.schedule.Provider.DatabaseHelper;
 import com.archermind.schedule.Services.ServiceManager;
@@ -272,6 +275,15 @@ public class ServerInterface {
 						"http://player.archermind.com/ci/index.php/aschedule/getMessage");
 		return ret;
 	}
+	//根据user_id查询此用户的基本信息
+	public String findUserInfobyUserId(String user_id) {
+		Map<String, String> map = new HashMap<String, String>();
+		map.put("user_id", user_id);
+		String ret = HttpUtils
+				.doPost(map,
+						"http://player.archermind.com/ci/index.php/aschedule/findUserInfobyUserId");
+        return ret;
+	}
 	//添加好友
 	public int inviteFriend(String user_id,String duser_id) {
 		Map<String, String> map = new HashMap<String, String>();
@@ -401,25 +413,26 @@ public class ServerInterface {
 		return telList;
 	}
 
-	public static int uploadSchedule(/*
+	public static int uploadSchedule(/*String num,String host*/
+			/*
 									 * String userID, int share,type,
 									 * start_time, update_time, city,
 									 * notice_time, notice_period, notice_week,
 									 * notice_start, notice_end, content...
 									 */) {
-		int userID = 3;
-		int share = 1;
-		int type = 4;
-		String start_time = "13311111111";
-		String update_time = "";
-		String city = "";
-		int notice_time = 0;
-		String notice_period = "";
-		String notice_week = "";
-		String notice_start = "";
-		String notice_end = "";
-		String content = "xiaopashu test!";
-		String oper_flag = "A";
+//		int userID = 3;
+//		int share = 1;
+//		int type = 4;
+//		String start_time = "13311111111";
+//		String update_time = "";
+//		String city = "";
+//		int notice_time = 0;
+//		String notice_period = "";
+//		String notice_week = "";
+//		String notice_start = "";
+//		String notice_end = "";
+//		String content = "xiaopashu test!";
+//		String oper_flag = "A";
 
 		int result = 0;
 		int tid = 0;
@@ -442,6 +455,9 @@ public class ServerInterface {
 					map.put("start_time",
 							cursor.getString(cursor
 									.getColumnIndex(DatabaseHelper.COLUMN_SCHEDULE_START_TIME)));
+					map.put("first_flag",
+							cursor.getString(cursor
+									.getColumnIndex(DatabaseHelper.COLUMN_SCHEDULE_FIRST_FLAG)));
 					map.put("city", "武汉");
 					map.put("notice_time",
 							Integer.toString(cursor.getInt(cursor
@@ -460,14 +476,14 @@ public class ServerInterface {
 									.getColumnIndex(DatabaseHelper.COLUMN_SCHEDULE_NOTICE_END)));
 					map.put("content",
 							cursor.getString(cursor
-									.getColumnIndex(DatabaseHelper.COLUMN_SCHEDULE_CONTENT)));
+									.getColumnIndex(DatabaseHelper.COLUMN_SCHEDULE_NOTICE_CONTENT)));
 					map.put("tid",
 							Integer.toString(cursor.getInt(cursor
 									.getColumnIndex(DatabaseHelper.COLUMN_SCHEDULE_T_ID))));
 
 					// 回帖。。。。
-					map.put("num", "1");
-					map.put("host", "197");
+					map.put("num", "0");
+					map.put("host", "207");
 					String text = "";
 					text = cursor
 							.getString(cursor
