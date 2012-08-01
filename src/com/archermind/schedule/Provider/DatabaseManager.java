@@ -167,12 +167,23 @@ public class DatabaseManager {
 	}
 	
 	
-	public Cursor queryShareSchedules(int size) {
+	public Cursor queryShareSchedules(int start, int end) {
 		return database
 				.query(DatabaseHelper.TAB_SHARE_SCHEDULE,
 						null,
 						DatabaseHelper.COLUMN_SCHEDULE_ORDER + " =? ",
-						new String[] { "0", "0", String.valueOf(size) }, 
+						new String[] { "0", String.valueOf(start), String.valueOf(end) }, 
+						null,
+						null,
+						DatabaseHelper.COLUMN_SCHEDULE_START_TIME + " DESC " + " LIMIT ? , ? ");
+	}
+	
+	public Cursor queryMyShareSchedules() {
+		return database
+				.query(DatabaseHelper.TAB_LOCAL_SCHEDULE,
+						null,
+						DatabaseHelper.COLUMN_SCHEDULE_SHARE + " =? ",
+						new String[] { "1", "0", "20" }, 
 						null,
 						null,
 						DatabaseHelper.COLUMN_SCHEDULE_START_TIME + " ASC " + " LIMIT ? , ? ");

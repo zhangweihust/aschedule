@@ -4,18 +4,26 @@ public class ScheduleBean {
 	private String id;
 	private String name;
 	private String date;
-	private String time;
+	private long time;
 	private String week;
 	private String content;
-	private String type;
+	private int type;
 	private String location;
 	private String weather;
 	private String slave;
 	private String order;
+    private int t_id;
+	
+	
+	
+	public int getT_id() {
+		return t_id;
+	}
 
-	
-	
-	
+	public void setT_id(int t_id) {
+		this.t_id = t_id;
+	}
+
 	public String getSlave() {
 		return slave;
 	}
@@ -56,11 +64,11 @@ public class ScheduleBean {
 		this.date = date;
 	}
 
-	public String getTime() {
+	public long getTime() {
 		return time;
 	}
 
-	public void setTime(String time) {
+	public void setTime(long time) {
 		this.time = time;
 	}
 
@@ -80,11 +88,11 @@ public class ScheduleBean {
 		this.content = content;
 	}
 
-	public String getType() {
+	public int getType() {
 		return type;
 	}
 
-	public void setType(String type) {
+	public void setType(int type) {
 		this.type = type;
 	}
 

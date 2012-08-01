@@ -1,9 +1,7 @@
 package com.archermind.schedule.Screens;
 
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
+import java.util.ArrayList;
+import java.util.List;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -17,6 +15,8 @@ import android.os.Message;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.View.OnClickListener;
+import android.widget.AdapterView;
+import android.widget.AdapterView.OnItemClickListener;
 import android.widget.Button;
 import android.widget.RelativeLayout;
 import android.widget.Toast;
@@ -24,6 +24,7 @@ import android.widget.Toast;
 import com.archermind.schedule.R;
 import com.archermind.schedule.ScheduleApplication;
 import com.archermind.schedule.Adapters.DynamicScheduleAdapter;
+import com.archermind.schedule.Model.ScheduleBean;
 import com.archermind.schedule.Provider.DatabaseHelper;
 import com.archermind.schedule.Services.ServiceManager;
 import com.archermind.schedule.Utils.DateTimeUtils;
@@ -32,7 +33,7 @@ import com.archermind.schedule.Views.XListView;
 import com.archermind.schedule.Views.XListView.IXListViewListener;
 
 public class FriendsDyamicScreen extends Screen implements 
-		IXListViewListener {
+		IXListViewListener , OnItemClickListener{
 	private XListView list;
 	private RelativeLayout mListFooter;
 	private Button loginBtn, registerBtn;
@@ -40,8 +41,11 @@ public class FriendsDyamicScreen extends Screen implements
 	private Cursor c;
 	protected static final int ON_Refresh = 0x101;
 	protected static final int ON_LoadMore = 0x102;
+	protected static final int ON_LoadData = 0x103;
 	private int end = 2;
 	private int start = 0;
+	private List<ScheduleBean> dataArrayList;
+	private DynamicScheduleAdapter mAdapter;
 
 	Handler mHandler = new Handler() {
 		public void handleMessage(Message msg) {
@@ -49,15 +53,17 @@ public class FriendsDyamicScreen extends Screen implements
 			switch (msg.what) {
 			case ON_Refresh:
 				loading.setVisibility(View.GONE);
-				list.setAdapter(new DynamicScheduleAdapter(
-						FriendsDyamicScreen.this, c));
+				mAdapter.setList(dataArrayList);
 				break;
 			case ON_LoadMore:
 				loading.setVisibility(View.GONE);
-				list.setAdapter(new DynamicScheduleAdapter(
-						FriendsDyamicScreen.this, c));
-				list.setSelection(start);
+				mAdapter.setList(dataArrayList);
 				break;
+			case ON_LoadData:
+				loading.setVisibility(View.GONE);
+				mAdapter.setList(dataArrayList);
+				break;	
+			
 			}
 
 		}
@@ -69,7 +75,12 @@ public class FriendsDyamicScreen extends Screen implements
 		setContentView(R.layout.friends_dynamic_screen);
 		list = (XListView) findViewById(R.id.list);
 		list.setPullLoadEnable(true);
+		list.setOnItemClickListener(this);
 		list.setXListViewListener(this);
+		dataArrayList = new ArrayList<ScheduleBean>();
+		mAdapter = new DynamicScheduleAdapter(FriendsDyamicScreen.this, dataArrayList);
+		mAdapter.setList(dataArrayList);
+		list.setAdapter(mAdapter);
 		loading = (RelativeLayout) findViewById(R.id.loading);
 		mListFooter = (RelativeLayout) LayoutInflater.from(this).inflate(
 				R.layout.dynamic_listview_footer, null);
@@ -92,7 +103,7 @@ public class FriendsDyamicScreen extends Screen implements
 		new Thread(new Runnable() {
 			@Override
 			public void run() {
-				getSchedulesFromWeb();
+				loadSchedules();
 			}
 		}).start();
 
@@ -110,30 +121,53 @@ public class FriendsDyamicScreen extends Screen implements
 	public void onRefresh() {
 		Toast.makeText(FriendsDyamicScreen.this, "onRefresh",
 				Toast.LENGTH_SHORT).show();
-		getSchedulesFromWeb();
+		getSchedulesFromWeb("1343203371");
+		mHandler.sendEmptyMessage(ON_Refresh);
 		onLoad();
 	}
 
 	@Override
 	public void onLoadMore() {
-		Toast.makeText(FriendsDyamicScreen.this, "onLoadMore",
-				Toast.LENGTH_SHORT).show();
 		end = end + 2;
 		start = start + 2;
-		c = ServiceManager.getDbManager().queryShareSchedules(end);
+		c = ServiceManager.getDbManager().queryShareSchedules(start, end);
+		if(c.getCount() == 0){
+			end = end -2;
+			start = start -2;
+		}
+		Toast.makeText(FriendsDyamicScreen.this, "onLoadMore" + "start = " + start + "  end = " + end,
+				Toast.LENGTH_SHORT).show();
+		cursorToArrayList(c);
 		mHandler.sendEmptyMessage(ON_LoadMore);
 		onLoad();
 	}
+	
+	private void loadSchedules(){
+		getSchedulesFromWeb("1343203369");
+		c = ServiceManager.getDbManager().queryShareSchedules(start, end);
+		if (c.getCount() == 0) {
+			list.addFooterView(mListFooter);
+			list.setHeaderGone(false);
+			insertDefaultSchedules();
+			c.requery();
+			cursorToArrayList(c);
+		} else {
+			c.close();
+		}
+		mHandler.sendEmptyMessage(ON_LoadData);
+	}
+	
 
-	private void getSchedulesFromWeb() {
+	private void getSchedulesFromWeb(String time) {
 		if (NetworkUtils.getNetworkState(this) != NetworkUtils.NETWORN_NONE) {
 			String jsonString = ServiceManager.getServerInterface()
-					.syncFriendShare("3", "1343203369");
+					.syncFriendShare("3", time);
 			try {
 				JSONArray jsonArray = new JSONArray(jsonString);
 				ScheduleApplication.LogD(FriendsDyamicScreen.class, jsonString
 						+ jsonArray.length());
 				ContentValues contentvalues;
+				ScheduleBean bean = null;
 				for (int i = 0; i < jsonArray.length(); i++) {
 					JSONObject jsonObject = (JSONObject) jsonArray.opt(i);
 					contentvalues = new ContentValues();
@@ -158,6 +192,13 @@ public class FriendsDyamicScreen extends Screen implements
 							jsonObject.getString("city"));
 					contentvalues.put(DatabaseHelper.COLUMN_SCHEDULE_CONTENT,
 							jsonObject.getString("content"));
+					bean = new ScheduleBean();
+					bean.setContent(jsonObject.getString("content"));
+					bean.setLocation(jsonObject.getString("city"));
+					bean.setT_id(Integer.parseInt(t_id));
+					bean.setTime(Long.parseLong(jsonObject.getString("start_time")));
+					bean.setType(Integer.parseInt(jsonObject.getString("type")));
+					dataArrayList.add(0,bean);
 					if (!ServiceManager.getDbManager().isInShareSchedules(t_id)) {
 						ServiceManager.getDbManager().insertShareSchedules(
 								contentvalues);
@@ -171,14 +212,24 @@ public class FriendsDyamicScreen extends Screen implements
 				e.printStackTrace();
 			}
 		}
-		c = ServiceManager.getDbManager().queryShareSchedules(end);
-		if (c.getCount() == 0) {
-			list.addFooterView(mListFooter);
-			list.setHeaderGone(false);
-			insertDefaultSchedules();
-			c.requery();
-		}
-		mHandler.sendEmptyMessage(ON_Refresh);
+	}
+	
+	
+	
+	private void cursorToArrayList(Cursor c){
+		if (c != null && c.getCount() > 0){
+			ScheduleBean bean;
+			for (c.moveToFirst(); !c.isAfterLast(); c.moveToNext()) {
+				bean = new ScheduleBean();
+				bean.setContent(c.getString(c.getColumnIndex(DatabaseHelper.COLUMN_SCHEDULE_CONTENT)));
+				bean.setLocation(c.getString(c.getColumnIndex(DatabaseHelper.COLUMN_SCHEDULE_CITY)));
+				bean.setT_id(c.getInt(c.getColumnIndex(DatabaseHelper.COLUMN_SCHEDULE_T_ID)));
+				bean.setTime(c.getLong(c.getColumnIndex(DatabaseHelper.COLUMN_SCHEDULE_START_TIME)));
+				bean.setType(c.getInt(c.getColumnIndex(DatabaseHelper.COLUMN_SCHEDULE_TYPE)));
+				dataArrayList.add(bean);
+			}
+			c.close();
+		} 
 	}
 
 	private void insertDefaultSchedules() {
@@ -251,19 +302,15 @@ public class FriendsDyamicScreen extends Screen implements
 		ServiceManager.getDbManager().insertShareSchedules(contentvalues);
 	}
 
-	String inputStream2String(InputStream is) {
-		BufferedReader in = new BufferedReader(new InputStreamReader(is));
-		StringBuffer buffer = new StringBuffer();
-		String line = "";
-		try {
-			while ((line = in.readLine()) != null) {
-				buffer.append(line);
-			}
-		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-		return buffer.toString();
+
+
+	@Override
+	public void onItemClick(AdapterView<?> parent, View view, int position,
+			long id) {
+		Toast.makeText(
+				FriendsDyamicScreen.this,
+				"position:" + position, Toast.LENGTH_SHORT)
+				.show();
 	}
 
 }

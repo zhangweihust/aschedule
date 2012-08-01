@@ -27,6 +27,7 @@ public class LocalScheduleAdapter  extends CursorAdapter {
 		final ScheduleItem item = (ScheduleItem) view.getTag(R.layout.local_schedule_item);
 		String content = cursor.getString(cursor.getColumnIndex(DatabaseHelper.COLUMN_SCHEDULE_CONTENT));
 		long time = cursor.getLong(cursor.getColumnIndex(DatabaseHelper.COLUMN_SCHEDULE_START_TIME));
+		long noticeTime = cursor.getLong(cursor.getColumnIndex(DatabaseHelper.COLUMN_SCHEDULE_NOTICE_TIME));
 		boolean share = cursor.getInt(cursor.getColumnIndex(DatabaseHelper.COLUMN_SCHEDULE_SHARE)) == 1;
 		boolean important = cursor.getInt(cursor.getColumnIndex(DatabaseHelper.COLUMN_SCHEDULE_IMPORTANT)) == 1;
 		int type = cursor.getInt(cursor.getColumnIndex(DatabaseHelper.COLUMN_SCHEDULE_TYPE));
@@ -45,6 +46,11 @@ public class LocalScheduleAdapter  extends CursorAdapter {
 			item.date.setText(DateTimeUtils.time2String("dd", time));
 		} else {
 			item.dateLayout.setVisibility(View.INVISIBLE);
+		}
+		if(noticeTime == 0){
+			item.alarm.setVisibility(View.GONE);
+		} else {
+			item.alarm.setVisibility(View.VISIBLE);
 		}
 		if(share){
 			item.share.setVisibility(View.VISIBLE);
