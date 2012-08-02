@@ -8,6 +8,7 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
 import android.telephony.TelephonyManager;
+import android.util.Log;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.Window;
@@ -64,11 +65,11 @@ public class LoginScreen extends Activity implements OnClickListener{
 				
 				if (msg.what == LOGIN_SUCCESS)
 				{
-					RegisterScreen.ToastShow("登录成功!");
+					ServiceManager.ToastShow("登录成功!");
 				}
 				else if (msg.what == LOGIN_FAILED)
 				{
-					RegisterScreen.ToastShow("登录失败!");
+					ServiceManager.ToastShow("登录失败!");
 				}
 			}
         };
@@ -115,12 +116,12 @@ public class LoginScreen extends Activity implements OnClickListener{
 		final String password = login_password.getText().toString();
 		if (username.length() == 0)
 		{
-			RegisterScreen.ToastShow("用户名不能为空!");
+			ServiceManager.ToastShow("用户名不能为空!");
 			return;
 		}
 		if (password.length() == 0)
 		{
-			RegisterScreen.ToastShow("密码不能为空");
+			ServiceManager.ToastShow("密码不能为空");
 			return;
 		}
 		new Thread()
@@ -131,6 +132,7 @@ public class LoginScreen extends Activity implements OnClickListener{
 				if (ret == 0)
 				{
 					handler.sendEmptyMessage(LOGIN_SUCCESS);
+					Log.e("---lqf---","userid = " + ServiceManager.getUserId());
 				}
 				else
 				{

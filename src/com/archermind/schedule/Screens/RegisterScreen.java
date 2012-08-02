@@ -27,11 +27,12 @@ public class RegisterScreen extends Activity implements OnClickListener {
 	private EditText et_pswd;
 	private ImageView photoselect;
 	private Handler handler;
-	private static Toast toast;
+	
 	
 	private static final int REGISTER_SUCCESS = 1;
 	private static final int REGISTER_FAILED = 2;
 	public static final String USER_INFO = "userinfo";
+	public static final String USER_ID = "userid";
     /** Called when the activity is first created. */
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -39,7 +40,7 @@ public class RegisterScreen extends Activity implements OnClickListener {
         
         requestWindowFeature(Window.FEATURE_NO_TITLE);
         setContentView(R.layout.register_layout);
-        toast = Toast.makeText(getApplicationContext(), "", Toast.LENGTH_SHORT);
+       
         
         handler = new Handler()
         {
@@ -51,12 +52,12 @@ public class RegisterScreen extends Activity implements OnClickListener {
 				
 				if (msg.what == REGISTER_SUCCESS)
 				{
-					ToastShow("注册成功!");
+					ServiceManager.ToastShow("注册成功!");
 					onBackPressed();
 				}
 				else if (msg.what == REGISTER_FAILED)
 				{
-					ToastShow("注册失败!");
+					ServiceManager.ToastShow("注册失败!");
 				}
 			}
         };
@@ -104,15 +105,6 @@ public class RegisterScreen extends Activity implements OnClickListener {
 		overridePendingTransition(R.anim.left_in,R.anim.left_out);
 	}
 	
-	public static void ToastShow(String message)
-	{
-		if (toast != null)
-		{
-			toast.cancel();
-		}
-		toast.setText(message);
-		toast.show();
-	}
 	
 	/* 验证填写的信息合法性 */
 	public void Register()
@@ -120,36 +112,36 @@ public class RegisterScreen extends Activity implements OnClickListener {
 		final String username = et_username.getText().toString();
 		if (username.length() <= 0)
 		{
-			ToastShow("昵称不能为空!");
+			ServiceManager.ToastShow("昵称不能为空!");
 			return;
 		}
 		else if (!ServiceManager.getServerInterface().isNickName(username))
 		{
-			ToastShow("昵称太长或者包含非法字符!");
+			ServiceManager.ToastShow("昵称太长或者包含非法字符!");
 			return;
 		}
 		
 		final String email = et_email.getText().toString();
 		if (email.length() <= 0)
 		{
-			ToastShow("邮箱不能为空!");
+			ServiceManager.ToastShow("邮箱不能为空!");
 			return;
 		}
 		else if (!ServiceManager.getServerInterface().isEmail(email))
 		{
-			ToastShow("邮箱格式不正确");
+			ServiceManager.ToastShow("邮箱格式不正确");
 			return;
 		}
 		
 		final String pswd = et_pswd.getText().toString();
 		if (pswd.length() < 6 ||  pswd.length() > 15)
 		{
-			ToastShow("密码长度应该在6-15个字符之间!");
+			ServiceManager.ToastShow("密码长度应该在6-15个字符之间!");
 			return;
 		}
 		else if (!ServiceManager.getServerInterface().isPswdValid(pswd))
 		{
-			ToastShow("密码中必须同时包含数字和字母!");
+			ServiceManager.ToastShow("密码中必须同时包含数字和字母!");
 			return;
 		}
 			
@@ -169,8 +161,9 @@ public class RegisterScreen extends Activity implements OnClickListener {
 				else
 				{
 					handler.sendEmptyMessage(REGISTER_SUCCESS);
+					ServiceManager.setUserId(ret);		/* 设置服务器返回的Userid */
 					SharedPreferences.Editor editor = getSharedPreferences(USER_INFO, Context.MODE_WORLD_WRITEABLE).edit();
-					editor.putInt("userid", ret);
+					editor.putInt(USER_ID, ret);
 					editor.commit();
 				}
 			};

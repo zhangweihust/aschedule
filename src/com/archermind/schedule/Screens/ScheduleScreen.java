@@ -776,7 +776,11 @@ private ViewFlipper flipper = null;
 				@Override
 				public void run() {
 //				    c1.requery();
-				    TodayScheduleCursor.requery();
+					Cursor c = ServiceManager.getDbManager().queryTodayLocalSchedules(System.currentTimeMillis());
+					List<ScheduleData> listdata = new ArrayList<ScheduleData>();
+					cursorToListData(c,listdata);
+					c.close();
+					hsa.setTodayData(listdata);
 //				    c3.requery();
 //				    c4.requery();
 				}});
