@@ -640,7 +640,7 @@ public class EditScheduleScreen extends Screen implements OnClickListener {
 //		ServiceManager.getDbManager().updateScheduleById((int) schedule_id,
 //				contentvalues);
 		ServiceManager.getDbManager().deleteLocalSchedules((int) schedule_id, firstFlag, scheduleTime);
-		si.uploadSchedule();
+		si.uploadSchedule("0","1");
 
 		// ServiceManager.getDbManager().deleScheduleById(schedule_id);
 
@@ -668,7 +668,7 @@ public class EditScheduleScreen extends Screen implements OnClickListener {
 		cv.put(DatabaseHelper.COLUMN_SCHEDULE_CONTENT, scheduleText);
 		ServiceManager.getDbManager().updateScheduleById((int) schedule_id, cv);
 		// ServiceManager.getDbManager().insertLocalSchedules(cv);
-		si.uploadSchedule();
+		si.uploadSchedule("0","1");
 	}
 
 //	public void sendAlarm(Long time) {

@@ -39,17 +39,18 @@ public class ServerInterface {
 
 	public static final int SUCCESS = 0;
 
-	public static final int ERROR_ACCOUNT_OR_PASSWORD_EMPTY = 1;
-	public static final int ERROR_ACCOUNT_EXIST = 2;
+	public static final int ERROR_ACCOUNT_OR_PASSWORD_EMPTY = -1;
+	public static final int ERROR_ACCOUNT_EXIST = -2;
 
-	public static final int ERROR_SYNC_FAILED = 3;
-	public static final int ERROR_UPLOAD_FAILED = 4;
-	public static final int ERROR_DATABASE_INTERNAL = 5;
+	public static final int ERROR_SYNC_FAILED = -3;
+	public static final int ERROR_UPLOAD_FAILED = -4;
+	public static final int ERROR_DATABASE_INTERNAL = -5;
 
-	public static final int ERROR_EMAIL_INVALID = 6;
-	public static final int ERROR_PASSWORD_INVALID = 7;
+	public static final int ERROR_EMAIL_INVALID = -6;
+	public static final int ERROR_PASSWORD_INVALID = -7;
+	public static final int ERROR_NICKNAME_INVALID = -9;
 	public static final int ERROR_TEL_INVALID = -1;
-	public static final int ERROR_WEB_ERROR = 8;
+	public static final int ERROR_WEB_ERROR = -8;
 
 	public static final int ERROR_SERVER_N0_REPLY = -100;
 	public static final int ERROR_SERVER_INTERNAL = -101;
@@ -76,7 +77,7 @@ public class ServerInterface {
 		while (m.find()) {
 			return false;
 		}
-		String regEx = "[`~!@#$%^&*()+=|{}':;',\\[\\]<>/?~！@#￥%……&*（）——+|{}【】‘；：”“’。，、？]";
+		String regEx = "[`~!#$%^&*()+=|{}':;',\\[\\]<>/?~！#￥%……&*（）——+|{}【】‘；：”“’。，、？]";
 		Pattern p2 = Pattern.compile(regEx);
 		Matcher m2 = p2.matcher(email);
 		while (m2.find()) {
@@ -99,6 +100,23 @@ public class ServerInterface {
 		}
 	}
 
+	/**************************************
+	 * 判断isNickName合法性 长度小于10，且没有特殊字符
+	 ***************************************/
+
+	public boolean isNickName(String nickName) {
+		if(nickName.length()==0 || nickName.length() >10)
+		{
+			return false;
+		}
+		String regEx = "[`~!@#$%^&*()+=|{}':;',\\[\\]<>/?~！@#￥%……&*（）——+|{}【】‘；：”“’。，、？]";
+		Pattern p2 = Pattern.compile(regEx);
+		Matcher m2 = p2.matcher(nickName);
+		while (m2.find()) {
+			return false;
+		}
+		return true;
+	}
 	/*
 	 * public String getWeather(){ return null; }
 	 */
@@ -134,7 +152,7 @@ public class ServerInterface {
 	 * //ERROR_ACCOUNT_EXIST —— account already exist //ERROR_WEB_ERROR ——
 	 * 网络异常或其他原因注册失败
 	 */
-	public int register(String username, String password, String imsi,
+	public int register(String username, String password,String nickname, String imsi,
 			String tel, String photo_id, String info) {
 		username = username.replace(" ", "");
 		password = password.replace(" ", "");
@@ -148,9 +166,13 @@ public class ServerInterface {
 		if (!isPswdValid(password)) {
 			return ERROR_PASSWORD_INVALID;
 		}
+		if (!isNickName(nickname)){
+			return ERROR_NICKNAME_INVALID;
+		}
 		Map<String, String> map = new HashMap<String, String>();
 		map.put("user", username);
 		map.put("password", password);
+		map.put("nick", nickname);
 		// HttpUtils mhttp =new HttpUtils();
 		// mhttp.SetMap(map);
 		// mhttp.Seturl("http://player.archermind.com/ci/index.php/aschedule/register");
@@ -165,13 +187,19 @@ public class ServerInterface {
 		// }
 		String ret = HttpUtils.doPost(map,
 				"http://player.archermind.com/ci/index.php/aschedule/register");
-		if (Integer.parseInt(ret) > 0) {
-			return SUCCESS;
-		} else {
-			System.out.println("login-----" + ret);
-			return -1;
+		int result =0;
+		try {
+			result =Integer.parseInt(ret);
+		} catch (Exception e) {
+			result =0;
 		}
-		// return SUCCESS;
+//		if (Integer.parseInt(ret) > 0) {
+//			return SUCCESS;
+//		} else {
+//			System.out.println("login-----" + ret);
+//			return -1;
+//		}
+		 return result;
 	}
 
 	/*
@@ -301,6 +329,20 @@ public class ServerInterface {
 			return -1;  // 消息发送失败
 		}
 	}
+	//拒绝信息回执
+	public int refuseConfirm(String user_id,String duser_id) {
+		Map<String, String> map = new HashMap<String, String>();
+		map.put("user_id", user_id);
+		map.put("duser_id", duser_id);
+		String ret = HttpUtils
+				.doPost(map,
+						"http://player.archermind.com/ci/index.php/aschedule/refuseConfirm");
+		if (ret.equals("0")){
+			return 0; // 消息发送成功
+		}else{
+			return -1;  // 消息发送失败
+		}
+	}
 	//拒绝邀请
 	public int refuseFriend(String user_id,String duser_id) {
 		Map<String, String> map = new HashMap<String, String>();
@@ -413,7 +455,7 @@ public class ServerInterface {
 		return telList;
 	}
 
-	public static int uploadSchedule(/*String num,String host*/
+	public static int uploadSchedule(String num,String host
 			/*
 									 * String userID, int share,type,
 									 * start_time, update_time, city,
@@ -476,14 +518,14 @@ public class ServerInterface {
 									.getColumnIndex(DatabaseHelper.COLUMN_SCHEDULE_NOTICE_END)));
 					map.put("content",
 							cursor.getString(cursor
-									.getColumnIndex(DatabaseHelper.COLUMN_SCHEDULE_NOTICE_CONTENT)));
+									.getColumnIndex(DatabaseHelper.COLUMN_SCHEDULE_CONTENT)));
 					map.put("tid",
 							Integer.toString(cursor.getInt(cursor
 									.getColumnIndex(DatabaseHelper.COLUMN_SCHEDULE_T_ID))));
 
 					// 回帖。。。。
-					map.put("num", "0");
-					map.put("host", "207");
+					map.put("num", num);
+					map.put("host", host);
 					String text = "";
 					text = cursor
 							.getString(cursor

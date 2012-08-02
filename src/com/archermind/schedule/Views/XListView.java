@@ -10,6 +10,7 @@ package com.archermind.schedule.Views;
 
 import android.content.Context;
 import android.util.AttributeSet;
+import android.util.Log;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewTreeObserver.OnGlobalLayoutListener;
@@ -45,7 +46,7 @@ public class XListView extends ListView implements OnScrollListener {
 
 	// -- footer view
 	private XListViewFooter mFooterView;
-	private boolean mEnablePullLoad;
+	private boolean mEnablePullLoad = true;
 	private boolean mPullLoading;
 	private boolean mIsFooterReady = false;
 	

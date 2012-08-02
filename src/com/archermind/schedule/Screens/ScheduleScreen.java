@@ -1,8 +1,11 @@
 package com.archermind.schedule.Screens;
 
+import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Date;
+import java.util.List;
 
 import android.app.AlertDialog;
 import android.app.DatePickerDialog;
@@ -13,6 +16,7 @@ import android.graphics.Color;
 import android.graphics.Typeface;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.Display;
 import android.view.GestureDetector;
 import android.view.GestureDetector.OnGestureListener;
@@ -42,10 +46,13 @@ import android.widget.ViewFlipper;
 import com.archermind.schedule.R;
 import com.archermind.schedule.Adapters.CalendarAdapter;
 import com.archermind.schedule.Adapters.LocalScheduleAdapter;
+import com.archermind.schedule.Adapters.HistoryScheduleAdapter;
 import com.archermind.schedule.Events.EventArgs;
 import com.archermind.schedule.Events.IEventHandler;
+import com.archermind.schedule.Provider.DatabaseHelper;
 import com.archermind.schedule.Services.ServiceManager;
 import com.archermind.schedule.Utils.Constant;
+import com.archermind.schedule.Utils.ScheduleData;
 import com.archermind.schedule.Views.VerticalScrollView;
 import com.archermind.schedule.Views.XListView;
 import com.archermind.schedule.Views.XListView.IXListViewListener;
@@ -53,26 +60,32 @@ import com.archermind.schedule.Views.XListView.IXListViewListener;
 public class ScheduleScreen extends Screen implements IXListViewListener,
 		OnItemClickListener ,OnGestureListener, OnClickListener, IEventHandler{
 
-	private ImageView mListHeader;
-	private TextView tv1;
-	private TextView tv2;
-	private TextView tv3;
-	private TextView tv4;
-
-	private FrameLayout layout1;
-	private FrameLayout layout2;
-	private FrameLayout layout3;
-	private FrameLayout layout4;
-
-	private ListView list1;
-	private XListView list2;
-	private ListView list3;
-	private ListView list4;
+	private static final int FRESH_LIMIT_NUM = 30;
 	
-	private Cursor c1;
-	private Cursor c2;
-	private Cursor c3;
-	private Cursor c4;
+	private ImageView mListHeader;
+//	private TextView tv1;
+//	private TextView tv2;
+//	private TextView tv3;
+//	private TextView tv4;
+
+//	private FrameLayout layout1;
+	private FrameLayout layout2;
+//	private FrameLayout layout3;
+//	private FrameLayout layout4;
+
+//	private ListView list1;
+	private XListView list2;
+//	private ListView list3;
+//	private ListView list4;
+	
+//	private Cursor c1;
+	private Cursor TodayScheduleCursor;
+//	private Cursor c3;
+//	private Cursor c4;
+	
+	private HistoryScheduleAdapter hsa;
+	private List<ScheduleData> listdata = new ArrayList<ScheduleData>();
+	private String curSelectedDate = "";
 	
 
 private ViewFlipper flipper = null;
@@ -137,74 +150,89 @@ private ViewFlipper flipper = null;
 					mListHeader
 							.setBackgroundResource(R.drawable.listview_header_down);
 					mListHeader.setTag(R.drawable.listview_header_down);
-					tv2.setTextColor(Color.parseColor("#4f810f"));
+//					tv2.setTextColor(Color.parseColor("#4f810f"));
 					list2.setHeaderGone(true);
-					tv3.setVisibility(View.VISIBLE);
-					tv4.setVisibility(View.VISIBLE);
+//					tv3.setVisibility(View.VISIBLE);
+//					tv4.setVisibility(View.VISIBLE);
 				} else {
 					mListHeader
 							.setBackgroundResource(R.drawable.listview_header_up);
 					mListHeader.setTag(R.drawable.listview_header_up);
-					tv1.setVisibility(View.GONE);
-					tv2.setVisibility(View.GONE);
-					tv3.setVisibility(View.GONE);
-					tv4.setVisibility(View.GONE);
-					layout1.setVisibility(View.GONE);
+//					tv1.setVisibility(View.GONE);
+//					tv2.setVisibility(View.GONE);
+//					tv3.setVisibility(View.GONE);
+//					tv4.setVisibility(View.GONE);
+//					layout1.setVisibility(View.GONE);
 					layout2.setVisibility(View.VISIBLE);
-					layout3.setVisibility(View.GONE);
-					layout4.setVisibility(View.GONE);
+//					layout3.setVisibility(View.GONE);
+//					layout4.setVisibility(View.GONE);
 				}
 			}
 		});
 	}
 
 	private void setupView() {
-		tv1 = (TextView) findViewById(R.id.tv01);
-		tv2 = (TextView) findViewById(R.id.tv02);
-		tv3 = (TextView) findViewById(R.id.tv03);
-		tv4 = (TextView) findViewById(R.id.tv04);
+//		tv1 = (TextView) findViewById(R.id.tv01);
+//		tv2 = (TextView) findViewById(R.id.tv02);
+//		tv3 = (TextView) findViewById(R.id.tv03);
+//		tv4 = (TextView) findViewById(R.id.tv04);
 
-		layout1 = (FrameLayout) findViewById(R.id.layout1);
+//		layout1 = (FrameLayout) findViewById(R.id.layout1);
 		layout2 = (FrameLayout) findViewById(R.id.layout2);
-		layout3 = (FrameLayout) findViewById(R.id.layout3);
-		layout4 = (FrameLayout) findViewById(R.id.layout4);
+//		layout3 = (FrameLayout) findViewById(R.id.layout3);
+//		layout4 = (FrameLayout) findViewById(R.id.layout4);
 
-		list1 = (ListView) findViewById(R.id.list01);
+//		list1 = (ListView) findViewById(R.id.list01);
 		list2 = (XListView) findViewById(R.id.list02);
-		list3 = (ListView) findViewById(R.id.list03);
-		list4 = (ListView) findViewById(R.id.list04);
+//		list3 = (ListView) findViewById(R.id.list03);
+//		list4 = (ListView) findViewById(R.id.list04);
 		list2.setXListViewListener(this);
-		list1.setOnItemClickListener(this);
+//		list1.setOnItemClickListener(this);
 		list2.setOnItemClickListener(this);
-		list3.setOnItemClickListener(this);
-		list4.setOnItemClickListener(this);
+//		list3.setOnItemClickListener(this);
+//		list4.setOnItemClickListener(this);
 
-		c1 = ServiceManager.getDbManager().query3DaysBeforeLocalSchedules(
+//		c1 = ServiceManager.getDbManager().query3DaysBeforeLocalSchedules(
+//				System.currentTimeMillis());
+		
+		TodayScheduleCursor = ServiceManager.getDbManager().queryTodayLocalSchedules(
 				System.currentTimeMillis());
 		
-		c2 = ServiceManager.getDbManager().queryTodayLocalSchedules(
-				System.currentTimeMillis());
+//		c3 = ServiceManager.getDbManager().queryTomorrowLocalSchedules(
+//				System.currentTimeMillis());
+//		
+//		c4 = ServiceManager.getDbManager().queryWeekLocalSchedules(
+//				System.currentTimeMillis());
 		
-		c3 = ServiceManager.getDbManager().queryTomorrowLocalSchedules(
-				System.currentTimeMillis());
-		
-		c4 = ServiceManager.getDbManager().queryWeekLocalSchedules(
-				System.currentTimeMillis());
-		
-		list1.setAdapter(new LocalScheduleAdapter(this, c1));
-		list2.setAdapter(new LocalScheduleAdapter(this, c2));
-		list3.setAdapter(new LocalScheduleAdapter(this, c3));
-		list4.setAdapter(new LocalScheduleAdapter(this, c4));
+//		list1.setAdapter(new LocalScheduleAdapter(this, c1));
+		ScheduleData data;
+		while (TodayScheduleCursor.moveToNext())
+		{
+			data = new ScheduleData();
+			data.content = TodayScheduleCursor.getString(TodayScheduleCursor.getColumnIndex(DatabaseHelper.COLUMN_SCHEDULE_CONTENT));
+			data.time = TodayScheduleCursor.getLong(TodayScheduleCursor.getColumnIndex(DatabaseHelper.COLUMN_SCHEDULE_START_TIME));
+			data.share = TodayScheduleCursor.getInt(TodayScheduleCursor.getColumnIndex(DatabaseHelper.COLUMN_SCHEDULE_SHARE)) == 1;
+			data.important = TodayScheduleCursor.getInt(TodayScheduleCursor.getColumnIndex(DatabaseHelper.COLUMN_SCHEDULE_IMPORTANT)) == 1;
+			data.type = TodayScheduleCursor.getInt(TodayScheduleCursor.getColumnIndex(DatabaseHelper.COLUMN_SCHEDULE_TYPE));
+			data.first = TodayScheduleCursor.getInt(TodayScheduleCursor.getColumnIndex(DatabaseHelper.COLUMN_SCHEDULE_FIRST_FLAG)) == 1;
+			
+			listdata.add(data);
+		}
+		TodayScheduleCursor.close();
+		hsa = new HistoryScheduleAdapter(this, listdata);
+		list2.setAdapter(hsa);
+//		list3.setAdapter(new LocalScheduleAdapter(this, c3));
+//		list4.setAdapter(new LocalScheduleAdapter(this, c4));
 
-		layout1.setVisibility(View.GONE);
+//		layout1.setVisibility(View.GONE);
 		layout2.setVisibility(View.VISIBLE);
-		layout3.setVisibility(View.GONE);
-		layout4.setVisibility(View.GONE);
+//		layout3.setVisibility(View.GONE);
+//		layout4.setVisibility(View.GONE);
 
-		tv1.setVisibility(View.GONE);
-		tv2.setVisibility(View.GONE);
-		tv3.setVisibility(View.GONE);
-		tv4.setVisibility(View.GONE);
+//		tv1.setVisibility(View.GONE);
+//		tv2.setVisibility(View.GONE);
+//		tv3.setVisibility(View.GONE);
+//		tv4.setVisibility(View.GONE);
 
 		
 		gestureDetector = new GestureDetector(this);
@@ -214,71 +242,71 @@ private ViewFlipper flipper = null;
        
         
        
-		tv1.setOnClickListener(new View.OnClickListener() {
+//		tv1.setOnClickListener(new View.OnClickListener() {
+//
+//			@Override
+//			public void onClick(View v) {
+//				tv1.setTextColor(Color.parseColor("#4f810f"));
+//				tv2.setTextColor(Color.parseColor("#252524"));
+//				tv3.setTextColor(Color.parseColor("#252524"));
+//				tv4.setTextColor(Color.parseColor("#252524"));
+//				layout1.setVisibility(View.VISIBLE);
+//				layout2.setVisibility(View.GONE);
+//				layout3.setVisibility(View.GONE);
+//				layout4.setVisibility(View.GONE);
+//			}
+//		});
 
-			@Override
-			public void onClick(View v) {
-				tv1.setTextColor(Color.parseColor("#4f810f"));
-				tv2.setTextColor(Color.parseColor("#252524"));
-				tv3.setTextColor(Color.parseColor("#252524"));
-				tv4.setTextColor(Color.parseColor("#252524"));
-				layout1.setVisibility(View.VISIBLE);
-				layout2.setVisibility(View.GONE);
-				layout3.setVisibility(View.GONE);
-				layout4.setVisibility(View.GONE);
-			}
-		});
+//		tv2.setOnClickListener(new View.OnClickListener() {
+//
+//			@Override
+//			public void onClick(View v) {
+//				tv2.setTextColor(Color.parseColor("#4f810f"));
+////				tv1.setTextColor(Color.parseColor("#252524"));
+//				tv3.setTextColor(Color.parseColor("#252524"));
+//				tv4.setTextColor(Color.parseColor("#252524"));
+////				layout1.setVisibility(View.GONE);
+//				layout2.setVisibility(View.VISIBLE);
+//				layout3.setVisibility(View.GONE);
+//				layout4.setVisibility(View.GONE);
+//			}
+//		});
 
-		tv2.setOnClickListener(new View.OnClickListener() {
-
-			@Override
-			public void onClick(View v) {
-				tv2.setTextColor(Color.parseColor("#4f810f"));
-				tv1.setTextColor(Color.parseColor("#252524"));
-				tv3.setTextColor(Color.parseColor("#252524"));
-				tv4.setTextColor(Color.parseColor("#252524"));
-				layout1.setVisibility(View.GONE);
-				layout2.setVisibility(View.VISIBLE);
-				layout3.setVisibility(View.GONE);
-				layout4.setVisibility(View.GONE);
-			}
-		});
-
-		tv3.setOnClickListener(new View.OnClickListener() {
-
-			@Override
-			public void onClick(View v) {
-				tv3.setTextColor(Color.parseColor("#4f810f"));
-				tv1.setTextColor(Color.parseColor("#252524"));
-				tv2.setTextColor(Color.parseColor("#252524"));
-				tv4.setTextColor(Color.parseColor("#252524"));
-				layout1.setVisibility(View.GONE);
-				layout2.setVisibility(View.GONE);
-				layout3.setVisibility(View.VISIBLE);
-				layout4.setVisibility(View.GONE);
-				if (!tv2.isShown()) {
-					tv2.setVisibility(View.VISIBLE);
-				}
-			}
-		});
-
-		tv4.setOnClickListener(new View.OnClickListener() {
-
-			@Override
-			public void onClick(View v) {
-				tv4.setTextColor(Color.parseColor("#4f810f"));
-				tv1.setTextColor(Color.parseColor("#252524"));
-				tv2.setTextColor(Color.parseColor("#252524"));
-				tv3.setTextColor(Color.parseColor("#252524"));
-				layout1.setVisibility(View.GONE);
-				layout2.setVisibility(View.GONE);
-				layout3.setVisibility(View.GONE);
-				layout4.setVisibility(View.VISIBLE);
-				if (!tv2.isShown()) {
-					tv2.setVisibility(View.VISIBLE);
-				}
-			}
-		});
+//		tv3.setOnClickListener(new View.OnClickListener() {
+//
+//			@Override
+//			public void onClick(View v) {
+//				tv3.setTextColor(Color.parseColor("#4f810f"));
+////				tv1.setTextColor(Color.parseColor("#252524"));
+////				tv2.setTextColor(Color.parseColor("#252524"));
+//				tv4.setTextColor(Color.parseColor("#252524"));
+////				layout1.setVisibility(View.GONE);
+//				layout2.setVisibility(View.GONE);
+//				layout3.setVisibility(View.VISIBLE);
+//				layout4.setVisibility(View.GONE);
+////				if (!tv2.isShown()) {
+////					tv2.setVisibility(View.VISIBLE);
+////				}
+//			}
+//		});
+//
+//		tv4.setOnClickListener(new View.OnClickListener() {
+//
+//			@Override
+//			public void onClick(View v) {
+//				tv4.setTextColor(Color.parseColor("#4f810f"));
+////				tv1.setTextColor(Color.parseColor("#252524"));
+////				tv2.setTextColor(Color.parseColor("#252524"));
+//				tv3.setTextColor(Color.parseColor("#252524"));
+////				layout1.setVisibility(View.GONE);
+//				layout2.setVisibility(View.GONE);
+//				layout3.setVisibility(View.GONE);
+//				layout4.setVisibility(View.VISIBLE);
+////				if (!tv2.isShown()) {
+////					tv2.setVisibility(View.VISIBLE);
+////				}
+//			}
+//		});
 	}
 
 @Override
@@ -302,11 +330,52 @@ private ViewFlipper flipper = null;
 			current_day.setOnClickListener(this);
 	}
 
+	public void cursorToListData(Cursor c,List<ScheduleData> listdata)
+	{
+		ScheduleData data;
+		
+		if (c == null)
+		{
+			return;
+		}
+		
+		while (c.moveToNext())
+		{
+			data = new ScheduleData();
+			data.content = c.getString(c.getColumnIndex(DatabaseHelper.COLUMN_SCHEDULE_CONTENT));
+			data.time = c.getLong(c.getColumnIndex(DatabaseHelper.COLUMN_SCHEDULE_START_TIME));
+			data.share = c.getInt(c.getColumnIndex(DatabaseHelper.COLUMN_SCHEDULE_SHARE)) == 1;
+			data.important = c.getInt(c.getColumnIndex(DatabaseHelper.COLUMN_SCHEDULE_IMPORTANT)) == 1;
+			data.type = c.getInt(c.getColumnIndex(DatabaseHelper.COLUMN_SCHEDULE_TYPE));
+			data.first = c.getInt(c.getColumnIndex(DatabaseHelper.COLUMN_SCHEDULE_FIRST_FLAG)) == 1;
+			
+			listdata.add(data);
+		}
+	}
+
 	@Override
 	public void onRefresh() {
-		Toast.makeText(ScheduleScreen.this, "up", Toast.LENGTH_SHORT).show();
-		tv1.setVisibility(View.VISIBLE);
-		tv2.setVisibility(View.VISIBLE);
+//		Toast.makeText(ScheduleScreen.this, "up", Toast.LENGTH_SHORT).show();
+//		tv1.setVisibility(View.VISIBLE);
+//		tv2.setVisibility(View.VISIBLE);
+		
+		Cursor c;
+		if (hsa.isEmpty())
+		{
+			c = ServiceManager.getDbManager().querySpecifiedNumPreSchedules(
+					getMillisTimeByDate(curSelectedDate),FRESH_LIMIT_NUM);
+		}
+		else
+		{
+			c = ServiceManager.getDbManager().querySpecifiedNumPreSchedules(
+					hsa.getEarliestTime(),FRESH_LIMIT_NUM);
+		}
+		List<ScheduleData> listdata = new ArrayList<ScheduleData>();
+		cursorToListData(c,listdata);
+		Collections.reverse(listdata);		/* 数据库查询时按照降序排列，因此此处需要将listdata中数据倒序 */
+		c.close();
+		hsa.addPreData(listdata);
+		
 		onLoad();
 		list2.setHeaderGone(false);
 	}
@@ -314,7 +383,24 @@ private ViewFlipper flipper = null;
 	@Override
 	public void onLoadMore() {
 		// TODO Auto-generated method stub
-
+		Cursor c;
+		if (hsa.isEmpty())
+		{
+			c = ServiceManager.getDbManager().querySpecifiedNumAftSchedules(
+					getMillisTimeByDate(curSelectedDate),FRESH_LIMIT_NUM);
+		}
+		else
+		{
+			c = ServiceManager.getDbManager().querySpecifiedNumAftSchedules(
+					hsa.getlatestTime(),FRESH_LIMIT_NUM);
+		}
+		List<ScheduleData> listdata = new ArrayList<ScheduleData>();
+		cursorToListData(c,listdata);
+		c.close();
+		hsa.addAfterData(listdata);
+		
+		onLoad();
+		list2.setHeaderGone(false);
 	}
 
 	private void onLoad() {
@@ -327,21 +413,21 @@ private ViewFlipper flipper = null;
 	public void onItemClick(AdapterView<?> parent, View view, int position,
 			long id) {
 		args = (EventArgs) view.getTag();
-		if (parent.getId() == list1.getId()) {
+		/*if (parent.getId() == list1.getId()) {
 			Toast.makeText(
 					ScheduleScreen.this,
 					"list1=" + id + "  tag = "
 							+ (Boolean) args.getExtra("first") + "  time = "
 							+ (Long) args.getExtra("time"), Toast.LENGTH_SHORT)
 					.show();
-		} else if (parent.getId() == list2.getId()) {
+		} else */if (parent.getId() == list2.getId()) {
 			Toast.makeText(
 					ScheduleScreen.this,
 					"list2=" + id + "  tag = "
 							+ (Boolean) args.getExtra("first") + "  time = "
 							+ (Long) args.getExtra("time"), Toast.LENGTH_SHORT)
 					.show();
-		} else if (parent.getId() == list3.getId()) {
+		}/* else if (parent.getId() == list3.getId()) {
 			Toast.makeText(
 					ScheduleScreen.this,
 					"list3=" + id + "  tag = "
@@ -355,7 +441,7 @@ private ViewFlipper flipper = null;
 							+ (Boolean) args.getExtra("first") + "  time = "
 							+ (Long) args.getExtra("time"), Toast.LENGTH_SHORT)
 					.show();
-		}
+		}*/
 		Intent mIntent =new Intent(ScheduleScreen.this,EditScheduleScreen.class);
 		mIntent.putExtra("id", id);
 		mIntent.putExtra("first", (Boolean) args.getExtra("first"));
@@ -461,6 +547,40 @@ private ViewFlipper flipper = null;
 		view.setTypeface(Typeface.DEFAULT_BOLD);
 	}
 	
+	public String getDate(int position){
+		String date = "";
+		int month = Integer.parseInt(calV.getShowMonth());
+		int day = Integer.parseInt(calV.getDateByClickItem(position).split("\\.")[0]);
+		
+		if(month < 10){
+			date = calV.getShowYear() + ".0" + month;
+		}else{
+			date = calV.getShowYear() + "." + month;
+		}
+		if (day < 10){
+			date += ".0" + day;
+		}
+		else{
+			date += "." + day;
+		}
+		return date;
+	}
+	
+	public long getMillisTimeByDate(String date)
+	{
+		long time = 0;
+		SimpleDateFormat sdf = new SimpleDateFormat("yy.MM.dd");
+		try {
+			Date d = sdf.parse(date);
+			time = d.getTime();
+		} catch (ParseException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		
+		return time;
+	}
+	
 	//添加gridview
 	private void addGridView() {
 		RelativeLayout.LayoutParams params = new RelativeLayout.LayoutParams(
@@ -560,7 +680,20 @@ private ViewFlipper flipper = null;
 		                  startActivity(intent);
 	                  }
 				  }
-			*/}
+			*/
+				String date = getDate(position);
+				if (!curSelectedDate.equals(date))	
+				{
+					curSelectedDate = date;
+
+					Cursor c = ServiceManager.getDbManager().queryTodayLocalSchedules(getMillisTimeByDate(curSelectedDate));
+					List<ScheduleData> listdata = new ArrayList<ScheduleData>();
+					cursorToListData(c,listdata);
+					c.close();
+					hsa.setTodayData(listdata);
+
+				}
+			}
 		});
 		gridView.setLayoutParams(params);
 
@@ -642,10 +775,10 @@ private ViewFlipper flipper = null;
 			ScheduleScreen.this.runOnUiThread(new Runnable(){
 				@Override
 				public void run() {
-				    c1.requery();
-				    c2.requery();
-				    c3.requery();
-				    c4.requery();
+//				    c1.requery();
+				    TodayScheduleCursor.requery();
+//				    c3.requery();
+//				    c4.requery();
 				}});
 			break;
 		}
@@ -658,8 +791,6 @@ private ViewFlipper flipper = null;
 		super.onDestroy();
 		eventService.remove(this);
 	}	
-	
-	
 	
 }
 

@@ -166,6 +166,31 @@ public class DatabaseManager {
 								+ " ASC");
 	}
 	
+	public Cursor querySpecifiedNumPreSchedules(long timeInMillis,int limitnum)
+	{
+		return database.query(false, 
+								DatabaseHelper.TAB_LOCAL_SCHEDULE, 
+								null, 
+								DatabaseHelper.COLUMN_SCHEDULE_START_TIME + " < ? and "  + DatabaseHelper.COLUMN_SCHEDULE_OPER_FLAG + " != 'D'", 
+								new String[] {String.valueOf(timeInMillis)}, 
+								null, 
+								null, 
+								DatabaseHelper.COLUMN_SCHEDULE_START_TIME + " DESC", 
+								String.valueOf(limitnum));
+	}
+	
+	public Cursor querySpecifiedNumAftSchedules(long timeInMillis,int limitnum)
+	{
+		return database.query(false, 
+								DatabaseHelper.TAB_LOCAL_SCHEDULE, 
+								null, 
+								DatabaseHelper.COLUMN_SCHEDULE_START_TIME + " > ? and "  + DatabaseHelper.COLUMN_SCHEDULE_OPER_FLAG + " != 'D'", 
+								new String[] {String.valueOf(timeInMillis)}, 
+								null, 
+								null, 
+								DatabaseHelper.COLUMN_SCHEDULE_START_TIME + " ASC", 
+								String.valueOf(limitnum));
+	}
 	
 	public Cursor queryShareSchedules(int start, int end) {
 		return database

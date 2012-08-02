@@ -651,7 +651,7 @@ public class NewScheduleScreen extends Screen implements OnClickListener {
 		String scheduleText = schedule_text.getText().toString();
 		cv.put(DatabaseHelper.COLUMN_SCHEDULE_CONTENT, scheduleText);
 		ServiceManager.getDbManager().insertLocalSchedules(cv, scheduleTime);
-		si.uploadSchedule();
+		si.uploadSchedule("0","1");
 	}
 
 //	public void sendAlarm(Long time) {
