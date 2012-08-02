@@ -10,12 +10,11 @@ public class ScheduleBean {
 	private int type;
 	private String location;
 	private String weather;
-	private String slave;
-	private String order;
+	private int slave;
+	private int order;
     private int t_id;
 	
-	
-	
+
 	public int getT_id() {
 		return t_id;
 	}
@@ -24,19 +23,19 @@ public class ScheduleBean {
 		this.t_id = t_id;
 	}
 
-	public String getSlave() {
+	public int getSlave() {
 		return slave;
 	}
 
-	public void setSlave(String slave) {
+	public void setSlave(int slave) {
 		this.slave = slave;
 	}
 
-	public String getOrder() {
+	public int getOrder() {
 		return order;
 	}
 
-	public void setOrder(String order) {
+	public void setOrder(int order) {
 		this.order = order;
 	}
 

@@ -42,10 +42,11 @@ public class FriendsDyamicScreen extends Screen implements
 	protected static final int ON_Refresh = 0x101;
 	protected static final int ON_LoadMore = 0x102;
 	protected static final int ON_LoadData = 0x103;
-	private int end = 2;
+	private int end = 10;
 	private int start = 0;
 	private List<ScheduleBean> dataArrayList;
 	private DynamicScheduleAdapter mAdapter;
+	private final int LOAD_DATA_SIZE = 20;
 
 	Handler mHandler = new Handler() {
 		public void handleMessage(Message msg) {
@@ -122,23 +123,24 @@ public class FriendsDyamicScreen extends Screen implements
 		Toast.makeText(FriendsDyamicScreen.this, "onRefresh",
 				Toast.LENGTH_SHORT).show();
 		getSchedulesFromWeb("1343203371");
+		dataArrayList.clear();
+		c = ServiceManager.getDbManager().queryShareSchedules(start, end);
+		cursorToArrayList(c);
 		mHandler.sendEmptyMessage(ON_Refresh);
 		onLoad();
 	}
 
 	@Override
 	public void onLoadMore() {
-		end = end + 2;
-		start = start + 2;
-		c = ServiceManager.getDbManager().queryShareSchedules(start, end);
-		if(c.getCount() == 0){
-			end = end -2;
-			start = start -2;
+		ScheduleBean bean = dataArrayList.get(dataArrayList.size() -1);
+		c = ServiceManager.getDbManager().queryShareSchedules(bean.getTime(), LOAD_DATA_SIZE);
+		if(c.getCount() != 0){
+			cursorToArrayList(c);
+			mHandler.sendEmptyMessage(ON_LoadMore);
+		} else {
+			Toast.makeText(FriendsDyamicScreen.this, "onLoadMore is lastone" ,
+					Toast.LENGTH_SHORT).show();
 		}
-		Toast.makeText(FriendsDyamicScreen.this, "onLoadMore" + "start = " + start + "  end = " + end,
-				Toast.LENGTH_SHORT).show();
-		cursorToArrayList(c);
-		mHandler.sendEmptyMessage(ON_LoadMore);
 		onLoad();
 	}
 	
@@ -146,20 +148,19 @@ public class FriendsDyamicScreen extends Screen implements
 		getSchedulesFromWeb("1343203369");
 		c = ServiceManager.getDbManager().queryShareSchedules(start, end);
 		if (c.getCount() == 0) {
-			list.addFooterView(mListFooter);
-			list.setHeaderGone(false);
-			insertDefaultSchedules();
-			c.requery();
-			cursorToArrayList(c);
-		} else {
-			c.close();
-		}
+				list.addFooterView(mListFooter);
+				list.setHeaderGone(false);
+				insertDefaultSchedules();
+				c.requery();
+		} 
+		cursorToArrayList(c);
 		mHandler.sendEmptyMessage(ON_LoadData);
 	}
 	
 
 	private void getSchedulesFromWeb(String time) {
 		if (NetworkUtils.getNetworkState(this) != NetworkUtils.NETWORN_NONE) {
+			
 			String jsonString = ServiceManager.getServerInterface()
 					.syncFriendShare("3", time);
 			try {
@@ -167,7 +168,7 @@ public class FriendsDyamicScreen extends Screen implements
 				ScheduleApplication.LogD(FriendsDyamicScreen.class, jsonString
 						+ jsonArray.length());
 				ContentValues contentvalues;
-				ScheduleBean bean = null;
+				//ScheduleBean bean = null;
 				for (int i = 0; i < jsonArray.length(); i++) {
 					JSONObject jsonObject = (JSONObject) jsonArray.opt(i);
 					contentvalues = new ContentValues();
@@ -192,19 +193,20 @@ public class FriendsDyamicScreen extends Screen implements
 							jsonObject.getString("city"));
 					contentvalues.put(DatabaseHelper.COLUMN_SCHEDULE_CONTENT,
 							jsonObject.getString("content"));
-					bean = new ScheduleBean();
-					bean.setContent(jsonObject.getString("content"));
-					bean.setLocation(jsonObject.getString("city"));
-					bean.setT_id(Integer.parseInt(t_id));
-					bean.setTime(Long.parseLong(jsonObject.getString("start_time")));
-					bean.setType(Integer.parseInt(jsonObject.getString("type")));
-					dataArrayList.add(0,bean);
+//					bean = new ScheduleBean();
+//					bean.setContent(jsonObject.getString("content"));
+//					bean.setLocation(jsonObject.getString("city"));
+//					bean.setT_id(Integer.parseInt(t_id));
+//					bean.setTime(Long.parseLong(jsonObject.getString("start_time")));
+//					bean.setType(Integer.parseInt(jsonObject.getString("type")));
+//					dataArrayList.add(0,bean);
 					if (!ServiceManager.getDbManager().isInShareSchedules(t_id)) {
 						ServiceManager.getDbManager().insertShareSchedules(
 								contentvalues);
 					} else {
 						ServiceManager.getDbManager().updateShareSchedules(
 								contentvalues, t_id);
+						ScheduleApplication.LogD(FriendsDyamicScreen.class, "重复的TID：" + t_id);
 					}
 				}
 			} catch (JSONException e) {

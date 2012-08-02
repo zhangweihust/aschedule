@@ -178,6 +178,19 @@ public class DatabaseManager {
 						DatabaseHelper.COLUMN_SCHEDULE_START_TIME + " DESC " + " LIMIT ? , ? ");
 	}
 	
+	public Cursor queryShareSchedules(long time, int size) {
+		return database
+				.query(DatabaseHelper.TAB_SHARE_SCHEDULE,
+						null,
+						DatabaseHelper.COLUMN_SCHEDULE_ORDER + " =? AND " + DatabaseHelper.COLUMN_SCHEDULE_START_TIME + " < ? ",
+						new String[] { "0", String.valueOf(time), String.valueOf(size) }, 
+						null,
+						null,
+						DatabaseHelper.COLUMN_SCHEDULE_START_TIME + " DESC " + " LIMIT ? ");
+	}
+	
+	
+	
 	public Cursor queryMyShareSchedules() {
 		return database
 				.query(DatabaseHelper.TAB_LOCAL_SCHEDULE,
