@@ -7,6 +7,7 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
 import android.telephony.TelephonyManager;
+import android.util.Log;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.View.OnClickListener;
@@ -154,6 +155,7 @@ public class RegisterScreen extends Activity implements OnClickListener {
 			public void run() 
 			{
 				int ret = ServiceManager.getServerInterface().register(email,pswd,username,imsi,null,null,null);
+				Log.e("RegisterScreen","ret = " + ret);
 				if (ret <= 0)
 				{
 					handler.sendEmptyMessage(REGISTER_FAILED);

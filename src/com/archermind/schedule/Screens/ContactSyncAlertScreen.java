@@ -9,6 +9,8 @@ import android.widget.Button;
 import android.widget.Toast;
 
 import com.archermind.schedule.R;
+import com.archermind.schedule.Events.EventArgs;
+import com.archermind.schedule.Events.EventTypes;
 import com.archermind.schedule.Services.ServiceManager;
 
 public class ContactSyncAlertScreen extends Activity implements OnClickListener{
@@ -61,7 +63,7 @@ public class ContactSyncAlertScreen extends Activity implements OnClickListener{
 				public void run() 
 				{
 					/* 要获取用户名 */
-					if (ServiceManager.getContact().ContactSync("111"))
+					if (ServiceManager.getContact().ContactSync(String.valueOf(ServiceManager.getUserId())))
 					{
 						handler.sendEmptyMessage(SUCCESS);
 					}
@@ -69,6 +71,7 @@ public class ContactSyncAlertScreen extends Activity implements OnClickListener{
 					{
 						handler.sendEmptyMessage(SUCCESS);
 					}
+					ServiceManager.getEventservice().onUpdateEvent(new EventArgs(EventTypes.CONTACT_SYNC_OVER));
 					
 				};
 			}.start();

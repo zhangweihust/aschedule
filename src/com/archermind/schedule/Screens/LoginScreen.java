@@ -16,6 +16,7 @@ import android.widget.Button;
 import android.widget.EditText;
 
 import com.archermind.schedule.R;
+import com.archermind.schedule.ScheduleApplication;
 import com.archermind.schedule.Services.ServiceManager;
 
 public class LoginScreen extends Activity implements OnClickListener{
@@ -132,7 +133,6 @@ public class LoginScreen extends Activity implements OnClickListener{
 				if (ret == 0)
 				{
 					handler.sendEmptyMessage(LOGIN_SUCCESS);
-					Log.e("---lqf---","userid = " + ServiceManager.getUserId());
 				}
 				else
 				{
