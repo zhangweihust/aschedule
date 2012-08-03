@@ -83,6 +83,7 @@ public class WheelView extends View {
 
 	/** Text size */
 	private static int TEXT_SIZE = 14;
+	private static int LABEL_SIZE;
 
 	/** Top and bottom items offset (to hide that) */
 //	private static final int ITEM_OFFSET = TEXT_SIZE / 5;
@@ -155,8 +156,9 @@ public class WheelView extends View {
 	private List<OnWheelScrollListener> scrollingListeners = new LinkedList<OnWheelScrollListener>();
 
 	
-	private float multiple = 2;
+	private float startLabel;
 	private boolean isHadScroll = false;
+	
 	/**
 	 * Constructor
 	 */
@@ -191,21 +193,6 @@ public class WheelView extends View {
 		
 		scroller = new Scroller(context);
 		
-		DisplayMetrics dm = ScheduleApplication.getContext().getResources().getDisplayMetrics();
-		String value = String.valueOf(dm.widthPixels) + "*" + String.valueOf(dm.heightPixels);
-		if(value.equals("480*800")){
-			ITEM_HEIGHT = 36;
-			TEXT_SIZE = 24;
-			startOffset = 18;
-		}else if(value.equals("320*480")){
-			ITEM_HEIGHT = 22;
-			TEXT_SIZE = 18;
-			startOffset = 0;
-		}else if(value.equals("240*320")){
-			ITEM_HEIGHT = 17;
-			TEXT_SIZE = 14;
-			startOffset = -10;
-		}
 	}
 	
 	/**
@@ -224,10 +211,87 @@ public class WheelView extends View {
 		this.adapter = adapter;
 		int num = adapter.getMaximumLength();
 		System.out.println("num = "+num);
-		if(num == 4){
-			multiple = 1.5f;
-		}else if(num == 2){
-			multiple = 2f;
+		
+		DisplayMetrics dm = ScheduleApplication.getContext().getResources().getDisplayMetrics();
+		String value = String.valueOf(dm.widthPixels) + "*" + String.valueOf(dm.heightPixels);
+		if(Constant.wheelViewFlag == 0){
+			if(value.equals("480*800")){
+				ITEM_HEIGHT = 36;
+				TEXT_SIZE = 24;
+				startLabel = 26;
+				startOffset = 18;
+				LABEL_SIZE = TEXT_SIZE -10;
+				if(wheel_type == Constant.wheel_year){
+					startLabel = 32;
+				}
+				if(wheel_type == Constant.wheel_day){
+					startLabel = 19;
+				}
+			}else if(value.equals("320*480")){
+				ITEM_HEIGHT = 22;
+				TEXT_SIZE = 18;
+				startLabel = 16;
+				startOffset = 2;
+				LABEL_SIZE = TEXT_SIZE -10;
+				if(wheel_type == Constant.wheel_year){
+					startLabel = 26;
+					startOffset = 0;
+				}
+				if(wheel_type == Constant.wheel_day){
+					startLabel = 12;
+				}
+			}else if(value.equals("240*320")){
+				ITEM_HEIGHT = 17;
+				TEXT_SIZE = 14;
+				startLabel = 10;
+				startOffset = -7;
+				LABEL_SIZE = TEXT_SIZE -7;
+				if(wheel_type == Constant.wheel_year){
+					startOffset = -16;
+					startLabel = 16;
+				}
+				if(wheel_type == Constant.wheel_day){
+					startLabel = 8;
+				}
+			}
+		}else if(Constant.wheelViewFlag == 1){
+			if(value.equals("480*800")){
+				ITEM_HEIGHT = 36;
+				TEXT_SIZE = 24;
+				startLabel = 56;
+				startOffset = 50;
+				LABEL_SIZE = TEXT_SIZE -10;
+				if(wheel_type == Constant.wheel_year){
+					startOffset = 37;
+				}
+				if(wheel_type == Constant.wheel_day){
+					startLabel = 50;
+				}
+			}else if(value.equals("320*480")){
+				ITEM_HEIGHT = 22;
+				TEXT_SIZE = 18;
+				startLabel = 38;
+				startOffset = 26;
+				LABEL_SIZE = TEXT_SIZE -10;
+				if(wheel_type == Constant.wheel_year){
+					startOffset = 8;
+				}
+				if(wheel_type == Constant.wheel_day){
+					startLabel = 33;
+				}
+			}else if(value.equals("240*320")){
+				ITEM_HEIGHT = 17;
+				TEXT_SIZE = 14;
+				startLabel = 22;
+				startOffset = 10;
+				LABEL_SIZE = TEXT_SIZE -7;
+				if(wheel_type == Constant.wheel_year){
+					startOffset = -9;
+				}
+				if(wheel_type == Constant.wheel_day){
+					startLabel = 20;
+				}
+			}
 		}
 		invalidateLayouts();
 		invalidate();
@@ -455,7 +519,7 @@ public class WheelView extends View {
 			labelPaint = new TextPaint(Paint.ANTI_ALIAS_FLAG
 					| Paint.FAKE_BOLD_TEXT_FLAG | Paint.DITHER_FLAG);
 			//valuePaint.density = getResources().getDisplayMetrics().density;
-			labelPaint.setTextSize(TEXT_SIZE-10);
+			labelPaint.setTextSize(LABEL_SIZE);
 			labelPaint.setShadowLayer(0.1f, 0, 0.1f, 0xFFC0C0C0);
 		}
 
@@ -849,7 +913,7 @@ public class WheelView extends View {
 		// draw label
 		if (labelLayout != null) {
 			canvas.save();
-			canvas.translate((float) ((getWidth() - labelWidth)/2.0 - LABEL_OFFSET), bounds.top + ITEM_HEIGHT);
+			canvas.translate(startLabel, bounds.top + ITEM_HEIGHT + 2);
 			labelLayout.draw(canvas);
 			canvas.restore();
 		}

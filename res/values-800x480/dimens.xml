@@ -3,6 +3,7 @@
  	<dimen name="time_select_marginTop">20px</dimen>
 	<dimen name="wheelView_layout_height">318px</dimen>
 	<dimen name="wheelView_year_width">110px</dimen>
+	<dimen name="simple_wheelView_year_width">150px</dimen>
 	<dimen name="wheelView_month_width">80px</dimen>	
 	<dimen name="wheelView_min_width">90px</dimen>
 	<dimen name="wheelView_layout_marginLeft">12px</dimen>
@@ -11,4 +12,7 @@
 	<dimen name="time_select_layout_button_height">90px</dimen>
 	<dimen name="time_select_button_width">160px</dimen>
 	<dimen name="time_select_button_marginLeft">20px</dimen>
+	
+	<dimen name="calendar_text_size">12sp</dimen>	
+		
 </resources>

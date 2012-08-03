@@ -14,6 +14,7 @@ import android.content.Intent;
 import android.database.Cursor;
 import android.graphics.Color;
 import android.graphics.Typeface;
+import android.graphics.drawable.ColorDrawable;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.util.Log;
@@ -105,6 +106,7 @@ private ViewFlipper flipper = null;
 		private Button previous_year, next_year;
 		private Button current_day;
 		private EventArgs args;
+		private boolean flag = false;
 		
 		public ScheduleScreen() {
 			Date date = new Date();
@@ -120,6 +122,7 @@ private ViewFlipper flipper = null;
 		setContentView(R.layout.schedule_screen);
 		final VerticalScrollView pager = (VerticalScrollView) findViewById(R.id.pager);
 		setupView();
+		flag = true;
 		eventService.add(this);
 		mListHeader = (ImageView) findViewById(R.id.list_header);
 		mListHeader.setBackgroundResource(R.drawable.listview_header_up);
@@ -312,22 +315,25 @@ private ViewFlipper flipper = null;
 @Override
 	public void onWindowFocusChanged(boolean hasFocus) {
 		super.onWindowFocusChanged(hasFocus);
-		 calV = new CalendarAdapter(this, getResources(),jumpMonth,jumpYear,year_c,month_c,day_c,1,flipper.getHeight(), Constant.flagType);
-	        
-	        addGridView();
-	        gridView.setAdapter(calV);
-	        //flipper.addView(gridView);
-	        flipper.addView(gridView,0);
-	        current_date = (TextView) findViewById(R.id.current_date);
-			addTextToTopTextView(current_date);
-		
-			previous_year = (Button) findViewById(R.id.previous_year);
-			next_year = (Button) findViewById(R.id.next_year);
-			current_day = (Button) findViewById(R.id.current_day);
+		if(flag){
+			flag = false;
+			 calV = new CalendarAdapter(this, getResources(),jumpMonth,jumpYear,year_c,month_c,day_c,1,flipper.getHeight(), Constant.flagType);
+		        
+		        addGridView();
+		        gridView.setAdapter(calV);
+		        //flipper.addView(gridView);
+		        flipper.addView(gridView,0);
+		        current_date = (TextView) findViewById(R.id.current_date);
+				addTextToTopTextView(current_date);
 			
-			previous_year.setOnClickListener(this);
-			next_year.setOnClickListener(this);
-			current_day.setOnClickListener(this);
+				previous_year = (Button) findViewById(R.id.previous_year);
+				next_year = (Button) findViewById(R.id.next_year);
+				current_day = (Button) findViewById(R.id.current_day);
+				
+				previous_year.setOnClickListener(this);
+				next_year.setOnClickListener(this);
+				current_day.setOnClickListener(this);
+		}
 	}
 
 	public void cursorToListData(Cursor c,List<ScheduleData> listdata)
@@ -599,6 +605,7 @@ private ViewFlipper flipper = null;
 //		if(Width == 480 && Height == 800){
 //			gridView.setColumnWidth(69);
 //		}
+      gridView.setSelector(new ColorDrawable(Color.TRANSPARENT)); 
 		gridView.setGravity(Gravity.CENTER);
 		gridView.setOnTouchListener(new OnTouchListener() {
             //将gridview中的触摸时间回传给gestureDetector
@@ -614,8 +621,8 @@ private ViewFlipper flipper = null;
 		gridView.setOnItemClickListener(new OnItemClickListener() {
             //gridView中的每一个item的点击事件
 			@Override
-			public void onItemClick(AdapterView<?> arg0, View arg1, int position,
-					long arg3) {/*
+			public void onItemClick(AdapterView<?> arg0, View view, int position,
+					long arg3) {
 				  //点击任何一个item，得到这个item的日期（排除点击的是周日到周六（点击不响应））
 				  int startPosition = calV.getStartPositon();
 				  int endPosition = calV.getEndPosition();
@@ -626,61 +633,21 @@ private ViewFlipper flipper = null;
 	                  String scheduleMonth = calV.getShowMonth();
 	                  String week = "";
 	                  
-	                  //ͨ通过日期查询这一天是否被标记，如果标记了日程就查询出这天的所有日程信息
-	                  String[] scheduleIDs = database.getScheduleByTagDate(Integer.parseInt(scheduleYear), Integer.parseInt(scheduleMonth), Integer.parseInt(scheduleDay));
-	                  if(scheduleIDs != null && scheduleIDs.length > 0){
-	                	  for(String str : scheduleIDs){
-	                		  System.out.print("scheduleID = "+str+", ");
-	                	  }
-	                	  //跳转到显示这一天的所有日程信息界面
-		  				  Intent intent = new Intent();
-		  				  intent.setClass(ScheduleScreen.this, ScheduleInfoScreen.class);
-		                  intent.putExtra("scheduleID", scheduleIDs);
-		  				  startActivity(intent);  
-		  				  
+                  int index = calV.getOldposition();
+	                  System.out.println("index = "+index);
+	                  if(index == -1){
+	                	  ((RelativeLayout)view).setBackgroundResource(R.drawable.current_day_bg);
+	                	  calV.setOldPosition(position);
 	                  }else{
-	                  //ֱ直接跳转到需要添加日程的界面
-	                	  
-		                  //得到这一天是星期几
-		                  switch(position%7){
-		                  case 0:
-		                	  week = "星期日";
-		                	  break;
-		                  case 1:
-		                	  week = "星期一";
-		                	  break;
-		                  case 2:
-		                	  week = "星期二";
-		                	  break;
-		                  case 3:
-		                	  week = "星期三";
-		                	  break;
-		                  case 4:
-		                	  week = "星期四";
-		                	  break;
-		                  case 5:
-		                	  week = "星期五";
-		                	  break;
-		                  case 6:
-		                	  week = "星期六";
-		                	  break;
-		                  }
-						 
-		                  ArrayList<String> scheduleDate = new ArrayList<String>();
-		                  scheduleDate.add(scheduleYear);
-		                  scheduleDate.add(scheduleMonth);
-		                  scheduleDate.add(scheduleDay);
-		                  scheduleDate.add(week);
-		                  //scheduleDate.add(scheduleLunarDay);
-		                  
-		                  
-		                  Intent intent = new Intent();
-		                  intent.putStringArrayListExtra("scheduleDate", scheduleDate);
-		                  intent.setClass(ScheduleScreen.this, ScheduleAddScreen.class);
-		                  startActivity(intent);
+	                	  RelativeLayout layout = (RelativeLayout) arg0.getChildAt(index);
+	                	  if(layout != null){
+	                		  layout.setBackgroundResource(R.drawable.gridview_bk);  
+//	                		  layout.setBackgroundDrawable(null);
+	                	  }
+		                  ((RelativeLayout)view).setBackgroundResource(R.drawable.current_day_bg);
+		                  System.out.println("position = "+position);
+		                  calV.setOldPosition(position);
 	                  }
-				  }
-			*/
 				String date = getDate(position);
 				if (!curSelectedDate.equals(date))	
 				{
@@ -694,6 +661,7 @@ private ViewFlipper flipper = null;
 
 				}
 			}
+        }
 		});
 		gridView.setLayoutParams(params);
 

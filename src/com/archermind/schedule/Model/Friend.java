@@ -3,29 +3,32 @@ package com.archermind.schedule.Model;
 import com.archermind.schedule.Utils.Constant;
 
 public class Friend {
-	private int id;
+	private String id;
 	private String telephone;
 	private String name;
 	private String headImagePath;
+	private String nike;
 	private int type = Constant.FriendType.friend_contact;
 
-	public Friend(int id, String telephone, String name, String headImagePath, int type){
-		this.id = id;
+	public Friend(){
+		
+	}
+	public Friend(String telephone, String name, String headImagePath, int type){
 		this.telephone = telephone;
 		this.name = name;
 		this.telephone = telephone;
 		this.headImagePath = headImagePath;
 		this.type = type;
 	}
-	public Friend(int id, String telephone, int type){
+	public Friend(String id, String telephone, int type){
 		this.id = id;
 		this.telephone = telephone;
 		this.type = type;
 	}
-	public int getId(){
+	public String getId(){
 		return this.id;
 	}
-	public void setId(int id){
+	public void setId(String id){
 		this.id = id;
 	}
 	public String getTelephone(){
@@ -54,7 +57,19 @@ public class Friend {
 		return type;
 	}
 
-	public void setType(int type) {
+	public void setType(int nike) {
 		this.type = type;
+	}
+	
+	public String getNike() {
+		return this.nike;
+	}
+
+	public void setNike(String nike) {
+		this.nike = nike;
+	}
+	
+	public String toString(){
+		return "id ="+id+" telephone = "+telephone + " name = "+name + " nike = "+nike;
 	}
 }

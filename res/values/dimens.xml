@@ -18,17 +18,20 @@
 	<dimen name="previous_year_height">33dp</dimen>
 	<dimen name="current_day_marginRight">8dp</dimen>
 	
+	<dimen name="calendar_text_size">10sp</dimen>	
 	<dimen name="calendar_number_width">46dp</dimen>	
 	<dimen name="calendar_number_height">49dp</dimen>
 	<dimen name="calendar_schedule_number_width">16dp</dimen>
 	<dimen name="calendar_schedule_number_height">25dp</dimen>
 	
+	
 	    
  	<dimen name="time_select_marginTop">10dp</dimen>
 	<dimen name="wheelView_layout_height">210dp</dimen>
 	<dimen name="wheelView_year_width">80dp</dimen>
+	<dimen name="simple_wheelView_year_width">95dp</dimen>
 	<dimen name="wheelView_month_width">57dp</dimen>	
-	<dimen name="wheelView_min_width">57px</dimen>
+	<dimen name="wheelView_min_width">57dp</dimen>
 	<dimen name="wheelView_layout_marginLeft">6dp</dimen>
 	<dimen name="wheelView_layout_marginRight">6dp</dimen>
 	

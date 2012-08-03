@@ -20,12 +20,19 @@ public class Constant {
 	public static int wheel_day = 3;
 	public static int wheel_hour = 4;
 	public static int wheel_min = 5;
+public static int wheelViewFlag = 0;
+	
 	
 	public final static class FriendType{
 		public final static int friend_yes = 0;
 		public final static int friend_Ignore = 1;
 		public final static int friend_contact_use = 2;
 		public final static int friend_contact = 3;
+		
+		public final static String FRIEND_YES_KEY = "friend_yes_key";
+		public final static String FRIEND_IGNORE_KEY = "friend_ingnore_key";
+		public final static String FRIEND_CONTACT_USE_KEY = "friend_cantact_use_key";
+		public final static String FRIEND_CONTACT_KEY = "friend_contact_key";
 	}
 	public static boolean refrash = false;
 }

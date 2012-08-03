@@ -111,7 +111,8 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 
 	public static final String ASCHEDULE_CONTACT = "schedule_contact";	/* 微日程联系人表 */
 	public static final String COLUMN_CONTACT_ID = "contact_id";			/* 微日程联系人表 */
-	public static final String ASCHEDULE_CONTACT_NUM = "number";			/* 微日程联系人表 */
+   public static final String COLUMN_FRIEND_ID = "friend_id";		
+   public static final String ASCHEDULE_CONTACT_NUM = "number";			/* 微日程联系人表 */
 //	public static final String ASCHEDULE_CONTACT_FLAG = "flag";			/* 微日程联系人表 */
 	public static final String ASCHEDULE_CONTACT_NAME = "name";
 	public static final String ASCHEDULE_CONTACT_IMGPATH = "img_path";
@@ -120,6 +121,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 	+ ASCHEDULE_CONTACT +
 	" ( "
 	+ COLUMN_CONTACT_ID + " INTEGER PRIMARY KEY, " 
+	+ COLUMN_FRIEND_ID + " INTEGER DEFAULT '-1', "
 	+ ASCHEDULE_CONTACT_NUM + " TEXT, "
 	+ ASCHEDULE_CONTACT_NAME + " TEXT, "
 	+ ASCHEDULE_CONTACT_IMGPATH + " TEXT, "
@@ -131,6 +133,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 	public static final String ASCHEDULE_FRIEND_ID = "friend_id";
 	public static final String ASCHEDULE_FRIEND_NUM = "number";
 	public static final String ASCHEDULE_FRIEND_NAME = "name";
+	public static final String ASCHEDULE_FRIEND_NIKE = "nike";
 	public static final String ASCHEDULE_FRIEND_TYPE = "type";
 	
 	private static final String CREATE_FRIEND_TABLE = " CREATE TABLE IF NOT EXISTS "
@@ -139,6 +142,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 		+ ASCHEDULE_FRIEND_ID + " INTEGER PRIMARY KEY, " 
 		+ ASCHEDULE_FRIEND_NUM + " TEXT, "
 		+ ASCHEDULE_FRIEND_NAME + " TEXT, "
+		+ ASCHEDULE_FRIEND_NIKE + " TEXT, "
 		+ ASCHEDULE_FRIEND_TYPE + " INTEGER DEFAULT '0' "
 		+ " ); ";
 	public DatabaseHelper(Context context) {

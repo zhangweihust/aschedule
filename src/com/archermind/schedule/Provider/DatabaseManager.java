@@ -134,7 +134,21 @@ public class DatabaseManager {
 								+ " ASC");
 	}
 	
-	
+	public Cursor queryMonthLocalSchedules(long starTimeInMillis, long endTimeInMillis) {
+		return database
+				.query(DatabaseHelper.TAB_LOCAL_SCHEDULE,
+						null,
+						DatabaseHelper.COLUMN_SCHEDULE_START_TIME
+								+ " BETWEEN ? AND ?  AND " + DatabaseHelper.COLUMN_SCHEDULE_OPER_FLAG + " != 'D'",
+						new String[] {
+								String.valueOf(DateTimeUtils.getToday(
+										Calendar.AM, starTimeInMillis)),
+								String.valueOf(DateTimeUtils.getToday(
+										Calendar.PM, endTimeInMillis)) }, null,
+						null, DatabaseHelper.COLUMN_SCHEDULE_START_TIME
+								+ " ASC");
+	}
+
 
 	public Cursor queryTomorrowLocalSchedules(long timeInMillis) {
 		return database
@@ -280,12 +294,13 @@ public class DatabaseManager {
 	public Cursor queryContactIdByTel(String tel){
 		return database.query(DatabaseHelper.ASCHEDULE_CONTACT, null, DatabaseHelper.ASCHEDULE_CONTACT_NUM + " =? ", new String[]{tel}, null, null, null);
 	}
-	public void updateContactType(Cursor cursor, int type){
+	public void updateContactType(Cursor cursor, int type, String id){
 		while(cursor.moveToNext()){
-			String id = cursor.getString(cursor.getColumnIndex(DatabaseHelper.COLUMN_CONTACT_ID));
+			String tel = cursor.getString(cursor.getColumnIndex(DatabaseHelper.ASCHEDULE_CONTACT_NUM));
 			ContentValues values = new ContentValues();
 			values.put(DatabaseHelper.ASCHEDULE_CONTACT_TYPE, type);
-			database.update(DatabaseHelper.ASCHEDULE_CONTACT, values, DatabaseHelper.COLUMN_CONTACT_ID + " =? ", new String[] { String.valueOf(id)});
+			values.put(DatabaseHelper.COLUMN_FRIEND_ID, id);
+			database.update(DatabaseHelper.ASCHEDULE_CONTACT, values, DatabaseHelper.ASCHEDULE_CONTACT_NUM + " =? ", new String[] { String.valueOf(tel)});
 		}
 		cursor.close();
 	}
@@ -306,17 +321,17 @@ public class DatabaseManager {
 		return count > 0 ? true : false;
 	}
 
-	public void addFriend(int id){
-		ContentValues values = new ContentValues();
-		values.put(DatabaseHelper.ASCHEDULE_FRIEND_TYPE, Constant.FriendType.friend_yes);
-		values.put(DatabaseHelper.ASCHEDULE_FRIEND_ID, id);
+	public void addFriend(ContentValues values){
 		database.insert(DatabaseHelper.ASCHEDULE_FRIEND, null,values);
 	}
-	public void addIgnoreFriend(int id){
+public void deleteFriend(String id){
+		database.delete(DatabaseHelper.ASCHEDULE_FRIEND, DatabaseHelper.COLUMN_FRIEND_ID+ " =? ", new String[] { String.valueOf(id)});
+	}
+	public void ignoreFriend(String id){
 		ContentValues values = new ContentValues();
 		values.put(DatabaseHelper.ASCHEDULE_FRIEND_TYPE, Constant.FriendType.friend_Ignore);
 		values.put(DatabaseHelper.ASCHEDULE_FRIEND_ID, id);
-		database.insert(DatabaseHelper.ASCHEDULE_FRIEND, null,values);
+		database.update(DatabaseHelper.ASCHEDULE_FRIEND, values, DatabaseHelper.COLUMN_FRIEND_ID+ " =? ", new String[] { String.valueOf(id)});
 	}
 	public void UpdateContactUse(int id){
 		ContentValues values = new ContentValues();

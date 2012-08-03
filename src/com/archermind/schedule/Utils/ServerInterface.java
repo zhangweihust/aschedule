@@ -519,7 +519,7 @@ public class ServerInterface {
 									.getColumnIndex(DatabaseHelper.COLUMN_SCHEDULE_NOTICE_END)));
 					map.put("content",
 							cursor.getString(cursor
-									.getColumnIndex(DatabaseHelper.COLUMN_SCHEDULE_NOTICE_CONTENT)));
+									.getColumnIndex(DatabaseHelper.COLUMN_SCHEDULE_CONTENT)));
 					map.put("tid",
 							Integer.toString(cursor.getInt(cursor
 									.getColumnIndex(DatabaseHelper.COLUMN_SCHEDULE_T_ID))));

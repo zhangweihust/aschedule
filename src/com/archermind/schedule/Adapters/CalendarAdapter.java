@@ -2,10 +2,14 @@ package com.archermind.schedule.Adapters;
 
 
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Date;
+import java.util.Locale;
 
 import android.content.Context;
 import android.content.res.Resources;
+import android.database.Cursor;
 import android.graphics.Color;
 import android.graphics.drawable.Drawable;
 import android.text.SpannableString;
@@ -18,12 +22,16 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
 import android.widget.ImageView;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.archermind.schedule.R;
 import com.archermind.schedule.Calendar.LunarCalendar;
 import com.archermind.schedule.Calendar.SpecialCalendar;
+import com.archermind.schedule.Model.ScheduleBean;
+import com.archermind.schedule.Provider.DatabaseHelper;
 import com.archermind.schedule.Provider.DatabaseManager;
+import com.archermind.schedule.Services.ServiceManager;
 
 /**
  * 日历gridview中的每一个item显示的textview
@@ -70,7 +78,12 @@ public class CalendarAdapter extends BaseAdapter {
 	private String sch_month = "";
 	private String sch_day = "";
 	private int height;
+	private int old_position = -1;
+	private int old_color_res;
 	
+	
+	private int height1;
+	private int height2;
 	public CalendarAdapter(){
 		Date date = new Date();
 		sysDate = sdf.format(date);  //当前日期
@@ -84,6 +97,14 @@ public class CalendarAdapter extends BaseAdapter {
 		this();
 		this.context= context;
 		this.height = height;
+		
+		if(height % 6 == 0){
+			height1 = height2 = height / 6;
+		}else{
+			height1 = height / 6;
+			height2 = height / 6 + height % 6;
+		}
+		
 		sc = new SpecialCalendar();
 		lc = new LunarCalendar();
 		this.res = rs;
@@ -104,9 +125,17 @@ public class CalendarAdapter extends BaseAdapter {
 				//往上一个月滑动
 				stepYear = /*year_c*/stepYear - 1 + stepMonth/12;
 				stepMonth = stepMonth%12 + 12;
+			}
+		}else if(mark == 0){
+			if(stepMonth > 0){
+				//往下一个月滑动
 				if(stepMonth%12 == 0){
-					
+					stepMonth = 12;
+				}else{
+					stepMonth = stepMonth%12;
 				}
+			}else{
+				stepMonth = stepMonth%12 + 12;
 			}
 		}
 	
@@ -157,8 +186,14 @@ public class CalendarAdapter extends BaseAdapter {
 		if(convertView == null){
 			convertView = LayoutInflater.from(context).inflate(R.layout.calendar, null);
 		 }
+		RelativeLayout layout = (RelativeLayout) convertView.findViewById(R.id.calendar_layout);
 		TextView calendar_number = (TextView) convertView.findViewById(R.id.calendar_number);
-		calendar_number.setHeight(height / 6 + 1);
+//		calendar_number.setTextSize(height1/4);
+		if(position < 35){
+			calendar_number.setHeight(height1);
+		}else{
+			calendar_number.setHeight(height2);
+		}
 		TextView calendar_schedule_number = (TextView) convertView.findViewById(R.id.calendar_schedule_number);
 		ImageView holiday = (ImageView) convertView.findViewById(R.id.calendar_holiday);
 		String d = dayNumber[position].split("\\.")[0];
@@ -190,6 +225,7 @@ public class CalendarAdapter extends BaseAdapter {
 			calendar_number.setTextColor(Color.BLACK);
 			drawable = res.getDrawable(R.drawable.week_top);
 			calendar_number.setBackgroundDrawable(drawable);
+			calendar_number.setTag(R.drawable.week_top);
 		}
 		
 		if (position < daysOfMonth + dayOfWeek+daysOfWeek && position >= dayOfWeek+daysOfWeek) {
@@ -214,9 +250,10 @@ public class CalendarAdapter extends BaseAdapter {
 		}
 		if(currentFlag == position){ 
 			//设置当天的背景
-			drawable = res.getDrawable(R.drawable.current_day_bg);
-			calendar_number.setBackgroundDrawable(drawable);
+//			calendar_number.setBackgroundDrawable(drawable);
+			layout.setBackgroundResource(R.drawable.current_day_bg);
 			calendar_number.setTextColor(Color.WHITE);
+			setOldPosition(position);
 		}
 		return convertView;
 	}
@@ -244,11 +281,23 @@ public class CalendarAdapter extends BaseAdapter {
 		int flag = 0;
 		String lunarDay = "";
 		//得到当前月的所有日程日期（这些日期需要标记）
-//		database = ServiceManager.getDbManager();
-//		ArrayList<ScheduleDateTag> dateTagList = database.getTagDate(year,month);
-//		if(dateTagList != null && dateTagList.size() > 0){
-//			schDateTagFlag = new int[dateTagList.size()];
-//		}
+		database = ServiceManager.getDbManager();
+		Date startData = new Date(year, month, 1);
+		int days = SpecialCalendar.getDaysOfMonth(SpecialCalendar.isLeapYear(year),month);
+		Date endData = new Date(year, month, days);
+		long starTimeInMillis = startData.getTime();
+		long endTimeInMillis = endData.getTime();
+		ArrayList<ScheduleBean> dateTagList = new ArrayList<ScheduleBean>();
+		Cursor cursor = database.queryMonthLocalSchedules(starTimeInMillis, endTimeInMillis);
+		while(cursor.moveToNext()){
+			String date = cursor.getString(cursor.getColumnIndex(DatabaseHelper.COLUMN_SCHEDULE_START_TIME));
+			ScheduleBean scheduleBean = new ScheduleBean();
+			scheduleBean.setDate(date);
+			dateTagList.add(scheduleBean);
+		}
+		if(dateTagList != null && dateTagList.size() > 0){
+			schDateTagFlag = new int[dateTagList.size()];
+		}
 		
 		for (int i = 0; i < dayNumber.length; i++) {
 			int k = 1;
@@ -271,18 +320,21 @@ public class CalendarAdapter extends BaseAdapter {
 				}
 				
 				//标记日程日期
-//				if(dateTagList != null && dateTagList.size() > 0){
-//					for(int m = 0; m < dateTagList.size(); m++){
-//						ScheduleDateTag dateTag = dateTagList.get(m);
-//						int matchYear = dateTag.getYear();
-//						int matchMonth = dateTag.getMonth();
-//						int matchDay = dateTag.getDay();
-//						if(matchYear == year && matchMonth == month && matchDay == Integer.parseInt(day)){
-//							schDateTagFlag[flag] = i;
-//							flag++;
-//						}
-//					}
-//				}
+				if(dateTagList != null && dateTagList.size() > 0){
+					for(int m = 0; m < dateTagList.size(); m++){
+						ScheduleBean scheduleBean = dateTagList.get(m);
+						String date = scheduleBean.getDate();
+						Calendar time = Calendar.getInstance(Locale.CHINA);
+						time.setTimeInMillis(Long.parseLong(date));
+						int matchYear = time.get(Calendar.YEAR);
+						int matchMonth = time.get(Calendar.MONTH + 1);
+						int matchDay = time.get(Calendar.DAY_OF_MONTH);
+						if(matchYear == year && matchMonth == month && matchDay == Integer.parseInt(day)){
+							schDateTagFlag[flag] = i;
+							flag++;
+						}
+					}
+				}
 				
 				setShowYear(String.valueOf(year));
 				setShowMonth(String.valueOf(month));
@@ -374,4 +426,22 @@ public class CalendarAdapter extends BaseAdapter {
 	public void setCyclical(String cyclical) {
 		this.cyclical = cyclical;
 	}
+	
+	public void setOldPosition(int old_position){
+		this.old_position = old_position;
+	}
+	public int getOldposition(){
+		return this.old_position;
+	}
+	
+	public void setOldColorRes(int old_color_res){
+		this.old_color_res = old_color_res;
+	}
+	
+	public int getOldColorRes(){
+		return this.old_color_res;
+	}
+	
 }
+
+
