@@ -7,9 +7,6 @@ import java.util.Collections;
 import java.util.Date;
 import java.util.List;
 
-import android.app.AlertDialog;
-import android.app.DatePickerDialog;
-import android.app.DatePickerDialog.OnDateSetListener;
 import android.content.Intent;
 import android.database.Cursor;
 import android.graphics.Color;
@@ -17,14 +14,11 @@ import android.graphics.Typeface;
 import android.graphics.drawable.ColorDrawable;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.Display;
 import android.view.GestureDetector;
 import android.view.GestureDetector.OnGestureListener;
 import android.view.Gravity;
 import android.view.KeyEvent;
-import android.view.Menu;
-import android.view.MenuItem;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.View.OnClickListener;
@@ -35,25 +29,22 @@ import android.view.animation.AnimationUtils;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
 import android.widget.Button;
-import android.widget.DatePicker;
 import android.widget.FrameLayout;
 import android.widget.GridView;
 import android.widget.ImageView;
-import android.widget.ListView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
-import android.widget.Toast;
 import android.widget.ViewFlipper;
 
 import com.archermind.schedule.R;
 import com.archermind.schedule.Adapters.CalendarAdapter;
-import com.archermind.schedule.Adapters.LocalScheduleAdapter;
 import com.archermind.schedule.Adapters.HistoryScheduleAdapter;
 import com.archermind.schedule.Events.EventArgs;
 import com.archermind.schedule.Events.IEventHandler;
 import com.archermind.schedule.Provider.DatabaseHelper;
 import com.archermind.schedule.Services.ServiceManager;
 import com.archermind.schedule.Utils.Constant;
+import com.archermind.schedule.Utils.DateTimeUtils;
 import com.archermind.schedule.Utils.ScheduleData;
 import com.archermind.schedule.Views.VerticalScrollView;
 import com.archermind.schedule.Views.XListView;
@@ -425,7 +416,8 @@ private ViewFlipper flipper = null;
 	private void onLoad() {
 		list2.stopRefresh();
 		list2.stopLoadMore();
-		list2.setRefreshTime("刚刚");
+		list2.setRefreshTime(DateTimeUtils.time2String("yyyy-MM-dd hh:mm:ss",
+				System.currentTimeMillis()));
 	}
 
 	@Override

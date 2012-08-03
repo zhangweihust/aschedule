@@ -49,7 +49,7 @@ public class LoadingScreen extends Screen implements IEventHandler {
         new Thread() {
             public void run() {
 
-                handler.sendEmptyMessage(0);
+               // handler.sendEmptyMessage(0);
                 
                 try {
                     Thread.sleep(2 * 1000);
@@ -125,5 +125,13 @@ public class LoadingScreen extends Screen implements IEventHandler {
 
         eventService.remove(this);
     }
+
+	@Override
+	public void onWindowFocusChanged(boolean hasFocus) {
+		super.onWindowFocusChanged(hasFocus);
+		mAnimaition.start();
+	}
+    
+    
 
 }

@@ -124,12 +124,14 @@ public class DatabaseManager {
 				.query(DatabaseHelper.TAB_LOCAL_SCHEDULE,
 						null,
 						DatabaseHelper.COLUMN_SCHEDULE_START_TIME
-								+ " BETWEEN ? AND ?  AND " + DatabaseHelper.COLUMN_SCHEDULE_OPER_FLAG + " != 'D'",
-						new String[] {
+								+ " BETWEEN ? AND ?  AND " + DatabaseHelper.COLUMN_SCHEDULE_OPER_FLAG + " != 'D' AND "
+								+ DatabaseHelper.COLUMN_SCHEDULE_ORDER + " = ? ",
+						new String[] { 
 								String.valueOf(DateTimeUtils.getToday(
 										Calendar.AM, timeInMillis)),
 								String.valueOf(DateTimeUtils.getToday(
-										Calendar.PM, timeInMillis)) }, null,
+										Calendar.PM, timeInMillis)),
+										"0"}, null,
 						null, DatabaseHelper.COLUMN_SCHEDULE_START_TIME
 								+ " ASC");
 	}

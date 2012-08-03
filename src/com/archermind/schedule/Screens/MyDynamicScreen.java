@@ -9,6 +9,7 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import android.content.ContentValues;
+import android.content.Intent;
 import android.database.Cursor;
 import android.os.Bundle;
 import android.os.Handler;
@@ -92,6 +93,8 @@ public class MyDynamicScreen extends Screen implements IXListViewListener, OnIte
 			public void onClick(View v) {
 				Toast.makeText(MyDynamicScreen.this, "login",
 						Toast.LENGTH_SHORT).show();
+				Intent it = new Intent(MyDynamicScreen.this,LoginScreen.class);
+				startActivity(it);
 			}
 		});
 		registerBtn.setOnClickListener(new OnClickListener() {
@@ -99,6 +102,8 @@ public class MyDynamicScreen extends Screen implements IXListViewListener, OnIte
 			public void onClick(View v) {
 				Toast.makeText(MyDynamicScreen.this, "register",
 						Toast.LENGTH_SHORT).show();
+				Intent it = new Intent(MyDynamicScreen.this,RegisterScreen.class);
+				startActivity(it);
 			}
 		});
 		new Thread(new Runnable() {
@@ -146,8 +151,12 @@ public class MyDynamicScreen extends Screen implements IXListViewListener, OnIte
 		getSchedulesFromWeb("1343203369");
 		c = ServiceManager.getDbManager().queryLocalSchedules(start, end);
 		if (c.getCount() == 0) {
-				list.addFooterView(mListFooter);
-				list.setHeaderGone(false);
+			    MyDynamicScreen.this.runOnUiThread(new Runnable(){
+				@Override
+				public void run() {
+					list.addFooterView(mListFooter);
+					list.setHeaderGone(false);
+				}});
 				insertDefaultSchedules();
 				c.requery();
 		} 

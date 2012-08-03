@@ -73,14 +73,6 @@ public class NewScheduleScreen extends Screen implements OnClickListener {
 			R.drawable.schedule_new_work
 
 	};
-	private static int SCHEDULE_EVENT_TYPE_NONE = 0;
-	private static int SCHEDULE_EVENT_TYPE_NOTICE = 1;
-	private static int SCHEDULE_EVENT_TYPE_ACTIVE = 2;
-	private static int SCHEDULE_EVENT_TYPE_APPOINTMENT = 3;
-	private static int SCHEDULE_EVENT_TYPE_TRAVEL = 4;
-	private static int SCHEDULE_EVENT_TYPE_ENTERTAINMENT = 5;
-	private static int SCHEDULE_EVENT_TYPE_EAT = 6;
-	private static int SCHEDULE_EVENT_TYPE_WORK = 7;
 
 	private View remind_root_view;
 	private LayoutInflater inflater;
@@ -125,7 +117,7 @@ public class NewScheduleScreen extends Screen implements OnClickListener {
 	private int weekValue = 0x00;
 	private int[] weekvalue = new int[7];
 	private Calendar mCalendar = Calendar.getInstance();
-	private ServerInterface si = new ServerInterface();
+	private ServerInterface si;
 	private TimeSelectorDialog timeselectordialog;
 	private long flagAlarm;
 	private long schedule_id;
@@ -134,6 +126,7 @@ public class NewScheduleScreen extends Screen implements OnClickListener {
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
+		si = ServiceManager.getServerInterface();
 		setContentView(R.layout.schedule_new);
 		init();
 	}
@@ -218,28 +211,28 @@ public class NewScheduleScreen extends Screen implements OnClickListener {
 				img_selector.setVisibility(View.VISIBLE);
 				moveTopSelect(position);
 				switch (position) {
+//				case 0:
+//					mType = DatabaseHelper.SCHEDULE_EVENT_TYPE_NONE;
 				case 0:
-					mType = SCHEDULE_EVENT_TYPE_NONE;
+					mType = DatabaseHelper.SCHEDULE_EVENT_TYPE_NOTICE;
+					break;
 				case 1:
-					mType = SCHEDULE_EVENT_TYPE_NOTICE;
+					mType = DatabaseHelper.SCHEDULE_EVENT_TYPE_ACTIVE;
 					break;
 				case 2:
-					mType = SCHEDULE_EVENT_TYPE_ACTIVE;
+					mType = DatabaseHelper.SCHEDULE_EVENT_TYPE_APPOINTMENT;
 					break;
 				case 3:
-					mType = SCHEDULE_EVENT_TYPE_APPOINTMENT;
+					mType = DatabaseHelper.SCHEDULE_EVENT_TYPE_TRAVEL;
 					break;
 				case 4:
-					mType = SCHEDULE_EVENT_TYPE_TRAVEL;
+					mType = DatabaseHelper.SCHEDULE_EVENT_TYPE_ENTERTAINMENT;
 					break;
 				case 5:
-					mType = SCHEDULE_EVENT_TYPE_ENTERTAINMENT;
+					mType = DatabaseHelper.SCHEDULE_EVENT_TYPE_EAT;
 					break;
 				case 6:
-					mType = SCHEDULE_EVENT_TYPE_EAT;
-					break;
-				case 7:
-					mType = SCHEDULE_EVENT_TYPE_WORK;
+					mType = DatabaseHelper.SCHEDULE_EVENT_TYPE_WORK;
 					break;
 				}
 			}
@@ -602,6 +595,9 @@ public class NewScheduleScreen extends Screen implements OnClickListener {
 	}
 
 	public void saveScheduleToDb() {
+		new Thread(new Runnable(){
+			@Override
+			public void run() {
 		Log.d("NewSheduleScreen", "----save to schedule");
 		ContentValues cv = new ContentValues();
 		// cv.put(DatabaseHelper.COLUMN_SCHEDULE_USER_ID, 1);
@@ -629,8 +625,11 @@ public class NewScheduleScreen extends Screen implements OnClickListener {
 		cv.put(DatabaseHelper.COLUMN_SCHEDULE_NOTICE_WEEK, weekType.toString());
 		String scheduleText = schedule_text.getText().toString();
 		cv.put(DatabaseHelper.COLUMN_SCHEDULE_CONTENT, scheduleText);
-		schedule_id = ServiceManager.getDbManager().insertSchedules(cv);
-		// si.uploadSchedule();
+				ServiceManager.getDbManager().insertLocalSchedules(cv, scheduleTime);
+				si.uploadSchedule("0","1");
+			}
+			
+		}).start();
 	}
 
 	public void sendAlarm(Long time) {

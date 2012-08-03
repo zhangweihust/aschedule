@@ -55,6 +55,10 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 			+ " INTEGER, "
 			+ COLUMN_SCHEDULE_SHARE
 			+ " BOOLEAN, "
+			+ COLUMN_SCHEDULE_SLAVE_ID
+			+ " INTEGER, "
+			+ COLUMN_SCHEDULE_ORDER
+			+ " INTEGER, "
 			+ COLUMN_SCHEDULE_IMPORTANT
 			+ " BOOLEAN, "
 			+ COLUMN_SCHEDULE_TYPE
@@ -63,6 +67,8 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 			+ " BIGINT, "
 			+ COLUMN_SCHEDULE_OPER_FLAG
 			+ " TEXT, "
+			+ COLUMN_SCHEDULE_NOTICE_FLAG
+			+" BIGINT, "
 			+ COLUMN_SCHEDULE_UPDATE_TIME
 			+ " TEXT, "
 			+ COLUMN_SCHEDULE_NOTICE_TIME
@@ -76,6 +82,8 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 			+ COLUMN_SCHEDULE_NOTICE_END
 			+ " TEXT, "
 			+ COLUMN_SCHEDULE_FIRST_FLAG
+			+ " BOOLEAN, "
+			+ COLUMN_SCHEDULE_FLAG_OUTDATE
 			+ " BOOLEAN, "
 			+ COLUMN_SCHEDULE_CONTENT
 			+ " TEXT "

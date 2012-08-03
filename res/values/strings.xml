@@ -2,7 +2,7 @@
 <resources>
 
 	<string name="hello">Hello World, MainActivity!</string>
-	<string name="app_name">Schedule</string>
+	<string name="app_name">微日程</string>
 	<string name="tab_name_schedule">日程</string>
 	<string name="tab_name_dynamic">动态</string>
 	<string name="tab_name_friend">好友</string>
