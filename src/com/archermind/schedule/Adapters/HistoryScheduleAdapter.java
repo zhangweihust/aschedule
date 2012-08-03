@@ -127,6 +127,7 @@ public class HistoryScheduleAdapter extends BaseAdapter{
 			break;
 		}
 		EventArgs args = new EventArgs();
+		args.putExtra("id", data.id);
 		args.putExtra("time", data.time);
 		args.putExtra("first", data.first);
 		convertView.setTag(args);

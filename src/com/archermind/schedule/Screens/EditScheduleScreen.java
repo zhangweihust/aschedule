@@ -110,7 +110,7 @@ public class EditScheduleScreen extends Screen implements OnClickListener {
 	private Calendar mCalendar = Calendar.getInstance();
 	private int currentMonth, currentDay, currentWeek, currentTime;
 	private ServerInterface si;
-	private long schedule_id;
+	private int schedule_id;
 	private boolean firstFlag = false;
 	private String scheduleContent;
 	private int[] weekvalue = new int[7];
@@ -123,10 +123,10 @@ public class EditScheduleScreen extends Screen implements OnClickListener {
 		Intent mIntent = new Intent();
 		mIntent = getIntent();
 		si = ServiceManager.getServerInterface();
-		schedule_id = mIntent.getLongExtra("id", 1);
+		schedule_id = mIntent.getIntExtra("id", 1);
 		firstFlag = mIntent.getBooleanExtra("first", false);
 		scheduleTime = mIntent.getLongExtra("time", 1);
-		Log.i("editschedulescreen", "------schedule_id" + schedule_id);
+		Log.i("editschedulescreen", "------schedule_id = " + schedule_id);
 		init();
 	}
 
@@ -186,7 +186,7 @@ public class EditScheduleScreen extends Screen implements OnClickListener {
 		schedule_text = (ScheduleEditText) findViewById(R.id.schedule_note);
 
 		Cursor c = ServiceManager.getDbManager().queryScheduleById(
-				(int) schedule_id);
+				schedule_id);
 		if (c.moveToFirst())
 			scheduleContent = c
 					.getString(c
@@ -639,7 +639,7 @@ public class EditScheduleScreen extends Screen implements OnClickListener {
 //		contentvalues.put("oper_flag", oper_flag);
 //		ServiceManager.getDbManager().updateScheduleById((int) schedule_id,
 //				contentvalues);
-		ServiceManager.getDbManager().deleteLocalSchedules((int) schedule_id, firstFlag, scheduleTime);
+		ServiceManager.getDbManager().deleteLocalSchedules(schedule_id, firstFlag, scheduleTime);
 		si.uploadSchedule("0","1");
 
 		// ServiceManager.getDbManager().deleScheduleById(schedule_id);
@@ -666,7 +666,7 @@ public class EditScheduleScreen extends Screen implements OnClickListener {
 		cv.put(DatabaseHelper.COLUMN_SCHEDULE_NOTICE_WEEK, weekType);
 		String scheduleText = schedule_text.getText().toString();
 		cv.put(DatabaseHelper.COLUMN_SCHEDULE_CONTENT, scheduleText);
-		ServiceManager.getDbManager().updateScheduleById((int) schedule_id, cv);
+		ServiceManager.getDbManager().updateScheduleById(schedule_id, cv);
 		// ServiceManager.getDbManager().insertLocalSchedules(cv);
 		si.uploadSchedule("0","1");
 	}

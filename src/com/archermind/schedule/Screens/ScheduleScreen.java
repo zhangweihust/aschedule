@@ -154,7 +154,7 @@ private ViewFlipper flipper = null;
 							.setBackgroundResource(R.drawable.listview_header_down);
 					mListHeader.setTag(R.drawable.listview_header_down);
 //					tv2.setTextColor(Color.parseColor("#4f810f"));
-					list2.setHeaderGone(true);
+//					list2.setHeaderGone(true);
 //					tv3.setVisibility(View.VISIBLE);
 //					tv4.setVisibility(View.VISIBLE);
 				} else {
@@ -348,6 +348,7 @@ private ViewFlipper flipper = null;
 		while (c.moveToNext())
 		{
 			data = new ScheduleData();
+			data.id = c.getInt(c.getColumnIndex(DatabaseHelper.COLUMN_SCHEDULE_ID));
 			data.content = c.getString(c.getColumnIndex(DatabaseHelper.COLUMN_SCHEDULE_CONTENT));
 			data.time = c.getLong(c.getColumnIndex(DatabaseHelper.COLUMN_SCHEDULE_START_TIME));
 			data.share = c.getInt(c.getColumnIndex(DatabaseHelper.COLUMN_SCHEDULE_SHARE)) == 1;
@@ -383,7 +384,7 @@ private ViewFlipper flipper = null;
 		hsa.addPreData(listdata);
 		
 		onLoad();
-		list2.setHeaderGone(false);
+//		list2.setHeaderGone(false);
 	}
 
 	@Override
@@ -406,7 +407,7 @@ private ViewFlipper flipper = null;
 		hsa.addAfterData(listdata);
 		
 		onLoad();
-		list2.setHeaderGone(false);
+//		list2.setHeaderGone(false);
 	}
 
 	private void onLoad() {
@@ -427,12 +428,12 @@ private ViewFlipper flipper = null;
 							+ (Long) args.getExtra("time"), Toast.LENGTH_SHORT)
 					.show();
 		} else */if (parent.getId() == list2.getId()) {
-			Toast.makeText(
-					ScheduleScreen.this,
-					"list2=" + id + "  tag = "
-							+ (Boolean) args.getExtra("first") + "  time = "
-							+ (Long) args.getExtra("time"), Toast.LENGTH_SHORT)
-					.show();
+//			Toast.makeText(
+//					ScheduleScreen.this,
+//					"list2=" + id + "  tag = "
+//							+ (Boolean) args.getExtra("first") + "  time = "
+//							+ (Long) args.getExtra("time"), Toast.LENGTH_SHORT)
+//					.show();
 		}/* else if (parent.getId() == list3.getId()) {
 			Toast.makeText(
 					ScheduleScreen.this,
@@ -449,7 +450,7 @@ private ViewFlipper flipper = null;
 					.show();
 		}*/
 		Intent mIntent =new Intent(ScheduleScreen.this,EditScheduleScreen.class);
-		mIntent.putExtra("id", id);
+		mIntent.putExtra("id", (Integer) args.getExtra("id"));
 		mIntent.putExtra("first", (Boolean) args.getExtra("first"));
 		mIntent.putExtra("time", (Long) args.getExtra("time"));
 		ScheduleScreen.this.startActivity(mIntent);
