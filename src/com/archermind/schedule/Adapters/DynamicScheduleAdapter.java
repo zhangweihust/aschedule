@@ -104,6 +104,7 @@ public class DynamicScheduleAdapter extends BaseAdapter {
 			} else if ("下午".equals(amORpm)) {
 				item.time.setBackgroundResource(R.drawable.pm);
 			}
+			
 			item.location.setText(data.getLocation());
 			int t_id = data.getT_id();
 			Cursor slaveCursor = ServiceManager.getDbManager().querySlaveShareSchedules(t_id);

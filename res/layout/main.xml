@@ -1,21 +1,68 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/loadinglayout"
     android:layout_width="fill_parent"
     android:layout_height="fill_parent"
-    android:background="#ffffff"
-    android:orientation="vertical" >
+    android:background="@drawable/repeat_register_bg" >
 
-    <TextView
-        android:id="@+id/text1"
+    <LinearLayout
+        android:id="@+id/loadinglogo"
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
-        android:text="@string/hello" />
+        android:layout_marginTop="50dp"
+        android:gravity="center_horizontal" >
 
-    <Button
-        android:id="@+id/button1"
-        android:layout_width="wrap_content"
+        <ImageView
+            android:id="@+id/ivloadinglogo"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:src="@drawable/logo" >
+        </ImageView>
+    </LinearLayout>
+
+    <RelativeLayout
+        android:layout_width="fill_parent"
         android:layout_height="wrap_content"
-        android:text="Button" />
+        android:layout_below="@+id/loadinglogo"
+        android:layout_marginTop="50dp"
+        android:gravity="center_horizontal" >
+
+        <ImageView
+            android:id="@+id/ivloadingslogan"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:src="@drawable/slogan" >
+        </ImageView>
+
+        <ImageView
+            android:id="@+id/ivloadingsthreepoint"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="3dp"
+            android:layout_toRightOf="@+id/ivloadingslogan"
+            android:layout_alignBottom="@+id/ivloadingslogan"
+            >
+        </ImageView>
+        
+    </RelativeLayout>
 
     
-</LinearLayout>
+    <LinearLayout
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="14dp"
+        android:layout_alignParentBottom="true"
+        
+        android:gravity="center_horizontal" >
+
+        <ImageView
+            android:id="@+id/ivloadingreserved"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:src="@drawable/reserved" >
+        </ImageView>
+    </LinearLayout>
+    
+    
+    
+</RelativeLayout>

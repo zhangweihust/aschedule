@@ -214,7 +214,26 @@ public class DatabaseManager {
 						DatabaseHelper.COLUMN_SCHEDULE_START_TIME + " DESC " + " LIMIT ? ");
 	}
 	
-	
+	  public Cursor queryLocalSchedules(int start, int end) {
+
+        return database.query(DatabaseHelper.TAB_LOCAL_SCHEDULE, null,
+               DatabaseHelper.COLUMN_SCHEDULE_SHARE + " =? " , new String[] {
+                       "1", String.valueOf(start), String.valueOf(end)
+                }, null, null, DatabaseHelper.COLUMN_SCHEDULE_START_TIME + " DESC "
+                        + " LIMIT ? , ? ");
+
+    }
+    
+    public Cursor queryLocalSchedules(long time, int size) {
+
+        return database.query(DatabaseHelper.TAB_LOCAL_SCHEDULE, null,
+                DatabaseHelper.COLUMN_SCHEDULE_SHARE + " =? AND "
+                        + DatabaseHelper.COLUMN_SCHEDULE_START_TIME + " < ? ", new String[] {
+                        "1", String.valueOf(time), String.valueOf(size)
+                }, null, null, DatabaseHelper.COLUMN_SCHEDULE_START_TIME + " DESC "
+                        + " LIMIT ? ");
+
+    }
 	
 	public Cursor queryMyShareSchedules() {
 		return database
@@ -231,8 +250,9 @@ public class DatabaseManager {
 		return database
 				.query(DatabaseHelper.TAB_SHARE_SCHEDULE,
 						null,
-						DatabaseHelper.COLUMN_SCHEDULE_SLAVE_ID + " =? ",
-						new String[] {String.valueOf(t_id)}, 
+						DatabaseHelper.COLUMN_SCHEDULE_SLAVE_ID + " =? AND " 
+						+ DatabaseHelper.COLUMN_SCHEDULE_ORDER +" >? ",
+						new String[] {String.valueOf(t_id),"0"}, 
 						null,
 						null,
 						DatabaseHelper.COLUMN_SCHEDULE_START_TIME + " ASC ");
