@@ -11,6 +11,7 @@ import android.content.Intent;
 import android.content.IntentFilter;
 import android.database.Cursor;
 import android.os.Bundle;
+import android.view.KeyEvent;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.Button;
@@ -61,6 +62,17 @@ public class FriendScreen extends Screen implements OnClickListener{
 		loadData();
 		
 	 }
+	
+	@Override
+	public boolean onKeyUp(int keyCode, KeyEvent event) {
+		// TODO Auto-generated method stub
+		
+		if (keyCode == KeyEvent.KEYCODE_MENU)
+		{
+			HomeScreen.switchActivity();
+		}
+		return super.onKeyUp(keyCode, event);
+	}
 	
 	private void loadData(){
 		new FriendTask(this).execute();

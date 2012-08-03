@@ -9,6 +9,11 @@
 	<dimen name="login_Microblogging_commonmargin">30dip</dimen>
 	<dimen name="login_sinaMicroblogging_margintop">30dip</dimen>
 	<dimen name="login_otherMicroblogging_margintop">10dip</dimen>
+	<dimen name="login_separated_up">30dip</dimen>
+	<dimen name="login_separated_low">15dip</dimen>
+	<dimen name="login_btn_up">19dip</dimen>
+	<dimen name="menu_first_row_btn_up">55dip</dimen>
+	<dimen name="menu_between_btn">65dip</dimen>
 	
 	<dimen name="calendar_level1_height">73dp</dimen>
 	<dimen name="calendar_level2_height">38dp</dimen>

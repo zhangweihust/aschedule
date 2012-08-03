@@ -1,5 +1,19 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <resources>
+	<!--login_layout.xml.xml -->
+	<dimen name="login_goback_marginleft">3dip</dimen>
+	<dimen name="login_title_marginleft">85dip</dimen>
+	<dimen name="login_schedule_margintop">15dip</dimen>
+	<dimen name="login_schedule_marginleft">20dip</dimen>
+	<dimen name="login_Microblogging_commonmargin">30dip</dimen>
+	<dimen name="login_sinaMicroblogging_margintop">20dip</dimen>
+	<dimen name="login_otherMicroblogging_margintop">10dip</dimen>
+	<dimen name="login_separated_up">20dip</dimen>
+	<dimen name="login_separated_low">15dip</dimen>
+	<dimen name="login_btn_up">19dip</dimen>
+	<dimen name="menu_first_row_btn_up">45dip</dimen>
+	<dimen name="menu_between_btn">60dip</dimen>
+
  	<dimen name="time_select_marginTop">10px</dimen>
 	<dimen name="wheelView_layout_height">210px</dimen>
 	<dimen name="wheelView_year_width">80px</dimen>

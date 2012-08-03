@@ -12,6 +12,7 @@ import android.database.Cursor;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
+import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.View.OnClickListener;
@@ -110,6 +111,16 @@ public class FriendsDyamicScreen extends Screen implements
 
 	}
 
+	@Override
+	public boolean onKeyUp(int keyCode, KeyEvent event) {
+		// TODO Auto-generated method stub
+		
+		if (keyCode == KeyEvent.KEYCODE_MENU)
+		{
+			HomeScreen.switchActivity();
+		}
+		return super.onKeyUp(keyCode, event);
+	}
 
 	private void onLoad() {
 		list.stopRefresh();

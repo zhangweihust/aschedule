@@ -22,6 +22,7 @@ import android.view.Display;
 import android.view.GestureDetector;
 import android.view.GestureDetector.OnGestureListener;
 import android.view.Gravity;
+import android.view.KeyEvent;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.MotionEvent;
@@ -174,6 +175,17 @@ private ViewFlipper flipper = null;
 		});
 	}
 
+	@Override
+	public boolean onKeyUp(int keyCode, KeyEvent event) {
+		// TODO Auto-generated method stub
+		
+		if (keyCode == KeyEvent.KEYCODE_MENU)
+		{
+			HomeScreen.switchActivity();
+		}
+		return super.onKeyUp(keyCode, event);
+	}
+	
 	private void setupView() {
 //		tv1 = (TextView) findViewById(R.id.tv01);
 //		tv2 = (TextView) findViewById(R.id.tv02);

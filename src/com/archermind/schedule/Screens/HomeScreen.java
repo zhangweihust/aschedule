@@ -1,6 +1,8 @@
 package com.archermind.schedule.Screens;
 
+import android.app.Activity;
 import android.app.TabActivity;
+import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.LayoutInflater;
@@ -36,10 +38,12 @@ public class HomeScreen extends TabActivity implements OnTabChangeListener {
 	private ImageView titleImage;
 	private static TabHost mChildTabHost;
 	private Button titleAddBtn;
+	private static Context context;
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.home_screen);
+        context = HomeScreen.this;
         initView();
         mTabHost.addTab(buildTabSpec("schedule", R.drawable.tab_schedule, new Intent(this, ScheduleScreen.class)));
         mTabHost.addTab(buildTabSpec("dynamic", R.drawable.tab_dynamic, new Intent(this, DynamicScreen.class)));
@@ -161,6 +165,10 @@ public class HomeScreen extends TabActivity implements OnTabChangeListener {
 	        mCurSelectTabIndex = selectIndex;
 	    }
 	 
-	 
+	 public static void switchActivity()
+	 {
+		 context.startActivity(new Intent(context,MenuScreen.class));	
+		 ((Activity) context).overridePendingTransition(R.anim.right_in,R.anim.right_out);
+	 }
 	 
 }
