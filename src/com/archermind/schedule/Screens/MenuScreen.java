@@ -60,6 +60,7 @@ public class MenuScreen extends Activity implements OnClickListener{
 			overridePendingTransition(R.anim.right_in,R.anim.right_out);
 			break;
 		case R.id.menu_weather_btn:
+			startActivity(new Intent(MenuScreen.this,WeatherScreen.class));
 			break;
 		case R.id.menu_setting_btn:
 			break;

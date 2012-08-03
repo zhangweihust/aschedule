@@ -41,6 +41,7 @@
 		<service android:name=".Services.ServiceManager"/>
 		<activity android:name=".Screens.NewScheduleScreen"/>
         <activity android:name=".Screens.EditScheduleScreen"></activity>
+         <activity android:name=".Screens.WeatherScreen"/>
         <activity android:name=".Screens.LoadingScreen"> <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 

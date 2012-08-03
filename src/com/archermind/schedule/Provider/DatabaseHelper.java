@@ -147,6 +147,25 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 		+ ASCHEDULE_FRIEND_NIKE + " TEXT, "
 		+ ASCHEDULE_FRIEND_TYPE + " INTEGER DEFAULT '0' "
 		+ " ); ";
+
+
+	public static final String TAB_SCHEDULE_WEATHER = "schedule_weather";
+	public static final String COLUMN_WEATHER_ID = "weather_id";
+	public static final String COLUMN_WEATHER_DATE = "weather_date";
+	public static final String COLUMN_WEATHER_TEMP = "weather_temp";
+	public static final String COLUMN_WEATHER_TEMP_RANGE = "weather_tempRange";
+	public static final String COLUMN_WEATHER_WEATHER = "weather_weather";
+	private static final String CREATE_TABLE_WEATHER = "CREATE TABLE IF NOT EXISTS "
+			+ TAB_SCHEDULE_WEATHER
+			+ " ( "
+			+ COLUMN_WEATHER_ID
+			+ " INTEGER PRIMARY KEY, "
+			+ COLUMN_WEATHER_DATE
+			+ " TEXT, "
+			+ COLUMN_WEATHER_TEMP
+			+ " TEXT, "
+			+ COLUMN_WEATHER_TEMP_RANGE
+			+ " TEXT, " + COLUMN_WEATHER_WEATHER + " TEXT " + " ); ";
 	public DatabaseHelper(Context context) {
 		super(context, NAME, null, version);
 	}
@@ -167,6 +186,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 		db.execSQL(CRETAE_TAB_SHARE_SCHEDULE);
 		db.execSQL(CREATE_CONTACT_TABLE);	
         db.execSQL(CREATE_FRIEND_TABLE);	
+         db.execSQL(CREATE_TABLE_WEATHER);
 	}
 
 }

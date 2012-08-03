@@ -43,4 +43,6 @@
 	<dimen name="time_select_layout_button_height">60dp</dimen>
 	<dimen name="time_select_button_width">100dp</dimen>
 	<dimen name="time_select_button_marginLeft">20dp</dimen>
+	<!--weather_layout.xml.xml -->
+	<dimen name="weather_max_temp_textsize">20dp</dimen>  
 </resources>

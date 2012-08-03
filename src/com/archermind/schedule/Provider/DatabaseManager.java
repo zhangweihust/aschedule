@@ -377,6 +377,12 @@ public void deleteFriend(String id){
 				+ DatabaseHelper.TAB_LOCAL_SCHEDULE, null);
 	}
 
+
+	public boolean insertScheduleWeather(ContentValues cv) {
+		return database.insert(DatabaseHelper.TAB_SCHEDULE_WEATHER, null, cv) > 0;
+	}
+
+
 	public Cursor queryNotOutdateschedule( ){
 		return database.query(DatabaseHelper.TAB_LOCAL_SCHEDULE, null, DatabaseHelper.COLUMN_SCHEDULE_FLAG_OUTDATE + " = ?",
 				new String[] { String.valueOf(0) }, null, null, null);
@@ -385,5 +391,14 @@ public void deleteFriend(String id){
 	public long insertSchedules(ContentValues values) {
 		return database.insert(DatabaseHelper.TAB_LOCAL_SCHEDULE, null, values) ;
 	}
+	public int deleteScheduleWeather() {
+		return database.delete(DatabaseHelper.TAB_SCHEDULE_WEATHER, null, null);
+	}
 
+public Cursor queryScheduleWeather(String date){
+		return database.query(DatabaseHelper.TAB_SCHEDULE_WEATHER, null,
+				DatabaseHelper.COLUMN_WEATHER_DATE + " = ?",
+				new String[] { String.valueOf(date) }, null, null, null);
+		
+	}
 }
