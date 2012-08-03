@@ -156,6 +156,7 @@ public class ServerInterface {
 			String tel, String photo_id, String info) {
 		username = username.replace(" ", "");
 		password = password.replace(" ", "");
+		nickname = nickname.replace(" ", "");
 
 		if (username.length() == 0 || password.length() == 0) {
 			return ERROR_ACCOUNT_OR_PASSWORD_EMPTY;// 帐号或密码为空
@@ -187,19 +188,19 @@ public class ServerInterface {
 		// }
 		String ret = HttpUtils.doPost(map,
 				"http://player.archermind.com/ci/index.php/aschedule/register");
-		int result =0;
-		try {
-			result =Integer.parseInt(ret);
-		} catch (Exception e) {
-			result =0;
-		}
 //		if (Integer.parseInt(ret) > 0) {
 //			return SUCCESS;
 //		} else {
 //			System.out.println("login-----" + ret);
 //			return -1;
 //		}
-		 return result;
+		int result =0;
+		try{
+			result =Integer.parseInt(ret);
+		}catch (Exception e){
+			result =0;
+		}
+		return result;
 	}
 
 	/*
@@ -518,7 +519,7 @@ public class ServerInterface {
 									.getColumnIndex(DatabaseHelper.COLUMN_SCHEDULE_NOTICE_END)));
 					map.put("content",
 							cursor.getString(cursor
-									.getColumnIndex(DatabaseHelper.COLUMN_SCHEDULE_CONTENT)));
+									.getColumnIndex(DatabaseHelper.COLUMN_SCHEDULE_NOTICE_CONTENT)));
 					map.put("tid",
 							Integer.toString(cursor.getInt(cursor
 									.getColumnIndex(DatabaseHelper.COLUMN_SCHEDULE_T_ID))));
