@@ -34,10 +34,12 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 	public static final String COLUMN_SCHEDULE_OPER_FLAG = "oper_flag";//日程操作标志
 	public static final String COLUMN_SCHEDULE_UPDATE_TIME = "update_time";//日程更新时间
 	public static final String COLUMN_SCHEDULE_NOTICE_TIME = "notice_time";//
+	public static final String COLUMN_SCHEDULE_NOTICE_FLAG = "notice_flag";//闹钟标志
 	public static final String COLUMN_SCHEDULE_NOTICE_PERIOD = "notice_period";
 	public static final String COLUMN_SCHEDULE_NOTICE_WEEK = "notice_week";
 	public static final String COLUMN_SCHEDULE_NOTICE_START = "notice_start";//日程开始时间
 	public static final String COLUMN_SCHEDULE_NOTICE_END = "notice_end";//日程结束时间
+	public static final String COLUMN_SCHEDULE_FLAG_OUTDATE="notice_outdate";//闹钟是否过期
 	public static final String COLUMN_SCHEDULE_CONTENT = "content";//日程内容
 	public static final String COLUMN_SCHEDULE_SLAVE_ID = "slave_id";//隶属于哪个主贴
 	public static final String COLUMN_SCHEDULE_ORDER = "queue";//回帖顺序

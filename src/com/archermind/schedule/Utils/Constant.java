@@ -11,6 +11,10 @@ public class Constant {
 	public static int VARY_YEAR;
 	public static int VARY_MONTH;
 	public static int VARY_DAY;
+	public static int VARY_HOUR;
+	public static int VARY_MIN;
+	
+	
 	public static String VARY_LUNAR_YEAR;
 	public static String VARY_LUNAR_MONTH;
 	public static String VARY_LUNAR_DAY;

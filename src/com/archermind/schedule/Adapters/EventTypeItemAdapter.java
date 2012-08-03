@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import com.archermind.schedule.R;
+import com.archermind.schedule.Model.EventTypeItem;
 
 import android.content.Context;
 import android.util.Log;

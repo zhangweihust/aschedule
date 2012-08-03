@@ -377,4 +377,13 @@ public void deleteFriend(String id){
 				+ DatabaseHelper.TAB_LOCAL_SCHEDULE, null);
 	}
 
+	public Cursor queryNotOutdateschedule( ){
+		return database.query(DatabaseHelper.TAB_LOCAL_SCHEDULE, null, DatabaseHelper.COLUMN_SCHEDULE_FLAG_OUTDATE + " = ?",
+				new String[] { String.valueOf(0) }, null, null, null);
+		
+	}
+	public long insertSchedules(ContentValues values) {
+		return database.insert(DatabaseHelper.TAB_LOCAL_SCHEDULE, null, values) ;
+	}
+
 }

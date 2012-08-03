@@ -1,46 +1,54 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
 
-    <string name="hello">Hello World, MainActivity!</string>
-    <string name="app_name">Schedule</string>
-    <string name="tab_name_schedule">日程</string>
-    <string name="tab_name_dynamic">动态</string>
-    <string name="tab_name_friend">好友</string>
-    <string name="three_days_before">前三天</string>
-    <string name="today">今天</string>
-    <string name="tomorrow">明天</string>
-    <string name="this_week">本周</string>
-    <string name="xlistview_header_hint_normal">下拉刷新</string>
-    <string name="xlistview_header_hint_ready">松开刷新数据</string>
-    <string name="xlistview_header_hint_loading">正在加载...</string>
-    <string name="xlistview_header_last_time">上次更新时间：</string>
-    <string name="xlistview_footer_hint_normal">查看更多</string>
-    <string name="xlistview_footer_hint_ready">松开载入更多</string>
-    <!-- newSchedule_screen -->
-    <string name="schedule_new_title">添加日程</string>
-    <string name="schedule_new_back">返回</string>
-    <string name="schedule_new_save">保存</string>
-    <string name="notice">注意</string>
-    <string name="activity">活动</string>
-    <string name="appointment">约会</string>
-    <string name="travel">出行</string>
-    <string name="entertainment">娱乐</string>
-    <string name="eat">吃饭</string>
-    <string name="work">工作</string>
-    <string name="share">分享</string>
-    <string name="remind">提醒</string>
-    <string name="important">重要</string>
-    <!-- editSchedule_screen -->
-    <string name="schedule_edit_title">编辑</string>
-    <string name="schedule_edit_delete">删除</string>
+	<string name="hello">Hello World, MainActivity!</string>
+	<string name="app_name">Schedule</string>
+	<string name="tab_name_schedule">日程</string>
+	<string name="tab_name_dynamic">动态</string>
+	<string name="tab_name_friend">好友</string>
+	<string name="three_days_before">前三天</string>
+	<string name="today">今天</string>
+	<string name="tomorrow">明天</string>
+	<string name="this_week">本周</string>
+	<string name="xlistview_header_hint_normal">下拉刷新</string>
+	<string name="xlistview_header_hint_ready">松开刷新数据</string>
+	<string name="xlistview_header_hint_loading">正在加载...</string>
+	<string name="xlistview_header_last_time">上次更新时间：</string>
+	<string name="xlistview_footer_hint_normal">查看更多</string>
+	<string name="xlistview_footer_hint_ready">松开载入更多</string>
+	<!-- newSchedule_screen -->
+	<string name="schedule_new_title">添加日程</string>
+	<string name="schedule_new_back">返回</string>
+	<string name="schedule_new_save">保存</string>
+	<string name="notice">注意</string>
+	<string name="activity">活动</string>
+	<string name="appointment">约会</string>
+	<string name="travel">出行</string>
+	<string name="entertainment">娱乐</string>
+	<string name="eat">吃饭</string>
+	<string name="work">工作</string>
+	<string name="share">分享</string>
+	<string name="remind">提醒</string>
+	<string name="important">重要</string>
+	<!-- editSchedule_screen -->
+	<string name="schedule_edit_title">编辑</string>
+	<string name="schedule_edit_delete">删除</string>
+	<string name="sunday">星期日</string>
+	<string name="monday">星期一</string>
+	<string name="tuesday">星期二</string>
+	<string name="wednesday">星期三</string>
+	<string name="thursday">星期四</string>
+	<string name="friday">星期五</string>
+	<string name="saturday">星期六</string>
 
-    <string name="friend_add">加为好友</string>
-    <string name="friend_invite">邀请</string>
-    
-    <string name="friend_show">我的好友</string>
-    <string name="friend_contact_show">查找联系人中的好友</string>
-        <string name="contact_show">联系人</string>
-    <string name="contact_use_show">正在使用 微日程 的好友</string>
 
-        
+	<string name="friend_add">加为好友</string>
+	<string name="friend_invite">邀请</string>
+
+	<string name="friend_show">我的好友</string>
+	<string name="friend_contact_show">查找联系人中的好友</string>
+	<string name="contact_show">联系人</string>
+	<string name="contact_use_show">正在使用 微日程 的好友</string>
+
+
 </resources>

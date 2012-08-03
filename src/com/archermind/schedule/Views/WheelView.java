@@ -50,6 +50,7 @@ import com.archermind.schedule.Adapters.WheelAdapter;
 import com.archermind.schedule.Calendar.SpecialCalendar;
 import com.archermind.schedule.Utils.Constant;
 
+
 /**
  * Numeric wheel view.
  * 
@@ -801,6 +802,10 @@ public class WheelView extends View {
 //						Constant.VARY_DAY = Integer.parseInt(solarDate.split(",")[2]);
 //					}
 				}
+			}else if(wheel_type == Constant.wheel_hour){
+				Constant.VARY_HOUR = Integer.valueOf(text);
+			}else if(wheel_type == Constant.wheel_min){
+				Constant.VARY_MIN = Integer.valueOf(text);
 			}
 			valueLayout = new StaticLayout(text != null ? text : "",
 					valuePaint, widthItems, widthLabel > 0 ? Layout.Alignment.ALIGN_OPPOSITE : Layout.Alignment.ALIGN_CENTER,

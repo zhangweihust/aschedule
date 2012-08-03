@@ -14,6 +14,7 @@ import com.archermind.schedule.R;
 import com.archermind.schedule.Adapters.NumericWheelAdapter;
 import com.archermind.schedule.Calendar.SpecialCalendar;
 import com.archermind.schedule.Utils.Constant;
+import com.archermind.schedule.Utils.DateTimeUtils;
 import com.archermind.schedule.Views.WheelView;
 import com.archermind.schedule.Views.WheelView.OnWheelScrollListener;
 
@@ -21,12 +22,26 @@ public class TimeSelectorDialog implements OnClickListener {
 	private WheelView wheelView_day;
 	private WheelView wheelView_month;
 	private WheelView wheelView_year;
+	private WheelView wheelView_hour;
+	private WheelView wheelView_min;
 	private boolean wheelScrolled = false;
 	private Dialog timeSelectorDialog;
 	private Context context;
 	private Button wheelView_cancel,wheelView_ok;
 	private Window window = null;
-
+    
+	  public interface OnOkButtonClickListener{		  
+		  void onOkButtonClick(TimeSelectorDialog timeSelectorDialog);
+	  }
+	
+	private OnOkButtonClickListener mOnOkButtonClickListener;
+	
+	
+	public void setOnOkButtonClickListener(OnOkButtonClickListener l){
+		mOnOkButtonClickListener=l;	
+	}
+	
+	
 	public TimeSelectorDialog(Context context) {
 		timeSelectorDialog = new Dialog(context, R.style.CustomDialog);
 		timeSelectorDialog.setContentView(R.layout.time_select);
@@ -47,7 +62,20 @@ public class TimeSelectorDialog implements OnClickListener {
 		wheelView_cancel.setOnClickListener(this);
 		wheelView_ok.setOnClickListener(this);
 
+	}
 
+	public void setCurrentItem(long time) {
+
+		Constant.YEAR = Integer.parseInt(DateTimeUtils.time2String("y", time));
+		Constant.MONTH = Integer.parseInt(DateTimeUtils.time2String("M", time));
+		Constant.DAY = Integer.parseInt(DateTimeUtils.time2String("d", time));
+		Constant.HOUR = Integer.parseInt(DateTimeUtils.time2String("H", time));
+		Constant.MIN = Integer.parseInt(DateTimeUtils.time2String("m", time));
+		wheelView_year.setCurrentItem(Constant.YEAR - 1901);
+		wheelView_month.setCurrentItem(Constant.MONTH - 1);
+		wheelView_day.setCurrentItem(Constant.DAY - 1);
+		wheelView_hour.setCurrentItem(Constant.HOUR - 0);
+		wheelView_min.setCurrentItem(Constant.MIN - 0);
 	}
 
 	private void initWheel(int id) {
@@ -89,14 +117,16 @@ public class TimeSelectorDialog implements OnClickListener {
 					NumericWheelAdapter.DEFAULT_CALENDER));
 			wheel.setType(Constant.wheel_hour);
 			wheel.setLabel("时");
-			wheel.setCurrentItem(12);
+			wheel.setCurrentItem(Constant.HOUR - 0);
+			wheelView_hour = wheel;
 			break;
 		case R.id.wheelView_min:
 			wheel.setAdapter(new NumericWheelAdapter(0, 59,
 					NumericWheelAdapter.DEFAULT_CALENDER));
 			wheel.setType(Constant.wheel_min);
 			wheel.setLabel("分");
-			wheel.setCurrentItem(12);
+			wheel.setCurrentItem(Constant.MIN - 0);
+			wheelView_min = wheel;
 			break;
 		}
 		wheel.setInterpolator(new AnticipateOvershootInterpolator());
@@ -155,6 +185,7 @@ public class TimeSelectorDialog implements OnClickListener {
 			break;
 		case R.id.wheelView_ok:
 			dismiss();
+            mOnOkButtonClickListener.onOkButtonClick(this);
 			break;
 		}
 	}

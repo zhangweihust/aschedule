@@ -1,4 +1,4 @@
-package com.archermind.schedule.Adapters;
+package com.archermind.schedule.Model;
 
 public class EventTypeItem {
 	private String title; 

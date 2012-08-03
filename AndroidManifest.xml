@@ -46,7 +46,13 @@
 
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter></activity>
-        
+         <receiver android:name=".Services.AlarmRecevier" >
+        </receiver>
+        <receiver android:name=".Services.BootRecevier" >
+            <intent-filter >
+                <action android:name="android.intent.action.BOOT_COMPLETED" />
+            </intent-filter>
+        </receiver>
 		</application>
 		<uses-permission android:name="android.permission.INTERNET"/>
 		<uses-permission android:name="android.permission.READ_PHONE_STATE"/>
@@ -55,4 +61,5 @@
 		 <uses-permission android:name="android.permission.ACCESS_WIFI_STATE"/>
 		   <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
 	    <uses-permission android:name="android.permission.READ_PHONE_STATE"/>
+	     <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED" />
 </manifest>
