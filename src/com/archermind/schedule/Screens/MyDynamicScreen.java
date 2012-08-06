@@ -80,7 +80,7 @@ public class MyDynamicScreen extends Screen implements IXListViewListener, OnIte
 		list.setOnItemClickListener(this);
 		list.setXListViewListener(this);
 		dataArrayList = new ArrayList<ScheduleBean>();
-		mAdapter = new DynamicScheduleAdapter(MyDynamicScreen.this, dataArrayList);
+		mAdapter = new DynamicScheduleAdapter(MyDynamicScreen.this, dataArrayList,list);
 		mAdapter.setList(dataArrayList);
 		list.setAdapter(mAdapter);
 		loading = (RelativeLayout) findViewById(R.id.loading);

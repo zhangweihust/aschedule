@@ -91,7 +91,7 @@ public class FriendsDyamicScreen extends Screen implements
 		list.setOnItemClickListener(this);
 		list.setXListViewListener(this);
 		dataArrayList = new ArrayList<ScheduleBean>();
-		mAdapter = new DynamicScheduleAdapter(FriendsDyamicScreen.this, dataArrayList);
+		mAdapter = new DynamicScheduleAdapter(FriendsDyamicScreen.this, dataArrayList, list);
 		mAdapter.setList(dataArrayList);
 		list.setAdapter(mAdapter);
 		loading = (RelativeLayout) findViewById(R.id.loading);

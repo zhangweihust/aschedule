@@ -20,8 +20,9 @@
 
     <com.archermind.schedule.Views.XListView
         android:id="@+id/list"
+        android:fastScrollEnabled="true"
         android:layout_width="fill_parent"
-        android:layout_height="wrap_content"
+        android:layout_height="fill_parent"
         android:cacheColorHint="#00000000"
         android:divider="@drawable/listview_divider"
         android:listSelector="@drawable/listview_selector" />

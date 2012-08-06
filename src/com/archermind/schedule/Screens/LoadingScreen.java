@@ -1,3 +1,4 @@
+
 package com.archermind.schedule.Screens;
 
 import android.content.Intent;
@@ -49,8 +50,6 @@ public class LoadingScreen extends Screen implements IEventHandler {
         new Thread() {
             public void run() {
 
-               // handler.sendEmptyMessage(0);
-                
                 try {
                     Thread.sleep(2 * 1000);
                 } catch (InterruptedException e) {
@@ -64,7 +63,7 @@ public class LoadingScreen extends Screen implements IEventHandler {
         }.start();
 
     }
-
+    
     /**
      * 用Handler来更新UI
      */
@@ -73,14 +72,9 @@ public class LoadingScreen extends Screen implements IEventHandler {
         public void handleMessage(Message msg) {
 
             switch (msg.what) {
-                case 0:
 
-                    mAnimaition.start();
-                    
-                    break;
-                    
                 case 1:
-                    
+
                     if (mAnimaition.isRunning()) {
 
                         mAnimaition.stop();
@@ -89,7 +83,7 @@ public class LoadingScreen extends Screen implements IEventHandler {
                     Intent it = new Intent(LoadingScreen.this, HomeScreen.class);
                     startActivity(it);
                     finish();
-                    
+
                     break;
 
                 default:
@@ -125,13 +119,12 @@ public class LoadingScreen extends Screen implements IEventHandler {
 
         eventService.remove(this);
     }
-
-	@Override
-	public void onWindowFocusChanged(boolean hasFocus) {
-		super.onWindowFocusChanged(hasFocus);
-		mAnimaition.start();
-	}
     
-    
+    @Override
+    public void onWindowFocusChanged(boolean hasFocus) {
+        super.onWindowFocusChanged(hasFocus);
+        
+        mAnimaition.start();
+    }
 
 }
