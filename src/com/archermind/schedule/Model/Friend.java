@@ -7,7 +7,7 @@ public class Friend {
 	private String telephone;
 	private String name;
 	private String headImagePath;
-	private String nike;
+	private String nick;
 	private int type = Constant.FriendType.friend_contact;
 
 	public Friend(){
@@ -61,15 +61,15 @@ public class Friend {
 		this.type = type;
 	}
 	
-	public String getNike() {
-		return this.nike;
+	public String getNick() {
+		return this.nick;
 	}
 
-	public void setNike(String nike) {
-		this.nike = nike;
+	public void setNick(String nick) {
+		this.nick = nick;
 	}
 	
 	public String toString(){
-		return "id ="+id+" telephone = "+telephone + " name = "+name + " nike = "+nike;
+		return "id ="+id+" telephone = "+telephone + " name = "+name + " nike = "+nick;
 	}
 }

@@ -269,7 +269,7 @@ public class FriendTask extends AsyncTask<Void, Integer, HashMap<String, List<Fr
 		if(dialog.isShowing()){
 			dialog.dismiss();
 		}
-		friendScreen.initAdapter(result);
+//		friendScreen.initAdapter(result);
 	}
 	@Override
 	protected void onCancelled() {

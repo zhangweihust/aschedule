@@ -155,9 +155,11 @@ public class FriendContactAdapter extends BaseAdapter implements OnClickListener
 			if(friend != null){
 				contentHolderView.name.setText(friend.getTelephone());
 				if(Constant.FriendType.friend_contact_use == friend.getType()){
+					System.out.println("friend_contact_use");
 					contentHolderView.friend_button2.setText(context.getResources().getString(R.string.friend_add));
 					contentHolderView.friend_button2.setTag(friend);
 				}else if(Constant.FriendType.friend_contact == friend.getType()){
+					System.out.println("friend_contact");
 					contentHolderView.friend_button2.setText(context.getResources().getString(R.string.friend_invite));
 					contentHolderView.friend_button2.setTag(friend);
 				}
@@ -191,11 +193,11 @@ public class FriendContactAdapter extends BaseAdapter implements OnClickListener
 		switch(friend.getType()){
 		case Constant.FriendType.friend_contact_use:	
 			System.out.println("&&&&&&&&&&&&&&&&&&&&&&&&&friend.getId() = "+friend.getId());
-			if(serverInterface.inviteFriend("3", friend.getId().replace("\"", "")) == 0){	
+			if(serverInterface.inviteFriend("3", "4") == 0){	
 			}
 			break;
 		case Constant.FriendType.friend_contact:
-			String result = serverInterface.getMessage("5");//返回主动加人的信息
+			String result = serverInterface.getMessage("4");//返回主动加人的信息
 			Dialog dialog = new Dialog(context);
 			dialog.setContentView(R.layout.dialog);
 			Button btn1 = (Button) dialog.findViewById(R.id.button1);
@@ -217,15 +219,15 @@ public class FriendContactAdapter extends BaseAdapter implements OnClickListener
 			Friend friend = (Friend) v.getTag();
 			switch(v.getId()){
 				case R.id.button1:
-					serverInterface.acceptFriend("5", "3");
+					serverInterface.acceptFriend("4", "3");
 					 ContentValues values = new ContentValues();
-					 values.put(DatabaseHelper.ASCHEDULE_FRIEND_ID, "5");
+					 values.put(DatabaseHelper.ASCHEDULE_FRIEND_ID, "4");
 					 values.put(DatabaseHelper.ASCHEDULE_FRIEND_TYPE, Constant.FriendType.friend_yes);
 					 values.put(DatabaseHelper.ASCHEDULE_FRIEND_NUM, friend.getTelephone().replace("\"", ""));
 					 database.addFriend(values);
 					break;
 				case R.id.button2:
-					serverInterface.refuseFriend("5", "3");
+					serverInterface.refuseFriend("4", "3");
 					break;
 				}
 			}

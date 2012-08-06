@@ -78,6 +78,7 @@ public class FriendAdapter extends BaseAdapter implements OnClickListener{
 			holderView.name.setText(friend.getTelephone());
 			if(Constant.FriendType.friend_Ignore == friend.getType()){
 				holderView.friend_button1.setEnabled(false);
+				holderView.friend_button1.setVisibility(View.GONE);
 			}
 			holderView.friend_button1.setText("屏蔽");
 			holderView.friend_button1.setTag(friend);

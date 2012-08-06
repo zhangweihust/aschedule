@@ -39,6 +39,7 @@ import android.widget.ViewFlipper;
 import com.archermind.schedule.R;
 import com.archermind.schedule.Adapters.CalendarAdapter;
 import com.archermind.schedule.Adapters.HistoryScheduleAdapter;
+import com.archermind.schedule.Calendar.CalendarData;
 import com.archermind.schedule.Events.EventArgs;
 import com.archermind.schedule.Events.IEventHandler;
 import com.archermind.schedule.Provider.DatabaseHelper;
@@ -84,6 +85,7 @@ public class ScheduleScreen extends Screen implements IXListViewListener,
 private ViewFlipper flipper = null;
 		private GestureDetector gestureDetector = null;
 		private CalendarAdapter calV = null;
+       private CalendarData calendarData;
 		private GridView gridView = null;
 		private TextView current_date = null;
 		private Drawable draw = null;
@@ -320,7 +322,8 @@ private ViewFlipper flipper = null;
 		super.onWindowFocusChanged(hasFocus);
 		if(flag){
 			flag = false;
-			 calV = new CalendarAdapter(this, getResources(),jumpMonth,jumpYear,year_c,month_c,day_c,1,flipper.getHeight(), Constant.flagType);
+			calendarData = new CalendarData(jumpMonth, jumpYear, year_c, month_c, day_c, 1, Constant.flagType);
+			 calV = new CalendarAdapter(this,flipper.getHeight(), calendarData);
 		        
 		        addGridView();
 		        gridView.setAdapter(calV);
@@ -471,7 +474,8 @@ private ViewFlipper flipper = null;
 			addGridView();   //添加一个gridview
 			jumpMonth++;     //下一个月
 			
-			calV = new CalendarAdapter(this, getResources(),jumpMonth,jumpYear,year_c,month_c,day_c,1,flipper.getHeight(),Constant.flagType);
+			calendarData = new CalendarData(jumpMonth, jumpYear, year_c, month_c, day_c, 1, Constant.flagType);
+			 calV = new CalendarAdapter(this,flipper.getHeight(), calendarData);
 	        gridView.setAdapter(calV);
 	        //flipper.addView(gridView);
 	        addTextToTopTextView(current_date);
@@ -486,8 +490,8 @@ private ViewFlipper flipper = null;
             //向右滑动
 			addGridView();   //添加一个gridview
 			jumpMonth--;     //上一个月
-			
-			calV = new CalendarAdapter(this, getResources(),jumpMonth,jumpYear,year_c,month_c,day_c,1,flipper.getHeight(),Constant.flagType);
+			calendarData = new CalendarData(jumpMonth, jumpYear, year_c, month_c, day_c, 1, Constant.flagType);
+			 calV = new CalendarAdapter(this,flipper.getHeight(), calendarData);
 	        gridView.setAdapter(calV);
 	        gvFlag++;
 	        addTextToTopTextView(current_date);
@@ -549,10 +553,10 @@ private ViewFlipper flipper = null;
 //		textDate.append(calV.getAnimalsYear()).append("年").append("(").append(
 //				calV.getCyclical()).append("年)");
 //		view.setText(textDate);
-		if(Integer.parseInt(calV.getShowMonth()) < 10){
-			view.setText(calV.getShowYear()+".0"+calV.getShowMonth());
+		if(Integer.parseInt(calendarData.getShowMonth()) < 10){
+			view.setText(calendarData.getShowYear()+".0"+calendarData.getShowMonth());
 		}else{
-			view.setText(calV.getShowYear()+"."+calV.getShowMonth());
+			view.setText(calendarData.getShowYear()+"."+calendarData.getShowMonth());
 		}
 		view.setTextColor(Color.BLACK);
 		view.setTypeface(Typeface.DEFAULT_BOLD);
@@ -560,13 +564,13 @@ private ViewFlipper flipper = null;
 	
 	public String getDate(int position){
 		String date = "";
-		int month = Integer.parseInt(calV.getShowMonth());
+		int month = Integer.parseInt(calendarData.getShowMonth());
 		int day = Integer.parseInt(calV.getDateByClickItem(position).split("\\.")[0]);
 		
 		if(month < 10){
-			date = calV.getShowYear() + ".0" + month;
+			date = calendarData.getShowYear() + ".0" + month;
 		}else{
-			date = calV.getShowYear() + "." + month;
+			date = calendarData.getShowYear() + "." + month;
 		}
 		if (day < 10){
 			date += ".0" + day;
@@ -634,23 +638,22 @@ private ViewFlipper flipper = null;
 				  if(startPosition <= position  && position <= endPosition){
 					  String scheduleDay = calV.getDateByClickItem(position).split("\\.")[0];  //这一天的阳历
 					  //String scheduleLunarDay = calV.getDateByClickItem(position).split("\\.")[1];  //这一天的阴历
-	                  String scheduleYear = calV.getShowYear();
-	                  String scheduleMonth = calV.getShowMonth();
+	                  String scheduleYear = calendarData.getShowYear();
+	                  String scheduleMonth = calendarData.getShowMonth();
 	                  String week = "";
 	                  
                   int index = calV.getOldposition();
-	                  System.out.println("index = "+index);
 	                  if(index == -1){
-	                	  ((RelativeLayout)view).setBackgroundResource(R.drawable.current_day_bg);
+//	                	  ((RelativeLayout)view).setBackgroundResource(R.drawable.current_day_bg);
+	                	  ((RelativeLayout)view).setBackgroundColor(Color.BLUE);
 	                	  calV.setOldPosition(position);
 	                  }else{
 	                	  RelativeLayout layout = (RelativeLayout) arg0.getChildAt(index);
 	                	  if(layout != null){
 	                		  layout.setBackgroundResource(R.drawable.gridview_bk);  
-//	                		  layout.setBackgroundDrawable(null);
 	                	  }
-		                  ((RelativeLayout)view).setBackgroundResource(R.drawable.current_day_bg);
-		                  System.out.println("position = "+position);
+//		                  ((RelativeLayout)view).setBackgroundResource(R.drawable.current_day_bg);
+	                	  ((RelativeLayout)view).setBackgroundColor(Color.BLUE);
 		                  calV.setOldPosition(position);
 	                  }
 				String date = getDate(position);
@@ -682,8 +685,8 @@ private ViewFlipper flipper = null;
             //向左滑动
 			addGridView();   //添加一个gridview
 			jumpYear--;     //下一年
-			
-			calV = new CalendarAdapter(this, getResources(),jumpMonth,jumpYear,year_c,month_c,day_c,0,flipper.getHeight(),Constant.flagType);
+			calendarData = new CalendarData(jumpMonth, jumpYear, year_c, month_c, day_c, 0, Constant.flagType);
+			 calV = new CalendarAdapter(this,flipper.getHeight(), calendarData);
 	        gridView.setAdapter(calV);
 	        //flipper.addView(gridView);
 	        addTextToTopTextView(current_date);
@@ -698,8 +701,8 @@ private ViewFlipper flipper = null;
 			 //向右滑动
 			addGridView();   //添加一个gridview
 			jumpYear++;     //上一年
-			
-			calV = new CalendarAdapter(this, getResources(),jumpMonth,jumpYear,year_c,month_c,day_c,0,flipper.getHeight(),Constant.flagType);
+			calendarData = new CalendarData(jumpMonth, jumpYear, year_c, month_c, day_c, 0, Constant.flagType);
+			 calV = new CalendarAdapter(this,flipper.getHeight(), calendarData);
 	        gridView.setAdapter(calV);
 	        gvFlag++;
 	        addTextToTopTextView(current_date);
@@ -720,7 +723,8 @@ private ViewFlipper flipper = null;
         	year_c = Integer.parseInt(currentDate.split("-")[0]);
         	month_c = Integer.parseInt(currentDate.split("-")[1]);
         	day_c = Integer.parseInt(currentDate.split("-")[2]);
-        	calV = new CalendarAdapter(this, getResources(),jumpMonth,jumpYear,year_c,month_c,day_c,1,flipper.getHeight(),Constant.flagType);
+        	calendarData = new CalendarData(jumpMonth, jumpYear, year_c, month_c, day_c, 1, Constant.flagType);
+			 calV = new CalendarAdapter(this,flipper.getHeight(), calendarData);
 	        gridView.setAdapter(calV);
 	        addTextToTopTextView(current_date);
 	        gvFlag++;

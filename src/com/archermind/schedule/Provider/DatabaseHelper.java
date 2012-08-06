@@ -143,7 +143,8 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 	public static final String ASCHEDULE_FRIEND_ID = "friend_id";
 	public static final String ASCHEDULE_FRIEND_NUM = "number";
 	public static final String ASCHEDULE_FRIEND_NAME = "name";
-	public static final String ASCHEDULE_FRIEND_NIKE = "nike";
+	public static final String ASCHEDULE_FRIEND_NICK = "nick";
+	public static final String ASCHEDULE_FRIEND_PHOTO_URL = "photo_url";
 	public static final String ASCHEDULE_FRIEND_TYPE = "type";
 	
 	private static final String CREATE_FRIEND_TABLE = " CREATE TABLE IF NOT EXISTS "
@@ -152,7 +153,8 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 		+ ASCHEDULE_FRIEND_ID + " INTEGER PRIMARY KEY, " 
 		+ ASCHEDULE_FRIEND_NUM + " TEXT, "
 		+ ASCHEDULE_FRIEND_NAME + " TEXT, "
-		+ ASCHEDULE_FRIEND_NIKE + " TEXT, "
+		+ ASCHEDULE_FRIEND_NICK + " TEXT, "
+		+ ASCHEDULE_FRIEND_PHOTO_URL + " TEXT, "
 		+ ASCHEDULE_FRIEND_TYPE + " INTEGER DEFAULT '0' "
 		+ " ); ";
 
