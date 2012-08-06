@@ -50,6 +50,17 @@ public class WeatherDialog implements OnClickListener {
 	private String maxtemp3, mintemp3;
 	private String maxtemp4, mintemp4;
 
+	
+	
+	public interface OnCancelButtonClickListener {
+		void onCancelButtonClick(WeatherDialog mweatherDialog);
+	}
+
+	private OnCancelButtonClickListener mOnCanceButtonClickListener;
+
+	public void setOnCancelButtonClickListener(OnCancelButtonClickListener l) {
+		mOnCanceButtonClickListener = l;
+	}
 	public WeatherDialog(Context context, int screenWidth, int screenHeight,
 			Map<String, String> cityInfoMap, Map<String, Integer> weathermap,
 			Map<String, String> itemsmap) {
@@ -142,10 +153,11 @@ public class WeatherDialog implements OnClickListener {
 				+ cityInfoMap.get("city") + "市");
 
 		// 设置今天当前温度
-		if(itemsmap.get("str1")!=null){
-			todayCurTemp.setText(itemsmap.get("str1") + "℃");
+		Log.i(TAG, "-------st1-" + itemsmap.get("st1"));
+		if(itemsmap.get("st1")!=null){
+			todayCurTemp.setText(itemsmap.get("st1") + "℃");
 		}else{
-			todayCurTemp.setText(itemsmap.get("str1"));			
+			todayCurTemp.setText(itemsmap.get("st1"));			
 		}
 		
 		todayTemp.setText(itemsmap.get("temp1"));
@@ -259,6 +271,7 @@ public class WeatherDialog implements OnClickListener {
 	public void onClick(View v) {
 		// TODO Auto-generated method stub
 		weatherDialog.dismiss();
+		mOnCanceButtonClickListener.onCancelButtonClick(this);
 	}
 
 }

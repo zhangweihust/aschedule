@@ -9,39 +9,22 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import com.archermind.schedule.R;
-import com.archermind.schedule.ScheduleApplication;
 import com.archermind.schedule.Dialog.WeatherDialog;
-import com.archermind.schedule.Model.ScheduleBean;
+import com.archermind.schedule.Dialog.WeatherDialog.OnCancelButtonClickListener;
 import com.archermind.schedule.Provider.DatabaseHelper;
 import com.archermind.schedule.Services.ServiceManager;
 import com.archermind.schedule.Utils.DateTimeUtils;
 import com.archermind.schedule.Utils.HttpUtils;
 import com.archermind.schedule.Utils.NetworkUtils;
-
 import android.content.ContentValues;
-import android.content.res.Resources.Theme;
 import android.database.Cursor;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.Display;
-import android.widget.ImageView;
-import android.widget.TextView;
 
-public class WeatherScreen extends Screen {
+public class WeatherScreen extends Screen implements
+		OnCancelButtonClickListener {
 	private static final String TAG = "WeatherScreen";
-	private TextView cityInfoTv;
-	private TextView todayCurTemp;
-	private TextView todayDate;
-	private ImageView todayImg, oneDAfterImg, twoDAfterImg, threeDAfterImg;
-	private TextView todayTemp;
-	private TextView oneDAfterMinTemp, oneDAfterMaxTemp;
-
-	private TextView twoDAfterMinTemp, twoDAfterMaxTemp;
-	private TextView threeDAfterMinTemp, threeDAfterMaxTemp;
-	private TextView todayWeather, oneDAfterWeather, twoDAfterWeather,
-			threeDAfterWeather;
-	private TextView oneDAfterDate, twoDAfterDate, threeDAfterDate;
-	private TextView oneDAfterWeek, twoDAfterWeek, threeDAfterWeek;
 	private String city, province, cid, weather;
 	private Map<String, String> cityInfoMap = new HashMap<String, String>();
 	private Map<String, String> itemsmap = new HashMap<String, String>();
@@ -49,7 +32,6 @@ public class WeatherScreen extends Screen {
 	private String[] date = new String[4];
 	private String[] week = new String[4];
 
-	private ImageView[] img = new ImageView[4];
 
 	WeatherDialog mwWeatherDialog;
 
@@ -92,54 +74,59 @@ public class WeatherScreen extends Screen {
 
 		// 如果联网了，则从服务器获取数据
 		//
-		 if (NetworkUtils.getNetworkState(this) != NetworkUtils.NETWORN_NONE)
-		 {
-		
-		 String strResult = HttpUtils
-		 .doPost(cityInfoMap,
-		 "http://player.archermind.com/ci/index.php/aschedule/getWeather");
-		 Log.d(TAG, "-------strResult:" + strResult);
+		if (NetworkUtils.getNetworkState(this) != NetworkUtils.NETWORN_NONE) {
 
-//		 [{"city":"武汉","province":"湖北","cid":"101200101","weather":"\"st1 \":\"33\",\"temp1\":\"33℃~27℃\",\"weather1\":\"多云\",\"temp2\": \"34℃~28℃\",\"weather2\":\"多云\",\"temp3\":\"35℃~28℃\",\"weather3 \":\"多云\",\"temp4\":\"34℃~24℃\",\"weather4\":\"多云\""}]
-		 if (!strResult.equals("-1")) {
-		 itemsmap = parseJson(strResult);
-		 mwWeatherDialog = new WeatherDialog(this, screenWidth,
-		 screenHeight, cityInfoMap, weatherMap, itemsmap);
-		 mwWeatherDialog.show();
-		 saveToDb(itemsmap);
-		 }
-		
-		 } else {
-		// 没有联网，则读取本地数据库
-		Cursor c = ServiceManager.getDbManager().queryScheduleWeather(date[0]);
-		// 如果不存在当天天气，则什么都不显示
-		if (c.getCount() != 0) {
+			String strResult = HttpUtils
+					.doPost(cityInfoMap,
+							"http://player.archermind.com/ci/index.php/aschedule/getWeather");
+			Log.d(TAG, "-------strResult:" + strResult);
 
-			if (c.moveToFirst()) {
+			// [{"city":"武汉","province":"湖北","cid":"101200101","weather":"\"st1 \":\"33\",\"temp1\":\"33℃~27℃\",\"weather1\":\"多云\",\"temp2\": \"34℃~28℃\",\"weather2\":\"多云\",\"temp3\":\"35℃~28℃\",\"weather3 \":\"多云\",\"temp4\":\"34℃~24℃\",\"weather4\":\"多云\""}]
+			if (!strResult.equals("-1")) {
+				itemsmap = parseJson(strResult);
+				mwWeatherDialog = new WeatherDialog(this, screenWidth,
+						screenHeight, cityInfoMap, weatherMap, itemsmap);
+				mwWeatherDialog.show();
+				mwWeatherDialog.setOnCancelButtonClickListener(this);
+				saveToDb(itemsmap);
+			}
 
-				itemsmap.put("str1", c.getString(c
-						.getColumnIndex(DatabaseHelper.COLUMN_WEATHER_TEMP)));
-				itemsmap.put(
-						"temp1",
-						c.getString(c
-								.getColumnIndex(DatabaseHelper.COLUMN_WEATHER_TEMP_RANGE)));
-				itemsmap.put("weather1", c.getString(c
-						.getColumnIndex(DatabaseHelper.COLUMN_WEATHER_WEATHER)));
-				c.getString(c
-						.getColumnIndex(DatabaseHelper.COLUMN_WEATHER_TEMP));
-				c.close();
-				
-				Cursor cursor1 = ServiceManager.getDbManager()
-						.queryScheduleWeather(date[1]);
-				if (cursor1.moveToFirst()) {
+		} else {
+			// 没有联网，则读取本地数据库
+			Cursor c = ServiceManager.getDbManager().queryScheduleWeather(
+					date[0]);
+			// 如果不存在当天天气，则什么都不显示
+			if (c.getCount() != 0) {
+
+				if (c.moveToFirst()) {
+
 					itemsmap.put(
-							"temp2",
-							cursor1.getString(cursor1
+							"st1",
+							c.getString(c
+									.getColumnIndex(DatabaseHelper.COLUMN_WEATHER_TEMP)));
+					itemsmap.put(
+							"temp1",
+							c.getString(c
 									.getColumnIndex(DatabaseHelper.COLUMN_WEATHER_TEMP_RANGE)));
 					itemsmap.put(
-							"weather2",
-							cursor1.getString(cursor1
+							"weather1",
+							c.getString(c
 									.getColumnIndex(DatabaseHelper.COLUMN_WEATHER_WEATHER)));
+					c.getString(c
+							.getColumnIndex(DatabaseHelper.COLUMN_WEATHER_TEMP));
+					c.close();
+
+					Cursor cursor1 = ServiceManager.getDbManager()
+							.queryScheduleWeather(date[1]);
+					if (cursor1.moveToFirst()) {
+						itemsmap.put(
+								"temp2",
+								cursor1.getString(cursor1
+										.getColumnIndex(DatabaseHelper.COLUMN_WEATHER_TEMP_RANGE)));
+						itemsmap.put(
+								"weather2",
+								cursor1.getString(cursor1
+										.getColumnIndex(DatabaseHelper.COLUMN_WEATHER_WEATHER)));
 
 				} else {
 					itemsmap.put("temp2", "");
@@ -149,57 +136,61 @@ public class WeatherScreen extends Screen {
 
 				cursor1.close();
 
-				Cursor cursor2 = ServiceManager.getDbManager()
-						.queryScheduleWeather(date[2]);
-				if(cursor2.moveToFirst()){
-					
-					itemsmap.put(
-							"temp3",
-							cursor2.getString(cursor2
-									.getColumnIndex(DatabaseHelper.COLUMN_WEATHER_TEMP_RANGE)));
-					itemsmap.put("weather3", cursor2.getString(cursor2
-							.getColumnIndex(DatabaseHelper.COLUMN_WEATHER_WEATHER)));
-					cursor2.close();
-								
-				}else {
-					itemsmap.put("temp3", "");
-					itemsmap.put("weather3", "");
+					Cursor cursor2 = ServiceManager.getDbManager()
+							.queryScheduleWeather(date[2]);
+					if (cursor2.moveToFirst()) {
+
+						itemsmap.put(
+								"temp3",
+								cursor2.getString(cursor2
+										.getColumnIndex(DatabaseHelper.COLUMN_WEATHER_TEMP_RANGE)));
+						itemsmap.put(
+								"weather3",
+								cursor2.getString(cursor2
+										.getColumnIndex(DatabaseHelper.COLUMN_WEATHER_WEATHER)));
+						cursor2.close();
+
+					} else {
+						itemsmap.put("temp3", "");
+						itemsmap.put("weather3", "");
 
 				}
 
-				Cursor cursor3 = ServiceManager.getDbManager()
-						.queryScheduleWeather(date[3]);
-				if(cursor3.moveToFirst()){
-					itemsmap.put(
-							"temp3",
-							cursor3.getString(cursor3
-									.getColumnIndex(DatabaseHelper.COLUMN_WEATHER_TEMP_RANGE)));
-					itemsmap.put("weather3", cursor3.getString(cursor3
-							.getColumnIndex(DatabaseHelper.COLUMN_WEATHER_WEATHER)));
-					cursor3.close();
-					
-				}else {
-					itemsmap.put("temp4", "");
-					itemsmap.put("weather4", "");
+					Cursor cursor3 = ServiceManager.getDbManager()
+							.queryScheduleWeather(date[3]);
+					if (cursor3.moveToFirst()) {
+						itemsmap.put(
+								"temp4",
+								cursor3.getString(cursor3
+										.getColumnIndex(DatabaseHelper.COLUMN_WEATHER_TEMP_RANGE)));
+						itemsmap.put(
+								"weather4",
+								cursor3.getString(cursor3
+										.getColumnIndex(DatabaseHelper.COLUMN_WEATHER_WEATHER)));
+						cursor3.close();
+
+					} else {
+						itemsmap.put("temp4", "");
+						itemsmap.put("weather4", "");
+
+					}
+
+					Log.d(TAG, "-------" + itemsmap.get("st1"));
+					Log.d(TAG, "-------" + itemsmap.get("temp1"));
+					Log.d(TAG, "-------" + itemsmap.get("weather1"));
+					Log.d(TAG, "-------" + itemsmap.get("temp2"));
+					Log.d(TAG, "-------" + itemsmap.get("weather2"));
+					Log.d(TAG, "-------" + itemsmap.get("temp3"));
+					Log.d(TAG, "-------" + itemsmap.get("weather3"));
+					Log.d(TAG, "-------" + itemsmap.get("temp4"));
+					Log.d(TAG, "-------" + itemsmap.get("weather4"));
 
 				}
-				
-				Log.d(TAG, "-------" + itemsmap.get("str1"));
-				Log.d(TAG, "-------" + itemsmap.get("temp1"));
-				Log.d(TAG, "-------" + itemsmap.get("weather1"));
-				Log.d(TAG, "-------" + itemsmap.get("temp2"));
-				Log.d(TAG, "-------" + itemsmap.get("weather2"));
-				Log.d(TAG, "-------" + itemsmap.get("temp3"));
-				Log.d(TAG, "-------" + itemsmap.get("weather3"));
-				Log.d(TAG, "-------" + itemsmap.get("temp4"));
-				Log.d(TAG, "-------" + itemsmap.get("weather4"));
-
+				mwWeatherDialog = new WeatherDialog(this, screenWidth,
+						screenHeight, cityInfoMap, weatherMap, itemsmap);
+				mwWeatherDialog.show();
+				mwWeatherDialog.setOnCancelButtonClickListener(this);
 			}
-			mwWeatherDialog = new WeatherDialog(this, screenWidth,
-					screenHeight, cityInfoMap, weatherMap, itemsmap);
-			mwWeatherDialog.show();
-
-		}
 
 		 }
 
@@ -352,5 +343,11 @@ public class WeatherScreen extends Screen {
 		cv4.put(DatabaseHelper.COLUMN_WEATHER_TEMP_RANGE, itemsmap.get("temp4"));
 		cv4.put(DatabaseHelper.COLUMN_WEATHER_WEATHER, itemsmap.get("weather4"));
 		ServiceManager.getDbManager().insertScheduleWeather(cv4);
+	}
+
+	@Override
+	public void onCancelButtonClick(WeatherDialog mweatherDialog) {
+		// TODO Auto-generated method stub
+           this.finish();
 	}
 }
