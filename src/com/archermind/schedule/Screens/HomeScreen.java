@@ -1,6 +1,7 @@
 package com.archermind.schedule.Screens;
 
 import android.app.Activity;
+import android.app.NotificationManager;
 import android.app.TabActivity;
 import android.content.Context;
 import android.content.Intent;
@@ -39,6 +40,7 @@ public class HomeScreen extends TabActivity implements OnTabChangeListener {
 	private static TabHost mChildTabHost;
 	private Button titleAddBtn;
 	private static Context context;
+	 private NotificationManager mNotificationManager;
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -62,6 +64,10 @@ public class HomeScreen extends TabActivity implements OnTabChangeListener {
 			}
 		});
         
+        mNotificationManager = (NotificationManager) this.getSystemService(this.NOTIFICATION_SERVICE);       
+		int id=getIntent().getIntExtra("notify_id",1);
+		mNotificationManager.cancel(id);
+		
     }
     
     private void initView(){
@@ -171,4 +177,12 @@ public class HomeScreen extends TabActivity implements OnTabChangeListener {
 		 ((Activity) context).overridePendingTransition(R.anim.right_in,R.anim.right_out);
 	 }
 	 
+
+		@Override
+		protected void onNewIntent(Intent intent) {
+			// TODO Auto-generated method stub
+			super.onNewIntent(intent);			
+			long id =intent.getIntExtra("notify_id", 1);
+			mNotificationManager.cancel((int)id);
+		}
 }

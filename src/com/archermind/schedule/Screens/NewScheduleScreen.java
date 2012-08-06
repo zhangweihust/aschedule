@@ -37,6 +37,8 @@ import android.widget.TextView;
 
 import com.archermind.schedule.R;
 import com.archermind.schedule.Adapters.EventTypeItemAdapter;
+import com.archermind.schedule.Dialog.SimpleTimeSelectorDialog;
+import com.archermind.schedule.Dialog.SimpleTimeSelectorDialog.SimpleOnOkButtonClickListener;
 import com.archermind.schedule.Dialog.TimeSelectorDialog;
 import com.archermind.schedule.Dialog.TimeSelectorDialog.OnOkButtonClickListener;
 import com.archermind.schedule.Model.EventTypeItem;
@@ -75,7 +77,6 @@ public class NewScheduleScreen extends Screen implements OnClickListener {
 	};
 
 	private View remind_root_view;
-	private LayoutInflater inflater;
 	private LinearLayout time_remind_linear, repeat_remind_linear,
 			stage_remind_linear;
 	private Button time_remind_option, repeat_remind_option,
@@ -98,32 +99,31 @@ public class NewScheduleScreen extends Screen implements OnClickListener {
 	private CheckBox stage_remind_checkbox;
 	private TextView stage_remind_start_date, stage_remind_end_date;
 	String text, text1;
-	private int temp = -1;
 	// private List<HashMap<String, Object>> remind_radiogroup;
 	private Button saveBtn, backBtn;
-	private NotificationManager mNotificationManager;
-	private Notification mNotification;
-	private Intent mIntent;
-	private PendingIntent mPendingIntent;
 	private boolean mShare = false;
 	private boolean mImportant = false;
 	private boolean mRemind = false;
-	private int mType;
+	private int mType=-1;
 	private long aHeadTime;
 	private long scheduleTime;
+	private long startTime = 0, endTime = 0;
 	private String oper_flag = "N";
 	private String remindCycle = "0";
 	private StringBuffer weekType = new StringBuffer();
-	private int weekValue = 0x00;
 	private int[] weekvalue = new int[7];
-	private Calendar mCalendar = Calendar.getInstance();
 	private ServerInterface si;
 	private TimeSelectorDialog timeselectordialog;
 	private long flagAlarm;
-	private long schedule_id;
-	private int[] weekdayId = new int[7];
-    private TimeSelectorOkListener mTimeSelectorOkListener= new TimeSelectorOkListener();
-	@Override
+	private long schedule_id = 1;
+	private String scheduleText;
+	private TimeSelectorOkListener mTimeSelectorOkListener = new TimeSelectorOkListener();
+	private SimpleTimeSelectorDialog mSimpleTimeSelectorDialog;
+	private SimpleTimeSelectorDialog mSimpleTimeSelectorDialogend;
+	private SimpleTimeSelectorOkListener mSimpleTimeSelectorOkListener = new SimpleTimeSelectorOkListener();
+    private SimpleTimeSelectorOkListenerend mSimpleTimeSelectorOkListenerend =new SimpleTimeSelectorOkListenerend();
+	private boolean mStageRemind=false ;
+    @Override
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		si = ServiceManager.getServerInterface();
@@ -153,8 +153,7 @@ public class NewScheduleScreen extends Screen implements OnClickListener {
 		mScheduleWeekTv = (TextView) findViewById(R.id.schedule_new_week);
 		mScheduleTimeTv = (TextView) findViewById(R.id.schedule_new_time);
 
-		// 获取当前时间
-		// long currentTime =System.currentTimeMillis();
+		Calendar mCalendar = Calendar.getInstance();
 		mCalendar.set(Calendar.SECOND, 0);
 		mCalendar.set(Calendar.MILLISECOND, 0);
 		
@@ -168,7 +167,7 @@ public class NewScheduleScreen extends Screen implements OnClickListener {
 		titles = this.getResources().getStringArray(R.array.schedule);
 		eventItems = new ArrayList<EventTypeItem>();
 		for (int i = 0; i < titles.length; i++) {
-			eventItems.add(new com.archermind.schedule.Model.EventTypeItem(
+			eventItems.add(new EventTypeItem(
 					titles[i], images[i]));
 			// Log.i("newshedule",
 			// "-------eventitems["+i+"]="+eventItems.get(i).getImageId());
@@ -240,6 +239,14 @@ public class NewScheduleScreen extends Screen implements OnClickListener {
 
 		timeselectordialog = new TimeSelectorDialog(this);
 		timeselectordialog.setOnOkButtonClickListener(mTimeSelectorOkListener);
+
+		mSimpleTimeSelectorDialog = new SimpleTimeSelectorDialog(this);
+		mSimpleTimeSelectorDialog
+				.setOnOkButtonClickListener(mSimpleTimeSelectorOkListener);
+		mSimpleTimeSelectorDialogend = new SimpleTimeSelectorDialog(this);
+		mSimpleTimeSelectorDialogend
+				.setOnOkButtonClickListener(mSimpleTimeSelectorOkListenerend);
+
 	}
 
 	public void setDisplayTime(long displaytime) {
@@ -471,11 +478,40 @@ public class NewScheduleScreen extends Screen implements OnClickListener {
 							boolean isChecked) {
 						// TODO Auto-generated method stub
 						if (isChecked) {
+							mStageRemind = true;
 							stage_remind_start_date.setEnabled(true);
 							stage_remind_end_date.setEnabled(true);
+
+							Calendar mCalendar = Calendar.getInstance();
+							mCalendar.setTimeInMillis(scheduleTime);
+
+							if (DatabaseHelper.SCHEDULE_NOTICE_PERIOD_MODE_DAY
+									.equals(remindCycle)) {
+								mCalendar.add(Calendar.DAY_OF_MONTH, 1);
+							} else if (DatabaseHelper.SCHEDULE_NOTICE_PERIOD_MODE_MONTH
+									.equals(remindCycle)) {
+								mCalendar.add(Calendar.MONTH, 1);
+							} else if (DatabaseHelper.SCHEDULE_NOTICE_PERIOD_MODE_YEAR
+									.equals(remindCycle)) {
+								mCalendar.add(Calendar.YEAR, 1);
+							} else if (DatabaseHelper.SCHEDULE_NOTICE_PERIOD_MODE_WEEK
+									.equals(remindCycle)) {
+								mCalendar.add(Calendar.WEEK_OF_MONTH, 1);
+							}
+							startTime = scheduleTime;
+							endTime = mCalendar.getTimeInMillis();
+							stage_remind_start_date.setText(DateTimeUtils
+									.time2String("yyyy-MM-dd", startTime));
+							stage_remind_end_date.setText(DateTimeUtils
+									.time2String("yyyy-MM-dd", endTime));
 						} else {
+							mStageRemind = false;
 							stage_remind_start_date.setEnabled(false);
 							stage_remind_end_date.setEnabled(false);
+							stage_remind_start_date.setText(DateTimeUtils
+									.time2String("yyyy-MM-dd", startTime));
+							stage_remind_end_date.setText(" ");
+
 						}
 					}
 				});
@@ -484,15 +520,12 @@ public class NewScheduleScreen extends Screen implements OnClickListener {
 
 			@Override
 			public void onClick(View v) {
-				// TODO Auto-generated method stub
-				// Toast.makeText(NewScheduleScreen.this,
-				// stage_remind_start_date.getText(), Toast.LENGTH_SHORT)
-				// .show();
-				// 设置时间选择器的默认时间
 
-				// 启动时间选择器
+				// 启动时间选择器,设置时间选择器的默认时间为日程时间
 
-				// 获取时间选择器的时间
+				mSimpleTimeSelectorDialog.setCurrentItem(startTime);
+				mSimpleTimeSelectorDialog.show();
+
 			}
 		});
 
@@ -500,11 +533,10 @@ public class NewScheduleScreen extends Screen implements OnClickListener {
 
 			@Override
 			public void onClick(View v) {
-				// TODO Auto-generated method stub
-				// Toast.makeText(NewScheduleScreen.this,
-				// stage_remind_end_date.getText(), Toast.LENGTH_SHORT)
-				// .show();
+
 				// 启动时间选择器
+				mSimpleTimeSelectorDialogend.setCurrentItem(endTime);
+				mSimpleTimeSelectorDialogend.show();
 
 				
 				
@@ -555,9 +587,17 @@ public class NewScheduleScreen extends Screen implements OnClickListener {
 			// Toast.LENGTH_SHORT).show();
 			oper_flag = "A";
 			// 将日程保存到数据库中
-			scheduleTime = scheduleTime -aHeadTime * 60 * 1000;
-			saveScheduleToDb();
-			sendAlarm(scheduleTime);
+//			scheduleTime = scheduleTime - aHeadTime * 60 * 1000;
+		     scheduleText	  = schedule_text.getText().toString();
+		     //日程内容为空，则提示用户
+		     if (!schedule_text.equals("")){
+		    	 saveScheduleToDb();
+		     }else{
+		    	 
+		 		    	 
+		     }
+			
+
 			this.finish();
 		} else if (v.getId() == share.getId()) {
 			if (mShare == false) {
@@ -572,6 +612,14 @@ public class NewScheduleScreen extends Screen implements OnClickListener {
 			// 显示闹钟提醒对话框
 			showRemindWindow(v);
 			remindImg.setImageResource(R.drawable.schedule_new_remind_select);
+			//设置开始时间为日程时间
+			if(DatabaseHelper.SCHEDULE_NOTICE_PERIOD_MODE_NONE.equals(remindCycle)){
+				startTime = scheduleTime;
+				stage_remind_start_date.setText(DateTimeUtils.time2String("yyyy-MM-dd",
+						startTime));
+				stage_remind_end_date.setText(" ");
+
+			}
 
 		} else if (v.getId() == important.getId()) {
 			if (mImportant == false) {
@@ -598,44 +646,48 @@ public class NewScheduleScreen extends Screen implements OnClickListener {
 		new Thread(new Runnable(){
 			@Override
 			public void run() {
-		Log.d("NewSheduleScreen", "----save to schedule");
-		ContentValues cv = new ContentValues();
-		// cv.put(DatabaseHelper.COLUMN_SCHEDULE_USER_ID, 1);
-		cv.put(DatabaseHelper.COLUMN_SCHEDULE_TYPE, mType);
-		cv.put(DatabaseHelper.COLUMN_SCHEDULE_SHARE, mShare);
-		cv.put(DatabaseHelper.COLUMN_SCHEDULE_IMPORTANT, mImportant);
-		cv.put(DatabaseHelper.COLUMN_SCHEDULE_OPER_FLAG, oper_flag);
-		flagAlarm = System.currentTimeMillis();
-		cv.put(DatabaseHelper.COLUMN_SCHEDULE_NOTICE_FLAG, flagAlarm);
-		// 此为时间选择器的时间，暂设置为当前时间
-		// long scheduleTime = System.currentTimeMillis();
-		// Log.d("AlarmRecever",
-		// "----------currenttime=" + System.currentTimeMillis());
-		cv.put(DatabaseHelper.COLUMN_SCHEDULE_START_TIME, scheduleTime);
-		cv.put(DatabaseHelper.COLUMN_SCHEDULE_NOTICE_TIME, aHeadTime);
-		cv.put(DatabaseHelper.COLUMN_SCHEDULE_NOTICE_PERIOD, remindCycle);
-		// cv.put(DatabaseHelper.COLUMN_SCHEDULE_UPDATE_TIME, scheduleTime);
-		cv.put(DatabaseHelper.COLUMN_SCHEDULE_NOTICE_START, scheduleTime);
-		cv.put(DatabaseHelper.COLUMN_SCHEDULE_NOTICE_END, scheduleTime);
-		cv.put(DatabaseHelper.COLUMN_SCHEDULE_FLAG_OUTDATE, false);
-		// weekType="1100000";
-		for (int i = 0; i < weekvalue.length; i++)
-			weekType.append(weekvalue[i]);
-		Log.d("newschedulescreen", "-------weekType=" + weekType);
-		cv.put(DatabaseHelper.COLUMN_SCHEDULE_NOTICE_WEEK, weekType.toString());
-		String scheduleText = schedule_text.getText().toString();
-		cv.put(DatabaseHelper.COLUMN_SCHEDULE_CONTENT, scheduleText);
-				ServiceManager.getDbManager().insertLocalSchedules(cv, scheduleTime);
-				si.uploadSchedule("0","1");
+				ContentValues cv = new ContentValues();
+				cv.put(DatabaseHelper.COLUMN_SCHEDULE_TYPE, mType);
+				cv.put(DatabaseHelper.COLUMN_SCHEDULE_SHARE, mShare);
+				cv.put(DatabaseHelper.COLUMN_SCHEDULE_IMPORTANT, mImportant);
+				cv.put(DatabaseHelper.COLUMN_SCHEDULE_OPER_FLAG, oper_flag);
+				flagAlarm = System.currentTimeMillis();
+				cv.put(DatabaseHelper.COLUMN_SCHEDULE_NOTICE_FLAG, flagAlarm);
+				cv.put(DatabaseHelper.COLUMN_SCHEDULE_START_TIME, scheduleTime);
+				cv.put(DatabaseHelper.COLUMN_SCHEDULE_NOTICE_TIME, aHeadTime);
+				cv.put(DatabaseHelper.COLUMN_SCHEDULE_NOTICE_PERIOD,
+						remindCycle);
+				cv.put(DatabaseHelper.COLUMN_SCHEDULE_NOTICE_START,
+						startTime);
+				
+				cv.put(DatabaseHelper.COLUMN_SCHEDULE_NOTICE_STAGE_FLAG, mStageRemind);
+				//主贴
+				cv.put(DatabaseHelper.COLUMN_SCHEDULE_ORDER,0);
+				cv.put(DatabaseHelper.COLUMN_SCHEDULE_NOTICE_END, endTime);
+				cv.put(DatabaseHelper.COLUMN_SCHEDULE_FLAG_OUTDATE, false);
+				for (int i = 0; i < weekvalue.length; i++)
+					weekType.append(weekvalue[i]);
+				cv.put(DatabaseHelper.COLUMN_SCHEDULE_NOTICE_WEEK,
+						weekType.toString());			
+				cv.put(DatabaseHelper.COLUMN_SCHEDULE_CONTENT, scheduleText);
+				schedule_id = ServiceManager.getDbManager()
+						.insertLocalSchedules(cv, scheduleTime);
+				// 闹钟提醒
+				long remindTime=scheduleTime - aHeadTime * 60 * 1000;
+				sendAlarm(remindTime);
+
+				// 同步新建日程到服务器
+				si.uploadSchedule("0", "1");
+
 			}
 			
 		}).start();
 	}
 
 	public void sendAlarm(Long time) {
-		Cursor c = ServiceManager.getDbManager().queryNotOutdateschedule();
-		Log.d(TAG, "-------NOT out date count = " + c.getCount());
-		c.close();
+		// Cursor c = ServiceManager.getDbManager().queryNotOutdateschedule();
+		// Log.d(TAG, "-------NOT out date count = " + c.getCount());
+		// c.close();
 		Intent alarmIntent = new Intent(NewScheduleScreen.this,
 				AlarmRecevier.class);
 		alarmIntent.setAction("" + flagAlarm);
@@ -645,31 +697,77 @@ public class NewScheduleScreen extends Screen implements OnClickListener {
 		AlarmManager am = (AlarmManager) getSystemService(ALARM_SERVICE);
 		am.set(AlarmManager.RTC_WAKEUP, time, pi);
 	}
+
+	// 监听时间选择器的“完成”按钮事件
+	class TimeSelectorOkListener implements OnOkButtonClickListener {
+
+		public void onOkButtonClick(TimeSelectorDialog timeSelectorDialog) {
+			// Constant.
+
+			// 获取时间选择器的值
+			Calendar c = Calendar.getInstance();
+			c.set(Calendar.YEAR, Constant.VARY_YEAR);
+			c.set(Calendar.MONTH, Constant.VARY_MONTH - 1);
+			Log.i(TAG, "-------MONTH" + Constant.VARY_MONTH);
+			c.set(Calendar.DAY_OF_MONTH, Constant.VARY_DAY);
+			c.set(Calendar.HOUR_OF_DAY, Constant.VARY_HOUR);
+			c.set(Calendar.MINUTE, Constant.VARY_MIN);
+
+			c.set(Calendar.SECOND, 0);
+			c.set(Calendar.MILLISECOND, 0);
+			scheduleTime = c.getTimeInMillis();
+			setDisplayTime(scheduleTime);
+			// Log.d(TAG,
+			// "----------huuujhhjhj     "+DateTimeUtils.time2String("yyyy-mm-dd",
+			// scheduleTime));
+			// 此时重复提醒默认为无，设置阶段提醒开始时间,结束时间显默认显示新建日程时间,；
+			
+		}
+
+	}
+
+	class SimpleTimeSelectorOkListener implements SimpleOnOkButtonClickListener {
+
+		@Override
+		public void onOkButtonClick(SimpleTimeSelectorDialog timeSelectorDialog) {
+			// TODO Auto-generated method stub
+
+			// 获取时间选择器的值
+			Calendar c = Calendar.getInstance();
+			c.set(Calendar.YEAR, Constant.VARY_YEAR);
+			c.set(Calendar.MONTH, Constant.VARY_MONTH - 1);
+			c.set(Calendar.DAY_OF_MONTH, Constant.VARY_DAY);
+			c.set(Calendar.HOUR_OF_DAY, 0);
+			c.set(Calendar.MINUTE, 0);
+			c.set(Calendar.SECOND, 0);
+			c.set(Calendar.MILLISECOND, 0);
+			startTime = c.getTimeInMillis();
+			stage_remind_start_date.setText(DateTimeUtils.time2String(
+					"yyyy-MM-dd", startTime));
+
+		}
+	}
 	
-	//监听时间选择器的“完成”按钮事件
-	class TimeSelectorOkListener implements OnOkButtonClickListener{
-		
-		
-		 public void onOkButtonClick(TimeSelectorDialog timeSelectorDialog){
-//			 Constant.
-			 
-			 //获取时间选择器的值
-			 Calendar c =Calendar.getInstance();
-			 c.set(Calendar.YEAR, Constant.VARY_YEAR);
-			 c.set(Calendar.MONTH, Constant.VARY_MONTH-1);
-			 Log.i(TAG, "-------MONTH"+Constant.VARY_MONTH);
-			 c.set(Calendar.DAY_OF_MONTH, Constant.VARY_DAY);
-			 c.set(Calendar.HOUR_OF_DAY, Constant.VARY_HOUR);
-			 c.set(Calendar.MINUTE, Constant.VARY_MIN);
-			 
-			 c.set(Calendar.SECOND, 0);
-			 c.set(Calendar.MILLISECOND, 0);
-		     scheduleTime= c.getTimeInMillis();			
-			 setDisplayTime(scheduleTime);
-//			 Log.d(TAG, "----------huuujhhjhj     "+DateTimeUtils.time2String("yyyy-mm-dd", scheduleTime));
-		 }
-		
-		
+	class SimpleTimeSelectorOkListenerend implements SimpleOnOkButtonClickListener {
+
+		@Override
+		public void onOkButtonClick(SimpleTimeSelectorDialog timeSelectorDialog) {
+			// TODO Auto-generated method stub
+
+			// 获取时间选择器的值
+			Calendar c = Calendar.getInstance();
+			c.set(Calendar.YEAR, Constant.VARY_YEAR);
+			c.set(Calendar.MONTH, Constant.VARY_MONTH - 1);
+			c.set(Calendar.DAY_OF_MONTH, Constant.VARY_DAY);
+			c.set(Calendar.HOUR_OF_DAY, 0);
+			c.set(Calendar.MINUTE, 0);
+			c.set(Calendar.SECOND, 0);
+			c.set(Calendar.MILLISECOND, 0);
+			endTime = c.getTimeInMillis();
+			stage_remind_end_date.setText(DateTimeUtils.time2String(
+					"yyyy-MM-dd", endTime));
+
+		}
 	}
 
 	class RemindTitleListener implements View.OnClickListener {
@@ -736,7 +834,7 @@ public class NewScheduleScreen extends Screen implements OnClickListener {
 
 			if (repeat_remind_none.getId() == buttonView.getId()) {
 				if (isChecked) {
-					remindCycle = "0";
+					remindCycle = DatabaseHelper.SCHEDULE_NOTICE_PERIOD_MODE_NONE;
 					repeat_remind_day.setChecked(false);
 
 					repeat_remind_month.setChecked(false);
@@ -745,7 +843,6 @@ public class NewScheduleScreen extends Screen implements OnClickListener {
 					setWeekDayFalse();
 			
 
-					stage_remind_checkbox.setChecked(false);
 					stage_remind_checkbox.setEnabled(false);
 				} else {
 					stage_remind_checkbox.setEnabled(true);
@@ -753,7 +850,7 @@ public class NewScheduleScreen extends Screen implements OnClickListener {
 			} else if (repeat_remind_day.getId() == buttonView.getId()) {
 
 				if (isChecked) {
-					remindCycle = "D";
+					remindCycle = DatabaseHelper.SCHEDULE_NOTICE_PERIOD_MODE_DAY;
 
 					repeat_remind_none.setChecked(false);
 					repeat_remind_month.setChecked(false);
@@ -767,7 +864,7 @@ public class NewScheduleScreen extends Screen implements OnClickListener {
 			} else if (repeat_remind_month.getId() == buttonView.getId()) {
 
 				if (isChecked) {
-					remindCycle = "M";
+					remindCycle = DatabaseHelper.SCHEDULE_NOTICE_PERIOD_MODE_MONTH;
 
 					repeat_remind_none.setChecked(false);
 					repeat_remind_day.setChecked(false);
@@ -776,7 +873,7 @@ public class NewScheduleScreen extends Screen implements OnClickListener {
 				}
 			} else if (repeat_remind_year.getId() == buttonView.getId()) {
 				if (isChecked) {
-					remindCycle = "Y";
+					remindCycle = DatabaseHelper.SCHEDULE_NOTICE_PERIOD_MODE_YEAR;
 
 					repeat_remind_none.setChecked(false);
 					repeat_remind_month.setChecked(false);
@@ -785,6 +882,14 @@ public class NewScheduleScreen extends Screen implements OnClickListener {
 				}
 
 			}
+			stage_remind_checkbox.setChecked(false);
+			Calendar mCalendar = Calendar.getInstance();
+			mCalendar.setTimeInMillis(scheduleTime);
+			startTime = scheduleTime;
+			endTime = mCalendar.getTimeInMillis();
+			stage_remind_start_date.setText(DateTimeUtils.time2String(
+					"yyyy-MM-dd", startTime));
+			stage_remind_end_date.setText(" ");
 
 		}
 	}
@@ -793,7 +898,7 @@ public class NewScheduleScreen extends Screen implements OnClickListener {
 		mMonday.setChecked(false);
 		mTuesday.setChecked(false);
 		mWednesday.setChecked(false);
-		mWednesday.setChecked(false);
+		mThursday.setChecked(false);
 		mFriday.setChecked(false);
 		mSaturday.setChecked(false);
 		mSunday.setChecked(false);
@@ -809,7 +914,7 @@ public class NewScheduleScreen extends Screen implements OnClickListener {
 			// Toast.LENGTH_SHORT)
 			// .show();
 			if (isChecked) {
-				remindCycle = "W";
+				remindCycle = DatabaseHelper.SCHEDULE_NOTICE_PERIOD_MODE_WEEK;
 				repeat_remind_day.setChecked(false);
 				repeat_remind_none.setChecked(false);
 				repeat_remind_month.setChecked(false);

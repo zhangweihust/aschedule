@@ -37,7 +37,9 @@ public class AlarmRecevier extends BroadcastReceiver {
 	private int dateMode;
 	private long nextTime;
 	private long flagAlarm;
+	private long remindTime;
 	private String schedule_content;
+	private boolean mStageRemind;
 	
 	private static final int DATE_MODE_NONE = 0;// 0
 
@@ -77,6 +79,8 @@ public class AlarmRecevier extends BroadcastReceiver {
 					.getColumnIndex(DatabaseHelper.COLUMN_SCHEDULE_NOTICE_FLAG));
 			schedule_content=c.getString(c
 					.getColumnIndex(DatabaseHelper.COLUMN_SCHEDULE_CONTENT));	
+			mStageRemind= c .getInt(c
+					.getColumnIndex(DatabaseHelper.COLUMN_SCHEDULE_NOTICE_STAGE_FLAG)) ==1;
 		}
 		
 		c.close();
@@ -87,7 +91,7 @@ public class AlarmRecevier extends BroadcastReceiver {
 				.getSystemService(context.NOTIFICATION_SERVICE);
 		// 点击通知进入的界面
 		Intent mIntent = new Intent(context, HomeScreen.class);
-		intent.putExtra("notify_id", (int)schedule_id);
+		mIntent.putExtra("notify_id", (int)schedule_id);
 		// mIntent.setComponent(getComponentName());
 		// mIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
 		// mIntent=new Intent("android.settings.SETTINGS");
@@ -101,31 +105,43 @@ public class AlarmRecevier extends BroadcastReceiver {
 		mNotification.setLatestEventInfo(context, "你有一个新日程", schedule_content,
 				mPendingIntent);
 		mNotificationManager.notify((int)schedule_id, mNotification);
+		Log.d(TAG, "-----------shedule_id="+schedule_id);
 		
 
 		
-
-		if (remindCycle.equals("0")) {
+		
+		if ("0".equals(remindCycle)) {
 			dateMode = DATE_MODE_NONE;
-		} else if (remindCycle.equals("D")) {
+		} else if ("D".equals(remindCycle)) {
 			dateMode = DATE_MODE_DAY;
-		} else if (remindCycle.equals("W")) {
+		} else if ("W".equals(remindCycle)) {
 			dateMode = DATE_MODE_WEEK;
-		} else if (remindCycle.equals("M")) {
+		} else if ("M".equals(remindCycle)) {
 			dateMode = DATE_MODE_MONTH;
-		} else if (remindCycle.equals("Y")) {
+		} else if ("Y".equals(remindCycle)) {
 			dateMode = DATE_MODE_YEAR;
 		}
-
-;
-		Log.d(TAG,
-				"----------scheduleTime="
-						+ DateTimeUtils.time2String("yyyy-MM-dd-hh-mm",
-								scheduleTime));
+		
+		Log.d(TAG, "-----------startTime="+startTime);
+		Log.d(TAG, "-----------startTime="+DateTimeUtils.time2String("yyyy-MM-dd-hh-mm",
+				startTime));
+		Log.d(TAG, "-----------aheadTime="+aheadTime);		
 		Log.d(TAG, "----------dateMode=" + dateMode);
 		Log.d(TAG, "----------weekValue=" + weekValue);
-	
-		nextTime = getNextTime(dateMode, weekValue, scheduleTime);
+		//闹钟提醒的时间
+		remindTime=scheduleTime-aheadTime*60*1000;
+		
+		
+        
+		Log.d(TAG,
+				"----------remindTime="
+						+ DateTimeUtils.time2String("yyyy-MM-dd-hh-mm",
+								remindTime));
+		 Log.d(TAG, "----------remindTime=" + remindTime);
+		nextTime = getNextTime(dateMode, weekValue, remindTime);
+		Log.d(TAG,
+				"-----last-----nextTime="
+						+ nextTime);
 		Log.d(TAG,
 				"-----last-----nextTime="
 						+ DateTimeUtils.time2String("yyyy-MM-dd-hh-mm",
@@ -161,10 +177,10 @@ public class AlarmRecevier extends BroadcastReceiver {
 
 		final SimpleDateFormat fmt = new SimpleDateFormat();
 		final Calendar c = Calendar.getInstance();// 获取的是当前的时间
-		Log.d(TAG,
-				"----------c="
-						+ DateTimeUtils.time2String("yyyy-MM-dd-hh-mm",
-								c.getTimeInMillis()));
+//		Log.d(TAG,
+//				"----------c="
+//						+ DateTimeUtils.time2String("yyyy-MM-dd-hh-mm",
+//								c.getTimeInMillis()));
 		// Log.d(TAG, "----------c=" + c.getTimeInMillis());
 		long nextTime = 0; // 需要计算的下一次闹钟的时间
 		final long now = System.currentTimeMillis(); // 当前的毫秒数
@@ -172,16 +188,16 @@ public class AlarmRecevier extends BroadcastReceiver {
 		Log.d(TAG,
 				"----------now="
 						+ DateTimeUtils.time2String("yyyy-MM-dd-hh-mm", now));
-		// Log.d(TAG, "----------now=" + now);
+		 Log.d(TAG, "----------now=" + now);
 
 		switch (dateMode) {
 
 		// 不指定
 		case DATE_MODE_NONE:
 
-			if (now < scheduleTime) {
+			if (now < time) {
 
-				nextTime = scheduleTime;
+				nextTime = time;
 			} else {
 
 				nextTime = 0;
@@ -313,6 +329,16 @@ public class AlarmRecevier extends BroadcastReceiver {
 			nextTime = c.getTimeInMillis();
 
 			nextTime = checkAlive(nextTime);
+			if (now >= nextTime) // 准时闹，或者上一次没有触发，且还没有到下一次触发时间
+			{
+
+				c.add(Calendar.YEAR, 1);// 往后面推迟一年
+				nextTime = c.getTimeInMillis();
+				Log.d(TAG,
+						"----------nextTime2="
+								+ DateTimeUtils.time2String("yyyy-MM-dd-hh-mm",
+										nextTime));
+			}
 			break;
 
 		default:
@@ -327,15 +353,21 @@ public class AlarmRecevier extends BroadcastReceiver {
 	}
 
 	private long checkAlive(long nextTime) {
+       if(mStageRemind){
+    	   
+    	   if (nextTime < startTime) {
+    			
+    			 nextTime = startTime;
+    			 } 
+    			 else if (nextTime > endTime) {
+    			
+    			 nextTime = 0;
+    			 }
+    	   
+    	   
+       }
+		 
 		return nextTime;
-		// if (nextTime < startTime) {
-		//
-		// nextTime = startTime;
-		// } else if (nextTime > endTime) {
-		//
-		// nextTime = 0;
-		// }
-
 	}
 
 	private int[] parseDateWeeks(String value) {

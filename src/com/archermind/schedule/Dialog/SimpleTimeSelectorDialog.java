@@ -13,7 +13,9 @@ import android.widget.Button;
 import com.archermind.schedule.R;
 import com.archermind.schedule.Adapters.NumericWheelAdapter;
 import com.archermind.schedule.Calendar.SpecialCalendar;
+import com.archermind.schedule.Dialog.TimeSelectorDialog.OnOkButtonClickListener;
 import com.archermind.schedule.Utils.Constant;
+import com.archermind.schedule.Utils.DateTimeUtils;
 import com.archermind.schedule.Views.WheelView;
 import com.archermind.schedule.Views.WheelView.OnWheelScrollListener;
 
@@ -27,6 +29,16 @@ public class SimpleTimeSelectorDialog implements OnClickListener {
 	private Button wheelView_cancel,wheelView_ok;
 	private Window window = null;
 
+	public interface SimpleOnOkButtonClickListener {
+		void onOkButtonClick(SimpleTimeSelectorDialog timeSelectorDialog);
+	}
+
+	private SimpleOnOkButtonClickListener mOnOkButtonClickListener;
+
+	public void setOnOkButtonClickListener(SimpleOnOkButtonClickListener l) {
+		mOnOkButtonClickListener = l;
+	}
+
 	public SimpleTimeSelectorDialog(Context context) {
 		timeSelectorDialog = new Dialog(context, R.style.CustomDialog);
 		timeSelectorDialog.setContentView(R.layout.simple_time_select);
@@ -38,13 +50,24 @@ public class SimpleTimeSelectorDialog implements OnClickListener {
 		initWheel(R.id.wheelView_year);
 		initWheel(R.id.wheelView_month);
 		initWheel(R.id.wheelView_day);
-		
-		wheelView_cancel = (Button) timeSelectorDialog.findViewById(R.id.wheelView_cancel);
-		wheelView_ok = (Button) timeSelectorDialog.findViewById(R.id.wheelView_ok);
-		
+
+		wheelView_cancel = (Button) timeSelectorDialog
+				.findViewById(R.id.wheelView_cancel);
+		wheelView_ok = (Button) timeSelectorDialog
+				.findViewById(R.id.wheelView_ok);
+
 		wheelView_cancel.setOnClickListener(this);
 		wheelView_ok.setOnClickListener(this);
 
+	}
+	public void setCurrentItem(long time) {
+
+		Constant.YEAR = Integer.parseInt(DateTimeUtils.time2String("y", time));
+		Constant.MONTH = Integer.parseInt(DateTimeUtils.time2String("M", time));
+		Constant.DAY = Integer.parseInt(DateTimeUtils.time2String("d", time));
+		wheelView_year.setCurrentItem(Constant.YEAR - 1901);
+		wheelView_month.setCurrentItem(Constant.MONTH - 1);
+		wheelView_day.setCurrentItem(Constant.DAY - 1);
 
 	}
 
@@ -145,6 +168,7 @@ public class SimpleTimeSelectorDialog implements OnClickListener {
 			break;
 		case R.id.wheelView_ok:
 			dismiss();
+		    mOnOkButtonClickListener.onOkButtonClick(this);
 			break;
 		}
 	}

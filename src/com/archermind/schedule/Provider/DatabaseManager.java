@@ -36,7 +36,7 @@ public class DatabaseManager {
 		database.close();
 	}
 
-	public void insertLocalSchedules(ContentValues values, long timeInMillis) {
+	public long insertLocalSchedules(ContentValues values, long timeInMillis) {
 		Cursor c = queryTodayLocalSchedules(timeInMillis);
 		if (c.getCount() == 0) {
 			values.put(DatabaseHelper.COLUMN_SCHEDULE_FIRST_FLAG, true);
@@ -44,8 +44,9 @@ public class DatabaseManager {
 			values.put(DatabaseHelper.COLUMN_SCHEDULE_FIRST_FLAG, false);
 		}
 		c.close();
-		database.insert(DatabaseHelper.TAB_LOCAL_SCHEDULE, null, values);
+		long schedule_id= database.insert(DatabaseHelper.TAB_LOCAL_SCHEDULE, null, values);
 		eventService.onUpdateEvent(new EventArgs(EventTypes.LOCAL_SCHEDULE_UPDATE));
+		return schedule_id;
 	}
 	
 	public void insertShareSchedules(ContentValues values) {

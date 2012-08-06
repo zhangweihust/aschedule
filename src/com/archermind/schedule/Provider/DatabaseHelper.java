@@ -23,9 +23,15 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 	public final static String SCHEDULE_OPER_MODIFY = "M";
 	public final static String SCHEDULE_OPER_DELETE = "D";
 	public final static String SCHEDULE_OPER_NOTHING = "N";
-	
-	public static final String COLUMN_SCHEDULE_ID = "_id";//日程ID
-	public static final String COLUMN_SCHEDULE_USER_ID = "user_id";//用户ID
+
+	public final static String SCHEDULE_NOTICE_PERIOD_MODE_NONE = "0";
+	public final static String SCHEDULE_NOTICE_PERIOD_MODE_DAY = "D";
+	public final static String SCHEDULE_NOTICE_PERIOD_MODE_YEAR = "Y";
+	public final static String SCHEDULE_NOTICE_PERIOD_MODE_MONTH = "M";
+	public final static String SCHEDULE_NOTICE_PERIOD_MODE_WEEK = "W";
+
+	public static final String COLUMN_SCHEDULE_ID = "_id";// 日程ID
+	public static final String COLUMN_SCHEDULE_USER_ID = "user_id";// 用户ID
 	public static final String COLUMN_SCHEDULE_T_ID = "tid";// 贴子ID
 	public static final String COLUMN_SCHEDULE_SHARE = "share";//是否分享
 	public static final String COLUMN_SCHEDULE_IMPORTANT = "important";//是否重要
@@ -37,13 +43,14 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 	public static final String COLUMN_SCHEDULE_NOTICE_FLAG = "notice_flag";//闹钟标志
 	public static final String COLUMN_SCHEDULE_NOTICE_PERIOD = "notice_period";
 	public static final String COLUMN_SCHEDULE_NOTICE_WEEK = "notice_week";
-	public static final String COLUMN_SCHEDULE_NOTICE_START = "notice_start";//日程开始时间
-	public static final String COLUMN_SCHEDULE_NOTICE_END = "notice_end";//日程结束时间
-	public static final String COLUMN_SCHEDULE_FLAG_OUTDATE="notice_outdate";//闹钟是否过期
-	public static final String COLUMN_SCHEDULE_CONTENT = "content";//日程内容
-	public static final String COLUMN_SCHEDULE_SLAVE_ID = "slave_id";//隶属于哪个主贴
-	public static final String COLUMN_SCHEDULE_ORDER = "queue";//回帖顺序
-	public static final String COLUMN_SCHEDULE_FIRST_FLAG = "first_flag";//一天的第一条日程
+	public static final String COLUMN_SCHEDULE_NOTICE_STAGE_FLAG = "notice_stage_flag";
+	public static final String COLUMN_SCHEDULE_NOTICE_START = "notice_start";// 日程开始时间
+	public static final String COLUMN_SCHEDULE_NOTICE_END = "notice_end";// 日程结束时间
+	public static final String COLUMN_SCHEDULE_FLAG_OUTDATE = "notice_outdate";// 闹钟是否过期
+	public static final String COLUMN_SCHEDULE_CONTENT = "content";// 日程内容
+	public static final String COLUMN_SCHEDULE_SLAVE_ID = "slave_id";// 隶属于哪个主贴
+	public static final String COLUMN_SCHEDULE_ORDER = "queue";// 回帖顺序
+	public static final String COLUMN_SCHEDULE_FIRST_FLAG = "first_flag";// 一天的第一条日程
 	private static final String CRETAE_TAB_LOCAL_SCHEDULE = " CREATE TABLE IF NOT EXISTS "
 			+ TAB_LOCAL_SCHEDULE
 			+ " ( "
@@ -85,10 +92,10 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 			+ " BOOLEAN, "
 			+ COLUMN_SCHEDULE_FLAG_OUTDATE
 			+ " BOOLEAN, "
-			+ COLUMN_SCHEDULE_CONTENT
-			+ " TEXT "
-			+ ")";
-	
+			+ COLUMN_SCHEDULE_NOTICE_STAGE_FLAG
+			+ " BOOLEAN, "
+			+ COLUMN_SCHEDULE_CONTENT + " TEXT " + ")";
+
 	public static final String TAB_SHARE_SCHEDULE = "share_schedule";
 	public static final String COLUMN_SCHEDULE_CITY = "city";//用户所在城市
 	

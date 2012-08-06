@@ -191,13 +191,6 @@
                     android:gravity="center"
                     android:orientation="horizontal" >
 
-                    <RadioButton
-                        android:id="@+id/repeat_remind_week_radiobtn"
-                        style="@style/CustomLeftRadioBtn"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:gravity="center" />
-
                     <LinearLayout
                         android:layout_width="fill_parent"
                         android:layout_height="wrap_content"
@@ -360,7 +353,7 @@
 
                 <TextView
                     android:id="@+id/stage_remind_start_date"
-                    android:layout_width="wrap_content"
+                    android:layout_width="80dp"
                     android:layout_height="wrap_content"
                     android:background="@drawable/schedule_alarm_remind_week_checkbox_unselect"
                     android:text="2012-07-13" />
@@ -375,7 +368,7 @@
 
                 <TextView
                     android:id="@+id/stage_remind_end_date"
-                    android:layout_width="wrap_content"
+                    android:layout_width="80dp"
                     android:layout_height="wrap_content"
                     android:background="@drawable/schedule_alarm_remind_week_checkbox_unselect"
                     android:text="2012-07-13" />
