@@ -66,14 +66,17 @@ public class FriendsDyamicScreen extends Screen implements
 			case ON_Refresh:
 				loading.setVisibility(View.GONE);
 				mAdapter.setList(dataArrayList);
+				onLoad();
 				break;
 			case ON_LoadMore:
 				loading.setVisibility(View.GONE);
 				mAdapter.setList(dataArrayList);
+				onLoad();
 				break;
 			case ON_LoadData:
 				loading.setVisibility(View.GONE);
 				mAdapter.setList(dataArrayList);
+				onLoad();
 				break;	
 			
 			}
@@ -144,26 +147,39 @@ public class FriendsDyamicScreen extends Screen implements
 	public void onRefresh() {
 		Toast.makeText(FriendsDyamicScreen.this, "onRefresh",
 				Toast.LENGTH_SHORT).show();
-		getSchedulesFromWeb("3", "1343203371");
-		dataArrayList.clear();
-		c = ServiceManager.getDbManager().queryShareSchedules(start, end);
-		cursorToArrayList(c);
-		mHandler.sendEmptyMessage(ON_Refresh);
-		onLoad();
+		new Thread(new Runnable(){
+			@Override
+			public void run() {
+				getSchedulesFromWeb("3", "1343203371");
+				dataArrayList.clear();
+				c = ServiceManager.getDbManager().queryShareSchedules(start, end);
+				cursorToArrayList(c);
+				mHandler.sendEmptyMessage(ON_Refresh);
+			}}).start();
 	}
 
 	@Override
 	public void onLoadMore() {
-		ScheduleBean bean = dataArrayList.get(dataArrayList.size() -1);
-		c = ServiceManager.getDbManager().queryShareSchedules(bean.getTime(), LOAD_DATA_SIZE);
-		if(c.getCount() != 0){
-			cursorToArrayList(c);
-			mHandler.sendEmptyMessage(ON_LoadMore);
-		} else {
-			Toast.makeText(FriendsDyamicScreen.this, "onLoadMore is lastone" ,
-					Toast.LENGTH_SHORT).show();
-		}
-		onLoad();
+		new Thread(new Runnable() {
+			@Override
+			public void run() {
+				ScheduleBean bean = dataArrayList.get(dataArrayList.size() - 1);
+				c = ServiceManager.getDbManager().queryShareSchedules(
+						bean.getTime(), LOAD_DATA_SIZE);
+				if (c.getCount() != 0) {
+					cursorToArrayList(c);
+					mHandler.sendEmptyMessage(ON_LoadMore);
+				} else {
+					FriendsDyamicScreen.this.runOnUiThread(new Runnable(){
+						@Override
+						public void run() {
+							Toast.makeText(FriendsDyamicScreen.this,
+									"onLoadMore is lastone", Toast.LENGTH_SHORT).show();
+							onLoad();
+						}});
+				}
+			}
+		}).start();
 	}
 	
 	private void loadSchedules(){

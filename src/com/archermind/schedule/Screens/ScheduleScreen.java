@@ -197,6 +197,8 @@ private ViewFlipper flipper = null;
 		list2.setXListViewListener(this);
 //		list1.setOnItemClickListener(this);
 		list2.setOnItemClickListener(this);
+		list2.setPullLoadEnable(true);
+		list2.setPullLoadEnable(true);
 //		list3.setOnItemClickListener(this);
 //		list4.setOnItemClickListener(this);
 

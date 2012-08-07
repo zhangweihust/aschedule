@@ -37,13 +37,13 @@ import com.archermind.schedule.Model.Friend;
 import com.archermind.schedule.Provider.DatabaseHelper;
 import com.archermind.schedule.Provider.DatabaseManager;
 import com.archermind.schedule.Services.ServiceManager;
+import com.archermind.schedule.Task.FriendTask;
 import com.archermind.schedule.Utils.AScheduleBroadcast;
 import com.archermind.schedule.Utils.Constant;
 import com.archermind.schedule.Utils.Contact;
 import com.archermind.schedule.Utils.NetworkUtils;
 import com.archermind.schedule.Utils.ScheduleData;
 import com.archermind.schedule.Utils.ServerInterface;
-import com.archermind.schedule.task.FriendTask;
 
 public class FriendScreen extends Screen implements OnClickListener, IEventHandler{
 	private ListView friend_listView;

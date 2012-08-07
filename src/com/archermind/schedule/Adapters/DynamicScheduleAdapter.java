@@ -1,10 +1,8 @@
 package com.archermind.schedule.Adapters;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import android.content.Context;
-import android.database.Cursor;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -18,11 +16,10 @@ import com.archermind.schedule.R;
 import com.archermind.schedule.ScheduleApplication;
 import com.archermind.schedule.Events.EventArgs;
 import com.archermind.schedule.Image.SmartImageView;
-import com.archermind.schedule.Model.AsyncScheduleLoader;
-import com.archermind.schedule.Model.AsyncScheduleLoader.ScheduleCallback;
 import com.archermind.schedule.Model.ScheduleBean;
 import com.archermind.schedule.Provider.DatabaseHelper;
-import com.archermind.schedule.Services.ServiceManager;
+import com.archermind.schedule.Task.AsyncScheduleLoader;
+import com.archermind.schedule.Task.AsyncScheduleLoader.ScheduleCallback;
 import com.archermind.schedule.Utils.DateTimeUtils;
 import com.archermind.schedule.Views.XListView;
 
@@ -36,10 +33,12 @@ public class DynamicScheduleAdapter extends BaseAdapter {
 
     private String TAG = "DynamicScheduleAdapter";
     
+    private Context mContext;
+    
     public DynamicScheduleAdapter(final Context context, List<ScheduleBean> list, XListView xlist) {
         ScheduleApplication.LogD(DynamicScheduleAdapter.class, "DynamicScheduleAdapter");
         inflater = LayoutInflater.from(context);
-
+        mContext = context;
         mXList = xlist;
         asyncScheduleLoader = new AsyncScheduleLoader();
      
@@ -110,29 +109,14 @@ public class DynamicScheduleAdapter extends BaseAdapter {
             item.location.setText(data.getLocation());
             int t_id = data.getT_id();
 
-            // Cursor slaveCursor =
-            // ServiceManager.getDbManager().querySlaveShareSchedules(t_id);
-            // mXList.setTag(item);
             item.commentsLayout.setTag(t_id);
 
-            // Cursor slaveCursor = null;
-            Cursor slaveCursor = (Cursor)asyncScheduleLoader.loadSchedule(inflater,
-                    item.commentsLayout, t_id, new ScheduleCallback() {
+            asyncScheduleLoader.loadSchedule(mContext, inflater,
+                    t_id, new ScheduleCallback() {
 
-                        public void scheduleCallback(ArrayList<View> listViews, int t_id) {
-
-                            if (listViews != null) {
-                                Log.i(TAG, "scheduleCallback" + t_id + "number of cursor is "
-                                        + listViews.size());
-
-                            } else {
-                                Log.i(TAG, "scheduleCallback" + t_id + "number of cursor is null");
-
-                            }
-
+                        public void scheduleCallback(LinearLayout listViews, int t_id) {
                             LinearLayout commentsLayout = (LinearLayout)mXList
                                     .findViewWithTag(t_id);
-
                             if (commentsLayout != null) {
                                 Log.i(TAG, "scheduleCallback" + t_id + "commentsLayout is "
                                         + commentsLayout.getId());
@@ -141,54 +125,15 @@ public class DynamicScheduleAdapter extends BaseAdapter {
                                 Log.i(TAG, "scheduleCallback" + t_id + "commentsLayout is null");
 
                             }
-
-                            // commentsLayout.getId();
-                            if ((commentsLayout != null) && (listViews != null)
-                                    && (listViews.size() > 0)) {
-                                commentsLayout.setVisibility(View.VISIBLE);
-                                commentsLayout.removeAllViews();
-
-                                for (int i = 0; i < listViews.size(); i++) {
-
-                                    commentsLayout.addView(listViews.get(i));
-                                }
-
-                            }
+							if ((commentsLayout != null) && (listViews != null) && (listViews.getChildCount() > 0)) {
+								commentsLayout.setVisibility(View.VISIBLE);
+								commentsLayout.removeAllViews();
+								commentsLayout.addView(listViews);
+							}
                         }
                     });
 
-            if (slaveCursor != null && slaveCursor.getCount() > 0) {
-                // item.commentsLayout.setVisibility(View.VISIBLE);
-                // item.commentsLayout.removeAllViews();
-                // for (slaveCursor.moveToFirst(); !slaveCursor.isAfterLast();
-                // slaveCursor
-                // .moveToNext()) {
-                // View commentView =
-                // inflater.inflate(R.layout.feed_comments_item, null);
-                // CommentItem commentItem = new CommentItem();
-                // commentItem.avatar = (SmartImageView)commentView
-                // .findViewById(R.id.comment_profile_photo);
-                // commentItem.content =
-                // (TextView)commentView.findViewById(R.id.comment_body);
-                // commentItem.time =
-                // (TextView)commentView.findViewById(R.id.comment_time);
-                // commentItem.avatar.setBackgroundResource(R.drawable.avatar);
-                // commentItem.content.setText(slaveCursor.getString(slaveCursor
-                // .getColumnIndex(DatabaseHelper.COLUMN_SCHEDULE_CONTENT)));
-                // long commentTime = slaveCursor.getLong(slaveCursor
-                // .getColumnIndex(DatabaseHelper.COLUMN_SCHEDULE_START_TIME));
-                // commentItem.time.setText(DateTimeUtils.time2String("yyyy/MM/dd hh:mm:ss",
-                // commentTime));
-                // item.commentsLayout.addView(commentView);
-                // }
-            } else {
-                item.commentsLayout.setVisibility(View.GONE);
-            }
-
-            if (slaveCursor != null) {
-                slaveCursor.close();
-            }
-
+            item.commentsLayout.setVisibility(View.GONE);
             item.avatarLayout.setVisibility(View.VISIBLE);
             item.avatar.setImageUrl("http://i0.sinaimg.cn/IT/cr/2010/0120/4105794628.jpg",
                     R.drawable.avatar, R.drawable.avatar);
