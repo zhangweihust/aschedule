@@ -80,9 +80,20 @@
             android:layout_toRightOf="@id/type" >
 
             <TextView
+                android:id="@+id/yearandmonth"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="2012年8月"
+                android:textColor="#252524"
+                android:textSize="12sp"
+                android:visibility="gone" />
+            <TextView
                 android:id="@+id/time"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:layout_alignBottom="@id/yearandmonth"
+                android:layout_alignTop="@id/yearandmonth"
+                android:layout_toRightOf="@id/yearandmonth"
                 android:background="@drawable/pm"
                 android:text="6:30"
                 android:textColor="#252524"

@@ -1,6 +1,8 @@
 package com.archermind.schedule.Adapters;
 
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 import com.archermind.schedule.R;
@@ -10,7 +12,6 @@ import com.archermind.schedule.Utils.DateTimeUtils;
 import com.archermind.schedule.Utils.ScheduleData;
 
 import android.content.Context;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -22,6 +23,7 @@ public class HistoryScheduleAdapter extends BaseAdapter{
 
 	private LayoutInflater inflater;
 	private List<ScheduleData> schedulelist = new ArrayList<ScheduleData>();
+	private boolean existsPrompt = false;
 	
 	public HistoryScheduleAdapter(Context context, List<ScheduleData> scheduledataset)
 	{
@@ -57,6 +59,7 @@ public class HistoryScheduleAdapter extends BaseAdapter{
 			convertView = inflater.inflate(R.layout.local_schedule_item, null);
 			item = new ScheduleItem();
 			item.date = (TextView) convertView.findViewById(R.id.date);
+			item.yearandmonth = (TextView) convertView.findViewById(R.id.yearandmonth);
 			item.time = (TextView) convertView.findViewById(R.id.time);
 			item.week = (TextView) convertView.findViewById(R.id.week);
 			item.location = (TextView) convertView.findViewById(R.id.location);
@@ -79,17 +82,20 @@ public class HistoryScheduleAdapter extends BaseAdapter{
 		item.content.setText(data.content);
 		item.time.setText(DateTimeUtils.time2String("hh:mm", data.time));
 		String amORpm = DateTimeUtils.time2String("a", data.time);
-		if("上午".equals(amORpm)){
+		if("上午".equals(amORpm) || "AM".equals(amORpm)){
 			item.time.setBackgroundResource(R.drawable.am);
-		} else if("下午".equals(amORpm)){
+		} else if("下午".equals(amORpm) || "PM".equals(amORpm)){
 			item.time.setBackgroundResource(R.drawable.pm);
 		}
 		if(data.first){
 			item.dateLayout.setVisibility(View.VISIBLE);
+			item.yearandmonth.setVisibility(View.VISIBLE);
 			item.week.setText(DateTimeUtils.time2String("EEEE", data.time));
 			item.date.setText(DateTimeUtils.time2String("dd", data.time));
+			item.yearandmonth.setText(DateTimeUtils.time2String("yyyy年MM月", data.time));
 		} else {
 			item.dateLayout.setVisibility(View.INVISIBLE);
+			item.yearandmonth.setVisibility(View.GONE);
 		}
 		if(data.share){
 			item.share.setVisibility(View.VISIBLE);
@@ -103,7 +109,8 @@ public class HistoryScheduleAdapter extends BaseAdapter{
 		}
 		switch (data.type) {
 		case DatabaseHelper.SCHEDULE_EVENT_TYPE_NONE:
-			item.typeView.setBackgroundResource(R.drawable.type_notice);
+			item.typeView.setBackgroundResource(R.drawable.type_none);
+			break;
 		case DatabaseHelper.SCHEDULE_EVENT_TYPE_NOTICE:
 			item.typeView.setBackgroundResource(R.drawable.type_notice);
 			break;
@@ -139,6 +146,11 @@ public class HistoryScheduleAdapter extends BaseAdapter{
 	{
 		int i = 0;
 		int size = prescheduledata.size();
+		if (existsPrompt)
+		{
+			schedulelist.clear();
+			existsPrompt = false;
+		}
 		while (i < size)
 		{
 			schedulelist.add(i, prescheduledata.get(i));
@@ -149,6 +161,11 @@ public class HistoryScheduleAdapter extends BaseAdapter{
 	
 	public void addAfterData(List<ScheduleData> afterscheduledata)
 	{
+		if (existsPrompt)
+		{
+			schedulelist.clear();
+			existsPrompt = false;
+		}
 		schedulelist.addAll(afterscheduledata);
 		notifyDataSetChanged();
 	}
@@ -157,6 +174,21 @@ public class HistoryScheduleAdapter extends BaseAdapter{
 	{
 		schedulelist.clear();
 		schedulelist.addAll(prescheduledata);
+		notifyDataSetChanged();
+	}
+	
+	public void setNoSchedulePrompt(long time)
+	{
+		ScheduleData data = new ScheduleData();
+		data.id = -1;
+		data.content = "日程是空的~点击右上角的+让您的生活变得有序";
+		data.first = true; 
+ 		data.time = time;
+		data.type = DatabaseHelper.SCHEDULE_EVENT_TYPE_NONE;
+		
+		schedulelist.clear();
+		schedulelist.add(data);
+		existsPrompt = true;
 		notifyDataSetChanged();
 	}
 	
@@ -188,10 +220,55 @@ public class HistoryScheduleAdapter extends BaseAdapter{
 		return schedulelist.size() == 0 ? true : false;
 	}
 	
+	public boolean containTodaySchedule(int begin,int end,String date)
+	{
+		boolean ret = false;
+		int i;
+		String today = "";
+		SimpleDateFormat sdf = new SimpleDateFormat("yyyy.MM.dd");
+		Date d;
+		for (i = begin; i < end; i++)
+		{
+			if (i >= 0 && i < schedulelist.size())
+			{
+				d = new Date(schedulelist.get(i).time);
+				today = sdf.format(d);
+				if (today.equals(date))
+				{
+					ret = true;
+					break;
+				}
+			}
+		}
+		
+		return ret;
+	}
+	
+	public int getTodayPosition(String date)
+	{
+		int i = 0;
+		int size = schedulelist.size();
+		String today = "";
+		SimpleDateFormat sdf = new SimpleDateFormat("yyyy.MM.dd");
+		Date d;
+		for (i = 0; i < size; i++)
+		{
+			d = new Date(schedulelist.get(i).time);
+			today = sdf.format(d);
+			if (today.equals(date))
+			{
+				break;
+			}
+		}
+		
+		return i;
+	}
+	
 	private class ScheduleItem{
 		private TextView date;
 		private TextView week;
 		private TextView location;
+		private TextView yearandmonth;
 		private TextView time;
 		private TextView content;
 		private ImageView weather;

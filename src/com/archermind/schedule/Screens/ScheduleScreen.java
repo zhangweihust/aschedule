@@ -26,6 +26,7 @@ import android.view.View.OnTouchListener;
 import android.view.ViewGroup.LayoutParams;
 import android.view.WindowManager;
 import android.view.animation.AnimationUtils;
+import android.widget.AbsListView;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
 import android.widget.Button;
@@ -50,8 +51,9 @@ import com.archermind.schedule.Utils.ScheduleData;
 import com.archermind.schedule.Views.VerticalScrollView;
 import com.archermind.schedule.Views.XListView;
 import com.archermind.schedule.Views.XListView.IXListViewListener;
+import com.archermind.schedule.Views.XListView.OnXScrollListener;
 
-public class ScheduleScreen extends Screen implements IXListViewListener,
+public class ScheduleScreen extends Screen implements IXListViewListener,OnXScrollListener,
 		OnItemClickListener ,OnGestureListener, OnClickListener, IEventHandler{
 
 	private static final int FRESH_LIMIT_NUM = 30;
@@ -101,6 +103,7 @@ private ViewFlipper flipper = null;
 		private Button current_day;
 		private EventArgs args;
 		private boolean flag = false;
+		private TextView gototoday;
 		
 		public ScheduleScreen() {
 			Date date = new Date();
@@ -114,6 +117,16 @@ private ViewFlipper flipper = null;
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.schedule_screen);
+		gototoday = (TextView)findViewById(R.id.gototoday);
+		gototoday.setOnClickListener(new OnClickListener() {
+			@Override
+			public void onClick(View arg0) {
+				// TODO Auto-generated method stub
+				int pos = hsa.getTodayPosition(getDateByMillisTime(System.currentTimeMillis()));
+				list2.setSelection(pos + 1);	/* 最上面的上翻更新数据也算一个位置,,所以+1 */
+			}
+		});
+		curSelectedDate = getDateByMillisTime(System.currentTimeMillis());
 		final VerticalScrollView pager = (VerticalScrollView) findViewById(R.id.pager);
 		setupView();
 		flag = true;
@@ -195,6 +208,7 @@ private ViewFlipper flipper = null;
 //		list3 = (ListView) findViewById(R.id.list03);
 //		list4 = (ListView) findViewById(R.id.list04);
 		list2.setXListViewListener(this);
+		list2.setOnScrollListener(this);
 //		list1.setOnItemClickListener(this);
 		list2.setOnItemClickListener(this);
 		list2.setPullLoadEnable(true);
@@ -219,6 +233,7 @@ private ViewFlipper flipper = null;
 		while (TodayScheduleCursor.moveToNext())
 		{
 			data = new ScheduleData();
+			data.id = TodayScheduleCursor.getInt(TodayScheduleCursor.getColumnIndex(DatabaseHelper.COLUMN_SCHEDULE_ID));
 			data.content = TodayScheduleCursor.getString(TodayScheduleCursor.getColumnIndex(DatabaseHelper.COLUMN_SCHEDULE_CONTENT));
 			data.time = TodayScheduleCursor.getLong(TodayScheduleCursor.getColumnIndex(DatabaseHelper.COLUMN_SCHEDULE_START_TIME));
 			data.share = TodayScheduleCursor.getInt(TodayScheduleCursor.getColumnIndex(DatabaseHelper.COLUMN_SCHEDULE_SHARE)) == 1;
@@ -458,11 +473,16 @@ private ViewFlipper flipper = null;
 							+ (Long) args.getExtra("time"), Toast.LENGTH_SHORT)
 					.show();
 		}*/
-		Intent mIntent =new Intent(ScheduleScreen.this,EditScheduleScreen.class);
-		mIntent.putExtra("id", (Integer) args.getExtra("id"));
-		mIntent.putExtra("first", (Boolean) args.getExtra("first"));
-		mIntent.putExtra("time", (Long) args.getExtra("time"));
-		ScheduleScreen.this.startActivity(mIntent);
+		Integer itemid = (Integer) args.getExtra("id");
+		if (itemid > 0)
+		{
+			Intent mIntent =new Intent(ScheduleScreen.this,EditScheduleScreen.class);
+			mIntent.putExtra("id", itemid);
+			mIntent.putExtra("first", (Boolean) args.getExtra("first"));
+			mIntent.putExtra("time", (Long) args.getExtra("time"));
+			ScheduleScreen.this.startActivity(mIntent);
+		}
+		
 	}
 	
 	@Override
@@ -586,7 +606,7 @@ private ViewFlipper flipper = null;
 	public long getMillisTimeByDate(String date)
 	{
 		long time = 0;
-		SimpleDateFormat sdf = new SimpleDateFormat("yy.MM.dd");
+		SimpleDateFormat sdf = new SimpleDateFormat("yyyy.MM.dd");
 		try {
 			Date d = sdf.parse(date);
 			time = d.getTime();
@@ -596,6 +616,15 @@ private ViewFlipper flipper = null;
 		}
 		
 		return time;
+	}
+	public String getDateByMillisTime(long time)
+	{
+		String date = "";
+		SimpleDateFormat sdf = new SimpleDateFormat("yyyy.MM.dd");
+		Date d = new Date(System.currentTimeMillis());
+		date = sdf.format(d);
+		
+		return date;
 	}
 	
 	//添加gridview
@@ -664,12 +693,19 @@ private ViewFlipper flipper = null;
 					curSelectedDate = date;
 
 					Cursor c = ServiceManager.getDbManager().queryTodayLocalSchedules(getMillisTimeByDate(curSelectedDate));
-					List<ScheduleData> listdata = new ArrayList<ScheduleData>();
-					cursorToListData(c,listdata);
+					if (c.getCount() > 0)
+					{
+						List<ScheduleData> listdata = new ArrayList<ScheduleData>();
+						cursorToListData(c,listdata);
+						hsa.setTodayData(listdata);
+					}
+					else
+					{
+						hsa.setNoSchedulePrompt(getMillisTimeByDate(curSelectedDate));
+					}
 					c.close();
-					hsa.setTodayData(listdata);
-
 				}
+				gototoday.setVisibility(View.INVISIBLE);
 			}
         }
 		});
@@ -755,11 +791,20 @@ private ViewFlipper flipper = null;
 				@Override
 				public void run() {
 //				    c1.requery();
+					
 					Cursor c = ServiceManager.getDbManager().queryTodayLocalSchedules(System.currentTimeMillis());
-					List<ScheduleData> listdata = new ArrayList<ScheduleData>();
-					cursorToListData(c,listdata);
+					if (c.getCount() > 0)
+					{
+						List<ScheduleData> listdata = new ArrayList<ScheduleData>();
+						cursorToListData(c,listdata);
+						hsa.setTodayData(listdata);
+					}
+					else
+					{
+						hsa.setNoSchedulePrompt(getMillisTimeByDate(curSelectedDate));
+					}
 					c.close();
-					hsa.setTodayData(listdata);
+					
 //				    c3.requery();
 //				    c4.requery();
 				}});
@@ -773,6 +818,38 @@ private ViewFlipper flipper = null;
 	protected void onDestroy() {
 		super.onDestroy();
 		eventService.remove(this);
+	}
+	@Override
+	public void onScroll(AbsListView view, int firstVisibleItem,
+			int visibleItemCount, int totalItemCount) {
+		// TODO Auto-generated method stub
+		if (firstVisibleItem < 1 || firstVisibleItem > hsa.getCount())
+		{
+			return;
+		}
+		
+		if (hsa.containTodaySchedule(firstVisibleItem - 1, firstVisibleItem + visibleItemCount - 1, getDateByMillisTime(System.currentTimeMillis())))
+		{
+			/* 当前显示中包含今天的日程，要让回今天按钮消失 */
+			gototoday.setVisibility(View.INVISIBLE);
+		}
+		else
+		{
+			/* 当前显示中不包含今天的日程,但是所有已加载的日程中包含今天的日程，显示回今天按钮 */
+			if (hsa.containTodaySchedule(0, hsa.getCount(), getDateByMillisTime(System.currentTimeMillis())))
+			{
+				gototoday.setVisibility(View.VISIBLE);
+			}
+		}
+		
+	}
+	@Override
+	public void onScrollStateChanged(AbsListView view, int scrollState) {
+		// TODO Auto-generated method stub
+	}
+	@Override
+	public void onXScrolling(View view) {
+		// TODO Auto-generated method stub
 	}	
 	
 }
