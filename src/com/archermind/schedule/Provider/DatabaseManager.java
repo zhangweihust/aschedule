@@ -183,6 +183,27 @@ public class DatabaseManager {
 								+ " ASC");
 	}
 	
+	
+	public Cursor queryIsMarkWithDay(long timeInMillis, String dayOfYear, String dayOfMonth, String dayOfWeek){
+		
+		
+		String sql = "select * from "+DatabaseHelper.TAB_LOCAL_SCHEDULE + " where ("
+		+DatabaseHelper.COLUMN_SCHEDULE_NOTICE_YEARDAY+" ="+" '"+dayOfYear+"' or "
+		+DatabaseHelper.COLUMN_SCHEDULE_NOTICE_MONTHDAY+" ="+" '"+dayOfMonth+"' or "
+		+DatabaseHelper.COLUMN_SCHEDULE_NOTICE_PERIOD+" ="+" '"+DatabaseHelper.SCHEDULE_NOTICE_PERIOD_MODE_DAY+"' or "
+		+DatabaseHelper.COLUMN_SCHEDULE_NOTICE_WEEK+" like"+" '%"+dayOfWeek+"%' ) and ("
+		+DatabaseHelper.COLUMN_SCHEDULE_START_TIME+" <="+" '"+timeInMillis+"' and "
+		+DatabaseHelper.COLUMN_SCHEDULE_NOTICE_END+" >="+" '"+timeInMillis+"' and "
+		+DatabaseHelper.COLUMN_SCHEDULE_NOTICE_PERIOD+" !="+" '"+DatabaseHelper.SCHEDULE_NOTICE_PERIOD_MODE_NONE+"' )";
+		
+		return database.rawQuery(sql, null);
+		
+		
+	}
+	
+	
+	
+	
 	public Cursor querySpecifiedNumPreSchedules(long timeInMillis,int limitnum)
 	{
 		return database.query(false, 
@@ -297,13 +318,13 @@ public class DatabaseManager {
 	public Cursor queryContactIdByTel(String tel){
 		return database.query(DatabaseHelper.ASCHEDULE_CONTACT, null, DatabaseHelper.ASCHEDULE_CONTACT_NUM + " =? ", new String[]{tel}, null, null, null);
 	}
-	public void updateContactType(Cursor cursor, int type, String id){
+	public void updateContactType(Cursor cursor, int type, String useId){
 		while(cursor.moveToNext()){
-			String tel = cursor.getString(cursor.getColumnIndex(DatabaseHelper.ASCHEDULE_CONTACT_NUM));
+			String id = cursor.getString(cursor.getColumnIndex(DatabaseHelper.COLUMN_CONTACT_ID));
 			ContentValues values = new ContentValues();
 			values.put(DatabaseHelper.ASCHEDULE_CONTACT_TYPE, type);
-			values.put(DatabaseHelper.COLUMN_FRIEND_ID, id);
-			database.update(DatabaseHelper.ASCHEDULE_CONTACT, values, DatabaseHelper.ASCHEDULE_CONTACT_NUM + " =? ", new String[] { String.valueOf(tel)});
+			values.put(DatabaseHelper.COLUMN_FRIEND_ID, useId);
+			database.update(DatabaseHelper.ASCHEDULE_CONTACT, values, DatabaseHelper.COLUMN_CONTACT_ID + " =? ", new String[] { String.valueOf(id)});
 		}
 		cursor.close();
 	}

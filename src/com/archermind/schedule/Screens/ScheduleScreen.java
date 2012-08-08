@@ -263,7 +263,6 @@ private ViewFlipper flipper = null;
 		gestureDetector = new GestureDetector(this);
         flipper = (ViewFlipper) findViewById(R.id.flipper);
         flipper.removeAllViews();
-        System.out.println("height = "+flipper.getHeight());
        
         
        
@@ -491,7 +490,7 @@ private ViewFlipper flipper = null;
 		System.out.println("e1.getX() - e2.getX() = "+ (e1.getX() - e2.getX()));
 		System.out.println("velocityX = "+ velocityX + "     velocityY = " + velocityY);
 		int gvFlag = 0;         //每次添加gridview到viewflipper中时给的标记
-		if (e1.getX() - e2.getX() > 0) {
+		if (e1.getX() - e2.getX() > 100) {
             //向左滑动
 			addGridView();   //添加一个gridview
 			jumpMonth++;     //下一个月
@@ -508,7 +507,7 @@ private ViewFlipper flipper = null;
 			this.flipper.showNext();
 			flipper.removeViewAt(0);
 			return true;
-		} else if (e1.getX() - e2.getX() < 0) {
+		} else if (e1.getX() - e2.getX() < -100) {
             //向右滑动
 			addGridView();   //添加一个gridview
 			jumpMonth--;     //上一个月
@@ -645,6 +644,7 @@ private ViewFlipper flipper = null;
 //		if(Width == 480 && Height == 800){
 //			gridView.setColumnWidth(69);
 //		}
+      gridView.setVerticalScrollBarEnabled(false);
       gridView.setSelector(new ColorDrawable(Color.TRANSPARENT)); 
 		gridView.setGravity(Gravity.CENTER);
 		gridView.setOnTouchListener(new OnTouchListener() {
@@ -676,7 +676,7 @@ private ViewFlipper flipper = null;
                   int index = calV.getOldposition();
 	                  if(index == -1){
 //	                	  ((RelativeLayout)view).setBackgroundResource(R.drawable.current_day_bg);
-	                	  ((RelativeLayout)view).setBackgroundColor(Color.BLUE);
+	                	  ((RelativeLayout)view).setBackgroundColor(getResources().getColor(R.color.selector));
 	                	  calV.setOldPosition(position);
 	                  }else{
 	                	  RelativeLayout layout = (RelativeLayout) arg0.getChildAt(index);
@@ -684,7 +684,7 @@ private ViewFlipper flipper = null;
 	                		  layout.setBackgroundResource(R.drawable.gridview_bk);  
 	                	  }
 //		                  ((RelativeLayout)view).setBackgroundResource(R.drawable.current_day_bg);
-	                	  ((RelativeLayout)view).setBackgroundColor(Color.BLUE);
+	                	  ((RelativeLayout)view).setBackgroundColor(getResources().getColor(R.color.selector));
 		                  calV.setOldPosition(position);
 	                  }
 				String date = getDate(position);
@@ -851,6 +851,16 @@ private ViewFlipper flipper = null;
 	public void onXScrolling(View view) {
 		// TODO Auto-generated method stub
 	}	
+	@Override
+	protected void onResume() {
+		// TODO Auto-generated method stub
+		super.onResume();
+		if(calV != null){
+			calendarData = new CalendarData(jumpMonth, jumpYear, year_c, month_c, day_c, 1, Constant.flagType);
+			 calV = new CalendarAdapter(this,flipper.getHeight(), calendarData);
+	        gridView.setAdapter(calV);
+		}
+	}
 	
 }
 

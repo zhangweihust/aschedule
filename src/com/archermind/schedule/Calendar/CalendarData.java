@@ -52,8 +52,9 @@ public class CalendarData {
 	private String sch_year = "";
 	private String sch_month = "";
 	private String sch_day = "";
-	private int mark_count = 0;
-	public CalendarData(int jumpMonth,int jumpYear,int year_c,int month_c,int day_c, int mark,int flagType){		
+	private int mark_count[];
+	public CalendarData(int jumpMonth,int jumpYear,int year_c,int month_c,int day_c, int mark,int flagType){
+		database = ServiceManager.getDbManager();
 		Date date = new Date();
 		sysDate = sdf.format(date);  //当前日期
 		sys_year = sysDate.split("-")[0];
@@ -138,29 +139,13 @@ public class CalendarData {
 		int j = 1;
 		int flag = 0;
 		String lunarDay = "";
-		//得到当前月的所有日程日期（这些日期需要标记）
-		database = ServiceManager.getDbManager();
-		String startData = year+"."+month+"."+1;
+		Cursor cursor = null;
 		int days = SpecialCalendar.getDaysOfMonth(SpecialCalendar.isLeapYear(year),month);
-		String endData = year+"."+month+"."+days;
-		long starTimeInMillis = getMillisTimeByDate(startData);
-		long endTimeInMillis = getMillisTimeByDate(endData);
-		
-		ArrayList<ScheduleBean> dateTagList = new ArrayList<ScheduleBean>();
-		Cursor cursor = database.queryMonthLocalSchedules(starTimeInMillis, endTimeInMillis);
-		while(cursor.moveToNext()){
-			String date = cursor.getString(cursor.getColumnIndex(DatabaseHelper.COLUMN_SCHEDULE_START_TIME));
-			System.out.println("**************date = "+date);
-			ScheduleBean scheduleBean = new ScheduleBean();
-			scheduleBean.setDate(date);
-			dateTagList.add(scheduleBean);
+		schDateTagFlag = new int[days];
+		mark_count = new int[days];
+		for(int i = 0; i < days; i++){
+			schDateTagFlag[i] = -1;
 		}
-		cursor.close();
-		if(dateTagList != null && dateTagList.size() > 0){
-			schDateTagFlag = new int[dateTagList.size()];
-			mark_count = dateTagList.size();
-		}
-		
 		for (int i = 0; i < dayNumber.length; i++) {
 			int k = 1;
 			// 周一
@@ -175,29 +160,69 @@ public class CalendarData {
 				String day = String.valueOf(i-dayOfWeek+k-daysOfWeek);   //得到的日期
 				lunarDay = lc.getLunarDate(year, month, i-dayOfWeek+k-daysOfWeek,false);
 				dayNumber[i] = i-dayOfWeek+k-daysOfWeek+"."+lunarDay;
+				
+				
+				
+				
+				
+				
+				
+				
+				String startData = year+"."+month+"."+day;
+				String dayOfYear = month + "." + day;
+				String dayOfMonth = day;
+				String dayOfWeek = SpecialCalendar.getNumberWeekDay(year,month,Integer.parseInt(day));
+				
+				System.out.println("*********************dayOfWeek = "+dayOfWeek);
+				
+				long starTimeInMillis = getMillisTimeByDate(startData);
+				ArrayList<ScheduleBean> dateTagList = new ArrayList<ScheduleBean>();
+				cursor = database.queryTodayLocalSchedules(starTimeInMillis);
+
+				while(cursor.moveToNext()){
+					String date = cursor.getString(cursor.getColumnIndex(DatabaseHelper.COLUMN_SCHEDULE_START_TIME));
+					ScheduleBean scheduleBean = new ScheduleBean();
+					scheduleBean.setDate(date);
+					dateTagList.add(scheduleBean);
+				}
+				cursor = database.queryIsMarkWithDay(starTimeInMillis, dayOfYear, dayOfMonth, dayOfWeek);
+				while(cursor.moveToNext()){
+						ScheduleBean scheduleBean = new ScheduleBean();
+						scheduleBean.setDate(String.valueOf(starTimeInMillis));
+						dateTagList.add(scheduleBean);
+				}
+				
+
+				if(dateTagList != null && dateTagList.size() > 0){
+
+				}
+				
+				
 				//对于当前月才去标记当前日期
 				if(sys_year.equals(String.valueOf(year)) && sys_month.equals(String.valueOf(month)) && sys_day.equals(day)){
 					//笔记当前日期
-					System.out.println("*********************i="+i);
 					currentFlag = i;
 				}
 				
 				//标记日程日期
 				if(dateTagList != null && dateTagList.size() > 0){
-					for(int m = 0; m < dateTagList.size(); m++){
-						ScheduleBean scheduleBean = dateTagList.get(m);
-						String date = scheduleBean.getDate();
-						Calendar time = Calendar.getInstance(Locale.CHINA);
-						time.setTimeInMillis(Long.parseLong(date));
-						int matchYear = time.get(Calendar.YEAR);
-						int matchMonth = time.get(Calendar.MONTH) + 1;
-						int matchDay = time.get(Calendar.DAY_OF_MONTH);
-						System.out.println("************matchYear = "+matchYear+"  matchMonth = "+matchMonth+" matchDay = "+matchDay);
-						if(matchYear == year && matchMonth == month && matchDay == Integer.parseInt(day)){
-							schDateTagFlag[flag] = i;
-							flag++;
-						}
-					}
+//					for(int m = 0; m < dateTagList.size(); m++){
+//						ScheduleBean scheduleBean = dateTagList.get(m);
+//						String date = scheduleBean.getDate();
+//						Calendar time = Calendar.getInstance(Locale.CHINA);
+//						time.setTimeInMillis(Long.parseLong(date));
+//						int matchYear = time.get(Calendar.YEAR);
+//						int matchMonth = time.get(Calendar.MONTH) + 1;
+//						int matchDay = time.get(Calendar.DAY_OF_MONTH);
+//						if(matchYear == year && matchMonth == month && matchDay == Integer.parseInt(day)){
+//							schDateTagFlag[flag] = i;
+//							mark_count[flag] = dateTagList.size();
+//							flag++;
+//						}
+//					}
+					schDateTagFlag[flag] = i;
+					mark_count[flag] = dateTagList.size();
+					flag++;
 				}
 				
 				setShowYear(String.valueOf(year));
@@ -210,6 +235,10 @@ public class CalendarData {
 				dayNumber[i] = j+"."+lunarDay;
 				j++;
 			}
+		}
+		
+		if(cursor != null){
+			cursor.close();
 		}
         
         String abc = "";
@@ -271,7 +300,7 @@ public class CalendarData {
 	public int getDayOfWeek(){
 		return this.dayOfWeek;
 	}
-	public int getMarkcount(){
+	public int[] getMarkcount(){
 		return this.mark_count;
 	}
 	public int getCurrentFlag(){

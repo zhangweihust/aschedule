@@ -1,122 +1,124 @@
 <?xml version="1.0" encoding="utf-8"?>
-<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
-        android:layout_width="fill_parent"
-    android:layout_height="fill_parent">
-<LinearLayout 
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="fill_parent"
-    android:layout_height="fill_parent"
-    android:background="#f6f6f6" 
-    android:orientation="vertical">
-
-    <LinearLayout
-        android:layout_width="fill_parent"
-        android:layout_height="wrap_content"
-        android:layout_weight="0"
-        android:orientation="vertical" >
+    android:layout_height="fill_parent" 
+    android:background="#f6f6f6">
 
         <LinearLayout
             android:layout_width="fill_parent"
-            android:layout_height="45dp"
-            android:background="#668a1f"
-            android:gravity="center_vertical"
-            android:orientation="horizontal" 
-            android:layout_weight="0">
+            android:layout_height="fill_parent"
+            android:background="#f6f6f6"
+            android:orientation="vertical" >
 
-            <ImageView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginLeft="10dp"
-                android:layout_weight="0"
-                android:src="@drawable/friend_group_icon" />
-
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginLeft="15dp"
-                android:layout_weight="1"
-                android:text="@string/friend_show"
-                android:textColor="@android:color/white" />
-
-            <Button
-                android:id="@+id/friend_button_state"
-                android:layout_width="wrap_content"
+            <LinearLayout
+                android:layout_width="fill_parent"
                 android:layout_height="wrap_content"
                 android:layout_weight="0"
-                android:background="@drawable/friend_group_expand" />
-        </LinearLayout>
+                android:orientation="vertical" >
 
-        <ListView
-            android:id="@+id/friend_listView"
+                <LinearLayout
+                    android:layout_width="fill_parent"
+                    android:layout_height="45dp"
+                    android:layout_weight="0"
+                    android:background="#668a1f"
+                    android:gravity="center_vertical"
+                    android:orientation="horizontal" >
+
+                    <ImageView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginLeft="10dp"
+                        android:layout_weight="0"
+                        android:src="@drawable/friend_group_icon" />
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginLeft="15dp"
+                        android:layout_weight="1"
+                        android:text="@string/friend_show"
+                        android:textColor="@android:color/white" />
+
+                    <Button
+                        android:id="@+id/friend_button_state"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="0"
+                        android:background="@drawable/friend_group_expand" />
+                </LinearLayout>
+
+                <ListView
+                    android:id="@+id/friend_listView"
+                    android:layout_width="fill_parent"
+                    android:layout_height="fill_parent"
+                    android:cacheColorHint="#00000000"
+                    android:divider="@drawable/listview_divider"
+                    android:listSelector="@drawable/friend_divider" >
+                </ListView>
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:layout_weight="0"
+                android:orientation="vertical" >
+
+                <LinearLayout
+                    android:layout_width="fill_parent"
+                    android:layout_height="45dp"
+                    android:layout_weight="0"
+                    android:background="#668a1f"
+                    android:gravity="center_vertical"
+                    android:orientation="horizontal" >
+
+                    <ImageView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginLeft="10dp"
+                        android:layout_weight="0"
+                        android:src="@drawable/friend_group_contact_icon" />
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginLeft="20dp"
+                        android:layout_weight="1"
+                        android:text="@string/friend_contact_show"
+                        android:textColor="@android:color/white" />
+
+                    <Button
+                        android:id="@+id/friend_contact_button_state"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="0"
+                        android:background="@drawable/friend_group_expand" />
+                </LinearLayout>
+
+                <ListView
+                    android:id="@+id/friend_contact_listView"
+                    android:layout_width="fill_parent"
+                    android:layout_height="fill_parent"
+                    android:cacheColorHint="#00000000"
+                    android:divider="@drawable/listview_divider"
+                    android:listSelector="@drawable/friend_divider" >
+                </ListView>
+            </LinearLayout>
+                    <RelativeLayout
+            android:id="@+id/loading"
             android:layout_width="fill_parent"
             android:layout_height="fill_parent"
-            android:cacheColorHint="#00000000"
-            android:divider="@drawable/listview_divider"
-            android:listSelector="@drawable/friend_divider" >
-        </ListView>
-    </LinearLayout>
+            android:background="#f6f6f6"
+            android:gravity="center"
+            android:layout_marginTop="60dp">
 
-    <LinearLayout
-        android:layout_width="fill_parent"
-        android:layout_height="wrap_content"
-        android:layout_weight="0"
-        android:orientation="vertical" >
-
-        <LinearLayout
-            android:layout_width="fill_parent"
-            android:layout_height="45dp"
-            android:background="#668a1f"
-            android:gravity="center_vertical"
-            android:orientation="horizontal" 
-            android:layout_weight="0">
-
-            <ImageView
+            <ProgressBar
+                style="@style/rotateProgress"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginLeft="10dp"
-                android:layout_weight="0"
-                android:src="@drawable/friend_group_contact_icon" />
-
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginLeft="20dp"
-                android:layout_weight="1"
-                android:text="@string/friend_contact_show"
-                android:textColor="@android:color/white" />
-
-            <Button
-                android:id="@+id/friend_contact_button_state"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_weight="0"
-                android:background="@drawable/friend_group_expand" />
+                android:layout_gravity="center" />
+        </RelativeLayout>
         </LinearLayout>
 
-        <ListView
-            android:id="@+id/friend_contact_listView"
-            android:layout_width="fill_parent"
-            android:layout_height="fill_parent"
-            android:cacheColorHint="#00000000"
-            android:divider="@drawable/listview_divider"
-            android:listSelector="@drawable/friend_divider" >
-        </ListView>
-    </LinearLayout>
 
-</LinearLayout>
 
-    
-        <RelativeLayout
-        android:id="@+id/loading"
-        android:layout_width="fill_parent"
-        android:layout_height="fill_parent"
-        android:background="#f6f6f6"
-        android:gravity="center">
-        <ProgressBar
-            style="@style/rotateProgress"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center" />
-    </RelativeLayout>
-    
-    
-</FrameLayout>
+</ScrollView>

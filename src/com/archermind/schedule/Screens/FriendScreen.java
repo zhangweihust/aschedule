@@ -12,9 +12,13 @@ import org.json.JSONObject;
 
 import android.app.AlarmManager;
 import android.app.PendingIntent;
+import android.app.ProgressDialog;
 import android.content.ContentValues;
+import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.content.SharedPreferences;
+import android.content.SharedPreferences.Editor;
 import android.database.Cursor;
 import android.os.Bundle;
 import android.os.Handler;
@@ -37,10 +41,10 @@ import com.archermind.schedule.Model.Friend;
 import com.archermind.schedule.Provider.DatabaseHelper;
 import com.archermind.schedule.Provider.DatabaseManager;
 import com.archermind.schedule.Services.ServiceManager;
-import com.archermind.schedule.Task.FriendTask;
 import com.archermind.schedule.Utils.AScheduleBroadcast;
 import com.archermind.schedule.Utils.Constant;
 import com.archermind.schedule.Utils.Contact;
+import com.archermind.schedule.Utils.ListViewUtil;
 import com.archermind.schedule.Utils.NetworkUtils;
 import com.archermind.schedule.Utils.ScheduleData;
 import com.archermind.schedule.Utils.ServerInterface;
@@ -55,8 +59,11 @@ public class FriendScreen extends Screen implements OnClickListener, IEventHandl
 	private static final int CONTACT_SYNC_INTERVAL = 60 * 60 * 100010;			/* 1个小时检测一次联系人是否有变化 */
 	private DatabaseManager database;
 	private ServerInterface serverInterface;
-	HashMap<String, List<Friend>> hashMap = new HashMap<String, List<Friend>>();
-	RelativeLayout loading;
+	private HashMap<String, List<Friend>> hashMap = new HashMap<String, List<Friend>>();
+	private RelativeLayout loading;
+	private SharedPreferences sp;
+	
+//	private ProgressDialog dialog;
 	public FriendScreen(){
 		database = ServiceManager.getDbManager();
 		serverInterface = new ServerInterface();
@@ -74,14 +81,24 @@ public class FriendScreen extends Screen implements OnClickListener, IEventHandl
 		AScheduleAM.setRepeating(AlarmManager.RTC, System.currentTimeMillis() + 3000, CONTACT_SYNC_INTERVAL, contactcheckintent);
 		ContactCheckReceiver = new AScheduleBroadcast();
 		
+		sp = getSharedPreferences("Data", Context.MODE_PRIVATE);
+		boolean sync = sp.getBoolean("sync", false);
+		if(sync){
+			new Thread(){
+				public void run() {
+					getData();
+				};
+			}.start();
+		}
+		
 	 }	
 	
 	public void initView(){
 		friend_listView = (ListView) findViewById(R.id.friend_listView);
 		friend_contact_listView = (ListView) findViewById(R.id.friend_contact_listView);
 		loading = (RelativeLayout) findViewById(R.id.loading);
-		
-		
+//		dialog = new ProgressDialog(this, R.style.rotateProgress);
+//		dialog.show();
 		friend_button_state= (Button) findViewById(R.id.friend_button_state);
 		friend_contact_button_state= (Button) findViewById(R.id.friend_contact_button_state);
 		friend_button_state.setOnClickListener(this);
@@ -98,7 +115,7 @@ public class FriendScreen extends Screen implements OnClickListener, IEventHandl
 	    friends.addAll(ignores);
 		FriendAdapter friendAdapter = new FriendAdapter(this, friends);
 		friend_listView.setAdapter(friendAdapter);
-		
+		ListViewUtil.setListViewHeightBasedOnChildren(friend_listView);
 		
 	    FriendContactAdapter friendContactAdapter = new FriendContactAdapter(this);
 		friendContactAdapter.addTitleHeaderItem(getResources().getString(R.string.contact_use_show));
@@ -120,6 +137,7 @@ public class FriendScreen extends Screen implements OnClickListener, IEventHandl
 	    friendContactAdapter.addList(elements);
 
 	    friend_contact_listView.setAdapter(friendContactAdapter);
+	    ListViewUtil.setListViewHeightBasedOnChildren(friend_contact_listView);
 	}	  	
 	
 	
@@ -177,19 +195,14 @@ public class FriendScreen extends Screen implements OnClickListener, IEventHandl
 	@Override
 	public boolean onEvent(Object sender, EventArgs e) {
 		switch(e.getType()){
-		case CONTACT_SYNC_OVER:
+		case CONTACT_SYNC_SUCCESS:
 			getData();
-			FriendScreen.this.runOnUiThread(new Runnable(){
-
-				@Override
-				public void run() {
-					// TODO Auto-generated method stub
-					
-				}
-				
-			});
-			
+			sp = getSharedPreferences("Data", Context.MODE_PRIVATE);
+			Editor editor = sp.edit();
+			editor.putBoolean("sync", true);
+			editor.commit();
 			break;
+		case CONTACT_SYNC_FAILED:
 		}
 		return true;
 	}
@@ -199,31 +212,11 @@ public class FriendScreen extends Screen implements OnClickListener, IEventHandl
 	private Handler handler = new Handler(){
 		public void handleMessage(Message msg) {
 			loading.setVisibility(View.GONE);
+//			dialog.dismiss();
 			initAdapter();
 		};
 	};
 	
-	
-	
-	private void makeList(String str, List<String> list){
-		   str.replaceAll("\"", "");
-		   System.out.println("^^^^^^^^^^^^^^^^^^^^^^^   str = "+str);
-			 if(str != null && !str.equals("")){
-				 String[] str1 = str.split(",");
-				 if(str1.length > 0){
-					 for(int k = 0 ;k < str1.length; k++){
-						 String str11 = str1[k];
-						 if(str11.matches("[0-9]+")){
-							 list.add(str11);
-						 }
-					 }
-				 }else{
-					 if(str.matches("[0-9]+")){
-						 list.add(str);
-					 }
-				 }
-			 }
-	   }
 	   
 	   private void makeFriend1(List<Friend> friends,String id, int type, List<String> toalList){
 			if (NetworkUtils.getNetworkState(this) != NetworkUtils.NETWORN_NONE) {

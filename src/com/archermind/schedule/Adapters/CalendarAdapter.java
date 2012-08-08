@@ -143,7 +143,7 @@ public class CalendarAdapter extends BaseAdapter {
 				if(schDateTagFlag[i] == position){
 					//设置日程标记背景
 					calendar_schedule_number.setVisibility(View.VISIBLE);
-					calendar_schedule_number.setText(calendarData.getMarkcount()+"");
+					calendar_schedule_number.setText(calendarData.getMarkcount()[i]+"");
 					calendar_schedule_number.setBackgroundResource(R.drawable.calendar_schedule_number_bg);
 				}
 			}
@@ -152,7 +152,7 @@ public class CalendarAdapter extends BaseAdapter {
 			//设置当天的背景
 //			calendar_number.setBackgroundDrawable(drawable);
 			layout.setBackgroundResource(R.drawable.current_day_bg);
-			calendar_number.setTextColor(Color.WHITE);
+//			calendar_number.setTextColor(Color.WHITE);
 			setOldPosition(position);
 		}
 		return convertView;

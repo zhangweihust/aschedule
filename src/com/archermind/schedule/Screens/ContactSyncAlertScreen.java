@@ -71,7 +71,7 @@ public class ContactSyncAlertScreen extends Activity implements OnClickListener{
 					{
 						handler.sendEmptyMessage(SUCCESS);
 					}
-					ServiceManager.getEventservice().onUpdateEvent(new EventArgs(EventTypes.CONTACT_SYNC_OVER));
+					ServiceManager.getEventservice().onUpdateEvent(new EventArgs(EventTypes.CONTACT_SYNC_SUCCESS));
 					
 				};
 			}.start();
