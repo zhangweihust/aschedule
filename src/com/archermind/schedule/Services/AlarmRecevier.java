@@ -10,6 +10,8 @@ import com.archermind.schedule.Provider.DatabaseHelper;
 import com.archermind.schedule.Screens.HomeScreen;
 import com.archermind.schedule.Screens.NewScheduleScreen;
 import com.archermind.schedule.Utils.DateTimeUtils;
+
+import android.R.integer;
 import android.app.AlarmManager;
 import android.app.Notification;
 import android.app.NotificationManager;
@@ -27,7 +29,7 @@ public class AlarmRecevier extends BroadcastReceiver {
 	private Notification mNotification;
 	private PendingIntent mPendingIntent;
 	private String remindCycle;
-	private long scheduleTime;
+//	private long scheduleTime;
 	private long aheadTime;
 	private String weekValue;
 	private String timeValue;
@@ -65,18 +67,18 @@ public class AlarmRecevier extends BroadcastReceiver {
 		if(c.moveToFirst()){			
 			remindCycle = c.getString(c
 					.getColumnIndex(DatabaseHelper.COLUMN_SCHEDULE_NOTICE_PERIOD));
-			scheduleTime = c.getLong(c
+			startTime = c.getLong(c
 					.getColumnIndex(DatabaseHelper.COLUMN_SCHEDULE_START_TIME));
 			aheadTime = Long.valueOf(c.getString(c
 					.getColumnIndex(DatabaseHelper.COLUMN_SCHEDULE_NOTICE_TIME)));
 			weekValue = c.getString(c
 					.getColumnIndex(DatabaseHelper.COLUMN_SCHEDULE_NOTICE_WEEK));
-			startTime = Long.valueOf(c.getString(c
-					.getColumnIndex(DatabaseHelper.COLUMN_SCHEDULE_NOTICE_START)));
+//			startTime = Long.valueOf(c.getString(c
+//					.getColumnIndex(DatabaseHelper.COLUMN_SCHEDULE_NOTICE_START)));
 			endTime = Long.valueOf(c.getString(c
 					.getColumnIndex(DatabaseHelper.COLUMN_SCHEDULE_NOTICE_END)));
 			flagAlarm = c.getLong(c
-					.getColumnIndex(DatabaseHelper.COLUMN_SCHEDULE_NOTICE_FLAG));
+					.getColumnIndex(DatabaseHelper.COLUMN_SCHEDULE_ALARM_FLAG));
 			schedule_content=c.getString(c
 					.getColumnIndex(DatabaseHelper.COLUMN_SCHEDULE_CONTENT));	
 			mStageRemind= c .getInt(c
@@ -125,11 +127,13 @@ public class AlarmRecevier extends BroadcastReceiver {
 		Log.d(TAG, "-----------startTime="+startTime);
 		Log.d(TAG, "-----------startTime="+DateTimeUtils.time2String("yyyy-MM-dd-hh-mm",
 				startTime));
+		Log.d(TAG, "-----------endTime="+DateTimeUtils.time2String("yyyy-MM-dd-hh-mm",
+				endTime));
 		Log.d(TAG, "-----------aheadTime="+aheadTime);		
 		Log.d(TAG, "----------dateMode=" + dateMode);
 		Log.d(TAG, "----------weekValue=" + weekValue);
 		//闹钟提醒的时间
-		remindTime=scheduleTime-aheadTime*60*1000;
+		remindTime=startTime-aheadTime*60*1000;
 		
 		
         
@@ -277,12 +281,14 @@ public class AlarmRecevier extends BroadcastReceiver {
 		// 首先获得今天是星期几,
 		case DATE_MODE_WEEK:
 
-			final int[] checkedWeeks = parseDateWeeks(weekValue);
+//			final int[] checkedWeeks = parseDateWeeks(weekValue);
+			String[] checkedWeeks = weekValue.split(",");
+			
 			if (null != checkedWeeks) {
 
-				for (int week : checkedWeeks) {
+				for (String week : checkedWeeks ) {
 
-					c.set(Calendar.DAY_OF_WEEK, (int) (week + 1));
+					c.set(Calendar.DAY_OF_WEEK, (int) (Integer.parseInt(week) + 1));
 					// 把时间移到当天的闹钟的时间
 					c.set(Calendar.HOUR_OF_DAY, Integer.parseInt(DateTimeUtils
 							.time2String("H", time)));
@@ -370,36 +376,38 @@ public class AlarmRecevier extends BroadcastReceiver {
 		return nextTime;
 	}
 
-	private int[] parseDateWeeks(String value) {
-
-		int[] weeks = null;
-		ArrayList<Integer> arrayList = new ArrayList<Integer>();
-
-		char[] weekString = value.toCharArray();
-
-		for (int i = 0; i < weekString.length; i++) {
-
-			String weekNumber = new String(weekString, i, 1);
-			int number = Integer.parseInt(weekNumber);
-
-			if (number == 1) {
-
-				arrayList.add(i + 1);
-
-			} else {
-
-			}
-		}
-
-		weeks = new int[arrayList.size()];
-
-		for (int i = 0; i < arrayList.size(); i++) {
-
-			weeks[i] = arrayList.get(i);
-		}
-
-		return weeks;
-	}
+//	private int[] parseDateWeeks(String value) {
+//
+//		String[] weeks = null;
+//		weeks = value.split(",");
+//		
+////		ArrayList<Integer> arrayList = new ArrayList<Integer>();
+////
+////		char[] weekString = value.toCharArray();
+////
+////		for (int i = 0; i < weekString.length; i++) {
+////
+////			String weekNumber = new String(weekString, i, 1);
+////			int number = Integer.parseInt(weekNumber);
+////
+////			if (number == 1) {
+////
+////				arrayList.add(i + 1);
+////
+////			} else {
+////
+////			}
+////		}
+////
+////		weeks = new int[arrayList.size()];
+////
+////		for (int i = 0; i < arrayList.size(); i++) {
+////
+////			weeks[i] = arrayList.get(i);
+////		}
+//
+//		return weeks;
+//	}
 
 	public static long[][] parseDateMonthsAndDays(String value) {
 		long[][] values = new long[2][];

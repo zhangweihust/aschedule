@@ -39,14 +39,16 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 	public static final String COLUMN_SCHEDULE_START_TIME = "start_time";//日程开始时间
 	public static final String COLUMN_SCHEDULE_OPER_FLAG = "oper_flag";//日程操作标志
 	public static final String COLUMN_SCHEDULE_UPDATE_TIME = "update_time";//日程更新时间
-	public static final String COLUMN_SCHEDULE_NOTICE_TIME = "notice_time";//
-	public static final String COLUMN_SCHEDULE_NOTICE_FLAG = "notice_flag";//闹钟标志
-	public static final String COLUMN_SCHEDULE_NOTICE_PERIOD = "notice_period";
-	public static final String COLUMN_SCHEDULE_NOTICE_WEEK = "notice_week";
-	public static final String COLUMN_SCHEDULE_NOTICE_STAGE_FLAG = "notice_stage_flag";
-	public static final String COLUMN_SCHEDULE_NOTICE_START = "notice_start";// 日程开始时间
+	public static final String COLUMN_SCHEDULE_NOTICE_TIME = "notice_time";//闹钟提前时间（分钟）
+	public static final String COLUMN_SCHEDULE_ALARM_FLAG = "alarm_flag";//闹钟标志
+	public static final String COLUMN_SCHEDULE_NOTICE_FLAG = "notice_flag";//闹钟提醒标志
+	public static final String COLUMN_SCHEDULE_NOTICE_PERIOD = "notice_period";//闹钟重复提醒标志
+	public static final String COLUMN_SCHEDULE_NOTICE_WEEK = "notice_week";//闹钟按星期重复提醒的星期值
+	public static final String COLUMN_SCHEDULE_NOTICE_MONTHDAY="notice_monthday";//闹钟按每月重复提醒的日
+	public static final String COLUMN_SCHEDULE_NOTICE_YEARDAY="notice_yearday";//闹钟按每年重复提醒的月和日
+	public static final String COLUMN_SCHEDULE_NOTICE_STAGE_FLAG = "notice_stage_flag";//闹钟阶段提醒标志
 	public static final String COLUMN_SCHEDULE_NOTICE_END = "notice_end";// 日程结束时间
-	public static final String COLUMN_SCHEDULE_FLAG_OUTDATE = "notice_outdate";// 闹钟是否过期
+	public static final String COLUMN_SCHEDULE_FLAG_OUTDATE = "notice_outdate";//闹钟是否过期
 	public static final String COLUMN_SCHEDULE_CONTENT = "content";// 日程内容
 	public static final String COLUMN_SCHEDULE_SLAVE_ID = "slave_id";// 隶属于哪个主贴
 	public static final String COLUMN_SCHEDULE_ORDER = "queue";// 回帖顺序
@@ -74,18 +76,22 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 			+ " BIGINT, "
 			+ COLUMN_SCHEDULE_OPER_FLAG
 			+ " TEXT, "
-			+ COLUMN_SCHEDULE_NOTICE_FLAG
+			+ COLUMN_SCHEDULE_ALARM_FLAG
 			+" BIGINT, "
 			+ COLUMN_SCHEDULE_UPDATE_TIME
 			+ " TEXT, "
 			+ COLUMN_SCHEDULE_NOTICE_TIME
 			+ " TEXT, "
+			+ COLUMN_SCHEDULE_NOTICE_FLAG
+			+ " BOOLEAN, "
 			+ COLUMN_SCHEDULE_NOTICE_PERIOD
 			+ " TEXT, "
 			+ COLUMN_SCHEDULE_NOTICE_WEEK
 			+ " TEXT, "
-			+ COLUMN_SCHEDULE_NOTICE_START
+			+ COLUMN_SCHEDULE_NOTICE_MONTHDAY
 			+ " TEXT, "
+			+ COLUMN_SCHEDULE_NOTICE_YEARDAY
+			+ " TEXT,"
 			+ COLUMN_SCHEDULE_NOTICE_END
 			+ " TEXT, "
 			+ COLUMN_SCHEDULE_FIRST_FLAG

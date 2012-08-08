@@ -537,9 +537,9 @@ public class ServerInterface {
 					map.put("notice_week",
 							cursor.getString(cursor
 									.getColumnIndex(DatabaseHelper.COLUMN_SCHEDULE_NOTICE_WEEK)));
-					map.put("notice_start",
-							cursor.getString(cursor
-									.getColumnIndex(DatabaseHelper.COLUMN_SCHEDULE_NOTICE_START)));
+//					map.put("notice_start",
+//							cursor.getString(cursor
+//									.getColumnIndex(DatabaseHelper.COLUMN_SCHEDULE_NOTICE_START)));
 					map.put("notice_end",
 							cursor.getString(cursor
 									.getColumnIndex(DatabaseHelper.COLUMN_SCHEDULE_NOTICE_END)));

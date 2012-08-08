@@ -116,7 +116,7 @@ public class EditScheduleScreen extends Screen implements OnClickListener {
 	private long scheduleTime;
 	private String oper_flag = "N";
 	private String remindCycle = "0";
-	private String weekType = "";
+	private StringBuffer weekType = new StringBuffer();
 	private Calendar mCalendar = Calendar.getInstance();
 	// private int currentYear,currentMonth, currentDay, currentWeek,
 	// currentTime;
@@ -206,14 +206,8 @@ public class EditScheduleScreen extends Screen implements OnClickListener {
 		    remindCycle= c.getString(c
 					.getColumnIndex(DatabaseHelper.COLUMN_SCHEDULE_NOTICE_PERIOD));
 		    
-		    weekType = c.getString(c
-					.getColumnIndex(DatabaseHelper.COLUMN_SCHEDULE_NOTICE_PERIOD));
-		    
-		    startTime = Integer.parseInt(c.getString(c
-					.getColumnIndex(DatabaseHelper.COLUMN_SCHEDULE_NOTICE_START)));
-		    
-		    endTime =   Integer.parseInt(c.getString(c
-					.getColumnIndex(DatabaseHelper.COLUMN_SCHEDULE_NOTICE_START)));
+		   String  weekType = c.getString(c
+			 		.getColumnIndex(DatabaseHelper.COLUMN_SCHEDULE_NOTICE_WEEK));
 		    
 		    mType = c.getInt(c
 					.getColumnIndex(DatabaseHelper.COLUMN_SCHEDULE_TYPE));
@@ -653,6 +647,12 @@ public class EditScheduleScreen extends Screen implements OnClickListener {
 			// 显示闹钟提醒对话框
 			showRemindWindow(v);
 			remindImg.setImageResource(R.drawable.schedule_new_remind_select);
+			// 设置开始时间为日程时间
+			startTime = scheduleTime;
+			stage_remind_start_date.setText(DateTimeUtils.time2String(
+					"yyyy-MM-dd", startTime));
+			stage_remind_end_date.setText(" ");
+			
 		} else if (v.getId() == important.getId()) {
 			if (mImportant == false) {
 				mImportant = true;
@@ -697,23 +697,35 @@ public class EditScheduleScreen extends Screen implements OnClickListener {
 		// 此为时间选择器的时间，暂设置为当前时间
 		long scheduleTime = System.currentTimeMillis();
 		cv.put(DatabaseHelper.COLUMN_SCHEDULE_START_TIME, scheduleTime);
+		cv.put(DatabaseHelper.COLUMN_SCHEDULE_NOTICE_FLAG, mRemind);
 		cv.put(DatabaseHelper.COLUMN_SCHEDULE_NOTICE_TIME, aHeadTime);
 		cv.put(DatabaseHelper.COLUMN_SCHEDULE_NOTICE_PERIOD, remindCycle);
-		// cv.put(DatabaseHelper.COLUMN_SCHEDULE_UPDATE_TIME, scheduleTime);
-		cv.put(DatabaseHelper.COLUMN_SCHEDULE_NOTICE_START, startTime);
+		endTime=getStageTime(endTime);
 		cv.put(DatabaseHelper.COLUMN_SCHEDULE_NOTICE_END, endTime);
 		cv.put(DatabaseHelper.COLUMN_SCHEDULE_NOTICE_STAGE_FLAG, mStageRemind);
 		//主贴
 		cv.put(DatabaseHelper.COLUMN_SCHEDULE_ORDER,0);
-		weekType = "1100000";
-		cv.put(DatabaseHelper.COLUMN_SCHEDULE_NOTICE_WEEK, weekType);
+//		weekType = "1100000";
+		praseWeekType();
+		cv.put(DatabaseHelper.COLUMN_SCHEDULE_NOTICE_WEEK, weekType.toString());
 		String scheduleText = schedule_text.getText().toString();
 		cv.put(DatabaseHelper.COLUMN_SCHEDULE_CONTENT, scheduleText);
 		ServiceManager.getDbManager().updateScheduleById(schedule_id, cv);
 		// ServiceManager.getDbManager().insertLocalSchedules(cv);
 		si.uploadSchedule("0","1");
 	}
+	  public void praseWeekType(){   	
+	    	int a = 1;
+			for (int i = 0; i < weekvalue.length; i++) {
+				if (weekvalue[i] == 1) {
+					if (a != 1)
+						weekType.append(",");
+					a = 0;
+					weekType.append(i + 1);
+				}
 
+			}
+	    }
 	public void cancelAlarm() {
 		Cursor c = ServiceManager.getDbManager().queryScheduleById(
 				(int) schedule_id);
@@ -733,7 +745,20 @@ public class EditScheduleScreen extends Screen implements OnClickListener {
 		c.close();
 
 	}
-
+   
+	public long getStageTime(long time){
+		
+		Calendar mCalendar = Calendar.getInstance();
+		mCalendar.setTimeInMillis(time);
+		mCalendar.set(Calendar.HOUR_OF_DAY, Integer.valueOf(DateTimeUtils.time2String("H", scheduleTime)));
+		mCalendar.set(Calendar.MINUTE, Integer.valueOf(DateTimeUtils.time2String("m", scheduleTime)));
+		mCalendar.set(Calendar.SECOND,0);
+		mCalendar.set(Calendar.MILLISECOND, 0);
+		long mTime=mCalendar.getTimeInMillis();
+		return mTime;		
+		
+	}
+	
 	public void sendAlarm(Long time) {
 //		Cursor c = ServiceManager.getDbManager().queryNotOutdateschedule();
 //		Log.d(TAG, "-------NOT out date count = " + c.getCount());

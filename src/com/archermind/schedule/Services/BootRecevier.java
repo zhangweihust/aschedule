@@ -61,15 +61,15 @@ public class BootRecevier extends BroadcastReceiver {
 					weekValue = c
 							.getString(c
 									.getColumnIndex(DatabaseHelper.COLUMN_SCHEDULE_NOTICE_WEEK));
-					startTime = Long
-							.valueOf(c.getString(c
-									.getColumnIndex(DatabaseHelper.COLUMN_SCHEDULE_NOTICE_START)));
+//					startTime = Long
+//							.valueOf(c.getString(c
+//									.getColumnIndex(DatabaseHelper.COLUMN_SCHEDULE_NOTICE_START)));
 					endTime = Long
 							.valueOf(c.getString(c
 									.getColumnIndex(DatabaseHelper.COLUMN_SCHEDULE_NOTICE_END)));
 					flagAlarm = c
 							.getLong(c
-									.getColumnIndex(DatabaseHelper.COLUMN_SCHEDULE_NOTICE_FLAG));
+									.getColumnIndex(DatabaseHelper.COLUMN_SCHEDULE_ALARM_FLAG));
 					schedule_id =c
 					.getLong(c
 							.getColumnIndex(DatabaseHelper.COLUMN_SCHEDULE_ID));
