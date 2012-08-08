@@ -49,7 +49,7 @@ public class ServerInterface {
 	public static final int ERROR_EMAIL_INVALID = -6;
 	public static final int ERROR_PASSWORD_INVALID = -7;
 	public static final int ERROR_NICKNAME_INVALID = -9;
-	public static final int ERROR_TEL_INVALID = -1;
+	public static final int ERROR_TEL_INVALID = -10;
 	public static final int ERROR_WEB_ERROR = -8;
 
 	public static final int ERROR_SERVER_N0_REPLY = -100;
@@ -59,6 +59,8 @@ public class ServerInterface {
 	public static final int ERROR_PASSWORD_WRONG = -201;
 	public static final int ERROR_USER_NOT_EXIST = -202;
 	public static final int ERROR_USER_NOT_BIND = -203;
+	
+	public static final int ERROR_HTTP_UNKNOW = -500;
 
 	// public static DatabaseManager mDatabaseManager= new
 	// DatabaseManager(ServerInterfaceActivity.getContext());;
@@ -117,9 +119,21 @@ public class ServerInterface {
 		}
 		return true;
 	}
-	/*
-	 * public String getWeather(){ return null; }
-	 */
+	//------------------ 获取天气信息  -------------------
+	//传入参数 ：pro 省  city 市
+	//返回值 ：json的字符串，包含了城市4天的天气预报,或者为空
+	public String getWeather(String prov,String city){ 
+		if(city ==null || city.length() ==0){
+			return "";
+		}
+		Map<String, String> map = new HashMap<String, String>();
+		map.put("city", city);
+		map.put("prov", prov);
+		String ret = HttpUtils.doPost(map,
+		"http://player.archermind.com/ci/index.php/aschedule/getWeather");
+		return ret;
+	}
+	 
 	// ----------------- 帐号注册、登录、管理、绑定 -----------------
 	/**************************************
 	 * 用户注册 return: 0 : success n : ...... ......
@@ -213,8 +227,11 @@ public class ServerInterface {
 		oldpassword = oldpassword.replace(" ", "");
 		newpassword = newpassword.replace(" ", "");
 		// 查询数据库判断旧密码是否正确，查询的时候如果异常返回-2
+		if (!isPswdValid(newpassword)) {
+			return ERROR_PASSWORD_INVALID;
+		}
 		if (newpassword.length() == 0 || oldpassword.length() == 0 /* ||旧密码不对 */) {
-			return ERROR_PASSWORD_WRONG;
+			return ERROR_PASSWORD_INVALID;
 		}
 		// 向数据库中插入更新的信息，并判断是否插入成功
 		// if(不成功){
@@ -223,12 +240,15 @@ public class ServerInterface {
 		Map<String, String> map = new HashMap<String, String>();
 		map.put("user", username);
 		map.put("password", oldpassword);
-		map.put("newpass", newpassword);
-		HttpUtils mhttp = new HttpUtils();
-		mhttp.SetMap(map);
-		mhttp.Seturl("http://player.archermind.com/ci/index.php/aschedule/pswdModify");
-		new Thread(mhttp).start();
-		return SUCCESS;
+		map.put("newpass", newpassword);;
+		String ret =HttpUtils.doPost(map,"http://player.archermind.com/ci/index.php/aschedule/pswdModify");
+		if (ret.equals("0")){
+		    return SUCCESS;
+		}else if (ret.equals("-1")||ret.equals("-2")){
+			return ERROR_PASSWORD_WRONG;
+		}else{
+			return ERROR_HTTP_UNKNOW;
+		}
 	}
 
 	/*
@@ -324,7 +344,9 @@ public class ServerInterface {
 		//System.out.println("zhangguopeng+++++++"+ret);
 		if (ret.equals("-2")) {
 			return -2; // 已经是好友了
-		} else if (ret.equals("0")){
+		}else if (ret.equals("-3")){
+			return -3; // 已经发过消息了
+		}else if (ret.equals("0")){
 			return 0; // 消息发送成功
 		}else{
 			return -1;  // 消息发送失败
@@ -451,9 +473,13 @@ public class ServerInterface {
 		// return SUCCESS;
 	}
 
-	public String syncContact() {
-		String telList = null;
-		return telList;
+	public String syncContact(String user_id) {
+		Map<String, String> map = new HashMap<String, String>();
+		map.put("user_id", user_id);
+		String ret = HttpUtils
+				.doPost(map,
+						"http://player.archermind.com/ci/index.php/aschedule/syncContact");
+		return ret;
 	}
 
 	public static int uploadSchedule(String num,String host
@@ -558,7 +584,6 @@ public class ServerInterface {
 						System.out.println("xiaopashu test!=======" + ret);
 						if (Integer.parseInt(ret) > 0) {				
 							ContentValues cv = new ContentValues();
-							System.out.println("------------ tid=" + tid);
 							cv.put(DatabaseHelper.COLUMN_SCHEDULE_T_ID, ret);
 							cv.put(DatabaseHelper.COLUMN_SCHEDULE_OPER_FLAG,
 									"N");
@@ -593,6 +618,9 @@ public class ServerInterface {
 													.getColumnIndex(DatabaseHelper.COLUMN_SCHEDULE_USER_ID)),
 											cv);
 
+						}else {
+							result = -1;
+							break;
 						}
 					} else if (text != null && text.equals("D")) {
 						String ret = HttpUtils
@@ -608,6 +636,9 @@ public class ServerInterface {
 											cursor.getInt(cursor
 													.getColumnIndex(DatabaseHelper.COLUMN_SCHEDULE_ID)));
 
+						}else {
+							result = -1;
+							break;
 						}
 					}
 				} while (cursor.moveToNext());
