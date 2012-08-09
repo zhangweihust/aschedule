@@ -42,6 +42,9 @@
 		<activity android:name=".Screens.NewScheduleScreen"/>
         <activity android:name=".Screens.EditScheduleScreen"></activity>
          <activity android:name=".Screens.WeatherScreen"/>
+         <activity android:name=".Screens.AboutScreen"></activity>
+         <activity android:name=".Screens.Feedback"></activity>
+         <activity android:name=".Screens.SettingScreen"></activity>
         <activity android:name=".Screens.LoadingScreen"> <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
@@ -54,6 +57,9 @@
                 <action android:name="android.intent.action.BOOT_COMPLETED" />
             </intent-filter>
         </receiver>
+        <receiver 
+            android:name=".Services.AlarmServiceReceiver"
+            ></receiver>
 		</application>
 		<uses-permission android:name="android.permission.INTERNET"/>
 		<uses-permission android:name="android.permission.READ_PHONE_STATE"/>

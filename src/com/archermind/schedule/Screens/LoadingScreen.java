@@ -1,11 +1,15 @@
 
 package com.archermind.schedule.Screens;
 
+import android.app.AlarmManager;
+import android.app.PendingIntent;
+import android.content.Context;
 import android.content.Intent;
 import android.graphics.drawable.AnimationDrawable;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
+import android.os.SystemClock;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
@@ -13,6 +17,7 @@ import android.widget.TextView;
 import com.archermind.schedule.R;
 import com.archermind.schedule.Events.EventArgs;
 import com.archermind.schedule.Events.IEventHandler;
+import com.archermind.schedule.Services.AlarmServiceReceiver;
 import com.archermind.schedule.Services.EventService;
 import com.archermind.schedule.Services.ServiceManager;
 
@@ -62,8 +67,18 @@ public class LoadingScreen extends Screen implements IEventHandler {
             }
         }.start();
 
+        // 下面这一段是当servicemanager被关闭的时候，自动重新启动的
+        Intent myIntent = new Intent(this, AlarmServiceReceiver.class);
+        PendingIntent sender = PendingIntent.getBroadcast(this, 0, myIntent, 0);
+
+        long firstime = SystemClock.elapsedRealtime();
+        AlarmManager am = (AlarmManager)this.getSystemService(Context.ALARM_SERVICE);
+
+        // 10秒一个周期，不停的发送广播
+        am.setRepeating(AlarmManager.ELAPSED_REALTIME_WAKEUP, firstime, 10 * 1000, sender);
+
     }
-    
+
     /**
      * 用Handler来更新UI
      */
@@ -119,11 +134,11 @@ public class LoadingScreen extends Screen implements IEventHandler {
 
         eventService.remove(this);
     }
-    
+
     @Override
     public void onWindowFocusChanged(boolean hasFocus) {
         super.onWindowFocusChanged(hasFocus);
-        
+
         mAnimaition.start();
     }
 

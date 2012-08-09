@@ -1,0 +1,74 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="fill_parent"
+    android:layout_height="fill_parent"
+    android:background="#ececec"
+    android:orientation="vertical" >
+
+    <FrameLayout
+        android:id="@+id/title_about_top"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:background="@drawable/top"
+        android:paddingLeft="10dip"
+        android:paddingRight="10dip" >
+
+        <Button
+            android:id="@+id/title_feedback_button_out"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_vertical"
+            android:background="@drawable/schedule_new_back_selector"
+            android:text="@string/schedule_new_back"
+            android:textColor="#FFFFFF" />
+
+        <TextView
+            android:id="@+id/title_bar_about_text"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:text="@+string/feedback"
+            android:textColor="#FFFFFF"
+            android:textSize="20sp"
+            android:textStyle="bold" />
+
+        <Button
+            android:id="@+id/title_feedback_button_send"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="right|center_vertical"
+            android:background="@drawable/schedule_new_save_selector"
+            android:text="@string/sendfeedback"
+            android:textColor="#FFFFFF" />
+    </FrameLayout>
+
+    <RelativeLayout
+        android:layout_width="fill_parent"
+        android:layout_height="fill_parent"
+        android:layout_weight="1.0" >
+
+        <TextView
+            android:id="@+id/feedback_text"
+            android:layout_width="wrap_content"
+            android:layout_height="25dp"
+            android:layout_marginTop="3dp"
+            android:background="@drawable/schedule_new_left_line" />
+
+        <com.archermind.schedule.Views.FeedBackEditText
+            android:id="@+id/etfeed_back_content"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:background="#ececec"
+            android:fadingEdge="vertical"
+            android:gravity="top"
+            android:minLines="10"
+            android:layout_toRightOf="@+id/feedback_text"
+            android:paddingBottom="5dp"
+            android:paddingRight="5dp"
+            android:paddingTop="5dp"
+            android:scrollbars="vertical"
+            android:textSize="10sp" />
+        
+    </RelativeLayout>
+
+</LinearLayout>

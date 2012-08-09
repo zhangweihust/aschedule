@@ -35,6 +35,9 @@ import android.widget.Toast;
 import com.archermind.schedule.R;
 import com.archermind.schedule.ScheduleApplication;
 import com.archermind.schedule.Adapters.DynamicScheduleAdapter;
+import com.archermind.schedule.Events.EventArgs;
+import com.archermind.schedule.Events.EventTypes;
+import com.archermind.schedule.Events.IEventHandler;
 import com.archermind.schedule.Model.ScheduleBean;
 import com.archermind.schedule.Provider.DatabaseHelper;
 import com.archermind.schedule.Services.ServiceManager;
@@ -43,27 +46,41 @@ import com.archermind.schedule.Utils.NetworkUtils;
 import com.archermind.schedule.Views.XListView;
 import com.archermind.schedule.Views.XListView.IXListViewListener;
 
-public class FriendsDyamicScreen extends Screen implements 
-		IXListViewListener , OnItemClickListener{
-	private XListView list;
-	private RelativeLayout mListFooter;
-	private Button loginBtn, registerBtn;
-	private RelativeLayout loading;
-	private Cursor c;
-	protected static final int ON_Refresh = 0x101;
-	protected static final int ON_LoadMore = 0x102;
-	protected static final int ON_LoadData = 0x103;
-	private int end = 10;
-	private int start = 0;
-	private List<ScheduleBean> dataArrayList;
-	private DynamicScheduleAdapter mAdapter;
-	private final int LOAD_DATA_SIZE = 20;
+public class FriendsDyamicScreen extends Screen implements IXListViewListener, OnItemClickListener,
+        IEventHandler {
+
+    private XListView list;
+
+    private RelativeLayout mListFooter;
+
+    private Button loginBtn, registerBtn;
+
+    private RelativeLayout loading;
+
+    private Cursor c;
+
+    protected static final int ON_Refresh = 0x101;
+
+    protected static final int ON_LoadMore = 0x102;
+
+    protected static final int ON_LoadData = 0x103;
+
+    private int end = 10;
+
+    private int start = 0;
+
+    private List<ScheduleBean> dataArrayList;
+
+    private DynamicScheduleAdapter mAdapter;
+
+    private final int LOAD_DATA_SIZE = 20;
 
 	Handler mHandler = new Handler() {
 		public void handleMessage(Message msg) {
 			super.handleMessage(msg);
 			switch (msg.what) {
 			case ON_Refresh:
+                eventService.onUpdateEvent(new EventArgs(EventTypes.SERVICE_TIP_OFF));
 				loading.setVisibility(View.GONE);
 				mAdapter.setList(dataArrayList);
 				onLoad();
@@ -84,46 +101,44 @@ public class FriendsDyamicScreen extends Screen implements
 		}
 	};
 
-	@Override
-	public void onCreate(Bundle savedInstanceState) {
-		super.onCreate(savedInstanceState);
-		setContentView(R.layout.friends_dynamic_screen);
-		list = (XListView) findViewById(R.id.list);
-		list.setPullLoadEnable(true);
-		list.setPullRefreshEnable(true);
-		list.setOnItemClickListener(this);
-		list.setXListViewListener(this);
-		dataArrayList = new ArrayList<ScheduleBean>();
-		mAdapter = new DynamicScheduleAdapter(FriendsDyamicScreen.this, dataArrayList, list);
-		mAdapter.setList(dataArrayList);
-		list.setAdapter(mAdapter);
-		loading = (RelativeLayout) findViewById(R.id.loading);
-		mListFooter = (RelativeLayout) LayoutInflater.from(this).inflate(
-				R.layout.dynamic_listview_footer, null);
-		loginBtn = (Button) mListFooter.findViewById(R.id.login);
-		registerBtn = (Button) mListFooter.findViewById(R.id.register);
-		loginBtn.setOnClickListener(new OnClickListener() {
-			@Override
-			public void onClick(View v) {
-				Toast.makeText(FriendsDyamicScreen.this, "login",
-						Toast.LENGTH_SHORT).show();
-			}
-		});
-		registerBtn.setOnClickListener(new OnClickListener() {
-			@Override
-			public void onClick(View v) {
-				Toast.makeText(FriendsDyamicScreen.this, "register",
-						Toast.LENGTH_SHORT).show();
-			}
-		});
-		new Thread(new Runnable() {
-			@Override
-			public void run() {
-				loadSchedules();
-			}
-		}).start();
-
-	}
+    @Override
+    public void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.friends_dynamic_screen);
+        list = (XListView)findViewById(R.id.list);
+        list.setPullLoadEnable(true);
+        list.setPullRefreshEnable(true);
+        list.setOnItemClickListener(this);
+        list.setXListViewListener(this);
+        dataArrayList = new ArrayList<ScheduleBean>();
+        mAdapter = new DynamicScheduleAdapter(FriendsDyamicScreen.this, dataArrayList, list);
+        mAdapter.setList(dataArrayList);
+        list.setAdapter(mAdapter);
+        loading = (RelativeLayout)findViewById(R.id.loading);
+        mListFooter = (RelativeLayout)LayoutInflater.from(this).inflate(
+                R.layout.dynamic_listview_footer, null);
+        loginBtn = (Button)mListFooter.findViewById(R.id.login);
+        registerBtn = (Button)mListFooter.findViewById(R.id.register);
+        eventService.add(this);
+        loginBtn.setOnClickListener(new OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Toast.makeText(FriendsDyamicScreen.this, "login", Toast.LENGTH_SHORT).show();
+            }
+        });
+        registerBtn.setOnClickListener(new OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Toast.makeText(FriendsDyamicScreen.this, "register", Toast.LENGTH_SHORT).show();
+            }
+        });
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                loadSchedules();
+            }
+        }).start();
+    }
 
 	@Override
 	public boolean onKeyUp(int keyCode, KeyEvent event) {
@@ -442,5 +457,16 @@ public class FriendsDyamicScreen extends Screen implements
 		}).start();
 	}
 
+    protected void onDestroy() {
+
+        eventService.remove(this);
+        super.onDestroy();
+    }
+
+    @Override
+    public boolean onEvent(Object sender, EventArgs e) {
+        // TODO Auto-generated method stub
+        return false;
+    }
 
 }

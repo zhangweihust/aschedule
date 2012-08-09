@@ -68,8 +68,6 @@ public class DynamicScheduleAdapter extends BaseAdapter {
     public View getView(final int position, View convertView, ViewGroup parent) {
         ScheduleItem item;
 
-        Log.i(TAG, "scheduleCallback" + "position is " + position);
-
         if (convertView == null) {
 
             Log.i(TAG, "scheduleCallback" + "create View is " + position);

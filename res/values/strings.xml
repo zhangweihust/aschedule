@@ -49,6 +49,21 @@
 	<string name="friend_contact_show">查找联系人中的好友</string>
 	<string name="contact_show">联系人</string>
 	<string name="contact_use_show">正在使用 微日程 的好友</string>
-
-
+	
+	<string name="about">关于</string>
+	<string name="aboutintroduce">微日程Android版</string>
+	<string name="aboutcontent">微日程，让生活有序，让生活更简单</string>
+    <string name="aboutresverseone">Copyright©archermind.</string>
+    <string name="aboutresversetwo">All Reserved.</string>
+ 
+    <string name="feedback">意见反馈</string>
+    <string name="sendfeedback">  发送  </string>
+    <string name="feedbackhintcontent">写下您宝贵的意见～您的每一条建议我们都会仔细阅读，感谢您对《微日程》的关注。</string>
+    
+    <string name="setting">设置</string>
+    <string name="settingweather">天气</string>
+    <string name="settingoutofdata">过期日程保留</string>
+    <string name="settingalarm">提醒设置</string>
+    <string name="settinghelp">帮助</string>
+    
 </resources>
