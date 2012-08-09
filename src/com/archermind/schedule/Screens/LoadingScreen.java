@@ -10,24 +10,13 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
 import android.os.SystemClock;
-import android.widget.Button;
+import android.view.KeyEvent;
 import android.widget.ImageView;
-import android.widget.TextView;
 
 import com.archermind.schedule.R;
-import com.archermind.schedule.Events.EventArgs;
-import com.archermind.schedule.Events.IEventHandler;
 import com.archermind.schedule.Services.AlarmServiceReceiver;
-import com.archermind.schedule.Services.EventService;
-import com.archermind.schedule.Services.ServiceManager;
 
-public class LoadingScreen extends Screen implements IEventHandler {
-    /** Called when the activity is first created. */
-    private Button btn;
-
-    private TextView tv;
-
-    EventService eventService;
+public class LoadingScreen extends Screen{
 
     private ImageView mImageView;
 
@@ -35,16 +24,12 @@ public class LoadingScreen extends Screen implements IEventHandler {
 
     public LoadingScreen() {
         super();
-        eventService = ServiceManager.getEventservice();
     }
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.main);
-
-        eventService.add(this);
-
         mImageView = (ImageView)findViewById(R.id.ivloadingsthreepoint);
 
         // 设置动画背景
@@ -78,7 +63,7 @@ public class LoadingScreen extends Screen implements IEventHandler {
         am.setRepeating(AlarmManager.ELAPSED_REALTIME_WAKEUP, firstime, 10 * 1000, sender);
 
     }
-
+    
     /**
      * 用Handler来更新UI
      */
@@ -107,20 +92,6 @@ public class LoadingScreen extends Screen implements IEventHandler {
         }
     };
 
-    @Override
-    public boolean onEvent(Object sender, final EventArgs e) {
-        switch (e.getType()) {
-            case LOCAL_SCHEDULE_UPDATE:
-                LoadingScreen.this.runOnUiThread(new Runnable() {
-                    @Override
-                    public void run() {
-                        // tv.setText((String)e.getExtra("message"));
-                    }
-                });
-                break;
-        }
-        return false;
-    }
 
     @Override
     protected void onDestroy() {
@@ -131,15 +102,21 @@ public class LoadingScreen extends Screen implements IEventHandler {
             mAnimaition.stop();
 
         }
-
-        eventService.remove(this);
     }
-
+    
     @Override
     public void onWindowFocusChanged(boolean hasFocus) {
         super.onWindowFocusChanged(hasFocus);
-
+        
         mAnimaition.start();
     }
+    
+    @Override
+	public boolean dispatchKeyEvent(KeyEvent event) {
+		if(event.getKeyCode() == KeyEvent.KEYCODE_BACK && event.getAction() == KeyEvent.ACTION_UP){
+	        return true;
+        }
+        return super.dispatchKeyEvent(event);
+	}
 
 }

@@ -643,6 +643,9 @@ public class NewScheduleScreen extends Screen implements OnClickListener {
 	}
 
 	public void saveScheduleToDb() {
+		Intent intent = new Intent();
+		intent.setAction("android.appwidget.action.LOCAL_SCHEDULE_UPDATE");  
+		sendBroadcast(intent);
 		new Thread(new Runnable(){
 			@Override
 			public void run() {

@@ -6,6 +6,7 @@ import android.app.TabActivity;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
+import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -20,8 +21,10 @@ import android.widget.TabHost;
 import android.widget.TabHost.OnTabChangeListener;
 import android.widget.TabHost.TabSpec;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.archermind.schedule.R;
+import com.archermind.schedule.ScheduleApplication;
 import com.archermind.schedule.Events.EventArgs;
 import com.archermind.schedule.Events.IEventHandler;
 import com.archermind.schedule.Services.EventService;
@@ -236,6 +239,24 @@ public class HomeScreen extends TabActivity implements OnTabChangeListener, IEve
         mNotificationManager.cancel((int)id);
     }
 
+    private boolean mExit_Flag;// 退出标记
+	@Override
+	public boolean dispatchKeyEvent(KeyEvent event) {
+		ScheduleApplication.LogD(HomeScreen.class, "onKeyDown" + event.getKeyCode());
+		if(event.getKeyCode() == KeyEvent.KEYCODE_BACK && event.getAction() == KeyEvent.ACTION_UP){
+			if (mExit_Flag) {
+				ScheduleApplication.LogD(HomeScreen.class, "mExit_Flag");
+				this.finish();
+				ServiceManager.exit();
+			} else {
+				Toast.makeText(this, getString(R.string.exit), Toast.LENGTH_SHORT)
+						.show();
+				mExit_Flag = true;
+			}
+	        return true;
+        }
+        return super.dispatchKeyEvent(event);
+	}
     @Override
     public boolean onEvent(Object sender, EventArgs e) {
 

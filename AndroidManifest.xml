@@ -57,9 +57,19 @@
                 <action android:name="android.intent.action.BOOT_COMPLETED" />
             </intent-filter>
         </receiver>
-        <receiver 
-            android:name=".Services.AlarmServiceReceiver"
-            ></receiver>
+        <receiver android:name=".Services.AlarmServiceReceiver"></receiver>
+        <receiver android:name="com.archermind.schedule.Views.WidgetProvider">
+			<intent-filter>
+				<action android:name="android.appwidget.action.APPWIDGET_UPDATE" />
+				<action android:name="android.appwidget.action.LOCAL_SCHEDULE_UPDATE" />
+                <action android:name="android.intent.action.TIMEZONE_CHANGED" />
+                <action android:name="android.intent.action.DATE_CHANGED" />
+                <action android:name="android.intent.action.TIME_SET" />
+                <action android:name="android.intent.action.LOCALE_CHANGED" />
+			</intent-filter>
+			<meta-data android:name="android.appwidget.provider"
+				android:resource="@xml/appwidget_provider" />
+		</receiver>
 		</application>
 		<uses-permission android:name="android.permission.INTERNET"/>
 		<uses-permission android:name="android.permission.READ_PHONE_STATE"/>
@@ -69,4 +79,5 @@
 		   <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
 	    <uses-permission android:name="android.permission.READ_PHONE_STATE"/>
 	     <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED" />
+	     <uses-permission android:name="android.permission.READ_CALENDAR" />
 </manifest>
