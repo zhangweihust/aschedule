@@ -41,6 +41,7 @@ import com.archermind.schedule.R;
 import com.archermind.schedule.Adapters.CalendarAdapter;
 import com.archermind.schedule.Adapters.HistoryScheduleAdapter;
 import com.archermind.schedule.Calendar.CalendarData;
+import com.archermind.schedule.Dialog.ScheduleOperateDialog;
 import com.archermind.schedule.Events.EventArgs;
 import com.archermind.schedule.Events.IEventHandler;
 import com.archermind.schedule.Provider.DatabaseHelper;
@@ -229,23 +230,17 @@ private ViewFlipper flipper = null;
 //				System.currentTimeMillis());
 		
 //		list1.setAdapter(new LocalScheduleAdapter(this, c1));
-		ScheduleData data;
-		while (TodayScheduleCursor.moveToNext())
-		{
-			data = new ScheduleData();
-			data.id = TodayScheduleCursor.getInt(TodayScheduleCursor.getColumnIndex(DatabaseHelper.COLUMN_SCHEDULE_ID));
-			data.content = TodayScheduleCursor.getString(TodayScheduleCursor.getColumnIndex(DatabaseHelper.COLUMN_SCHEDULE_CONTENT));
-			data.time = TodayScheduleCursor.getLong(TodayScheduleCursor.getColumnIndex(DatabaseHelper.COLUMN_SCHEDULE_START_TIME));
-			data.share = TodayScheduleCursor.getInt(TodayScheduleCursor.getColumnIndex(DatabaseHelper.COLUMN_SCHEDULE_SHARE)) == 1;
-			data.important = TodayScheduleCursor.getInt(TodayScheduleCursor.getColumnIndex(DatabaseHelper.COLUMN_SCHEDULE_IMPORTANT)) == 1;
-			data.type = TodayScheduleCursor.getInt(TodayScheduleCursor.getColumnIndex(DatabaseHelper.COLUMN_SCHEDULE_TYPE));
-			data.first = TodayScheduleCursor.getInt(TodayScheduleCursor.getColumnIndex(DatabaseHelper.COLUMN_SCHEDULE_FIRST_FLAG)) == 1;
-			
-			listdata.add(data);
-		}
-		TodayScheduleCursor.close();
+		cursorToListData(TodayScheduleCursor,listdata);
 		hsa = new HistoryScheduleAdapter(this, listdata);
 		list2.setAdapter(hsa);
+		
+		if (TodayScheduleCursor.getCount() <= 0)
+		{
+			hsa.setNoSchedulePrompt(getMillisTimeByDate(curSelectedDate));
+		}
+		TodayScheduleCursor.close();
+		
+		
 //		list3.setAdapter(new LocalScheduleAdapter(this, c3));
 //		list4.setAdapter(new LocalScheduleAdapter(this, c4));
 
@@ -374,6 +369,7 @@ private ViewFlipper flipper = null;
 			data.content = c.getString(c.getColumnIndex(DatabaseHelper.COLUMN_SCHEDULE_CONTENT));
 			data.time = c.getLong(c.getColumnIndex(DatabaseHelper.COLUMN_SCHEDULE_START_TIME));
 			data.share = c.getInt(c.getColumnIndex(DatabaseHelper.COLUMN_SCHEDULE_SHARE)) == 1;
+			data.notice_flag = c.getInt(c.getColumnIndex(DatabaseHelper.COLUMN_SCHEDULE_NOTICE_FLAG)) == 1;
 			data.important = c.getInt(c.getColumnIndex(DatabaseHelper.COLUMN_SCHEDULE_IMPORTANT)) == 1;
 			data.type = c.getInt(c.getColumnIndex(DatabaseHelper.COLUMN_SCHEDULE_TYPE));
 			data.first = c.getInt(c.getColumnIndex(DatabaseHelper.COLUMN_SCHEDULE_FIRST_FLAG)) == 1;
@@ -404,6 +400,7 @@ private ViewFlipper flipper = null;
 		Collections.reverse(listdata);		/* 数据库查询时按照降序排列，因此此处需要将listdata中数据倒序 */
 		c.close();
 		hsa.addPreData(listdata);
+		list2.setSelection(1);
 		
 		onLoad();
 //		list2.setHeaderGone(false);
@@ -427,6 +424,7 @@ private ViewFlipper flipper = null;
 		cursorToListData(c,listdata);
 		c.close();
 		hsa.addAfterData(listdata);
+		list2.setSelection(hsa.getCount());
 		
 		onLoad();
 //		list2.setHeaderGone(false);
@@ -472,14 +470,12 @@ private ViewFlipper flipper = null;
 							+ (Long) args.getExtra("time"), Toast.LENGTH_SHORT)
 					.show();
 		}*/
+		
 		Integer itemid = (Integer) args.getExtra("id");
 		if (itemid > 0)
 		{
-			Intent mIntent =new Intent(ScheduleScreen.this,EditScheduleScreen.class);
-			mIntent.putExtra("id", itemid);
-			mIntent.putExtra("first", (Boolean) args.getExtra("first"));
-			mIntent.putExtra("time", (Long) args.getExtra("time"));
-			ScheduleScreen.this.startActivity(mIntent);
+			ScheduleOperateDialog scheduleDialog = new ScheduleOperateDialog(this,args);
+			scheduleDialog.show(getWindow().getAttributes().width);
 		}
 		
 	}
@@ -779,6 +775,19 @@ private ViewFlipper flipper = null;
 				this.flipper.showPrevious();
 	        }
 			flipper.removeViewAt(0);
+			
+			Cursor c = ServiceManager.getDbManager().queryTodayLocalSchedules(System.currentTimeMillis());
+			if (c.getCount() > 0)
+			{
+				List<ScheduleData> listdata = new ArrayList<ScheduleData>();
+				cursorToListData(c,listdata);
+				hsa.setTodayData(listdata);
+			}
+			else
+			{
+				hsa.setNoSchedulePrompt(System.currentTimeMillis());
+			}
+			c.close();
 			break;
 		}
 		
@@ -863,4 +872,3 @@ private ViewFlipper flipper = null;
 	}
 	
 }
-

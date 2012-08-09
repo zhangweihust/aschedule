@@ -75,15 +75,14 @@
         <RelativeLayout
             android:layout_width="fill_parent"
             android:layout_height="wrap_content"
-            android:layout_alignTop="@id/type"
             android:layout_marginLeft="14.0dip"
+            android:gravity="center"
             android:layout_toRightOf="@id/type" >
 
             <TextView
                 android:id="@+id/yearandmonth"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="2012年8月"
                 android:textColor="#252524"
                 android:textSize="12sp"
                 android:visibility="gone" />

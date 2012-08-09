@@ -97,6 +97,11 @@ public class HistoryScheduleAdapter extends BaseAdapter{
 			item.dateLayout.setVisibility(View.INVISIBLE);
 			item.yearandmonth.setVisibility(View.GONE);
 		}
+		if(data.notice_flag){
+			item.alarm.setVisibility(View.VISIBLE);
+		} else {
+			item.alarm.setVisibility(View.INVISIBLE);
+		}
 		if(data.share){
 			item.share.setVisibility(View.VISIBLE);
 		} else {
@@ -146,6 +151,10 @@ public class HistoryScheduleAdapter extends BaseAdapter{
 	{
 		int i = 0;
 		int size = prescheduledata.size();
+		if (size <= 0)
+		{
+			return;
+		}
 		if (existsPrompt)
 		{
 			schedulelist.clear();
@@ -161,6 +170,10 @@ public class HistoryScheduleAdapter extends BaseAdapter{
 	
 	public void addAfterData(List<ScheduleData> afterscheduledata)
 	{
+		if (afterscheduledata.size() <= 0)
+		{
+			return;
+		}
 		if (existsPrompt)
 		{
 			schedulelist.clear();
@@ -172,6 +185,7 @@ public class HistoryScheduleAdapter extends BaseAdapter{
 	
 	public void setTodayData(List<ScheduleData> prescheduledata)
 	{
+		existsPrompt = false;
 		schedulelist.clear();
 		schedulelist.addAll(prescheduledata);
 		notifyDataSetChanged();

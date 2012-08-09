@@ -1,0 +1,120 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="fill_parent"
+    android:layout_height="fill_parent"
+    android:background="@drawable/sync_alert_bg"
+    android:orientation="vertical" >
+	
+    <FrameLayout
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="20dip"
+	    android:layout_marginLeft="30dip"
+	    android:layout_marginRight="30dip" >
+        
+        <Button
+	        android:id="@+id/schedule_operate_modify"    
+	        android:layout_width="fill_parent"
+	        android:layout_height="fill_parent"
+	        android:background="@drawable/time_button_selector"
+	        android:text="修 改"
+	        android:textSize="18sp" />
+        <RelativeLayout
+            android:layout_width="fill_parent"
+            android:layout_height="fill_parent"
+            android:layout_gravity="center"
+             >
+            
+            <TextView
+                android:id="@+id/schedule_tv_modify"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_centerInParent="true"
+                android:text=" " />
+            
+            <ImageView
+	            android:layout_width="wrap_content"
+	            android:layout_height="wrap_content"
+	            android:layout_toLeftOf="@id/schedule_tv_modify"
+	            android:layout_centerVertical="true"
+	            android:layout_marginRight="25dip"
+	            android:src="@drawable/schedule_edit_pressed" />
+        </RelativeLayout>
+    </FrameLayout>
+            
+    <FrameLayout
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="15dip"
+	    android:layout_marginLeft="30dip"
+	    android:layout_marginRight="30dip"
+	    android:layout_marginBottom="15dip" >
+        
+        <Button
+	        android:id="@+id/schedule_operate_delete"    
+	        android:layout_width="fill_parent"
+	        android:layout_height="fill_parent"
+	        android:background="@drawable/time_button_selector"
+	        android:text="删 除"
+	        android:textSize="18sp" />
+        <RelativeLayout
+            android:layout_width="fill_parent"
+            android:layout_height="fill_parent"
+            android:layout_gravity="center"
+             >
+            
+            <TextView
+                android:id="@+id/schedule_tv_delete"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_centerInParent="true"
+                android:text=" " />
+            
+            <ImageView
+	            android:layout_width="wrap_content"
+	            android:layout_height="wrap_content"
+	            android:layout_toLeftOf="@id/schedule_tv_delete"
+	            android:layout_centerVertical="true"
+	            android:layout_marginRight="25dip"
+	            android:src="@drawable/schedule_delete_pressed" />
+        </RelativeLayout>
+    </FrameLayout>
+    
+    <FrameLayout
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+	    android:layout_marginLeft="30dip"
+	    android:layout_marginRight="30dip"
+	    android:layout_marginBottom="35dip" >
+        
+        <Button
+	        android:id="@+id/schedule_operate_goback"    
+	        android:layout_width="fill_parent"
+	        android:layout_height="fill_parent"
+	        android:background="@drawable/time_button_selector"
+	        android:text="返 回"
+	        android:textSize="18sp" />
+        <RelativeLayout
+            android:layout_width="fill_parent"
+            android:layout_height="fill_parent"
+            android:layout_gravity="center"
+             >
+            
+            <TextView
+                android:id="@+id/schedule_tv_goback"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_centerInParent="true"
+                android:text=" " />
+            
+            <ImageView
+	            android:layout_width="wrap_content"
+	            android:layout_height="wrap_content"
+	            android:layout_toLeftOf="@id/schedule_tv_goback"
+	            android:layout_centerVertical="true"
+	            android:layout_marginRight="25dip"
+	            android:src="@drawable/schedule_cancel_pressed" />
+        </RelativeLayout>
+    </FrameLayout>
+
+</LinearLayout>
