@@ -11,6 +11,7 @@ import com.archermind.schedule.Provider.DatabaseManager;
 import com.archermind.schedule.Screens.Screen;
 import com.archermind.schedule.Services.ServiceManager;
 import com.archermind.schedule.Utils.Constant;
+import com.archermind.schedule.Utils.ListViewUtil;
 import com.archermind.schedule.Utils.ServerInterface;
 
 import android.app.Dialog;
@@ -25,6 +26,7 @@ import android.widget.BaseAdapter;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.ListView;
 import android.widget.SeekBar;
 import android.widget.TextView;
 
@@ -38,15 +40,54 @@ public class FriendContactAdapter extends BaseAdapter implements OnClickListener
 	
 	private ServerInterface serverInterface;
 	private DatabaseManager database;
-	public FriendContactAdapter(Context context) {
+	private FriendAdapter friendAdapter;
+//	private int friendContactIndex;
+	private int friendContactUseIndex;
+	private ListView listView;
+	public FriendContactAdapter(Context context, ListView listView) {
 		super();
 		this.context = context;
+		this.listView = listView;
 		this.layoutInflater = (LayoutInflater) context.getSystemService("layout_inflater");
 		this.resultList = new ArrayList<ListElement>();
 		serverInterface = new ServerInterface();
 		database = ServiceManager.getDbManager();
 	}
 
+	public ListView getListView(){
+		return this.listView;
+	}
+	
+	public void setOtherAdapter(FriendAdapter friendAdapter){
+		this.friendAdapter = friendAdapter;
+	}
+	
+//	public void addFriendContact(ListElement element){
+//		resultList.add(friendContactIndex, element);
+//	}
+	
+	public void addLastFriendContactUse(ListElement element){
+		resultList.add(friendContactUseIndex, element);
+		friendContactUseIndex++;
+	}
+	
+	public void addFristFriendContactUse(ListElement element){
+		resultList.add(0, element);
+		friendContactUseIndex++;
+	}
+	
+	public void removeFriendContactUse(ListElement element){
+		resultList.remove(element);
+	}
+	
+	public void setFriendContactUseIndex(int friendContactUseIndex){
+		this.friendContactUseIndex = friendContactUseIndex;
+	}
+	
+	public int getFriendContactUseIndex(){
+		return this.friendContactUseIndex;
+	}
+	
 	@Override
 	public int getCount() {
 	return this.resultList.size();
@@ -126,10 +167,14 @@ public class FriendContactAdapter extends BaseAdapter implements OnClickListener
 	public class ContentListElement implements ListElement {
 
 		private Friend friend = null;
-		public void setfriend(Friend friend) {
+		public void setFriend(Friend friend) {
 			this.friend = friend;
 		}
-
+		
+		public Friend getFriend(){
+			return this.friend;
+		}
+		
 		@Override
 		public int getLayoutId() {
 			return R.layout.friend_item;
@@ -157,11 +202,11 @@ public class FriendContactAdapter extends BaseAdapter implements OnClickListener
 				if(Constant.FriendType.friend_contact_use == friend.getType()){
 					System.out.println("friend_contact_use");
 					contentHolderView.friend_button2.setText(context.getResources().getString(R.string.friend_add));
-					contentHolderView.friend_button2.setTag(friend);
+					contentHolderView.friend_button2.setTag(this);
 				}else if(Constant.FriendType.friend_contact == friend.getType()){
 					System.out.println("friend_contact");
 					contentHolderView.friend_button2.setText(context.getResources().getString(R.string.friend_invite));
-					contentHolderView.friend_button2.setTag(friend);
+					contentHolderView.friend_button2.setTag(this);
 				}
 			}
 			return view;
@@ -188,8 +233,9 @@ public class FriendContactAdapter extends BaseAdapter implements OnClickListener
 	@Override
 	public void onClick(View v) {
 		// TODO Auto-generated method stub
-//		System.out.println("*********************8");
-		Friend friend = (Friend) v.getTag();
+		System.out.println("*********************8");
+		ContentListElement element = (ContentListElement) v.getTag();
+		Friend friend = element.getFriend();
 		switch(friend.getType()){
 		case Constant.FriendType.friend_contact_use:	
 			System.out.println("&&&&&&&&&&&&&&&&&&&&&&&&&friend.getId() = "+friend.getId());
@@ -209,6 +255,15 @@ public class FriendContactAdapter extends BaseAdapter implements OnClickListener
 			dialog.show();
 			break;
 		}
+		
+//		friendAdapter.getFriends().add(friend);
+//		friendAdapter.notifyDataSetChanged();
+//		ListViewUtil.setListViewHeightBasedOnChildren(friendAdapter.getListView());
+//		
+//		removeFriendContactUse(element);
+//		System.out.println("count = "+getCount());
+//		notifyDataSetChanged();
+//		ListViewUtil.setListViewHeightBasedOnChildren(getListView());
 	}
 	
 	OnClickListener listen = new OnClickListener(){

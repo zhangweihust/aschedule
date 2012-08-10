@@ -151,8 +151,8 @@ public class CalendarAdapter extends BaseAdapter {
 		if(calendarData.getCurrentFlag() == position){ 
 			//设置当天的背景
 //			calendar_number.setBackgroundDrawable(drawable);
-			layout.setBackgroundResource(R.drawable.current_day_bg);
-//			calendar_number.setTextColor(Color.WHITE);
+//			layout.setBackgroundResource(R.drawable.current_day_bg);
+			calendar_number.setTextColor(context.getResources().getColor(R.color.current_day));
 			setOldPosition(position);
 		}
 		return convertView;

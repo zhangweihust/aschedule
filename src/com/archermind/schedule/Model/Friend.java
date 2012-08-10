@@ -57,7 +57,7 @@ public class Friend {
 		return type;
 	}
 
-	public void setType(int nike) {
+	public void setType(int type) {
 		this.type = type;
 	}
 	

@@ -528,6 +528,7 @@ public class NewScheduleScreen extends Screen implements OnClickListener {
 
 				// 启动时间选择器,设置时间选择器的默认时间为日程时间
 
+				Constant.wheelViewFlag = 1;
 				mSimpleTimeSelectorDialog.setCurrentItem(startTime);
 				mSimpleTimeSelectorDialog.show();
 
@@ -540,6 +541,7 @@ public class NewScheduleScreen extends Screen implements OnClickListener {
 			public void onClick(View v) {
 
 				// 启动时间选择器
+				Constant.wheelViewFlag = 1;
 				mSimpleTimeSelectorDialogend.setCurrentItem(endTime);
 				mSimpleTimeSelectorDialogend.show();
 
@@ -635,6 +637,7 @@ public class NewScheduleScreen extends Screen implements OnClickListener {
 
 		} else if (v.getId() == dateView.getId()) {
 			// 启动时间选择器
+			Constant.wheelViewFlag = 0;
 			timeselectordialog.setCurrentItem(startTime);
 			timeselectordialog.show();
 

@@ -2,4 +2,5 @@
 <resources>
 	<color name="transparent">#00000000</color>
 	<color name="selector">#c8c8c8</color>
+	<color name="current_day">#5c8c04</color>
 </resources>

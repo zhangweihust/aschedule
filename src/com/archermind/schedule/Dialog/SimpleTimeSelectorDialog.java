@@ -44,30 +44,27 @@ public class SimpleTimeSelectorDialog implements OnClickListener {
 		timeSelectorDialog.setContentView(R.layout.simple_time_select);
 		timeSelectorDialog.setCanceledOnTouchOutside(true);
 		init();
+		wheelView_cancel = (Button) timeSelectorDialog
+		.findViewById(R.id.wheelView_cancel);
+		wheelView_ok = (Button) timeSelectorDialog
+		.findViewById(R.id.wheelView_ok);
+		wheelView_cancel.setOnClickListener(this);
+		wheelView_ok.setOnClickListener(this);
 	}
 
 	private void init() {
 		initWheel(R.id.wheelView_year);
 		initWheel(R.id.wheelView_month);
 		initWheel(R.id.wheelView_day);
-
-		wheelView_cancel = (Button) timeSelectorDialog
-				.findViewById(R.id.wheelView_cancel);
-		wheelView_ok = (Button) timeSelectorDialog
-				.findViewById(R.id.wheelView_ok);
-
-		wheelView_cancel.setOnClickListener(this);
-		wheelView_ok.setOnClickListener(this);
-
 	}
 	public void setCurrentItem(long time) {
 
 		Constant.YEAR = Integer.parseInt(DateTimeUtils.time2String("y", time));
 		Constant.MONTH = Integer.parseInt(DateTimeUtils.time2String("M", time));
 		Constant.DAY = Integer.parseInt(DateTimeUtils.time2String("d", time));
-		wheelView_year.setCurrentItem(Constant.YEAR - 1901);
-		wheelView_month.setCurrentItem(Constant.MONTH - 1);
-		wheelView_day.setCurrentItem(Constant.DAY - 1);
+//		wheelView_year.setCurrentItem(Constant.YEAR - 1901);
+//		wheelView_month.setCurrentItem(Constant.MONTH - 1);
+//		wheelView_day.setCurrentItem(Constant.DAY - 1);
 
 	}
 
@@ -152,11 +149,21 @@ public class SimpleTimeSelectorDialog implements OnClickListener {
 
 	public void show() {
 		windowDeploy(0,0);
+		init();
 		timeSelectorDialog.show();
 	}
 
 	public void dismiss() {
 		timeSelectorDialog.dismiss();
+		if(wheelView_day != null){
+			wheelView_day = null;
+		}
+		if(wheelView_month != null){
+			wheelView_month = null;
+		}
+		if(wheelView_year != null){
+			wheelView_year = null;
+		}
 	}
 
 	@Override

@@ -271,12 +271,6 @@ public class CalendarData {
             }
         }
 
-        String abc = "";
-        for (int i = 0; i < dayNumber.length; i++) {
-            abc = abc + dayNumber[i] + ":";
-        }
-        Log.d("DAYNUMBER", abc);
-
     }
 
     public String getShowYear() {

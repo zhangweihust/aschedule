@@ -43,7 +43,8 @@
             android:paddingLeft="5dp"
             android:paddingRight="5dp"
             android:paddingTop="5dp"
-            android:text="foejoifeji" />
+            android:text="foejoifeji" 
+            android:visibility="gone"/>
 
         <Button
             android:id="@+id/friend_button2"
@@ -57,7 +58,8 @@
             android:paddingLeft="5dp"
             android:paddingRight="5dp"
             android:paddingTop="5dp"
-            android:text="foejoifeji" />
+            android:text="foejoifeji" 
+            android:visibility="gone"/>
     </LinearLayout>
 
 </LinearLayout>

@@ -50,7 +50,7 @@ public class WeatherDialog implements OnClickListener {
 	private String maxtemp3, mintemp3;
 	private String maxtemp4, mintemp4;
 
-	
+	private Context context;
 	
 	public interface OnCancelButtonClickListener {
 		void onCancelButtonClick(WeatherDialog mweatherDialog);
@@ -65,6 +65,7 @@ public class WeatherDialog implements OnClickListener {
 			Map<String, String> cityInfoMap, Map<String, Integer> weathermap,
 			Map<String, String> itemsmap) {
 
+      this.context = context;
 		weatherDialog = new Dialog(context, R.style.WeatherDialog);
 		weatherDialog.setContentView(R.layout.weather);
 		// weatherDialog.setCanceledOnTouchOutside(true);
@@ -80,6 +81,8 @@ public class WeatherDialog implements OnClickListener {
 	public void init() {
 
 		cityInfoTv = (TextView) weatherDialog.findViewById(R.id.city_info);
+		
+		cityInfoTv.setOnClickListener(this);
 
 		todayImg = (ImageView) weatherDialog.findViewById(R.id.today_image);
 		todayCurTemp = (TextView) weatherDialog
@@ -272,6 +275,12 @@ public class WeatherDialog implements OnClickListener {
 		// TODO Auto-generated method stub
 		weatherDialog.dismiss();
 		mOnCanceButtonClickListener.onCancelButtonClick(this);
+		switch(v.getId()){
+		case R.id.city_info:
+			CitySettingDialog citySettingDialog = new CitySettingDialog(context);
+			citySettingDialog.show();
+			break;
+		}
 	}
 
 }

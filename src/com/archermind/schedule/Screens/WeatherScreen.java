@@ -348,6 +348,6 @@ public class WeatherScreen extends Screen implements
 	@Override
 	public void onCancelButtonClick(WeatherDialog mweatherDialog) {
 		// TODO Auto-generated method stub
-           this.finish();
+//           this.finish();
 	}
 }

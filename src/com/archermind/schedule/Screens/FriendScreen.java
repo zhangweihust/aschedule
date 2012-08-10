@@ -113,31 +113,36 @@ public class FriendScreen extends Screen implements OnClickListener, IEventHandl
 		List<Friend> contact = hashMap.get(Constant.FriendType.FRIEND_CONTACT_KEY);
 		 
 	    friends.addAll(ignores);
-		FriendAdapter friendAdapter = new FriendAdapter(this, friends);
+		FriendAdapter friendAdapter = new FriendAdapter(this, friends, friend_listView);
 		friend_listView.setAdapter(friendAdapter);
 		ListViewUtil.setListViewHeightBasedOnChildren(friend_listView);
 		
-	    FriendContactAdapter friendContactAdapter = new FriendContactAdapter(this);
+	    FriendContactAdapter friendContactAdapter = new FriendContactAdapter(this, friend_contact_listView);
 		friendContactAdapter.addTitleHeaderItem(getResources().getString(R.string.contact_use_show));
 	    ArrayList<ListElement> elements = new ArrayList<ListElement>();
     	for(Friend friend : contact_use){
     		FriendContactAdapter.ContentListElement element = friendContactAdapter.new ContentListElement();
-	    	element.setfriend(friend);
+	    	element.setFriend(friend);
 	    	elements.add(element);
     	}
 	    friendContactAdapter.addList(elements);
 
+	    
+	    friendContactAdapter.setFriendContactUseIndex(friendContactAdapter.getCount());
 	    friendContactAdapter.addTitleHeaderItem(getResources().getString(R.string.contact_show));
 	    elements = new ArrayList<ListElement>();
     	for(Friend friend : contact){
     		FriendContactAdapter.ContentListElement element2 = friendContactAdapter.new ContentListElement();
-    		element2.setfriend(friend);
+    		element2.setFriend(friend);
 	    	elements.add(element2);
     	}
 	    friendContactAdapter.addList(elements);
 
 	    friend_contact_listView.setAdapter(friendContactAdapter);
 	    ListViewUtil.setListViewHeightBasedOnChildren(friend_contact_listView);
+	    
+	    friendAdapter.setOtherAdapter(friendContactAdapter);
+	    friendContactAdapter.setOtherAdapter(friendAdapter);
 	}	  	
 	
 	
@@ -218,7 +223,7 @@ public class FriendScreen extends Screen implements OnClickListener, IEventHandl
 	};
 	
 	   
-	   private void makeFriend1(List<Friend> friends,String id, int type, List<String> toalList){
+	   private void makeFriendFromInet(List<Friend> friends,String id, int type, List<String> toalList){
 			if (NetworkUtils.getNetworkState(this) != NetworkUtils.NETWORN_NONE) {
 				
 				String jsonString = ServiceManager.getServerInterface().findUserInfobyUserId(id);
@@ -250,7 +255,7 @@ public class FriendScreen extends Screen implements OnClickListener, IEventHandl
 								 values.put(DatabaseHelper.ASCHEDULE_FRIEND_PHOTO_URL, photo_url);
 								 database.addFriend(values);
 								 
-//								 toalList.remove(tel);
+								 toalList.remove(tel);
 								
 							}
 						} catch (JSONException e) {
@@ -264,7 +269,7 @@ public class FriendScreen extends Screen implements OnClickListener, IEventHandl
 		}
 	   
 	   
-	   private void makeFriend(List<Friend> friends,String tel, int type, List<String> tempList){
+	   private void makeFriendContactUseFromInet(List<Friend> friendContactUs,String tel, int type, List<String> tempList,List<String> friendList){
 			if (NetworkUtils.getNetworkState(this) != NetworkUtils.NETWORN_NONE) {
 				
 				String jsonString = ServiceManager.getServerInterface().isfriendSchedule(tel);
@@ -283,14 +288,18 @@ public class FriendScreen extends Screen implements OnClickListener, IEventHandl
 								
 								tempList.add(tel);
 
+								if(friendList.contains(user_id)){
+									break;
+								}
 								Friend friend = new Friend();
 								friend.setTelephone(tel);
 								friend.setType(type);
 								friend.setNick(nick);
 								friend.setHeadImagePath(photo_url);
-								friends.add(friend);
+								
+								friendContactUs.add(friend);
 									 
-								database.updateContactType(database.queryContactIdByTel(tel), Constant.FriendType.friend_contact_use,user_id);
+								database.updateContactType(database.queryContactIdByTel(tel), type,user_id);
 								
 							}
 						} catch (JSONException e) {
@@ -357,8 +366,6 @@ public class FriendScreen extends Screen implements OnClickListener, IEventHandl
 				
 		 }
 
-		 System.out.println("%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% size = "+friendList.size());
-		 
 		 List<Friend> friends = new ArrayList<Friend>();
 		 Cursor cursor = null;
 		 for(String id : friendList){
@@ -371,7 +378,7 @@ public class FriendScreen extends Screen implements OnClickListener, IEventHandl
 					 friends.add(friend);
 				 }else{
 					 //向服务器查询数据(构造Friend,向本地数据库插入数据)
-					 makeFriend1(friends, id, Constant.FriendType.friend_yes, contactToalList);
+					 makeFriendFromInet(friends, id, Constant.FriendType.friend_yes, contactToalList);
 				 }
 			 }
 			 
@@ -387,7 +394,7 @@ public class FriendScreen extends Screen implements OnClickListener, IEventHandl
 					 ignores.add(friend);
 				 }else{
 					//向服务器查询数据(构造Friend,向本地数据库插入数据)
-					 makeFriend1(ignores, id, Constant.FriendType.friend_Ignore, contactToalList);
+					 makeFriendFromInet(ignores, id, Constant.FriendType.friend_Ignore, contactToalList);
 				 }
 			 }
 
@@ -413,7 +420,7 @@ public class FriendScreen extends Screen implements OnClickListener, IEventHandl
 		 }else{
 			 List<String> tempList = new ArrayList<String>();
 			 for(String tel : contactToalList){
-				 makeFriend(contact_use, tel, Constant.FriendType.friend_contact_use, tempList);
+				 makeFriendContactUseFromInet(contact_use, tel, Constant.FriendType.friend_contact_use, tempList, friendList);
 			 }
 			 for(String tel : tempList){
 				 contactToalList.remove(tel);
