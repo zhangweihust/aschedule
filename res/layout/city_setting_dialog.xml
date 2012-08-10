@@ -1,0 +1,95 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="fill_parent"
+    android:layout_height="fill_parent"
+    android:background="@drawable/sync_alert_bg"
+    android:orientation="vertical" >
+
+    <TextView
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="25dip"
+        android:layout_marginTop="20dip"
+        android:text="设置所在地" />
+
+    <FrameLayout
+        android:layout_width="fill_parent"
+        android:layout_height="30dip"
+        android:layout_marginLeft="25dip"
+        android:layout_marginRight="25dip"
+        android:layout_marginTop="20dip" >
+
+        <Button
+            android:id="@+id/province_button"
+            android:layout_width="fill_parent"
+            android:layout_height="fill_parent"
+            android:background="@drawable/city_setting_selector"
+            android:drawableRight="@drawable/city_setting_icon"
+            android:paddingRight="10dip"
+            android:textSize="18sp" />
+
+        <TextView
+            android:id="@+id/province_text"
+            android:layout_width="wrap_content"
+            android:layout_height="fill_parent"
+            android:layout_marginLeft="50dip"
+            android:gravity="center_vertical"
+            android:text="北京"
+            android:textColor="@android:color/black" />
+    </FrameLayout>
+
+    <FrameLayout
+        android:layout_width="fill_parent"
+        android:layout_height="30dip"
+        android:layout_marginLeft="25dip"
+        android:layout_marginRight="25dip"
+        android:layout_marginTop="20dip" >
+
+        <Button
+            android:id="@+id/city_button"
+            android:layout_width="fill_parent"
+            android:layout_height="fill_parent"
+            android:background="@drawable/city_setting_selector"
+            android:drawableRight="@drawable/city_setting_icon"
+            android:paddingRight="10dip"
+            android:textSize="18sp" />
+
+        <TextView
+            android:id="@+id/city_text"
+            android:layout_width="wrap_content"
+            android:layout_height="fill_parent"
+            android:layout_marginLeft="50dip"
+            android:gravity="center_vertical"
+            android:text="北京"
+            android:textColor="@android:color/black" />
+    </FrameLayout>
+
+    <RelativeLayout
+        android:layout_width="fill_parent"
+        android:layout_height="50dip"
+        android:layout_marginLeft="25dip"
+        android:layout_marginRight="25dip"
+        android:layout_marginTop="20dip"
+        android:gravity="center_vertical"
+        android:orientation="horizontal" >
+
+        <Button
+            android:id="@+id/city_setting_ok"
+            android:layout_width="110dip"
+            android:layout_height="30dip"
+            android:layout_alignParentLeft="true"
+            android:background="@drawable/time_button_selector"
+            android:text="确定"
+            android:textSize="18sp" />
+
+        <Button
+            android:id="@+id/city_setting_cancel"
+            android:layout_width="110dip"
+            android:layout_height="30dip"
+            android:layout_alignParentRight="true"
+            android:background="@drawable/time_button_selector"
+            android:text="取消"
+            android:textSize="18sp" />
+    </RelativeLayout>
+
+</LinearLayout>
