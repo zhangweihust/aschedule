@@ -1,7 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
  <string-array name="schedule">
-     <item>@string/notice</item>
      <item>@string/activity</item>
      <item>@string/appointment</item>
      <item>@string/travel</item>

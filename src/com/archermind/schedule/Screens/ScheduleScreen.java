@@ -84,6 +84,10 @@ public class ScheduleScreen extends Screen implements IXListViewListener,OnXScro
 	private List<ScheduleData> listdata = new ArrayList<ScheduleData>();
 	private String curSelectedDate = "";
 	
+	private static int year;
+	private static int month;
+	private static int day;
+	
 
 private ViewFlipper flipper = null;
 		private GestureDetector gestureDetector = null;
@@ -110,9 +114,10 @@ private ViewFlipper flipper = null;
 			Date date = new Date();
 	    	SimpleDateFormat sdf = new SimpleDateFormat("yyyy-M-d");
 	    	currentDate = sdf.format(date);  //当前日期
-	    	Constant.YEAR = year_c = Integer.parseInt(currentDate.split("-")[0]);
-	    	Constant.MONTH = month_c = Integer.parseInt(currentDate.split("-")[1]);
-	    	Constant.DAY = day_c = Integer.parseInt(currentDate.split("-")[2]);
+	    	year = Constant.YEAR = year_c = Integer.parseInt(currentDate.split("-")[0]);
+	    	month = Constant.MONTH = month_c = Integer.parseInt(currentDate.split("-")[1]);
+	    	day = Constant.DAY = day_c = Integer.parseInt(currentDate.split("-")[2]);
+	    	
 		}
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
@@ -583,7 +588,9 @@ private ViewFlipper flipper = null;
 		String date = "";
 		int month = Integer.parseInt(calendarData.getShowMonth());
 		int day = Integer.parseInt(calV.getDateByClickItem(position).split("\\.")[0]);
-		
+		this.year = Integer.parseInt(calendarData.getShowYear());
+		this.month = month;
+		this.day = day;
 		if(month < 10){
 			date = calendarData.getShowYear() + ".0" + month;
 		}else{
@@ -598,7 +605,12 @@ private ViewFlipper flipper = null;
 		return date;
 	}
 	
-	public long getMillisTimeByDate(String date)
+	public static long getDateMill(){
+		String data = year + "." + month + "." + day;
+		return getMillisTimeByDate(data);
+	}
+	
+	public static long getMillisTimeByDate(String date)
 	{
 		long time = 0;
 		SimpleDateFormat sdf = new SimpleDateFormat("yyyy.MM.dd");

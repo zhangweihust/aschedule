@@ -5,8 +5,10 @@
     android:orientation="vertical" >
 
     <LinearLayout
+        android:id="@+id/schedule_new_top"
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
+        android:layout_weight="0"
         android:background="@drawable/top"
         android:orientation="horizontal"
         android:paddingLeft="10dip"
@@ -43,45 +45,15 @@
             android:textSize="12sp" />
     </LinearLayout>
 
-    <RelativeLayout
-        android:id="@+id/event_item"
-        android:layout_width="fill_parent"
-        android:layout_height="wrap_content"
-        android:background="@drawable/grid_repeat_bg" >
-
-        <TextView
-            android:layout_width="fill_parent"
-            android:layout_height="5dp"
-            android:layout_alignParentTop="true"
-            android:background="@drawable/schedule_new_background_top" />
-
-        <GridView
-            android:id="@+id/mygridview"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:horizontalSpacing="10dp"
-            android:listSelector="@drawable/schedule_new_gridview_selector"
-            android:numColumns="7"
-            android:stretchMode="columnWidth" >
-        </GridView>
-
-        <ImageView
-            android:id="@+id/img_selector"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_alignLeft="@+id/mygridview"
-            android:src="@drawable/schedule_new_gridview_item_select"
-            android:visibility="invisible" />
-    </RelativeLayout>
-
     <LinearLayout
+        android:id="@+id/schedule_new_addtion"
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
         android:background="#ececec"
         android:orientation="vertical" >
 
         <LinearLayout
-            android:id="@+id/event_addtion"
+            
             android:layout_width="fill_parent"
             android:layout_height="wrap_content"
             android:background="#ececec"
@@ -100,49 +72,27 @@
                 android:background="@drawable/schedule_new_bg_selector"
                 android:orientation="horizontal" >
 
-                <LinearLayout
-                    android:layout_width="fill_parent"
-                    android:layout_height="fill_parent"
-                    android:layout_gravity="right"
-                    android:layout_weight="1.3"
-                    android:gravity="bottom"
-                    android:orientation="horizontal" >
-
-                    <TextView
-                        android:id="@+id/schedule_new_month"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:gravity="right"
-                        android:text="6"
-                        android:textSize="25sp" />
-
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:gravity="bottom"
-                        android:text="月"
-                        android:textSize="10sp" />
-
-                    <TextView
-                        android:id="@+id/schedule_new_day"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="27"
-                        android:textSize="25sp" />
-                </LinearLayout>
+                <TextView
+                    android:id="@+id/schedule_new_year"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="left|bottom"
+                    android:text="2012"
+                    android:textSize="25sp" />
 
                 <LinearLayout
                     android:layout_width="fill_parent"
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
-                    android:orientation="vertical" >
+                    android:orientation="vertical"
+                    android:paddingLeft="2dp" >
 
                     <TextView
-                        android:id="@+id/schedule_new_week"
+                        android:id="@+id/schedule_new_month_day"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_weight="1"
-                        android:text="星期三" />
+                        android:text="6月27日" />
 
                     <TextView
                         android:id="@+id/schedule_new_time"
@@ -165,6 +115,11 @@
                     android:gravity="center"
                     android:orientation="horizontal" >
 
+                    <TextView
+                        android:layout_width="1dp"
+                        android:layout_height="fill_parent"
+                        android:background="@drawable/schedule_new_line" />
+
                     <LinearLayout
                         android:id="@+id/schedule_new_share"
                         android:layout_width="fill_parent"
@@ -179,13 +134,11 @@
                             android:layout_height="wrap_content"
                             android:src="@drawable/schedule_new_share" />
 
-                        <TextView
-                            android:id="@+id/schedule_new_share_title"
-                            android:layout_width="fill_parent"
+                        <ImageView
+                            android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:gravity="center"
-                            android:text="@string/share"
-                            android:textSize="12sp" />
+                            android:src="@drawable/schedule_remind_selector"
+                            android:visibility="invisible" />
                     </LinearLayout>
 
                     <TextView
@@ -207,13 +160,12 @@
                             android:layout_height="wrap_content"
                             android:src="@drawable/schedule_new_remind" />
 
-                        <TextView
-                            android:id="@+id/schedule_new_remind_title"
-                            android:layout_width="fill_parent"
+                        <ImageView
+                            android:id="@+id/schedule_share_tringle_img"
+                            android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:gravity="center"
-                            android:text="@string/remind"
-                            android:textSize="12sp" />
+                            android:src="@drawable/schedule_remind_selector"
+                            android:visibility="invisible" />
                     </LinearLayout>
 
                     <TextView
@@ -222,7 +174,7 @@
                         android:background="@drawable/schedule_new_line" />
 
                     <LinearLayout
-                        android:id="@+id/schedule_new_important"
+                        android:id="@+id/schedule_new_event"
                         android:layout_width="fill_parent"
                         android:layout_height="wrap_content"
                         android:layout_weight="1"
@@ -230,18 +182,18 @@
                         android:orientation="vertical" >
 
                         <ImageView
-                            android:id="@+id/schedule_new_important_img"
+                            android:id="@+id/schedule_new_event_img"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:src="@drawable/schedule_new_important" />
+                            android:background="@drawable/schedule_new_add_event_bg"
+                            android:src="@drawable/schedule_new_add_event" />
 
-                        <TextView
-                            android:id="@+id/schedule_new_improtant_title"
-                            android:layout_width="fill_parent"
+                        <ImageView
+                            android:id="@+id/schedule_event_tringle_img"
+                            android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:gravity="center"
-                            android:text="@string/important"
-                            android:textSize="12sp" />
+                            android:src="@drawable/schedule_remind_selector"
+                            android:visibility="invisible" />
                     </LinearLayout>
                 </LinearLayout>
             </LinearLayout>
@@ -261,6 +213,7 @@
         android:background="#ececec"
         android:capitalize="sentences"
         android:fadingEdge="vertical"
+        android:layout_weight="1"
         android:gravity="top"
         android:padding="5dip"
         android:scrollbars="vertical"

@@ -30,6 +30,20 @@
 	<string name="share">分享</string>
 	<string name="remind">提醒</string>
 	<string name="important">重要</string>
+    <string name="not_remind">不提醒</string>
+    <string name="repeat_remind">重复提醒</string>
+    <string name="repeat_none">无</string>
+    <string name="repeat_per_day">每天</string>
+    <string name="repeat_per_month">每月</string>
+    <string name="repeat_per_year">每年</string>
+    <string name="repeat_week_monday">一</string>
+    <string name="repeat_week_tuesday">二</string>
+    <string name="repeat_week_wednesday">三</string>
+    <string name="repeat_week_thursday">四</string>
+    <string name="repeat_week_friday">五</string>
+    <string name="repeat_week_saturday">六</string>
+    <string name="repeat_week_sunday">日</string>
+    <string name="stage_remind">阶段提醒</string>
 	<!-- editSchedule_screen -->
 	<string name="schedule_edit_title">编辑</string>
 	<string name="schedule_edit_delete">删除</string>

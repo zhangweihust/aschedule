@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/event_item"
+    android:layout_width="fill_parent"
+    android:layout_height="fill_parent"
+    android:gravity="center">
+
+    <GridView
+        android:id="@+id/mygridview"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:horizontalSpacing="10dp"
+        android:listSelector="@drawable/schedule_new_gridview_selector"
+        android:numColumns="6"
+        android:stretchMode="columnWidth" >
+    </GridView>
+
+    <ImageView
+        android:id="@+id/img_selector"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignLeft="@+id/mygridview"
+        android:background="@drawable/schedule_new_gridview_item_select" />
+
+</RelativeLayout>
