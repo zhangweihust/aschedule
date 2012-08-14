@@ -19,6 +19,7 @@
             android:label="@string/app_name" >
 
         </activity>
+        <activity android:name=".Screens.PicCutScreen"/>
         <activity android:name=".Screens.DynamicScreen"/>
         <activity android:name=".Screens.MyDynamicScreen"/>
         <activity android:name=".Screens.FriendsDyamicScreen"/>

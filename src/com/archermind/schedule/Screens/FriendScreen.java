@@ -241,6 +241,7 @@ public class FriendScreen extends Screen implements OnClickListener, IEventHandl
 								String photo_url = jsonObject.getString("photo_url");
 								
 								Friend friend = new Friend();
+								friend.setId(id);
 								friend.setTelephone(tel);
 								friend.setType(type);
 								friend.setNick(nick);
@@ -292,6 +293,7 @@ public class FriendScreen extends Screen implements OnClickListener, IEventHandl
 									break;
 								}
 								Friend friend = new Friend();
+								friend.setId(user_id);
 								friend.setTelephone(tel);
 								friend.setType(type);
 								friend.setNick(nick);
@@ -323,7 +325,7 @@ public class FriendScreen extends Screen implements OnClickListener, IEventHandl
 		 
 		 if (NetworkUtils.getNetworkState(this) != NetworkUtils.NETWORN_NONE) {
 				
-				String jsonString = ServiceManager.getServerInterface().getFriendRel("3");
+				String jsonString = ServiceManager.getServerInterface().getFriendRel(String.valueOf(ServiceManager.getUserId()));
 				
 				System.out.println("result = "+jsonString);
 				if(jsonString != null && !"".equals(jsonString)){

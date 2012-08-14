@@ -1,14 +1,18 @@
 package com.archermind.schedule.Screens;
 
 
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
+
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
 import android.telephony.TelephonyManager;
-import android.util.Log;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.Window;
@@ -16,7 +20,6 @@ import android.widget.Button;
 import android.widget.EditText;
 
 import com.archermind.schedule.R;
-import com.archermind.schedule.ScheduleApplication;
 import com.archermind.schedule.Services.ServiceManager;
 
 public class LoginScreen extends Activity implements OnClickListener{
@@ -129,15 +132,41 @@ public class LoginScreen extends Activity implements OnClickListener{
 		{
 			public void run() 
 			{
-				int ret = ServiceManager.getServerInterface().login(username, password, imsi);
-				if (ret == 0)
-				{
-					handler.sendEmptyMessage(LOGIN_SUCCESS);
+				String ret = ServiceManager.getServerInterface().login(username, password, imsi);
+				String user_id = "";
+//				if (ret == 0)
+//				{
+//					handler.sendEmptyMessage(LOGIN_SUCCESS);
+//					
+//				}
+//				else
+//				{
+//					handler.sendEmptyMessage(LOGIN_FAILED);
+//				}
+				try {
+					JSONArray jsonArray = new JSONArray(ret);
+					for (int i = 0; i < jsonArray.length(); i++) {
+						JSONObject jsonObject = (JSONObject) jsonArray.opt(i);
+						 user_id = jsonObject.getString("user_id");
+						
+					}
+					if (!user_id.equals(""))
+					{
+						handler.sendEmptyMessage(LOGIN_SUCCESS);
+						ServiceManager.setUserId(Integer.parseInt(user_id));		/* 设置服务器返回的Userid */
+						SharedPreferences.Editor editor = getSharedPreferences(RegisterScreen.USER_INFO, Context.MODE_WORLD_WRITEABLE).edit();
+						editor.putInt(RegisterScreen.USER_ID, Integer.parseInt(user_id));
+						editor.commit();
+					}
+					else
+					{
+						handler.sendEmptyMessage(LOGIN_FAILED);
+					}
+				} catch (JSONException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
 				}
-				else
-				{
-					handler.sendEmptyMessage(LOGIN_FAILED);
-				}
+				
 			};
 		}.start();
 	}

@@ -186,19 +186,21 @@ public class DatabaseManager {
 	
 	public Cursor queryIsMarkWithDay(long timeInMillis, String dayOfYear, String dayOfMonth, String dayOfWeek){
 		
-		
-		String sql = "select * from "+DatabaseHelper.TAB_LOCAL_SCHEDULE + " where ("
+		String sql = "select * from "+DatabaseHelper.TAB_LOCAL_SCHEDULE + " where (("
 		+DatabaseHelper.COLUMN_SCHEDULE_NOTICE_YEARDAY+" ="+" '"+dayOfYear+"' or "
 		+DatabaseHelper.COLUMN_SCHEDULE_NOTICE_MONTHDAY+" ="+" '"+dayOfMonth+"' or "
 		+DatabaseHelper.COLUMN_SCHEDULE_NOTICE_PERIOD+" ="+" '"+DatabaseHelper.SCHEDULE_NOTICE_PERIOD_MODE_DAY+"' or "
 		+DatabaseHelper.COLUMN_SCHEDULE_NOTICE_WEEK+" like"+" '%"+dayOfWeek+"%' ) and ("
 		+DatabaseHelper.COLUMN_SCHEDULE_START_TIME+" <="+" '"+timeInMillis+"' and "
 		+DatabaseHelper.COLUMN_SCHEDULE_NOTICE_END+" >="+" '"+timeInMillis+"' and "
-		+DatabaseHelper.COLUMN_SCHEDULE_NOTICE_PERIOD+" !="+" '"+DatabaseHelper.SCHEDULE_NOTICE_PERIOD_MODE_NONE+"' )";
-		
+		+DatabaseHelper.COLUMN_SCHEDULE_NOTICE_PERIOD+" !="+" '"+DatabaseHelper.SCHEDULE_NOTICE_PERIOD_MODE_NONE+"' )) or ("
+		+DatabaseHelper.COLUMN_SCHEDULE_NOTICE_PERIOD+" ="+" '"+DatabaseHelper.SCHEDULE_NOTICE_PERIOD_MODE_NONE+"' and "
+		+DatabaseHelper.COLUMN_SCHEDULE_START_TIME+" <="+" '"+String.valueOf(DateTimeUtils.getToday(
+				Calendar.PM, timeInMillis))+"' and "
+		+DatabaseHelper.COLUMN_SCHEDULE_NOTICE_END+" >="+" '"+String.valueOf(DateTimeUtils.getToday(
+				Calendar.AM, timeInMillis))+"')"
+		;
 		return database.rawQuery(sql, null);
-		
-		
 	}
 	
 	

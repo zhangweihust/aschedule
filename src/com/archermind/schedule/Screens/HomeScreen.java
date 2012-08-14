@@ -71,6 +71,14 @@ public class HomeScreen extends TabActivity implements OnTabChangeListener, IEve
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.home_screen);
+		         ServiceManager.setHomeScreen(this);
+        if (ServiceManager.isStarted()) {
+		} else {
+			if (!ServiceManager.start()) {
+				ServiceManager.exit();
+				return;
+			}
+		}
         context = HomeScreen.this;
         initView();
         mTabHost.addTab(buildTabSpec("schedule", R.drawable.tab_schedule, new Intent(this,
@@ -295,8 +303,6 @@ public class HomeScreen extends TabActivity implements OnTabChangeListener, IEve
 
     protected void onDestroy() {
         super.onDestroy();
-
         eventService.remove(this);
     }
-
 }

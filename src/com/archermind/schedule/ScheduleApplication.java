@@ -24,13 +24,6 @@ public class ScheduleApplication extends Application{
 	 @Override
 		public void onCreate() {
 			super.onCreate();
-			 if (ServiceManager.isStarted()) {
-				} else {
-					if (!ServiceManager.start()) {
-						ServiceManager.exit();
-						return;
-					}
-				}
 		}
 	 
 	 @SuppressWarnings("rawtypes")

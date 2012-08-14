@@ -21,10 +21,13 @@ import android.widget.ListView;
 import android.widget.TextView;
 
 import com.archermind.schedule.R;
+import com.archermind.schedule.Adapters.FriendContactAdapter.ContentListElement;
+import com.archermind.schedule.Adapters.FriendContactAdapter.ListElement;
 import com.archermind.schedule.Model.Friend;
 import com.archermind.schedule.Provider.DatabaseManager;
 import com.archermind.schedule.Services.ServiceManager;
 import com.archermind.schedule.Utils.Constant;
+import com.archermind.schedule.Utils.ListViewUtil;
 import com.archermind.schedule.Utils.ServerInterface;
 
 public class FriendAdapter extends BaseAdapter implements OnClickListener{
@@ -44,6 +47,11 @@ public class FriendAdapter extends BaseAdapter implements OnClickListener{
 		this.layoutInflater = (LayoutInflater) context.getSystemService("layout_inflater");
 		serverInterface = new ServerInterface();
 		database = ServiceManager.getDbManager();
+	}
+	
+	public void refresh(){
+		notifyDataSetChanged();	
+	    ListViewUtil.setListViewHeightBasedOnChildren(listView);
 	}
 	
 	public ListView getListView(){
@@ -122,15 +130,23 @@ public class FriendAdapter extends BaseAdapter implements OnClickListener{
 			break;
 		case R.id.friend_shield:
 			dialog.dismiss();
-//			database.ignoreFriend(friend.getId());
-//			serverInterface.shieldFriend("3", friend.getId());	
+			database.ignoreFriend(friend.getId());
+			serverInterface.shieldFriend(String.valueOf(ServiceManager.getUserId()), friend.getId());	
 			break;
 		case R.id.friend_delete:
 			dialog.dismiss();
-//			friends.remove(friend);
-//		    notifyDataSetChanged();	
-//			database.deleteFriend(friend.getId());
-//			serverInterface.removeFriend("3", friend.getId());
+			serverInterface.removeFriend(String.valueOf(ServiceManager.getUserId()), friend.getId());
+			friends.remove(friend);
+			refresh();
+			database.deleteFriend(friend.getId());
+			database.updateContactType(database.queryContactIdByTel(friend.getTelephone()), Constant.FriendType.friend_contact_use,friend.getId());
+			
+			FriendContactAdapter.ContentListElement element = friendContactAdapter.new ContentListElement();
+			element.setFriend(friend);
+			friendContactAdapter.addFristFriendContactUse(element);
+			friendContactAdapter.refresh();
+			
+			
 			break;
 		}
 	}

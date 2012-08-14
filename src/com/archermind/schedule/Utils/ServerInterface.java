@@ -256,9 +256,12 @@ public class ServerInterface {
 	 * check user is not exist //ERROR_PASSWORD_WRONG —— check pswd is wrong
 	 * //ERROR_WEB_ERROR —— 网络异常或其他原因注册失败
 	 */
-	public int login(String username, String password, String imsi) {
+	public String login(String username, String password, String imsi) {
 		username = username.replace(" ", "");
 		password = password.replace(" ", "");
+		if(imsi ==null){
+			imsi = "NULL";
+		}
 		imsi = imsi.replace(" ", "");
 		Map<String, String> map = new HashMap<String, String>();
 		map.put("user", username);
@@ -283,13 +286,13 @@ public class ServerInterface {
 		// }
 		String ret = HttpUtils.doPost(map,
 				"http://player.archermind.com/ci/index.php/aschedule/login");
-		if (ret.equals("0") || ret.length() > 20) {
-			return SUCCESS;
-		} else {
-			System.out.println("login-----" + ret);
-			return -1;
-		}
-		// return SUCCESS;
+//		if (ret.equals("0") || ret.length() > 20) {
+//			return SUCCESS;
+//		} else {
+//			System.out.println("login-----" + ret);
+//			return -1;
+//		}
+		 return ret;
 	}
 
 	/**************************************

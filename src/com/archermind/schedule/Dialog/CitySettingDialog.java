@@ -10,6 +10,8 @@ import android.app.AlertDialog.Builder;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.SharedPreferences;
+import android.content.SharedPreferences.Editor;
 import android.view.Gravity;
 import android.view.View;
 import android.view.Window;
@@ -92,6 +94,7 @@ public class CitySettingDialog implements OnClickListener{
 	@Override
 	public void onClick(View v) {
 		// TODO Auto-generated method stub
+		SharedPreferences sp = context.getSharedPreferences("com.archermind.schedule_preferences",Context.MODE_WORLD_WRITEABLE);
 		switch(v.getId())
 		{
 		case R.id.province_button:
@@ -101,19 +104,35 @@ public class CitySettingDialog implements OnClickListener{
 			showDialog(cities, true);
 			break;
 		case R.id.city_setting_ok:
+			dismiss();
+			
+			Editor editor = sp.edit();
+			editor.putString("province", provinceStr);
+			editor.putString("city", cityStr);
+			editor.putInt("pro_position", pro_position);
+			editor.commit();
 			break;
 		case R.id.city_setting_cancel:
+			dismiss();
 			break;
 		}
 	}
 	
 	private void initPersonal() {
+		SharedPreferences sp = context.getSharedPreferences("com.archermind.schedule_preferences",Context.MODE_WORLD_WRITEABLE);
 		provinces = context.getResources().getStringArray(R.array.provinces);
 		two_char_provinces = context.getResources().getStringArray(
 				R.array.two_chars_provinces);
-		provinces = context.getResources().getStringArray(R.array.provinces);
+		pro_position = sp.getInt("pro_position", pro_position);
 		cities = (String[]) context.getResources().getStringArray(arrays[pro_position]);
-
+		provinceStr = sp.getString("province", provinceStr);
+		if (provinceStr != null && !("").equals(provinceStr)) {
+			province_text.setText(provinceStr);
+		}
+		cityStr = sp.getString("city", cityStr);
+		if (cityStr != null && !("").equals(cityStr)) {
+			city_text.setText(cityStr);
+		}
 	}
 	
 	private void showDialog() {

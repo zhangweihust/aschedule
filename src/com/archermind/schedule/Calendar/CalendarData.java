@@ -111,7 +111,7 @@ public class CalendarData {
             }
         } else if (mark == 0) {
             if (stepMonth > 0) {
-                // 往下一个月滑动
+                // 往下一年滑动
                 if (stepMonth % 12 == 0) {
                     stepMonth = 12;
                 } else {
@@ -198,36 +198,17 @@ public class CalendarData {
                 String dayOfWeek = SpecialCalendar.getNumberWeekDay(year, month,
                         Integer.parseInt(day));
 
-                System.out.println("*********************dayOfWeek = " + dayOfWeek);
                 Cursor cursor = null;
 
                 long starTimeInMillis = getMillisTimeByDate(startData);
-                ArrayList<ScheduleBean> dateTagList = new ArrayList<ScheduleBean>();
-                cursor = database.queryTodayLocalSchedules(starTimeInMillis);
-
-                while (cursor.moveToNext()) {
-                    String date = cursor.getString(cursor
-                            .getColumnIndex(DatabaseHelper.COLUMN_SCHEDULE_START_TIME));
-                    ScheduleBean scheduleBean = new ScheduleBean();
-                    scheduleBean.setDate(date);
-                    dateTagList.add(scheduleBean);
-                }
-                if (cursor != null) {
-                    cursor.close();
-                }
+                int count = 0;
                 cursor = database.queryIsMarkWithDay(starTimeInMillis, dayOfYear, dayOfMonth,
                         dayOfWeek);
                 while (cursor.moveToNext()) {
-                    ScheduleBean scheduleBean = new ScheduleBean();
-                    scheduleBean.setDate(String.valueOf(starTimeInMillis));
-                    dateTagList.add(scheduleBean);
+                	count++;
                 }
                 if (cursor != null) {
                     cursor.close();
-                }
-
-                if (dateTagList != null && dateTagList.size() > 0) {
-
                 }
 
                 // 对于当前月才去标记当前日期
@@ -238,24 +219,9 @@ public class CalendarData {
                 }
 
                 // 标记日程日期
-                if (dateTagList != null && dateTagList.size() > 0) {
-                    // for(int m = 0; m < dateTagList.size(); m++){
-                    // ScheduleBean scheduleBean = dateTagList.get(m);
-                    // String date = scheduleBean.getDate();
-                    // Calendar time = Calendar.getInstance(Locale.CHINA);
-                    // time.setTimeInMillis(Long.parseLong(date));
-                    // int matchYear = time.get(Calendar.YEAR);
-                    // int matchMonth = time.get(Calendar.MONTH) + 1;
-                    // int matchDay = time.get(Calendar.DAY_OF_MONTH);
-                    // if(matchYear == year && matchMonth == month && matchDay
-                    // == Integer.parseInt(day)){
-                    // schDateTagFlag[flag] = i;
-                    // mark_count[flag] = dateTagList.size();
-                    // flag++;
-                    // }
-                    // }
+                if (count > 0) {
                     schDateTagFlag[flag] = i;
-                    mark_count[flag] = dateTagList.size();
+                    mark_count[flag] = count;
                     flag++;
                 }
 

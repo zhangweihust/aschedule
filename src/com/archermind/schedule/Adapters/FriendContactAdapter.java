@@ -17,6 +17,7 @@ import com.archermind.schedule.Utils.ServerInterface;
 import android.app.Dialog;
 import android.content.ContentValues;
 import android.content.Context;
+import android.content.Intent;
 import android.content.pm.ServiceInfo;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -54,6 +55,11 @@ public class FriendContactAdapter extends BaseAdapter implements OnClickListener
 		database = ServiceManager.getDbManager();
 	}
 
+	public void refresh(){
+		notifyDataSetChanged();	
+	    ListViewUtil.setListViewHeightBasedOnChildren(listView);
+	}
+	
 	public ListView getListView(){
 		return this.listView;
 	}
@@ -72,7 +78,7 @@ public class FriendContactAdapter extends BaseAdapter implements OnClickListener
 	}
 	
 	public void addFristFriendContactUse(ListElement element){
-		resultList.add(0, element);
+		resultList.add(1, element);
 		friendContactUseIndex++;
 	}
 	
@@ -188,9 +194,8 @@ public class FriendContactAdapter extends BaseAdapter implements OnClickListener
 				view = layoutInflater.inflate(getLayoutId(), null);
 				contentHolderView.headImg = (ImageView) view.findViewById(R.id.head_image);
 				contentHolderView.name = (TextView) view.findViewById(R.id.name);
-				contentHolderView.friend_button1 = (Button) view.findViewById(R.id.friend_button1);
-				contentHolderView.friend_button1.setVisibility(View.GONE);
 				contentHolderView.friend_button2 = (Button) view.findViewById(R.id.friend_button2);
+				contentHolderView.friend_button2.setVisibility(View.VISIBLE);
 				contentHolderView.friend_button2.setOnClickListener(FriendContactAdapter.this);
 				view.setTag(contentHolderView);
 //			}else{
@@ -226,33 +231,29 @@ public class FriendContactAdapter extends BaseAdapter implements OnClickListener
 	public class ContentHolderView{
 		private ImageView headImg;
 		private TextView name;
-		private Button friend_button1;
 		private Button friend_button2;
 	}
-
+	 private void goToShare() {
+			Intent intent = new Intent(Intent.ACTION_SEND);
+			intent.setType("text/plain");
+			String textMessage = "邀请好友阿";
+			intent.putExtra(Intent.EXTRA_TEXT, textMessage);
+			context.startActivity(Intent.createChooser(intent,"邀请"));
+		}
+	 
 	@Override
 	public void onClick(View v) {
 		// TODO Auto-generated method stub
-		System.out.println("*********************8");
 		ContentListElement element = (ContentListElement) v.getTag();
 		Friend friend = element.getFriend();
 		switch(friend.getType()){
 		case Constant.FriendType.friend_contact_use:	
-			System.out.println("&&&&&&&&&&&&&&&&&&&&&&&&&friend.getId() = "+friend.getId());
-			if(serverInterface.inviteFriend("3", "4") == 0){	
+			if(serverInterface.inviteFriend(String.valueOf(ServiceManager.getUserId()), friend.getId()) == 0){	
 			}
 			break;
 		case Constant.FriendType.friend_contact:
-			String result = serverInterface.getMessage("4");//返回主动加人的信息
-			Dialog dialog = new Dialog(context);
-			dialog.setContentView(R.layout.dialog);
-			Button btn1 = (Button) dialog.findViewById(R.id.button1);
-			Button btn2 = (Button) dialog.findViewById(R.id.button2);
-			btn1.setTag(friend);
-			btn2.setTag(friend);
-			btn1.setOnClickListener(listen);
-			btn2.setOnClickListener(listen);
-			dialog.show();
+			goToShare();
+
 			break;
 		}
 		
@@ -272,19 +273,7 @@ public class FriendContactAdapter extends BaseAdapter implements OnClickListener
 		public void onClick(View v) {
 			// TODO Auto-generated method stub
 			Friend friend = (Friend) v.getTag();
-			switch(v.getId()){
-				case R.id.button1:
-					serverInterface.acceptFriend("4", "3");
-					 ContentValues values = new ContentValues();
-					 values.put(DatabaseHelper.ASCHEDULE_FRIEND_ID, "4");
-					 values.put(DatabaseHelper.ASCHEDULE_FRIEND_TYPE, Constant.FriendType.friend_yes);
-					 values.put(DatabaseHelper.ASCHEDULE_FRIEND_NUM, friend.getTelephone().replace("\"", ""));
-					 database.addFriend(values);
-					break;
-				case R.id.button2:
-					serverInterface.refuseFriend("4", "3");
-					break;
-				}
+
 			}
 	};
 }

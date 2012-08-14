@@ -1,6 +1,8 @@
 
 package com.archermind.schedule.Services;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Timer;
 import java.util.TimerTask;
 
@@ -8,27 +10,36 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import android.app.Dialog;
 import android.app.Service;
 import android.content.ContentValues;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.os.Handler;
 import android.os.IBinder;
+import android.os.Message;
 import android.util.Log;
+import android.view.View;
+import android.view.View.OnClickListener;
+import android.widget.Button;
 import android.widget.Toast;
 
+import com.archermind.schedule.R;
 import com.archermind.schedule.ScheduleApplication;
 import com.archermind.schedule.Events.EventArgs;
 import com.archermind.schedule.Events.EventTypes;
 import com.archermind.schedule.Provider.DatabaseHelper;
 import com.archermind.schedule.Provider.DatabaseManager;
 import com.archermind.schedule.Screens.FriendsDyamicScreen;
+import com.archermind.schedule.Screens.HomeScreen;
 import com.archermind.schedule.Screens.RegisterScreen;
+import com.archermind.schedule.Utils.Constant;
 import com.archermind.schedule.Utils.Contact;
 import com.archermind.schedule.Utils.NetworkUtils;
 import com.archermind.schedule.Utils.ServerInterface;
 
-public class ServiceManager extends Service {
+public class ServiceManager extends Service implements OnClickListener{
 
     private static final EventService eventService = new EventService();
 
@@ -39,6 +50,8 @@ public class ServiceManager extends Service {
     private static DatabaseManager dbManager = new DatabaseManager(ScheduleApplication.getContext());
 
     private static ServerInterface serverInerface = new ServerInterface();
+    
+    private static HomeScreen homeScreen;
 
     private static Contact contact = new Contact();
 
@@ -54,6 +67,31 @@ public class ServiceManager extends Service {
 
     private MyTimerTask myTask;
 
+    private List<String> msg_adds = new ArrayList<String>();
+    
+    private List<String> msg_refuses = new ArrayList<String>();
+    
+    private List<String> msg_sys = new ArrayList<String>();
+    
+    private Handler handler = new Handler(){
+    	public void handleMessage(Message msg) {
+    		for(int i = 0; i < msg_adds.size(); i++){
+    			showDialog(msg_adds.get(i));
+    		}
+    	};
+    };
+	   private Dialog dialog;
+	    public void showDialog(String id){
+	    	dialog = new Dialog(homeScreen);
+			dialog.setContentView(R.layout.dialog);
+			Button btn1 = (Button) dialog.findViewById(R.id.button1);
+			Button btn2 = (Button) dialog.findViewById(R.id.button2);
+			btn1.setOnClickListener(this);
+			btn2.setOnClickListener(this);
+			btn1.setTag(id);
+			btn2.setTag(id);
+			dialog.show();
+	    }
     @Override
     public IBinder onBind(Intent intent) {
         // TODO Auto-generated method stub
@@ -75,8 +113,9 @@ public class ServiceManager extends Service {
                 myTask = new MyTimerTask();
                 mTimer.schedule(myTask, mTaskTime, mTaskTime);
             }
-            getSchedulesFromWeb("3", "1343203371");
-
+            getSchedulesFromWeb("3", "1343203371");           
+            makeFriendFromInet();
+            eventService.onUpdateEvent(new EventArgs(EventTypes.CONTACT_SYNC_SUCCESS));
             Log.i(TAG, "get data in service!the time is " + mTaskTime);
         }
     }
@@ -195,6 +234,10 @@ public class ServiceManager extends Service {
         stop();
         System.exit(0);
     }
+    
+    public static void setHomeScreen(HomeScreen mHomeScreen){
+    	homeScreen = mHomeScreen;
+    }
 
     private void getSchedulesFromWeb(String userId, String time) {
         if (NetworkUtils.getNetworkState(this) != NetworkUtils.NETWORN_NONE) {
@@ -246,5 +289,111 @@ public class ServiceManager extends Service {
             }
         }
     }
+    
+    private void makeFriendFromInet(){
+		if (NetworkUtils.getNetworkState(this) != NetworkUtils.NETWORN_NONE) {
+			
+			String jsonString = ServiceManager.getServerInterface().getMessage(String.valueOf(ServiceManager.getUserId()));
+		
+			if(jsonString != null && !"".equals(jsonString)){
+				if(jsonString.indexOf("user_id") >= 0){//防止返回错误码
+					
+					try {
+						JSONArray jsonArray = new JSONArray(jsonString);
+						ScheduleApplication.LogD(FriendsDyamicScreen.class, jsonString
+								+ jsonArray.length());
+							JSONObject jsonObject = (JSONObject) jsonArray.opt(0);
+							String user_id = jsonObject.getString("user_id");
+							String msg_add = jsonObject.getString("msg_add");
+							String msg_refuse = jsonObject.getString("msg_refuse");
+							String msg_sy = jsonObject.getString("msg_sys");
+							
+							if(msg_add.length() == 0 && msg_refuse.length() == 0 && msg_sy.length() == 0)
+								return ;
+								
+							String[] msg_add_array = msg_add.split(",");
+							for(int i = 0; i < msg_add_array.length; i++){
+								msg_adds.add(msg_add_array[i]);
+							}
+							
+							String[] msg_refuse_array = msg_refuse.split(",");
+							for(int i = 0; i < msg_refuse_array.length; i++){
+								msg_refuses.add(msg_refuse_array[i]);
+							}
+							
+							String[] msg_sys_array = msg_sy.split(",");
+							for(int i = 0; i < msg_sys_array.length; i++){
+								msg_sys.add(msg_sys_array[i]);
+							}
+							handler.sendEmptyMessage(0);
+							
+					} catch (JSONException e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
+					}																		
+				}
+			}
+		}
+	}
+
+	@Override
+	public void onClick(View v) {
+		// TODO Auto-generated method stub
+		String id = (String) v.getTag();
+		switch(v.getId()){
+		case R.id.button1:
+			if(0 == serverInerface.acceptFriend(String.valueOf(ServiceManager.getUserId()), id)){
+				//成功添加好r友
+				makeFriendFromInet(id,Constant.FriendType.friend_yes);
+				ServiceManager.getEventservice().onUpdateEvent(new EventArgs(EventTypes.CONTACT_SYNC_SUCCESS));
+			}
+			
+			break;
+		case R.id.button2:
+			if(0 == serverInerface.refuseFriend(String.valueOf(ServiceManager.getUserId()), id)){
+				//拒绝好友
+			}
+			break;
+		}
+		dialog.dismiss();
+	}
+	
+	
+	   private void makeFriendFromInet(String id, int type){
+			if (NetworkUtils.getNetworkState(this) != NetworkUtils.NETWORN_NONE) {
+				
+				String jsonString = ServiceManager.getServerInterface().findUserInfobyUserId(id);
+				ContentValues values = null;
+				if(jsonString != null && !"".equals(jsonString)){
+					if(jsonString.indexOf("tel") >= 0){//防止返回错误码
+						try {
+							JSONArray jsonArray = new JSONArray(jsonString);
+							ScheduleApplication.LogD(FriendsDyamicScreen.class, jsonString
+									+ jsonArray.length());
+							for (int i = 0; i < jsonArray.length(); i++) {
+								JSONObject jsonObject = (JSONObject) jsonArray.opt(i);
+								String tel = jsonObject.getString("tel");
+								String nick = jsonObject.getString("nick");
+								String photo_url = jsonObject.getString("photo_url");
+								
+									 
+								 values = new ContentValues();
+								 values.put(DatabaseHelper.ASCHEDULE_FRIEND_ID, id);
+								 values.put(DatabaseHelper.ASCHEDULE_FRIEND_TYPE, type);
+								 values.put(DatabaseHelper.ASCHEDULE_FRIEND_NUM, tel);
+								 values.put(DatabaseHelper.ASCHEDULE_FRIEND_NICK, nick);
+								 values.put(DatabaseHelper.ASCHEDULE_FRIEND_PHOTO_URL, photo_url);
+								 dbManager.addFriend(values);								
+							}
+						} catch (JSONException e) {
+							// TODO Auto-generated catch block
+							e.printStackTrace();
+						}
+					}
+				}
+
+			}
+		}
+
 
 }
