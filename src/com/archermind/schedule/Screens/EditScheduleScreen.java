@@ -163,7 +163,7 @@ public class EditScheduleScreen extends Screen implements OnClickListener {
 		// 初始化界面
 		schedule_text.setText(scheduleText);
 		// 设置edittext的高度
-		ScheduleEditText.initNoteHight = 400;
+		ScheduleEditText.initNoteHight = screenHeight;
 
 		setDisplayTime(scheduleTime);
 
@@ -325,6 +325,7 @@ public class EditScheduleScreen extends Screen implements OnClickListener {
 				weekType = alarmPopwindow.getWeekValue();
 				remindCycle = alarmPopwindow.getRepeatType();
 				mType = eventTypeDialog.getEventType();
+				
 				Log.d(TAG, "=--------get----remindCycle------" + remindCycle);
 				cv.put(DatabaseHelper.COLUMN_SCHEDULE_TYPE, mType);
 				cv.put(DatabaseHelper.COLUMN_SCHEDULE_SHARE, mShare);
@@ -394,7 +395,7 @@ public class EditScheduleScreen extends Screen implements OnClickListener {
 
 	public void cancelAlarm() {
 		Cursor c = ServiceManager.getDbManager().queryScheduleById(
-				(int) schedule_id);
+				 schedule_id);
 		if (c.moveToFirst()) {
 			long flagAlarmb = c
 					.getLong(c

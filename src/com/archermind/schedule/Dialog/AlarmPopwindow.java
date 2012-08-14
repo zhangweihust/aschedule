@@ -61,7 +61,7 @@ public class AlarmPopwindow implements OnClickListener {
 	private String remindCycle = DatabaseHelper.SCHEDULE_NOTICE_PERIOD_MODE_NONE;
 	private long startTime;
 	private long endTime;
-	private StringBuffer weekType = new StringBuffer();
+	//private StringBuffer weekType = new StringBuffer();
 	private int[] weekvalue = new int[7];
 
 	public interface OnRemindSelectListener {
@@ -312,7 +312,6 @@ public class AlarmPopwindow implements OnClickListener {
 		this.startTime = startTime;
 		this.endTime = endTime;
 		this.remindCycle = remindCycle;
-		this.weekType = new StringBuffer(weekType);
 		this.mStageRemind = mStageRemind;
 		this.mRemind = mRemind;
 
@@ -375,7 +374,7 @@ public class AlarmPopwindow implements OnClickListener {
 	private void setweekvalue(String weekType) {
 		char[] week = weekType.toCharArray();
 		for (int i = 0; i < week.length; i++) {
-			switch (week[i]) {
+			switch (week[i]-48) {
 			case 1:
 				mMonday.setChecked(true);
 				break;
@@ -397,25 +396,10 @@ public class AlarmPopwindow implements OnClickListener {
 			case 7:
 				mSunday.setChecked(true);
 				break;
-			}
-		}
-	}
-
-	public HashMap<String, String> getVaule() {
-
-		infoMap.put("remind", String.valueOf(mRemind));
-		infoMap.put("repeat_type", remindCycle);
-		for (int i = 0; i < weekvalue.length; i++) {
-			if (weekvalue[i] == 1) {
-				weekType.append(i + 1);
-			}
+							}
+			//Log.d("ALarmpopWindow", String.valueOf(week[i]));
 
 		}
-		infoMap.put("repeat_weekType", weekType.toString());
-		infoMap.put("start_time", String.valueOf(startTime));
-		infoMap.put("end_time", String.valueOf(endTime));
-
-		return infoMap;
 	}
 
 	public long getStartTime() {
@@ -431,6 +415,7 @@ public class AlarmPopwindow implements OnClickListener {
 	}
 
 	public String getWeekValue() {
+		StringBuffer weekType = new StringBuffer();
 		for (int i = 0; i < weekvalue.length; i++) {
 			if (weekvalue[i] == 1) {
 				weekType.append(i + 1);

@@ -374,7 +374,7 @@ public void deleteFriend(String id){
 
 	
 
-	public void updateScheduleById(int id, ContentValues cv) {
+	public void updateScheduleById(long id, ContentValues cv) {
 		 database.update(DatabaseHelper.TAB_LOCAL_SCHEDULE, cv,
 				DatabaseHelper.COLUMN_SCHEDULE_ID + " =? ",
 				new String[] { String.valueOf(id) });
@@ -382,7 +382,7 @@ public void deleteFriend(String id){
 
 	}
 
-	public Cursor queryScheduleById(int id) {
+	public Cursor queryScheduleById(long id) {
 		return database.query(DatabaseHelper.TAB_LOCAL_SCHEDULE, null,
 				DatabaseHelper.COLUMN_SCHEDULE_ID + " = ?",
 				new String[] { String.valueOf(id) }, null, null, null);

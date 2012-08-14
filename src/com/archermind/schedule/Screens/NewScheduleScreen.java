@@ -142,8 +142,8 @@ public class NewScheduleScreen extends Screen implements OnClickListener {
 		screenHeight = display.getHeight();
 
 		// 设置edittext的高度
-		ScheduleEditText.initNoteHight = screenWidth;
-		ScheduleEditText.lineColor = 0xc5c5c5;
+		ScheduleEditText.initNoteHight = screenHeight;
+//		ScheduleEditText.lineColor = 0xc5c5c5;
 
 		timeselectordialog = new TimeSelectorDialog(this);
 		timeselectordialog.setOnOkButtonClickListener(mTimeSelectorOkListener);
