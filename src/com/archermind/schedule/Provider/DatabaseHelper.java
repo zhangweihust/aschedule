@@ -44,8 +44,9 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 	public static final String COLUMN_SCHEDULE_NOTICE_FLAG = "notice_flag";//闹钟提醒标志
 	public static final String COLUMN_SCHEDULE_NOTICE_PERIOD = "notice_period";//闹钟重复提醒标志
 	public static final String COLUMN_SCHEDULE_NOTICE_WEEK = "notice_week";//闹钟按星期重复提醒的星期值
-	public static final String COLUMN_SCHEDULE_NOTICE_MONTHDAY="notice_monthday";//闹钟按每月重复提醒的日
-	public static final String COLUMN_SCHEDULE_NOTICE_YEARDAY="notice_yearday";//闹钟按每年重复提醒的月和日
+	public static final String COLUMN_SCHEDULE_NOTICE_DAY= "notice_day";//闹钟重复的月和日(同步到数据库的数据)
+	public static final String COLUMN_SCHEDULE_NOTICE_MONTHDAY="notice_monthday";//闹钟按每月重复提醒的日（本地，取的是notice_day 中的日）
+	public static final String COLUMN_SCHEDULE_NOTICE_YEARDAY="notice_yearday";//闹钟按每年重复提醒的月和日（本地，取的是notice_day 中的日，月）
 	public static final String COLUMN_SCHEDULE_NOTICE_STAGE_FLAG = "notice_stage_flag";//闹钟阶段提醒标志
 	public static final String COLUMN_SCHEDULE_NOTICE_END = "notice_end";// 日程结束时间
 	public static final String COLUMN_SCHEDULE_FLAG_OUTDATE = "notice_outdate";//闹钟是否过期
@@ -88,6 +89,8 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 			+ " TEXT, "
 			+ COLUMN_SCHEDULE_NOTICE_WEEK
 			+ " TEXT, "
+			+ COLUMN_SCHEDULE_NOTICE_DAY
+			+ " TEXT."
 			+ COLUMN_SCHEDULE_NOTICE_MONTHDAY
 			+ " TEXT, "
 			+ COLUMN_SCHEDULE_NOTICE_YEARDAY
