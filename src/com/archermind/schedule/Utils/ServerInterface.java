@@ -259,9 +259,6 @@ public class ServerInterface {
 	public String login(String username, String password, String imsi) {
 		username = username.replace(" ", "");
 		password = password.replace(" ", "");
-		if(imsi ==null){
-			imsi = "NULL";
-		}
 		imsi = imsi.replace(" ", "");
 		Map<String, String> map = new HashMap<String, String>();
 		map.put("user", username);
@@ -292,7 +289,8 @@ public class ServerInterface {
 //			System.out.println("login-----" + ret);
 //			return -1;
 //		}
-		 return ret;
+		return ret;
+		// return SUCCESS;
 	}
 
 	/**************************************
@@ -540,9 +538,9 @@ public class ServerInterface {
 					map.put("notice_week",
 							cursor.getString(cursor
 									.getColumnIndex(DatabaseHelper.COLUMN_SCHEDULE_NOTICE_WEEK)));
-//					map.put("notice_start",
-//							cursor.getString(cursor
-//									.getColumnIndex(DatabaseHelper.COLUMN_SCHEDULE_NOTICE_START)));
+					map.put("notice_start",
+							cursor.getString(cursor
+									.getColumnIndex(DatabaseHelper.COLUMN_SCHEDULE_NOTICE_START)));
 					map.put("notice_end",
 							cursor.getString(cursor
 									.getColumnIndex(DatabaseHelper.COLUMN_SCHEDULE_NOTICE_END)));
@@ -849,5 +847,28 @@ public class ServerInterface {
 		} catch (ServiceException e) {
 			e.printStackTrace();
 		}
+	}	
+	/*设置绑定部分*/
+	public String get_Bin_Info(String user_id,String type,String user_acc) {
+		Map<String, String> map = new HashMap<String, String>();
+		map.put("user_id", user_id);
+		map.put("type", type);
+		map.put("user_acc", user_acc);
+		String ret = HttpUtils
+				.doPost(map,
+						"http://player.archermind.com/ci/index.php/aschedule/BinInfo");
+		System.out.println("Bin_Info===="+ret);
+		return ret;
+	}
+	/*设置绑定部分*/
+	public String Bin_login(String type,String user_acc) {
+		Map<String, String> map = new HashMap<String, String>();
+		map.put("type", type);
+		map.put("user_acc", user_acc);
+		String ret = HttpUtils
+				.doPost(map,
+						"http://player.archermind.com/ci/index.php/aschedule/Binlogin");
+		System.out.println("Bin_Info===="+ret);
+		return ret;
 	}
 }
