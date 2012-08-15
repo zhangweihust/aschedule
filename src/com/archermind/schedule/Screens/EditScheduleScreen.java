@@ -1,6 +1,7 @@
 package com.archermind.schedule.Screens;
 
 import java.util.Calendar;
+import java.util.Locale;
 
 import android.content.ContentValues;
 import android.content.Intent;
@@ -292,6 +293,10 @@ public class EditScheduleScreen extends Screen implements OnClickListener {
 
 				startTime = alarmPopwindow.getStartTime();
 				endTime = alarmPopwindow.getEndTime();
+				Calendar tmpTime = Calendar.getInstance(Locale.CHINA);
+				tmpTime.setTimeInMillis(endTime);
+				tmpTime.add(Calendar.DAY_OF_MONTH, 1);
+				endTime = tmpTime.getTimeInMillis();
 				mRemind = alarmPopwindow.getRemind();
 				mStageRemind = alarmPopwindow.getStageRemind();
 				weekType = alarmPopwindow.getWeekValue();
@@ -319,7 +324,7 @@ public class EditScheduleScreen extends Screen implements OnClickListener {
 				cv.put(DatabaseHelper.COLUMN_SCHEDULE_NOTICE_MONTHDAY, monthday);
 				if (DatabaseHelper.SCHEDULE_NOTICE_PERIOD_MODE_YEAR
 						.equals(remindCycle)) {
-					yearday = DateTimeUtils.time2String("d", startTime);
+					yearday = DateTimeUtils.time2String("M.d", startTime);
 				}
 				cv.put(DatabaseHelper.COLUMN_SCHEDULE_NOTICE_YEARDAY, yearday);
 				cv.put(DatabaseHelper.COLUMN_SCHEDULE_CONTENT, scheduleText);
@@ -333,12 +338,15 @@ public class EditScheduleScreen extends Screen implements OnClickListener {
 						DateTimeUtils.sendAlarm(time, flagAlarm, schedule_id);
 						cv.put(DatabaseHelper.COLUMN_SCHEDULE_FLAG_OUTDATE, false);
 					} else {
+						DateTimeUtils.cancelAlarm(schedule_id);
 						cv.put(DatabaseHelper.COLUMN_SCHEDULE_FLAG_OUTDATE, true);
 					}
 				} else {
 					DateTimeUtils.cancelAlarm(schedule_id);
 					cv.put(DatabaseHelper.COLUMN_SCHEDULE_FLAG_OUTDATE, true);
 				}
+				ServiceManager.getDbManager().updateScheduleById(
+						schedule_id, cv);
 				si.uploadSchedule("0", "1");
 
 			}

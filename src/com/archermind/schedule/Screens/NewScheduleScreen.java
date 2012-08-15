@@ -1,6 +1,7 @@
 package com.archermind.schedule.Screens;
 
 import java.util.Calendar;
+import java.util.Locale;
 
 import android.content.ContentValues;
 import android.content.Intent;
@@ -119,7 +120,7 @@ public class NewScheduleScreen extends Screen implements OnClickListener {
 		mCalendar.set(Calendar.DAY_OF_MONTH,
 				Integer.parseInt(DateTimeUtils.time2String("d", calendarTime)));
 		mCalendar.set(Calendar.HOUR_OF_DAY,
-				Integer.parseInt(DateTimeUtils.time2String("h", currentTime)));
+				Integer.parseInt(DateTimeUtils.time2String("H", currentTime)));
 		mCalendar.set(Calendar.MINUTE,
 				Integer.parseInt(DateTimeUtils.time2String("m", currentTime)));
 		mCalendar.set(Calendar.SECOND, 0);
@@ -268,8 +269,12 @@ public class NewScheduleScreen extends Screen implements OnClickListener {
 				ContentValues cv = new ContentValues();
 				startTime = alarmPopwindow.getStartTime();
 				endTime = alarmPopwindow.getEndTime();
+				Calendar tmpTime = Calendar.getInstance(Locale.CHINA);
+				tmpTime.setTimeInMillis(endTime);
+				tmpTime.add(Calendar.DAY_OF_MONTH, 1);
+				endTime = tmpTime.getTimeInMillis();
 				mRemind = alarmPopwindow.getRemind();
-				mStageRemind = alarmPopwindow.getStageRemind();
+				mStageRemind = alarmPopwindow.getStageRemind();				
 				weekType = alarmPopwindow.getWeekValue();
 				remindCycle = alarmPopwindow.getRepeatType();
 				mType = eventTypeDialog.getEventType();
@@ -302,6 +307,8 @@ public class NewScheduleScreen extends Screen implements OnClickListener {
 				cv.put(DatabaseHelper.COLUMN_SCHEDULE_NOTICE_YEARDAY, yearday);
 				cv.put(DatabaseHelper.COLUMN_SCHEDULE_CONTENT, scheduleText);
 				// 闹钟提醒
+				schedule_id = ServiceManager.getDbManager().insertLocalSchedules(cv);
+				cv.clear();
 				if(mRemind){
 					long time = DateTimeUtils.getNextAlarmTime(mStageRemind,
 							startTime, endTime, startTime, remindCycle, weekType);
@@ -317,25 +324,11 @@ public class NewScheduleScreen extends Screen implements OnClickListener {
 				} else {
 					cv.put(DatabaseHelper.COLUMN_SCHEDULE_FLAG_OUTDATE, true);
 				}
-				schedule_id = ServiceManager.getDbManager().insertLocalSchedules(cv);
+				ServiceManager.getDbManager().updateScheduleById(schedule_id,cv);
 				// 同步新建日程到服务器
 				si.uploadSchedule("0", "1");
 			}
 		}).start();
-	}
-
-	public long getStageTime(long time) {
-
-		Calendar mCalendar = Calendar.getInstance();
-		mCalendar.setTimeInMillis(time);
-		mCalendar.set(Calendar.HOUR_OF_DAY,
-				Integer.valueOf(DateTimeUtils.time2String("H", startTime)));
-		mCalendar.set(Calendar.MINUTE,
-				Integer.valueOf(DateTimeUtils.time2String("m", startTime)));
-		mCalendar.set(Calendar.SECOND, 0);
-		mCalendar.set(Calendar.MILLISECOND, 0);
-		long mTime = mCalendar.getTimeInMillis();
-		return mTime;
 	}
 
 

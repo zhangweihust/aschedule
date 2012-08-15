@@ -198,7 +198,7 @@ public class DateTimeUtils {
                     } else {
                         boolean flag = true;
                         while (flag) {// 循环往后遍历每一天
-                            time.add(Calendar.DATE, 1);
+                            time.add(Calendar.DAY_OF_MONTH, 1);
                             weekDay = getWeekDay(time);
                             if (week.contains(String.valueOf(weekDay))) {
                                 flag = false;
@@ -230,7 +230,9 @@ public class DateTimeUtils {
                     if (time.getTimeInMillis() > currentTime) {// 今天的闹钟时间还没有错过
                         return time.getTimeInMillis();
                     } else {
-                        time.add(Calendar.DATE, 1);
+                        time.add(Calendar.DAY_OF_MONTH, 1);
+                        tmp = DateTimeUtils.time2String("yyyy-MM-dd HH:mm:ss",
+                                time.getTimeInMillis());
                         if (time.getTimeInMillis() > endStage) {// 往后移动一天超出范围
                             return 0;
                         } else {
@@ -242,7 +244,9 @@ public class DateTimeUtils {
                     if (time.getTimeInMillis() > currentTime) {// 今天的闹钟时间还没有错过
                         return time.getTimeInMillis();
                     } else {
-                        time.add(Calendar.DATE, 1);
+                        time.add(Calendar.DAY_OF_MONTH, 1);
+                        tmp = DateTimeUtils.time2String("yyyy-MM-dd HH:mm:ss",
+                                time.getTimeInMillis());
                         if (time.getTimeInMillis() > endStage) {// 往后移动一天超出范围
                             return 0;
                         } else {
@@ -289,7 +293,7 @@ public class DateTimeUtils {
                     }
                     boolean flag = true;
                     while (flag) {// 循环往后遍历每一天
-                        time.add(Calendar.DATE, 1);
+                        time.add(Calendar.DAY_OF_MONTH, 1);
                         weekDay = getWeekDay(time);
                         if (week.contains(String.valueOf(weekDay))) {
                             flag = false;
@@ -335,7 +339,7 @@ public class DateTimeUtils {
                     if (time.getTimeInMillis() > currentTime) {// 今天的闹钟时间没有绰过
                         return time.getTimeInMillis();
                     } else {// 错过了今天，设置明天
-                        time.add(Calendar.DATE, 1);
+                        time.add(Calendar.DAY_OF_MONTH, 1);
                         return time.getTimeInMillis();
                     }
                 }
@@ -364,7 +368,7 @@ public class DateTimeUtils {
                         return time.getTimeInMillis();
                     }
                     while (flag) {// 循环往后遍历每一天
-                        time.add(Calendar.DATE, 1);
+                        time.add(Calendar.DAY_OF_MONTH, 1);
                         weekDay = getWeekDay(time);
                         if (week.contains(String.valueOf(weekDay))) {
                             return time.getTimeInMillis();
@@ -386,7 +390,7 @@ public class DateTimeUtils {
                         }
                     }
                     while (flag) {// 循环往后遍历每一天
-                        time.add(Calendar.DATE, 1);
+                        time.add(Calendar.DAY_OF_MONTH, 1);
                         weekDay = getWeekDay(time);
                         if (week.contains(String.valueOf(weekDay))) {
                             return time.getTimeInMillis();
