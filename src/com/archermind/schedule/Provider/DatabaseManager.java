@@ -36,14 +36,7 @@ public class DatabaseManager {
 		database.close();
 	}
 
-	public long insertLocalSchedules(ContentValues values, long timeInMillis) {
-		Cursor c = queryTodayLocalSchedules(timeInMillis);
-		if (c.getCount() == 0) {
-			values.put(DatabaseHelper.COLUMN_SCHEDULE_FIRST_FLAG, true);
-		} else {
-			values.put(DatabaseHelper.COLUMN_SCHEDULE_FIRST_FLAG, false);
-		}
-		c.close();
+	public long insertLocalSchedules(ContentValues values) {
 		long schedule_id= database.insert(DatabaseHelper.TAB_LOCAL_SCHEDULE, null, values);
 		eventService.onUpdateEvent(new EventArgs(EventTypes.LOCAL_SCHEDULE_UPDATE));
 		return schedule_id;
@@ -89,7 +82,6 @@ public class DatabaseManager {
 				int _id = c.getInt(c
 						.getColumnIndex(DatabaseHelper.COLUMN_SCHEDULE_ID));
 				ContentValues values = new ContentValues();
-				values.put(DatabaseHelper.COLUMN_SCHEDULE_FIRST_FLAG, true);
 				updateLocalSchedules(values, _id);
 				c.close();
 			}
@@ -410,8 +402,8 @@ public void deleteFriend(String id){
 
 
 	public Cursor queryNotOutdateschedule( ){
-		return database.query(DatabaseHelper.TAB_LOCAL_SCHEDULE, null, DatabaseHelper.COLUMN_SCHEDULE_FLAG_OUTDATE + " = ?",
-				new String[] { String.valueOf(0) }, null, null, null);
+		return database.query(DatabaseHelper.TAB_LOCAL_SCHEDULE, null, DatabaseHelper.COLUMN_SCHEDULE_FLAG_OUTDATE + " = ? AND " + DatabaseHelper.COLUMN_SCHEDULE_NOTICE_FLAG + " =?",
+				new String[] { String.valueOf(0) , String.valueOf(1)}, null, null, null);
 		
 	}
 	public long insertSchedules(ContentValues values) {

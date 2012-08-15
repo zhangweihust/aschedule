@@ -450,7 +450,7 @@ public class FriendsDyamicScreen extends Screen implements IXListViewListener, O
 				cv.put(DatabaseHelper.COLUMN_SCHEDULE_ORDER, 1);
 				cv.put(DatabaseHelper.COLUMN_SCHEDULE_START_TIME, System.currentTimeMillis());
 				cv.put(DatabaseHelper.COLUMN_SCHEDULE_CONTENT, content);
-				ServiceManager.getDbManager().insertLocalSchedules(cv, System.currentTimeMillis());
+				ServiceManager.getDbManager().insertLocalSchedules(cv);
 				ServiceManager.getServerInterface().uploadSchedule("1", String.valueOf(t_id));
 			}
 			

@@ -27,11 +27,10 @@ public class LocalScheduleAdapter  extends CursorAdapter {
 		final ScheduleItem item = (ScheduleItem) view.getTag(R.layout.local_schedule_item);
 		String content = cursor.getString(cursor.getColumnIndex(DatabaseHelper.COLUMN_SCHEDULE_CONTENT));
 		long time = cursor.getLong(cursor.getColumnIndex(DatabaseHelper.COLUMN_SCHEDULE_START_TIME));
-		long noticeTime = cursor.getLong(cursor.getColumnIndex(DatabaseHelper.COLUMN_SCHEDULE_NOTICE_TIME));
 		boolean share = cursor.getInt(cursor.getColumnIndex(DatabaseHelper.COLUMN_SCHEDULE_SHARE)) == 1;
-		boolean important = cursor.getInt(cursor.getColumnIndex(DatabaseHelper.COLUMN_SCHEDULE_IMPORTANT)) == 1;
+		boolean alarm = cursor.getInt(cursor.getColumnIndex(DatabaseHelper.COLUMN_SCHEDULE_NOTICE_FLAG)) == 1;
 		int type = cursor.getInt(cursor.getColumnIndex(DatabaseHelper.COLUMN_SCHEDULE_TYPE));
-		boolean first = cursor.getInt(cursor.getColumnIndex(DatabaseHelper.COLUMN_SCHEDULE_FIRST_FLAG)) == 1;
+		boolean first = false;
 		item.content.setText(content);
 		item.time.setText(DateTimeUtils.time2String("hh:mm", time));
 		String amORpm = DateTimeUtils.time2String("a", time);
@@ -47,7 +46,7 @@ public class LocalScheduleAdapter  extends CursorAdapter {
 		} else {
 			item.dateLayout.setVisibility(View.INVISIBLE);
 		}
-		if(noticeTime == 0){
+		if(alarm){
 			item.alarm.setVisibility(View.GONE);
 		} else {
 			item.alarm.setVisibility(View.VISIBLE);
@@ -56,11 +55,6 @@ public class LocalScheduleAdapter  extends CursorAdapter {
 			item.share.setVisibility(View.VISIBLE);
 		} else {
 			item.share.setVisibility(View.GONE);
-		}
-		if(important){
-			item.important.setVisibility(View.VISIBLE);
-		} else {
-			item.important.setVisibility(View.INVISIBLE);
 		}
 		switch (type) {
 		case DatabaseHelper.SCHEDULE_EVENT_TYPE_NONE:

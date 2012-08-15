@@ -1,10 +1,7 @@
 package com.archermind.schedule.Screens;
 
-import java.util.ArrayList;
 import java.util.Calendar;
 
-import android.app.AlarmManager;
-import android.app.PendingIntent;
 import android.content.ContentValues;
 import android.content.Intent;
 import android.database.Cursor;
@@ -14,23 +11,19 @@ import android.view.Display;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.Button;
-import android.widget.GridView;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import com.archermind.schedule.R;
-import com.archermind.schedule.Adapters.EventTypeItemAdapter;
 import com.archermind.schedule.Dialog.AlarmPopwindow;
 import com.archermind.schedule.Dialog.AlarmPopwindow.OnRemindSelectListener;
 import com.archermind.schedule.Dialog.EventTypeDialog;
 import com.archermind.schedule.Dialog.EventTypeDialog.OnEventTypeSelectListener;
 import com.archermind.schedule.Dialog.TimeSelectorDialog;
 import com.archermind.schedule.Dialog.TimeSelectorDialog.OnOkButtonClickListener;
-import com.archermind.schedule.Model.EventTypeItem;
 import com.archermind.schedule.Provider.DatabaseHelper;
-import com.archermind.schedule.Services.AlarmRecevier;
 import com.archermind.schedule.Services.ServiceManager;
 import com.archermind.schedule.Utils.Constant;
 import com.archermind.schedule.Utils.DateTimeUtils;
@@ -62,7 +55,6 @@ public class EditScheduleScreen extends Screen implements OnClickListener {
 	private String yearday = " ";
 	private long flagAlarm;
 
-	private boolean firstFlag = false;
 	private long scheduleTime;
 	private ServerInterface si;
 	private TimeSelectorDialog timeselectordialog;
@@ -70,31 +62,13 @@ public class EditScheduleScreen extends Screen implements OnClickListener {
 	private EventTypeDialog eventTypeDialog;
 	private int schedule_id = 1;
 	private String scheduleText;
-	private int screenWidth, screenHeight;
+	private int screenHeight;
 	private TimeSelectorOkListener mTimeSelectorOkListener = new TimeSelectorOkListener();
 	private RemindSelectListner mRemindSelectListner = new RemindSelectListner();
 	private EventTypeSelectListner mEventTypeSelectListner = new EventTypeSelectListner();
-	private AlarmManager am;
-
-	private View type_root_view;
-	private GridView gridview;
-	private ImageView img_selector;
-	private EventTypeItemAdapter adapter;
-	private String[] titles;
-	private ArrayList<EventTypeItem> eventItems;
-	// private int mType;
-	private int mCurSelectorIndex = 0;
-	private long prePosition = -1;
-	private int flag = 0;
 	private ImageView remind_selector;
 	private ImageView event_selector;
 
-	private int[] images = new int[] { R.drawable.schedule_new_active,
-			R.drawable.schedule_new_appointment,
-			R.drawable.schedule_new_travel, R.drawable.type_entertainment,
-			R.drawable.schedule_new_eat, R.drawable.schedule_new_work
-
-	};
 
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
@@ -106,7 +80,6 @@ public class EditScheduleScreen extends Screen implements OnClickListener {
 		mIntent = getIntent();
 
 		schedule_id = mIntent.getIntExtra("id", 1);
-		firstFlag = mIntent.getBooleanExtra("first", false);
 		scheduleTime = mIntent.getLongExtra("time", 1);
 		Log.i(TAG, "------schedule_id=" + schedule_id);
 		init();
@@ -147,7 +120,6 @@ public class EditScheduleScreen extends Screen implements OnClickListener {
 		// 查询数据库，获得该日程的相关信息
 		readDb();
 		Display display = getWindowManager().getDefaultDisplay();
-		screenWidth = display.getWidth();
 		screenHeight = display.getHeight();
 
 		timeselectordialog = new TimeSelectorDialog(this);
@@ -158,7 +130,6 @@ public class EditScheduleScreen extends Screen implements OnClickListener {
 		eventTypeDialog = new EventTypeDialog(this, R.style.EventTypedialog,
 				mType, screenHeight / 8);
 		eventTypeDialog.setOnEventTypeSelectListener(mEventTypeSelectListner);
-		am = (AlarmManager) getSystemService(ALARM_SERVICE);
 
 		// 初始化界面
 		schedule_text.setText(scheduleText);
@@ -205,7 +176,8 @@ public class EditScheduleScreen extends Screen implements OnClickListener {
 			remindCycle = c
 					.getString(c
 							.getColumnIndex(DatabaseHelper.COLUMN_SCHEDULE_NOTICE_PERIOD));
-
+			flagAlarm = c.getLong(c
+					.getColumnIndex(DatabaseHelper.COLUMN_SCHEDULE_ALARM_FLAG));
 			weekType = c
 					.getString(c
 							.getColumnIndex(DatabaseHelper.COLUMN_SCHEDULE_NOTICE_WEEK));
@@ -325,13 +297,9 @@ public class EditScheduleScreen extends Screen implements OnClickListener {
 				weekType = alarmPopwindow.getWeekValue();
 				remindCycle = alarmPopwindow.getRepeatType();
 				mType = eventTypeDialog.getEventType();
-				
-				Log.d(TAG, "=--------get----remindCycle------" + remindCycle);
 				cv.put(DatabaseHelper.COLUMN_SCHEDULE_TYPE, mType);
 				cv.put(DatabaseHelper.COLUMN_SCHEDULE_SHARE, mShare);
 				cv.put(DatabaseHelper.COLUMN_SCHEDULE_OPER_FLAG, oper_flag);
-				flagAlarm = System.currentTimeMillis();
-				cv.put(DatabaseHelper.COLUMN_SCHEDULE_ALARM_FLAG, flagAlarm);
 				cv.put(DatabaseHelper.COLUMN_SCHEDULE_START_TIME, startTime);
 
 				cv.put(DatabaseHelper.COLUMN_SCHEDULE_NOTICE_FLAG, mRemind);
@@ -342,7 +310,6 @@ public class EditScheduleScreen extends Screen implements OnClickListener {
 				// 主贴
 				cv.put(DatabaseHelper.COLUMN_SCHEDULE_ORDER, 0);
 				cv.put(DatabaseHelper.COLUMN_SCHEDULE_NOTICE_END, endTime);
-				cv.put(DatabaseHelper.COLUMN_SCHEDULE_FLAG_OUTDATE, false);
 				cv.put(DatabaseHelper.COLUMN_SCHEDULE_NOTICE_WEEK, weekType);
 				if (DatabaseHelper.SCHEDULE_NOTICE_PERIOD_MODE_MONTH
 						.equals(remindCycle)) {
@@ -356,21 +323,22 @@ public class EditScheduleScreen extends Screen implements OnClickListener {
 				}
 				cv.put(DatabaseHelper.COLUMN_SCHEDULE_NOTICE_YEARDAY, yearday);
 				cv.put(DatabaseHelper.COLUMN_SCHEDULE_CONTENT, scheduleText);
-				Log.d(TAG, "--------mRemind=" + mRemind);
-				Log.d(TAG,
-						"--------startTime="
-								+ DateTimeUtils.time2String(
-										"yyyy-MM-dd-hh-mm-ss", startTime));
-				Log.d(TAG,
-						"--------endTime="
-								+ DateTimeUtils.time2String(
-										"yyyy-MM-dd-hh-mm-ss", endTime));
-
-				ServiceManager.getDbManager().updateLocalSchedules(cv,
-						schedule_id);
-				// 重置闹钟提醒
-				// sendAlarm(startTime);
-				// 同步新建日程到服务器
+				if(mRemind){
+					long time = DateTimeUtils.getNextAlarmTime(mStageRemind,
+							startTime, endTime, startTime, remindCycle, weekType);
+					System.out.println("result:"
+							+ DateTimeUtils
+									.time2String("yyyy-MM-dd HH:mm:ss", time));
+					if (time != 0) {
+						DateTimeUtils.sendAlarm(time, flagAlarm, schedule_id);
+						cv.put(DatabaseHelper.COLUMN_SCHEDULE_FLAG_OUTDATE, false);
+					} else {
+						cv.put(DatabaseHelper.COLUMN_SCHEDULE_FLAG_OUTDATE, true);
+					}
+				} else {
+					DateTimeUtils.cancelAlarm(schedule_id);
+					cv.put(DatabaseHelper.COLUMN_SCHEDULE_FLAG_OUTDATE, true);
+				}
 				si.uploadSchedule("0", "1");
 
 			}
@@ -393,40 +361,6 @@ public class EditScheduleScreen extends Screen implements OnClickListener {
 
 	}
 
-	public void cancelAlarm() {
-		Cursor c = ServiceManager.getDbManager().queryScheduleById(
-				 schedule_id);
-		if (c.moveToFirst()) {
-			long flagAlarmb = c
-					.getLong(c
-							.getColumnIndex(DatabaseHelper.COLUMN_SCHEDULE_NOTICE_FLAG));
-
-			Intent alarmIntent = new Intent(EditScheduleScreen.this,
-					AlarmRecevier.class);
-			alarmIntent.setAction("" + flagAlarmb);
-			alarmIntent.putExtra("schedule_id", schedule_id);
-			PendingIntent pi = PendingIntent.getBroadcast(
-					EditScheduleScreen.this, 1, alarmIntent, 0);
-			am.cancel(pi);
-		}
-		c.close();
-
-	}
-
-	// 发送闹钟事件
-	public void sendAlarm(Long time) {
-		// Cursor c = ServiceManager.getDbManager().queryNotOutdateschedule();
-		// Log.d(TAG, "-------NOT out date count = " + c.getCount());
-		// c.close();
-		Intent alarmIntent = new Intent(EditScheduleScreen.this,
-				AlarmRecevier.class);
-		alarmIntent.setAction("" + flagAlarm);
-		alarmIntent.putExtra("schedule_id", schedule_id);
-		PendingIntent pi = PendingIntent.getBroadcast(EditScheduleScreen.this,
-				1, alarmIntent, 0);
-		AlarmManager am = (AlarmManager) getSystemService(ALARM_SERVICE);
-		am.set(AlarmManager.RTC_WAKEUP, time, pi);
-	}
 
 	// 监听时间选择器的“完成”按钮事件
 	class TimeSelectorOkListener implements OnOkButtonClickListener {

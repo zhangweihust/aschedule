@@ -375,10 +375,7 @@ private ViewFlipper flipper = null;
 			data.time = c.getLong(c.getColumnIndex(DatabaseHelper.COLUMN_SCHEDULE_START_TIME));
 			data.share = c.getInt(c.getColumnIndex(DatabaseHelper.COLUMN_SCHEDULE_SHARE)) == 1;
 			data.notice_flag = c.getInt(c.getColumnIndex(DatabaseHelper.COLUMN_SCHEDULE_NOTICE_FLAG)) == 1;
-			data.important = c.getInt(c.getColumnIndex(DatabaseHelper.COLUMN_SCHEDULE_IMPORTANT)) == 1;
 			data.type = c.getInt(c.getColumnIndex(DatabaseHelper.COLUMN_SCHEDULE_TYPE));
-			data.first = c.getInt(c.getColumnIndex(DatabaseHelper.COLUMN_SCHEDULE_FIRST_FLAG)) == 1;
-			
 			listdata.add(data);
 		}
 	}

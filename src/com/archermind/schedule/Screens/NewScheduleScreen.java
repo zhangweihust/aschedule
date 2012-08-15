@@ -1,8 +1,7 @@
 package com.archermind.schedule.Screens;
 
 import java.util.Calendar;
-import android.app.AlarmManager;
-import android.app.PendingIntent;
+
 import android.content.ContentValues;
 import android.content.Intent;
 import android.os.Bundle;
@@ -15,6 +14,7 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
+
 import com.archermind.schedule.R;
 import com.archermind.schedule.Dialog.AlarmPopwindow;
 import com.archermind.schedule.Dialog.AlarmPopwindow.OnRemindSelectListener;
@@ -23,7 +23,6 @@ import com.archermind.schedule.Dialog.EventTypeDialog.OnEventTypeSelectListener;
 import com.archermind.schedule.Dialog.TimeSelectorDialog;
 import com.archermind.schedule.Dialog.TimeSelectorDialog.OnOkButtonClickListener;
 import com.archermind.schedule.Provider.DatabaseHelper;
-import com.archermind.schedule.Services.AlarmRecevier;
 import com.archermind.schedule.Services.ServiceManager;
 import com.archermind.schedule.Utils.Constant;
 import com.archermind.schedule.Utils.DateTimeUtils;
@@ -46,7 +45,6 @@ public class NewScheduleScreen extends Screen implements OnClickListener {
 
 	private boolean mStageRemind = false;
 	private boolean mShare = false;
-	private boolean mImportant = false;
 	private boolean mRemind = false;
 	private int mType = -1;
 	private long startTime = 0;
@@ -58,15 +56,13 @@ public class NewScheduleScreen extends Screen implements OnClickListener {
 	private String yearday = " ";
 	private long flagAlarm;
 
-	private boolean remind_flag = false;
-	private int bottom;
 	private ServerInterface si;
 	private TimeSelectorDialog timeselectordialog;
 	private AlarmPopwindow alarmPopwindow;
 	private EventTypeDialog eventTypeDialog;
 	private long schedule_id = 1;
 	private String scheduleText;
-	private int screenWidth, screenHeight;
+	private int  screenHeight;
 	private TimeSelectorOkListener mTimeSelectorOkListener = new TimeSelectorOkListener();
 	private RemindSelectListner mRemindSelectListner = new RemindSelectListner();
 
@@ -117,8 +113,9 @@ public class NewScheduleScreen extends Screen implements OnClickListener {
 		// 进入新建日程的时间,默认显示当前时间（hh mm）,日期为日历日期
 		mCalendar.set(Calendar.YEAR,
 				Integer.parseInt(DateTimeUtils.time2String("y", calendarTime)));
-		mCalendar.set(Calendar.MONTH,
-				Integer.parseInt(DateTimeUtils.time2String("M", calendarTime))-1);
+		mCalendar
+				.set(Calendar.MONTH, Integer.parseInt(DateTimeUtils
+						.time2String("M", calendarTime)) - 1);
 		mCalendar.set(Calendar.DAY_OF_MONTH,
 				Integer.parseInt(DateTimeUtils.time2String("d", calendarTime)));
 		mCalendar.set(Calendar.HOUR_OF_DAY,
@@ -138,12 +135,11 @@ public class NewScheduleScreen extends Screen implements OnClickListener {
 		schedule_text = (ScheduleEditText) findViewById(R.id.schedule_note);
 
 		Display display = getWindowManager().getDefaultDisplay();
-		screenWidth = display.getWidth();
 		screenHeight = display.getHeight();
 
 		// 设置edittext的高度
 		ScheduleEditText.initNoteHight = screenHeight;
-//		ScheduleEditText.lineColor = 0xc5c5c5;
+		// ScheduleEditText.lineColor = 0xc5c5c5;
 
 		timeselectordialog = new TimeSelectorDialog(this);
 		timeselectordialog.setOnOkButtonClickListener(mTimeSelectorOkListener);
@@ -155,7 +151,6 @@ public class NewScheduleScreen extends Screen implements OnClickListener {
 		eventTypeDialog = new EventTypeDialog(this, R.style.EventTypedialog,
 				mType, screenHeight / 8);
 		eventTypeDialog.setOnEventTypeSelectListener(mEventTypeSelectListner);
-
 
 	}
 
@@ -195,12 +190,6 @@ public class NewScheduleScreen extends Screen implements OnClickListener {
 		mScheduleYearTv.setText(year);
 	}
 
-	@Override
-	public void onWindowFocusChanged(boolean hasFocus) {
-		// TODO Auto-generated method stub
-		super.onWindowFocusChanged(hasFocus);
-		bottom = remind_selector.getBottom();
-	}
 
 	@Override
 	public void onClick(View v) {
@@ -271,8 +260,8 @@ public class NewScheduleScreen extends Screen implements OnClickListener {
 
 	public void saveScheduleToDb() {
 		Intent intent = new Intent();
-	    intent.setAction("android.appwidget.action.LOCAL_SCHEDULE_UPDATE");  
-	    sendBroadcast(intent);
+		intent.setAction("android.appwidget.action.LOCAL_SCHEDULE_UPDATE");
+		sendBroadcast(intent);
 		new Thread(new Runnable() {
 			@Override
 			public void run() {
@@ -291,7 +280,7 @@ public class NewScheduleScreen extends Screen implements OnClickListener {
 				cv.put(DatabaseHelper.COLUMN_SCHEDULE_ALARM_FLAG, flagAlarm);
 				cv.put(DatabaseHelper.COLUMN_SCHEDULE_START_TIME, startTime);
 
-				cv.put(DatabaseHelper.COLUMN_SCHEDULE_NOTICE_FLAG, mRemind);
+				cv.put(DatabaseHelper.COLUMN_SCHEDULE_NOTICE_FLAG, mRemind);// 闹钟是否开启
 				cv.put(DatabaseHelper.COLUMN_SCHEDULE_NOTICE_PERIOD,
 						remindCycle);
 				cv.put(DatabaseHelper.COLUMN_SCHEDULE_NOTICE_STAGE_FLAG,
@@ -299,7 +288,6 @@ public class NewScheduleScreen extends Screen implements OnClickListener {
 				// 主贴
 				cv.put(DatabaseHelper.COLUMN_SCHEDULE_ORDER, 0);
 				cv.put(DatabaseHelper.COLUMN_SCHEDULE_NOTICE_END, endTime);
-				cv.put(DatabaseHelper.COLUMN_SCHEDULE_FLAG_OUTDATE, false);
 				cv.put(DatabaseHelper.COLUMN_SCHEDULE_NOTICE_WEEK, weekType);
 				if (DatabaseHelper.SCHEDULE_NOTICE_PERIOD_MODE_MONTH
 						.equals(remindCycle)) {
@@ -309,29 +297,30 @@ public class NewScheduleScreen extends Screen implements OnClickListener {
 				cv.put(DatabaseHelper.COLUMN_SCHEDULE_NOTICE_MONTHDAY, monthday);
 				if (DatabaseHelper.SCHEDULE_NOTICE_PERIOD_MODE_YEAR
 						.equals(remindCycle)) {
-					yearday = DateTimeUtils.time2String("d", startTime);
+					yearday = DateTimeUtils.time2String("M", startTime);
 				}
 				cv.put(DatabaseHelper.COLUMN_SCHEDULE_NOTICE_YEARDAY, yearday);
 				cv.put(DatabaseHelper.COLUMN_SCHEDULE_CONTENT, scheduleText);
-				Log.d(TAG, "--------mRemind=" + mRemind);
-				Log.d(TAG,
-						"--------startTime="
-								+ DateTimeUtils.time2String(
-										"yyyy-MM-dd-hh-mm-ss", startTime));
-				Log.d(TAG,
-						"--------endTime="
-								+ DateTimeUtils.time2String(
-										"yyyy-MM-dd-hh-mm-ss", endTime));
-
-				schedule_id = ServiceManager.getDbManager()
-						.insertLocalSchedules(cv, startTime);
 				// 闹钟提醒
-				// sendAlarm(startTime);
+				if(mRemind){
+					long time = DateTimeUtils.getNextAlarmTime(mStageRemind,
+							startTime, endTime, startTime, remindCycle, weekType);
+					System.out.println("result:"
+							+ DateTimeUtils
+									.time2String("yyyy-MM-dd HH:mm:ss", time));
+					if (time != 0) {
+						DateTimeUtils.sendAlarm(time, flagAlarm, schedule_id);
+						cv.put(DatabaseHelper.COLUMN_SCHEDULE_FLAG_OUTDATE, false);
+					} else {
+						cv.put(DatabaseHelper.COLUMN_SCHEDULE_FLAG_OUTDATE, true);
+					}
+				} else {
+					cv.put(DatabaseHelper.COLUMN_SCHEDULE_FLAG_OUTDATE, true);
+				}
+				schedule_id = ServiceManager.getDbManager().insertLocalSchedules(cv);
 				// 同步新建日程到服务器
 				si.uploadSchedule("0", "1");
-
 			}
-
 		}).start();
 	}
 
@@ -347,30 +336,14 @@ public class NewScheduleScreen extends Screen implements OnClickListener {
 		mCalendar.set(Calendar.MILLISECOND, 0);
 		long mTime = mCalendar.getTimeInMillis();
 		return mTime;
-
 	}
 
-	// 发送闹钟事件
-	public void sendAlarm(Long time) {
-		// Cursor c = ServiceManager.getDbManager().queryNotOutdateschedule();
-		// Log.d(TAG, "-------NOT out date count = " + c.getCount());
-		// c.close();
-		Intent alarmIntent = new Intent(NewScheduleScreen.this,
-				AlarmRecevier.class);
-		alarmIntent.setAction("" + flagAlarm);
-		alarmIntent.putExtra("schedule_id", schedule_id);
-		PendingIntent pi = PendingIntent.getBroadcast(NewScheduleScreen.this,
-				1, alarmIntent, 0);
-		AlarmManager am = (AlarmManager) getSystemService(ALARM_SERVICE);
-		am.set(AlarmManager.RTC_WAKEUP, time, pi);
-	}
 
 	// 监听时间选择器的“完成”按钮事件
 	class TimeSelectorOkListener implements OnOkButtonClickListener {
 
 		public void onOkButtonClick(TimeSelectorDialog timeSelectorDialog) {
 			// Constant.
-
 			// 获取时间选择器的值
 			Calendar c = Calendar.getInstance();
 			c.set(Calendar.YEAR, Constant.VARY_YEAR);
