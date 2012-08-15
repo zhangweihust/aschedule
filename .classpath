@@ -10,5 +10,8 @@
 	<classpathentry kind="lib" path="libs/guava-11.0.2.jar"/>
 	<classpathentry kind="src" path="src"/>
 	<classpathentry kind="src" path="gen"/>
+	<classpathentry kind="lib" path="libs/RenrenAthou2SDK2.jar"/>
+	<classpathentry kind="lib" path="libs/sinav2.jar"/>
+	<classpathentry kind="lib" path="libs/tenxun_SDK_v1.2_Fix.jar"/>
 	<classpathentry kind="output" path="bin/classes"/>
 </classpath>

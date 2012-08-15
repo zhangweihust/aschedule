@@ -58,7 +58,7 @@ public class CitySettingDialog implements OnClickListener{
 	int cityId = 0;
 	boolean provinceClickOrNot = false;
 	boolean cityClickOrNot = false;
-	
+	private SharedPreferences sp;
 	
 	public CitySettingDialog(Context context)
 	{
@@ -80,10 +80,15 @@ public class CitySettingDialog implements OnClickListener{
 		city_setting_ok.setOnClickListener(this);
 		city_setting_cancel.setOnClickListener(this);
 		
-		initPersonal();// 初始化控件
+		sp = context.getSharedPreferences("com.archermind.schedule_preferences",Context.MODE_WORLD_WRITEABLE);
 	}
 	 
+	public Dialog getDialog(){
+		return dialog;
+	}
+	
 	 public void show() {
+		   initPersonal();
 			dialog.show();
 		}
 	 
@@ -94,14 +99,13 @@ public class CitySettingDialog implements OnClickListener{
 	@Override
 	public void onClick(View v) {
 		// TODO Auto-generated method stub
-		SharedPreferences sp = context.getSharedPreferences("com.archermind.schedule_preferences",Context.MODE_WORLD_WRITEABLE);
 		switch(v.getId())
 		{
 		case R.id.province_button:
 			showDialog();
 			break;
 		case R.id.city_button:
-			showDialog(cities, true);
+			showDialog(true);
 			break;
 		case R.id.city_setting_ok:
 			dismiss();
@@ -119,12 +123,10 @@ public class CitySettingDialog implements OnClickListener{
 	}
 	
 	private void initPersonal() {
-		SharedPreferences sp = context.getSharedPreferences("com.archermind.schedule_preferences",Context.MODE_WORLD_WRITEABLE);
 		provinces = context.getResources().getStringArray(R.array.provinces);
 		two_char_provinces = context.getResources().getStringArray(
 				R.array.two_chars_provinces);
 		pro_position = sp.getInt("pro_position", pro_position);
-		cities = (String[]) context.getResources().getStringArray(arrays[pro_position]);
 		provinceStr = sp.getString("province", provinceStr);
 		if (provinceStr != null && !("").equals(provinceStr)) {
 			province_text.setText(provinceStr);
@@ -188,7 +190,11 @@ public class CitySettingDialog implements OnClickListener{
 					}).show();
 	}
 
-	private void showDialog(final String[] array, final boolean city) {
+	private void showDialog(final boolean city) {
+		pro_position = getProvincesId(province_text
+				.getText().toString());
+		final String[] array = (String[]) context.getResources().getStringArray(arrays[pro_position]);
+		
 		Builder builder = new android.app.AlertDialog.Builder(context);
 		// 设置对话框的标题
 

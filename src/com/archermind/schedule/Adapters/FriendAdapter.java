@@ -130,23 +130,24 @@ public class FriendAdapter extends BaseAdapter implements OnClickListener{
 			break;
 		case R.id.friend_shield:
 			dialog.dismiss();
-			database.ignoreFriend(friend.getId());
-			serverInterface.shieldFriend(String.valueOf(ServiceManager.getUserId()), friend.getId());	
+			if(0 == serverInterface.shieldFriend(String.valueOf(ServiceManager.getUserId()), friend.getId())){
+				database.ignoreFriend(friend.getId());
+			}
 			break;
 		case R.id.friend_delete:
 			dialog.dismiss();
-			serverInterface.removeFriend(String.valueOf(ServiceManager.getUserId()), friend.getId());
-			friends.remove(friend);
-			refresh();
-			database.deleteFriend(friend.getId());
-			database.updateContactType(database.queryContactIdByTel(friend.getTelephone()), Constant.FriendType.friend_contact_use,friend.getId());
-			
-			FriendContactAdapter.ContentListElement element = friendContactAdapter.new ContentListElement();
-			element.setFriend(friend);
-			friendContactAdapter.addFristFriendContactUse(element);
-			friendContactAdapter.refresh();
-			
-			
+			if(0 == serverInterface.removeFriend(String.valueOf(ServiceManager.getUserId()), friend.getId())){
+				friends.remove(friend);
+				refresh();
+				database.deleteFriend(friend.getId());
+				database.updateContactType(database.queryContactIdByTel(friend.getTelephone()), Constant.FriendType.friend_contact_use,friend.getId());
+				
+				FriendContactAdapter.ContentListElement element = friendContactAdapter.new ContentListElement();
+				friend.setType(Constant.FriendType.friend_contact_use);
+				element.setFriend(friend);
+				friendContactAdapter.addFristFriendContactUse(element);
+				friendContactAdapter.refresh();
+			}
 			break;
 		}
 	}

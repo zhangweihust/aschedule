@@ -3,8 +3,12 @@ package com.archermind.schedule.Dialog;
 import java.util.Calendar;
 import java.util.Map;
 
+import android.app.Activity;
 import android.app.Dialog;
 import android.content.Context;
+import android.content.DialogInterface;
+import android.content.SharedPreferences;
+import android.content.DialogInterface.OnDismissListener;
 import android.util.Log;
 import android.view.Gravity;
 import android.view.View;
@@ -16,6 +20,7 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.archermind.schedule.R;
+import com.archermind.schedule.Screens.WeatherScreen;
 import com.archermind.schedule.Utils.DateTimeUtils;
 
 public class WeatherDialog implements OnClickListener {
@@ -52,27 +57,55 @@ public class WeatherDialog implements OnClickListener {
 
 	private Context context;
 	
+	private CitySettingDialog citySettingDialog;
+	
+	private String province;
+	
+	private String city;
+	
 	public interface OnCancelButtonClickListener {
 		void onCancelButtonClick(WeatherDialog mweatherDialog);
 	}
 
-	private OnCancelButtonClickListener mOnCanceButtonClickListener;
-
-	public void setOnCancelButtonClickListener(OnCancelButtonClickListener l) {
-		mOnCanceButtonClickListener = l;
-	}
-	public WeatherDialog(Context context, int screenWidth, int screenHeight,
+	public WeatherDialog(final Context context, int screenWidth, int screenHeight,
 			Map<String, String> cityInfoMap, Map<String, Integer> weathermap,
 			Map<String, String> itemsmap) {
 
-      this.context = context;
+        this.context = context;
 		weatherDialog = new Dialog(context, R.style.WeatherDialog);
 		weatherDialog.setContentView(R.layout.weather);
-		// weatherDialog.setCanceledOnTouchOutside(true);
-
+		citySettingDialog = new CitySettingDialog(context);
+		citySettingDialog.getDialog().setOnDismissListener(new OnDismissListener() {
+			
+			@Override
+			public void onDismiss(DialogInterface dialog) {
+				// TODO Auto-generated method stub
+				WeatherScreen WeatherScreen = (WeatherScreen)context;
+				SharedPreferences sp = context.getSharedPreferences("com.archermind.schedule_preferences",Context.MODE_WORLD_WRITEABLE);
+				String mProvince = sp.getString("province", province);
+				String mCity = sp.getString("city", city);
+				if(mProvince.equals(province) && mCity.equals(city)){
+					return;
+				}
+				WeatherScreen.getWeatherData(mProvince,mCity);
+				displayWeather(WeatherScreen.getCityInfoMap(), WeatherScreen.getWeatherMap(), WeatherScreen.getItemsmap());
+				province = mProvince;
+				city = mCity;
+			}
+		});
+		weatherDialog.setOnDismissListener(new OnDismissListener() {
+			
+			@Override
+			public void onDismiss(DialogInterface dialog) {
+				// TODO Auto-generated method stub
+				((Activity)context).finish();
+			}
+		});
 		this.screenWidth = screenWidth;
 		this.screenHeight = screenHeight;
 		init();
+		province = cityInfoMap.get("province");
+		city = cityInfoMap.get("city");
 		displayWeather(cityInfoMap, weathermap, itemsmap);
 
 	}
@@ -273,12 +306,12 @@ public class WeatherDialog implements OnClickListener {
 	@Override
 	public void onClick(View v) {
 		// TODO Auto-generated method stub
-		weatherDialog.dismiss();
-		mOnCanceButtonClickListener.onCancelButtonClick(this);
 		switch(v.getId()){
 		case R.id.city_info:
-			CitySettingDialog citySettingDialog = new CitySettingDialog(context);
 			citySettingDialog.show();
+			break;
+		case R.id.weather_dialog_cancel:
+			weatherDialog.dismiss();
 			break;
 		}
 	}

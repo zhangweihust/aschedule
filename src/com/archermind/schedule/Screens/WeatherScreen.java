@@ -17,6 +17,8 @@ import com.archermind.schedule.Utils.DateTimeUtils;
 import com.archermind.schedule.Utils.HttpUtils;
 import com.archermind.schedule.Utils.NetworkUtils;
 import android.content.ContentValues;
+import android.content.Context;
+import android.content.SharedPreferences;
 import android.database.Cursor;
 import android.os.Bundle;
 import android.util.Log;
@@ -47,7 +49,29 @@ public class WeatherScreen extends Screen implements
 		Display display = getWindowManager().getDefaultDisplay();
 		int screenWidth = display.getWidth();
 		int screenHeight = display.getHeight();
-
+		SharedPreferences sp = getSharedPreferences("com.archermind.schedule_preferences",Context.MODE_WORLD_WRITEABLE);
+		getWeatherData(sp.getString("province", "北京"),sp.getString("city", "北京"));
+		
+		mwWeatherDialog = new WeatherDialog(this, screenWidth,
+				screenHeight, cityInfoMap, weatherMap, itemsmap);
+		mwWeatherDialog.show();
+		
+	}
+	
+	public Map<String, Integer> getWeatherMap(){
+		return weatherMap;
+	}
+	
+	public Map<String, String> getCityInfoMap(){
+		return cityInfoMap;
+	}
+	
+	public Map<String, String> getItemsmap(){
+		return itemsmap;
+	}
+	
+	
+	public void getWeatherData(String province,String city){
 		// 获取天气图片地址
 		weatherMap = getWeathermap();
 
@@ -60,17 +84,9 @@ public class WeatherScreen extends Screen implements
 					mCalendar.getTimeInMillis());
 			mCalendar.add(Calendar.DAY_OF_MONTH, 1);
 		}
-
-		// String cityInfo = "null";
-		//
-		// // 如果未设置城市，则默认显示北京天气
-		// if (cityInfo == null) {
-		//
-		//
-		// }
-		cityInfoMap.put("province", "湖北");
-		cityInfoMap.put("city", "武汉");
-		// new Thread(new HttpUtils()).start();
+		
+		cityInfoMap.put("province", province);
+		cityInfoMap.put("city", city);
 
 		// 如果联网了，则从服务器获取数据
 		//
@@ -82,13 +98,11 @@ public class WeatherScreen extends Screen implements
 			Log.d(TAG, "-------strResult:" + strResult);
 
 			// [{"city":"武汉","province":"湖北","cid":"101200101","weather":"\"st1 \":\"33\",\"temp1\":\"33℃~27℃\",\"weather1\":\"多云\",\"temp2\": \"34℃~28℃\",\"weather2\":\"多云\",\"temp3\":\"35℃~28℃\",\"weather3 \":\"多云\",\"temp4\":\"34℃~24℃\",\"weather4\":\"多云\""}]
-			if (!strResult.equals("-1")) {
-				itemsmap = parseJson(strResult);
-				mwWeatherDialog = new WeatherDialog(this, screenWidth,
-						screenHeight, cityInfoMap, weatherMap, itemsmap);
-				mwWeatherDialog.show();
-				mwWeatherDialog.setOnCancelButtonClickListener(this);
-				saveToDb(itemsmap);
+			if (strResult != null && !strResult.equals("")) {
+				if(strResult.indexOf("city") >= 0){
+					itemsmap = parseJson(strResult);
+					saveToDb(itemsmap);
+				}
 			}
 
 		} else {
@@ -186,10 +200,6 @@ public class WeatherScreen extends Screen implements
 					Log.d(TAG, "-------" + itemsmap.get("weather4"));
 
 				}
-				mwWeatherDialog = new WeatherDialog(this, screenWidth,
-						screenHeight, cityInfoMap, weatherMap, itemsmap);
-				mwWeatherDialog.show();
-				mwWeatherDialog.setOnCancelButtonClickListener(this);
 			}
 
 		 }
@@ -348,6 +358,6 @@ public class WeatherScreen extends Screen implements
 	@Override
 	public void onCancelButtonClick(WeatherDialog mweatherDialog) {
 		// TODO Auto-generated method stub
-//           this.finish();
+           this.finish();
 	}
 }

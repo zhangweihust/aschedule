@@ -1,0 +1,75 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="fill_parent"
+    android:layout_height="wrap_content"
+    android:background="@drawable/friend_dialog_bg"
+    android:orientation="vertical" >
+
+    <TextView
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="10dip"
+        android:gravity="center_horizontal"
+        android:text="好友请求"
+        android:textColor="@android:color/white"
+        android:textSize="20dp" />
+
+    <LinearLayout
+        android:layout_width="fill_parent"
+        android:layout_height="100dip"
+        android:gravity="center"
+        android:orientation="horizontal" >
+
+        <ImageView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:src="@drawable/friend_item_img" />
+
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="vertical" >
+
+            <TextView
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="10dip"
+                android:text="ZHANG"
+                android:textColor="#636363" />
+
+            <TextView
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="10dip"
+                android:text="请求添加您为好友"
+                android:textColor="#636363" />
+        </LinearLayout>
+    </LinearLayout>
+
+    <RelativeLayout
+        android:layout_width="fill_parent"
+        android:layout_height="60dip"
+        android:layout_marginLeft="30dip"
+        android:layout_marginRight="30dip"
+        android:orientation="horizontal" >
+
+        <Button
+            android:id="@+id/accept_friend"
+            android:layout_width="80dip"
+            android:layout_height="40dip"
+            android:layout_alignParentLeft="true"
+            android:background="@drawable/friend_btn_selector"
+            android:text="加为好友"
+            android:textColor="#636363" />
+
+        <Button
+            android:id="@+id/refuse_friend"
+            android:layout_width="80dip"
+            android:layout_height="40dip"
+            android:layout_alignParentRight="true"
+            android:background="@drawable/friend_btn_selector"
+            android:text="拒  绝"
+            android:textColor="#636363" />
+    </RelativeLayout>
+
+</LinearLayout>

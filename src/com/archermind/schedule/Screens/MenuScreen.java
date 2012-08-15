@@ -2,6 +2,7 @@ package com.archermind.schedule.Screens;
 
 
 import com.archermind.schedule.R;
+import com.archermind.schedule.Services.ServiceManager;
 
 import android.app.Activity;
 import android.content.Intent;
@@ -55,7 +56,15 @@ public class MenuScreen extends Activity implements OnClickListener{
 			onBackPressed();
 			break;
 		case R.id.menu_account_btn:
-			Intent it = new Intent(MenuScreen.this,LoginScreen.class);
+			Intent it;
+			if (ServiceManager.getUserId() > 0)
+			{
+				it = new Intent(MenuScreen.this,AccountSettingScreen.class);
+			}
+			else
+			{
+				it = new Intent(MenuScreen.this,LoginScreen.class);
+			}
 			startActivity(it);
 			overridePendingTransition(R.anim.right_in,R.anim.right_out);
 			break;

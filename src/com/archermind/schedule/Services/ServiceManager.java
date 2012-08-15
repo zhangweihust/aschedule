@@ -20,7 +20,11 @@ import android.os.Handler;
 import android.os.IBinder;
 import android.os.Message;
 import android.util.Log;
+import android.view.Display;
+import android.view.Gravity;
 import android.view.View;
+import android.view.Window;
+import android.view.WindowManager;
 import android.view.View.OnClickListener;
 import android.widget.Button;
 import android.widget.Toast;
@@ -71,6 +75,8 @@ public class ServiceManager extends Service implements OnClickListener{
     
     private List<String> msg_refuses = new ArrayList<String>();
     
+    private List<String> msg_accepets = new ArrayList<String>();
+    
     private List<String> msg_sys = new ArrayList<String>();
     
     private Handler handler = new Handler(){
@@ -78,18 +84,30 @@ public class ServiceManager extends Service implements OnClickListener{
     		for(int i = 0; i < msg_adds.size(); i++){
     			showDialog(msg_adds.get(i));
     		}
+    		for(int i = 0; i < msg_accepets.size(); i++){
+    			makeFriendFromInet(msg_accepets.get(i),Constant.FriendType.friend_yes);
+    		}
     	};
     };
+    
 	   private Dialog dialog;
 	    public void showDialog(String id){
-	    	dialog = new Dialog(homeScreen);
-			dialog.setContentView(R.layout.dialog);
-			Button btn1 = (Button) dialog.findViewById(R.id.button1);
-			Button btn2 = (Button) dialog.findViewById(R.id.button2);
-			btn1.setOnClickListener(this);
-			btn2.setOnClickListener(this);
-			btn1.setTag(id);
-			btn2.setTag(id);
+	    	dialog = new Dialog(homeScreen,R.style.WeatherDialog);
+			dialog.setContentView(R.layout.friend_dialog);
+			Button accept_friend = (Button) dialog.findViewById(R.id.accept_friend);
+			Button refuse_friend = (Button) dialog.findViewById(R.id.refuse_friend);
+			accept_friend.setOnClickListener(this);
+			refuse_friend.setOnClickListener(this);
+			accept_friend.setTag(id);
+			refuse_friend.setTag(id);
+			
+			Display display = homeScreen.getWindowManager().getDefaultDisplay();
+			int screenWidth = display.getWidth();
+			Window window = dialog.getWindow(); // 得到对话框
+			WindowManager.LayoutParams wl = window.getAttributes();
+			wl.width = screenWidth * 7 / 8;
+			wl.gravity = Gravity.CENTER; // 设置重力
+			window.setAttributes(wl);
 			dialog.show();
 	    }
     @Override
@@ -306,6 +324,7 @@ public class ServiceManager extends Service implements OnClickListener{
 							String user_id = jsonObject.getString("user_id");
 							String msg_add = jsonObject.getString("msg_add");
 							String msg_refuse = jsonObject.getString("msg_refuse");
+							String msg_accepet = jsonObject.getString("msg_accept");
 							String msg_sy = jsonObject.getString("msg_sys");
 							
 							if(msg_add.length() == 0 && msg_refuse.length() == 0 && msg_sy.length() == 0)
@@ -319,6 +338,11 @@ public class ServiceManager extends Service implements OnClickListener{
 							String[] msg_refuse_array = msg_refuse.split(",");
 							for(int i = 0; i < msg_refuse_array.length; i++){
 								msg_refuses.add(msg_refuse_array[i]);
+							}
+							
+							String[] msg_accepet_array = msg_accepet.split(",");
+							for(int i = 0; i < msg_accepet_array.length; i++){
+								msg_accepets.add(msg_accepet_array[i]);
 							}
 							
 							String[] msg_sys_array = msg_sy.split(",");
@@ -341,7 +365,7 @@ public class ServiceManager extends Service implements OnClickListener{
 		// TODO Auto-generated method stub
 		String id = (String) v.getTag();
 		switch(v.getId()){
-		case R.id.button1:
+		case R.id.accept_friend:
 			if(0 == serverInerface.acceptFriend(String.valueOf(ServiceManager.getUserId()), id)){
 				//成功添加好r友
 				makeFriendFromInet(id,Constant.FriendType.friend_yes);
@@ -349,7 +373,7 @@ public class ServiceManager extends Service implements OnClickListener{
 			}
 			
 			break;
-		case R.id.button2:
+		case R.id.refuse_friend:
 			if(0 == serverInerface.refuseFriend(String.valueOf(ServiceManager.getUserId()), id)){
 				//拒绝好友
 			}

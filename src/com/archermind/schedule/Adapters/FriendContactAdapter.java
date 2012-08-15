@@ -30,6 +30,7 @@ import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.SeekBar;
 import android.widget.TextView;
+import android.widget.Toast;
 
 public class FriendContactAdapter extends BaseAdapter implements OnClickListener{
 
@@ -205,11 +206,9 @@ public class FriendContactAdapter extends BaseAdapter implements OnClickListener
 			if(friend != null){
 				contentHolderView.name.setText(friend.getTelephone());
 				if(Constant.FriendType.friend_contact_use == friend.getType()){
-					System.out.println("friend_contact_use");
 					contentHolderView.friend_button2.setText(context.getResources().getString(R.string.friend_add));
 					contentHolderView.friend_button2.setTag(this);
 				}else if(Constant.FriendType.friend_contact == friend.getType()){
-					System.out.println("friend_contact");
 					contentHolderView.friend_button2.setText(context.getResources().getString(R.string.friend_invite));
 					contentHolderView.friend_button2.setTag(this);
 				}
@@ -238,7 +237,7 @@ public class FriendContactAdapter extends BaseAdapter implements OnClickListener
 			intent.setType("text/plain");
 			String textMessage = "邀请好友阿";
 			intent.putExtra(Intent.EXTRA_TEXT, textMessage);
-			context.startActivity(Intent.createChooser(intent,"邀请"));
+			context.startActivity(Intent.createChooser(intent,"邀请好友"));
 		}
 	 
 	@Override
@@ -248,7 +247,10 @@ public class FriendContactAdapter extends BaseAdapter implements OnClickListener
 		Friend friend = element.getFriend();
 		switch(friend.getType()){
 		case Constant.FriendType.friend_contact_use:	
-			if(serverInterface.inviteFriend(String.valueOf(ServiceManager.getUserId()), friend.getId()) == 0){	
+			if(0 == serverInterface.inviteFriend(String.valueOf(ServiceManager.getUserId()), friend.getId())){	
+				Toast.makeText(context, "正在添加好友...", Toast.LENGTH_LONG).show();
+			}else{
+				Toast.makeText(context, "添加好友失败", Toast.LENGTH_LONG).show();
 			}
 			break;
 		case Constant.FriendType.friend_contact:
@@ -266,14 +268,4 @@ public class FriendContactAdapter extends BaseAdapter implements OnClickListener
 //		notifyDataSetChanged();
 //		ListViewUtil.setListViewHeightBasedOnChildren(getListView());
 	}
-	
-	OnClickListener listen = new OnClickListener(){
-
-		@Override
-		public void onClick(View v) {
-			// TODO Auto-generated method stub
-			Friend friend = (Friend) v.getTag();
-
-			}
-	};
 }
