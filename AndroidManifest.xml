@@ -44,14 +44,19 @@
         <activity android:name=".Screens.EditScheduleScreen"></activity>
          <activity android:name=".Screens.WeatherScreen"/>
          <activity android:name=".Screens.AboutScreen"></activity>
-         <activity android:name=".Screens.Feedback"></activity>
+         <activity android:name=".Screens.FeedbackScreen"></activity>
          <activity android:name=".Screens.SettingScreen"></activity>
         <activity android:name=".Screens.LoadingScreen"> <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter></activity>
-         <receiver android:name=".Services.AlarmRecevier" >
+        <activity
+            android:name="com.tencent.weibo.webview.OAuthV1AuthorizeWebView"
+            android:label="@string/app_name" >
+        </activity>
+        
+        <receiver android:name=".Services.AlarmRecevier" >
         </receiver>
         <receiver android:name=".Services.BootRecevier" >
             <intent-filter >

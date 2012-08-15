@@ -66,7 +66,7 @@ public class MenuScreen extends Activity implements OnClickListener{
 		    startActivity(new Intent(MenuScreen.this,SettingScreen.class));
 			break;
 		case R.id.menu_feedback_btn:
-		    startActivity(new Intent(MenuScreen.this,Feedback.class));
+		    startActivity(new Intent(MenuScreen.this,FeedbackScreen.class));
 			break;
 		case R.id.menu_about_btn:
 		    startActivity(new Intent(MenuScreen.this,AboutScreen.class));

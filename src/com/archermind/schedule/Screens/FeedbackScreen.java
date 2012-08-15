@@ -12,7 +12,7 @@ import com.archermind.schedule.R;
 import com.archermind.schedule.Events.EventArgs;
 import com.archermind.schedule.Events.IEventHandler;
 
-public class Feedback extends Screen implements IEventHandler, OnClickListener {
+public class FeedbackScreen extends Screen implements IEventHandler, OnClickListener {
 
     private Button mBtnOut;
 
