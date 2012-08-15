@@ -2,7 +2,10 @@ package com.archermind.schedule.Calendar;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.util.Calendar;
 import java.util.Date;
+
+import android.util.Log;
 
 public class LunarCalendar {
 	private int year;   //农历的年份
@@ -230,7 +233,7 @@ public class LunarCalendar {
 			--monCyl;
 		}
 		month = iMonth;
-		setLunarMonth(chineseNumber[month - 1] + "��");  
+		setLunarMonth(chineseNumber[month - 1] + "月");  
 		day = offset + 1;
 
 		if(!isday){
@@ -281,6 +284,20 @@ public class LunarCalendar {
 
 	}
 
+	public String getLunarDate(long millistime, boolean isday)
+	{
+		int year;
+		int month;
+		int day;
+		
+		Calendar cal = Calendar.getInstance();
+		cal.setTimeInMillis(millistime);
+		year = cal.get(Calendar.YEAR);
+		month = cal.get(Calendar.MONTH) + 1;
+		day = cal.get(Calendar.DAY_OF_MONTH);
+		
+		return getLunarDate(year,month,day,isday);
+	}
 	
 	public String toString() {
 		if (chineseNumber[month - 1] == "一" && getChinaDayString(day) == "初一")

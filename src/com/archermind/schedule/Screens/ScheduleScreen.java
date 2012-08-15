@@ -14,6 +14,8 @@ import android.graphics.Typeface;
 import android.graphics.drawable.ColorDrawable;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.Message;
 import android.view.Display;
 import android.view.GestureDetector;
 import android.view.GestureDetector.OnGestureListener;
@@ -58,6 +60,8 @@ public class ScheduleScreen extends Screen implements IXListViewListener,OnXScro
 		OnItemClickListener ,OnGestureListener, OnClickListener, IEventHandler{
 
 	private static final int FRESH_LIMIT_NUM = 30;
+	private static final int LOAD_DATA_OVER = 1;
+	private static final int LOAD_OVERD_GOTO_TODAY = 2;
 	
 	private ImageView mListHeader;
 //	private TextView tv1;
@@ -81,13 +85,15 @@ public class ScheduleScreen extends Screen implements IXListViewListener,OnXScro
 //	private Cursor c4;
 	
 	private HistoryScheduleAdapter hsa;
-	private List<ScheduleData> listdata = new ArrayList<ScheduleData>();
+	private List<ScheduleData> listdata;
 	private String curSelectedDate = "";
-	
+	private int curScrollYear = 0;
+	private int curScrollMonth = 0;
+
 	private static int year;
 	private static int month;
 	private static int day;
-	
+	private Handler handler;
 
 private ViewFlipper flipper = null;
 		private GestureDetector gestureDetector = null;
@@ -118,11 +124,40 @@ private ViewFlipper flipper = null;
 	    	month = Constant.MONTH = month_c = Integer.parseInt(currentDate.split("-")[1]);
 	    	day = Constant.DAY = day_c = Integer.parseInt(currentDate.split("-")[2]);
 	    	
+			curScrollYear  = year_c;
+	    	curScrollMonth = month_c;
+	    	
 		}
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.schedule_screen);
+		
+		handler = new Handler()
+		{
+			@Override
+			public void handleMessage(Message msg) {
+				// TODO Auto-generated method stub
+				switch(msg.what)
+				{
+				case LOAD_DATA_OVER:
+					hsa.setData(listdata);
+					gototoday.setVisibility(View.INVISIBLE);
+					break;
+					
+				case LOAD_OVERD_GOTO_TODAY:
+					hsa.setData(listdata);
+					int pos = hsa.getTodayPosition(getDateByMillisTime(System.currentTimeMillis()));
+					if (pos >= 0)
+					{
+						list2.setSelection(pos + 1);	/* 最上面的上翻更新数据也算一个位置,,所以+1 */
+					}
+					break;
+				}
+				super.handleMessage(msg);
+			}
+		};
+		
 		gototoday = (TextView)findViewById(R.id.gototoday);
 		gototoday.setOnClickListener(new OnClickListener() {
 			@Override
@@ -185,6 +220,10 @@ private ViewFlipper flipper = null;
 				}
 			}
 		});
+		
+		hsa = new HistoryScheduleAdapter(this);
+		list2.setAdapter(hsa);
+		
 	}
 
 	@Override
@@ -199,138 +238,20 @@ private ViewFlipper flipper = null;
 	}
 	
 	private void setupView() {
-//		tv1 = (TextView) findViewById(R.id.tv01);
-//		tv2 = (TextView) findViewById(R.id.tv02);
-//		tv3 = (TextView) findViewById(R.id.tv03);
-//		tv4 = (TextView) findViewById(R.id.tv04);
-
-//		layout1 = (FrameLayout) findViewById(R.id.layout1);
 		layout2 = (FrameLayout) findViewById(R.id.layout2);
-//		layout3 = (FrameLayout) findViewById(R.id.layout3);
-//		layout4 = (FrameLayout) findViewById(R.id.layout4);
 
-//		list1 = (ListView) findViewById(R.id.list01);
 		list2 = (XListView) findViewById(R.id.list02);
-//		list3 = (ListView) findViewById(R.id.list03);
-//		list4 = (ListView) findViewById(R.id.list04);
 		list2.setXListViewListener(this);
 		list2.setOnScrollListener(this);
-//		list1.setOnItemClickListener(this);
 		list2.setOnItemClickListener(this);
 		list2.setPullLoadEnable(true);
 		list2.setPullLoadEnable(true);
-//		list3.setOnItemClickListener(this);
-//		list4.setOnItemClickListener(this);
 
-//		c1 = ServiceManager.getDbManager().query3DaysBeforeLocalSchedules(
-//				System.currentTimeMillis());
-		
-		TodayScheduleCursor = ServiceManager.getDbManager().queryTodayLocalSchedules(
-				System.currentTimeMillis());
-		
-//		c3 = ServiceManager.getDbManager().queryTomorrowLocalSchedules(
-//				System.currentTimeMillis());
-//		
-//		c4 = ServiceManager.getDbManager().queryWeekLocalSchedules(
-//				System.currentTimeMillis());
-		
-//		list1.setAdapter(new LocalScheduleAdapter(this, c1));
-		cursorToListData(TodayScheduleCursor,listdata);
-		hsa = new HistoryScheduleAdapter(this, listdata);
-		list2.setAdapter(hsa);
-		
-		if (TodayScheduleCursor.getCount() <= 0)
-		{
-			hsa.setNoSchedulePrompt(getMillisTimeByDate(curSelectedDate));
-		}
-		TodayScheduleCursor.close();
-		
-		
-//		list3.setAdapter(new LocalScheduleAdapter(this, c3));
-//		list4.setAdapter(new LocalScheduleAdapter(this, c4));
-
-//		layout1.setVisibility(View.GONE);
 		layout2.setVisibility(View.VISIBLE);
-//		layout3.setVisibility(View.GONE);
-//		layout4.setVisibility(View.GONE);
-
-//		tv1.setVisibility(View.GONE);
-//		tv2.setVisibility(View.GONE);
-//		tv3.setVisibility(View.GONE);
-//		tv4.setVisibility(View.GONE);
-
 		
 		gestureDetector = new GestureDetector(this);
         flipper = (ViewFlipper) findViewById(R.id.flipper);
         flipper.removeAllViews();
-       
-        
-       
-//		tv1.setOnClickListener(new View.OnClickListener() {
-//
-//			@Override
-//			public void onClick(View v) {
-//				tv1.setTextColor(Color.parseColor("#4f810f"));
-//				tv2.setTextColor(Color.parseColor("#252524"));
-//				tv3.setTextColor(Color.parseColor("#252524"));
-//				tv4.setTextColor(Color.parseColor("#252524"));
-//				layout1.setVisibility(View.VISIBLE);
-//				layout2.setVisibility(View.GONE);
-//				layout3.setVisibility(View.GONE);
-//				layout4.setVisibility(View.GONE);
-//			}
-//		});
-
-//		tv2.setOnClickListener(new View.OnClickListener() {
-//
-//			@Override
-//			public void onClick(View v) {
-//				tv2.setTextColor(Color.parseColor("#4f810f"));
-////				tv1.setTextColor(Color.parseColor("#252524"));
-//				tv3.setTextColor(Color.parseColor("#252524"));
-//				tv4.setTextColor(Color.parseColor("#252524"));
-////				layout1.setVisibility(View.GONE);
-//				layout2.setVisibility(View.VISIBLE);
-//				layout3.setVisibility(View.GONE);
-//				layout4.setVisibility(View.GONE);
-//			}
-//		});
-
-//		tv3.setOnClickListener(new View.OnClickListener() {
-//
-//			@Override
-//			public void onClick(View v) {
-//				tv3.setTextColor(Color.parseColor("#4f810f"));
-////				tv1.setTextColor(Color.parseColor("#252524"));
-////				tv2.setTextColor(Color.parseColor("#252524"));
-//				tv4.setTextColor(Color.parseColor("#252524"));
-////				layout1.setVisibility(View.GONE);
-//				layout2.setVisibility(View.GONE);
-//				layout3.setVisibility(View.VISIBLE);
-//				layout4.setVisibility(View.GONE);
-////				if (!tv2.isShown()) {
-////					tv2.setVisibility(View.VISIBLE);
-////				}
-//			}
-//		});
-//
-//		tv4.setOnClickListener(new View.OnClickListener() {
-//
-//			@Override
-//			public void onClick(View v) {
-//				tv4.setTextColor(Color.parseColor("#4f810f"));
-////				tv1.setTextColor(Color.parseColor("#252524"));
-////				tv2.setTextColor(Color.parseColor("#252524"));
-//				tv3.setTextColor(Color.parseColor("#252524"));
-////				layout1.setVisibility(View.GONE);
-//				layout2.setVisibility(View.GONE);
-//				layout3.setVisibility(View.GONE);
-//				layout4.setVisibility(View.VISIBLE);
-////				if (!tv2.isShown()) {
-////					tv2.setVisibility(View.VISIBLE);
-////				}
-//			}
-//		});
 	}
 
 @Override
@@ -343,6 +264,10 @@ private ViewFlipper flipper = null;
 		        
 		        addGridView();
 		        gridView.setAdapter(calV);
+		        
+		        listdata = calendarData.getMonthSchedule(curScrollYear, curScrollMonth);
+        		handler.sendEmptyMessage(LOAD_DATA_OVER);
+
 		        //flipper.addView(gridView);
 		        flipper.addView(gridView,0);
 		        current_date = (TextView) findViewById(R.id.current_date);
@@ -376,6 +301,7 @@ private ViewFlipper flipper = null;
 			data.share = c.getInt(c.getColumnIndex(DatabaseHelper.COLUMN_SCHEDULE_SHARE)) == 1;
 			data.notice_flag = c.getInt(c.getColumnIndex(DatabaseHelper.COLUMN_SCHEDULE_NOTICE_FLAG)) == 1;
 			data.type = c.getInt(c.getColumnIndex(DatabaseHelper.COLUMN_SCHEDULE_TYPE));
+			
 			listdata.add(data);
 		}
 	}
@@ -385,24 +311,15 @@ private ViewFlipper flipper = null;
 //		Toast.makeText(ScheduleScreen.this, "up", Toast.LENGTH_SHORT).show();
 //		tv1.setVisibility(View.VISIBLE);
 //		tv2.setVisibility(View.VISIBLE);
-		
-		Cursor c;
-		if (hsa.isEmpty())
-		{
-			c = ServiceManager.getDbManager().querySpecifiedNumPreSchedules(
-					getMillisTimeByDate(curSelectedDate),FRESH_LIMIT_NUM);
-		}
-		else
-		{
-			c = ServiceManager.getDbManager().querySpecifiedNumPreSchedules(
-					hsa.getEarliestTime(),FRESH_LIMIT_NUM);
-		}
-		List<ScheduleData> listdata = new ArrayList<ScheduleData>();
-		cursorToListData(c,listdata);
-		Collections.reverse(listdata);		/* 数据库查询时按照降序排列，因此此处需要将listdata中数据倒序 */
-		c.close();
-		hsa.addPreData(listdata);
-		list2.setSelection(1);
+		scrollToPreMonth();
+		new Thread()
+        {
+        	public void run() 
+        	{
+        		listdata = calendarData.getMonthSchedule(curScrollYear, curScrollMonth);
+        		handler.sendEmptyMessage(LOAD_DATA_OVER);
+        	};
+        }.start();
 		
 		onLoad();
 //		list2.setHeaderGone(false);
@@ -411,22 +328,16 @@ private ViewFlipper flipper = null;
 	@Override
 	public void onLoadMore() {
 		// TODO Auto-generated method stub
-		Cursor c;
-		if (hsa.isEmpty())
-		{
-			c = ServiceManager.getDbManager().querySpecifiedNumAftSchedules(
-					getMillisTimeByDate(curSelectedDate),FRESH_LIMIT_NUM);
-		}
-		else
-		{
-			c = ServiceManager.getDbManager().querySpecifiedNumAftSchedules(
-					hsa.getlatestTime(),FRESH_LIMIT_NUM);
-		}
-		List<ScheduleData> listdata = new ArrayList<ScheduleData>();
-		cursorToListData(c,listdata);
-		c.close();
-		hsa.addAfterData(listdata);
-		list2.setSelection(hsa.getCount());
+		scrollToAftMonth();
+		new Thread()
+        {
+        	public void run() 
+        	{
+        		listdata = calendarData.getMonthSchedule(curScrollYear, curScrollMonth);
+        		handler.sendEmptyMessage(LOAD_DATA_OVER);
+        	};
+        }.start();
+		
 		
 		onLoad();
 //		list2.setHeaderGone(false);
@@ -504,6 +415,19 @@ private ViewFlipper flipper = null;
 			this.flipper.setOutAnimation(AnimationUtils.loadAnimation(this,R.anim.push_left_out));
 			this.flipper.showNext();
 			flipper.removeViewAt(0);
+			
+			curScrollYear = Integer.parseInt(current_date.getText().toString().split("\\.")[0]);
+	    	curScrollMonth =  Integer.parseInt(current_date.getText().toString().split("\\.")[1]);
+	    	new Thread()
+	        {
+	        	public void run() 
+	        	{
+	        		listdata = calendarData.getMonthSchedule(curScrollYear, curScrollMonth);
+	        		handler.sendEmptyMessage(LOAD_DATA_OVER);
+	        	};
+	        }.start();
+			gototoday.setVisibility(View.INVISIBLE);
+			
 			return true;
 		} else if (e1.getX() - e2.getX() < -100) {
             //向右滑动
@@ -521,6 +445,19 @@ private ViewFlipper flipper = null;
 			this.flipper.setOutAnimation(AnimationUtils.loadAnimation(this,R.anim.push_right_out));
 			this.flipper.showPrevious();
 			flipper.removeViewAt(0);
+			
+			curScrollYear = Integer.parseInt(current_date.getText().toString().split("\\.")[0]);
+	    	curScrollMonth =  Integer.parseInt(current_date.getText().toString().split("\\.")[1]);
+	    	new Thread()
+	        {
+	        	public void run() 
+	        	{
+	        		listdata = calendarData.getMonthSchedule(curScrollYear, curScrollMonth);
+	        		handler.sendEmptyMessage(LOAD_DATA_OVER);
+	        	};
+	        }.start();
+			gototoday.setVisibility(View.INVISIBLE);
+			
 			return true;
 		}
 		return false;
@@ -625,10 +562,36 @@ private ViewFlipper flipper = null;
 	{
 		String date = "";
 		SimpleDateFormat sdf = new SimpleDateFormat("yyyy.MM.dd");
-		Date d = new Date(System.currentTimeMillis());
+		Date d = new Date(time);
 		date = sdf.format(d);
 		
 		return date;
+	}
+	
+	public void scrollToPreMonth()
+	{
+		if (curScrollMonth > 1)
+		{
+			curScrollMonth--;
+		}
+		else
+		{
+			curScrollMonth = 12;
+			curScrollYear--;
+		}
+	}
+	
+	public void scrollToAftMonth()
+	{
+		if (curScrollMonth < 12)
+		{
+			curScrollMonth++;
+		}
+		else
+		{
+			curScrollMonth = 1;
+			curScrollYear++;
+		}
 	}
 	
 	//添加gridview
@@ -697,18 +660,15 @@ private ViewFlipper flipper = null;
 				{
 					curSelectedDate = date;
 
-					Cursor c = ServiceManager.getDbManager().queryTodayLocalSchedules(getMillisTimeByDate(curSelectedDate));
-					if (c.getCount() > 0)
+					if (!hsa.isEmpty())
 					{
-						List<ScheduleData> listdata = new ArrayList<ScheduleData>();
-						cursorToListData(c,listdata);
-						hsa.setTodayData(listdata);
+						int pos = hsa.getTodayPosition(curSelectedDate);
+						if (pos >= 0)
+						{
+							list2.setSelection(pos + 1);	/* 最上面的上翻更新数据也算一个位置,,所以+1 */
+						}
 					}
-					else
-					{
-						hsa.setNoSchedulePrompt(getMillisTimeByDate(curSelectedDate));
-					}
-					c.close();
+
 				}
 				gototoday.setVisibility(View.INVISIBLE);
 			}
@@ -739,6 +699,18 @@ private ViewFlipper flipper = null;
 			this.flipper.setOutAnimation(AnimationUtils.loadAnimation(this,R.anim.push_left_out));
 			this.flipper.showNext();
 			flipper.removeViewAt(0);
+
+			curScrollYear = Integer.parseInt(current_date.getText().toString().split("\\.")[0]);
+	    	curScrollMonth = Integer.parseInt(current_date.getText().toString().split("\\.")[1]);
+	    	new Thread()
+	        {
+	        	public void run() 
+	        	{
+	        		listdata = calendarData.getMonthSchedule(curScrollYear, curScrollMonth);
+	        		handler.sendEmptyMessage(LOAD_DATA_OVER);
+	        	};
+	        }.start();
+	    	
 			break;
 		case R.id.next_year:
 			 //向右滑动
@@ -756,6 +728,18 @@ private ViewFlipper flipper = null;
 			this.flipper.setOutAnimation(AnimationUtils.loadAnimation(this,R.anim.push_right_out));
 			this.flipper.showPrevious();
 			flipper.removeViewAt(0);
+			
+			curScrollYear = Integer.parseInt(current_date.getText().toString().split("\\.")[0]);
+	    	curScrollMonth = Integer.parseInt(current_date.getText().toString().split("\\.")[1]);
+	    	new Thread()
+	        {
+	        	public void run() 
+	        	{
+	        		listdata = calendarData.getMonthSchedule(curScrollYear, curScrollMonth);
+	        		handler.sendEmptyMessage(LOAD_DATA_OVER);
+	        	};
+	        }.start();
+	    	
 			break;
 		case R.id.current_day:
 			int xMonth = jumpMonth;
@@ -785,18 +769,22 @@ private ViewFlipper flipper = null;
 	        }
 			flipper.removeViewAt(0);
 			
-			Cursor c = ServiceManager.getDbManager().queryTodayLocalSchedules(System.currentTimeMillis());
-			if (c.getCount() > 0)
+
+			if (Integer.parseInt(current_date.getText().toString().split("\\.")[0]) != curScrollYear
+					|| Integer.parseInt(current_date.getText().toString().split("\\.")[1]) != curScrollMonth)
 			{
-				List<ScheduleData> listdata = new ArrayList<ScheduleData>();
-				cursorToListData(c,listdata);
-				hsa.setTodayData(listdata);
+				curScrollYear = Integer.parseInt(current_date.getText().toString().split("\\.")[0]);
+		    	curScrollMonth = Integer.parseInt(current_date.getText().toString().split("\\.")[1]);
+		    	new Thread()
+		        {
+		        	public void run() 
+		        	{
+		        		listdata = calendarData.getMonthSchedule(curScrollYear, curScrollMonth);
+		        		handler.sendEmptyMessage(LOAD_OVERD_GOTO_TODAY);
+		        	};
+		        }.start();
 			}
-			else
-			{
-				hsa.setNoSchedulePrompt(System.currentTimeMillis());
-			}
-			c.close();
+			
 			break;
 		}
 		
@@ -808,23 +796,8 @@ private ViewFlipper flipper = null;
 			ScheduleScreen.this.runOnUiThread(new Runnable(){
 				@Override
 				public void run() {
-//				    c1.requery();
-					
-					Cursor c = ServiceManager.getDbManager().queryTodayLocalSchedules(System.currentTimeMillis());
-					if (c.getCount() > 0)
-					{
-						List<ScheduleData> listdata = new ArrayList<ScheduleData>();
-						cursorToListData(c,listdata);
-						hsa.setTodayData(listdata);
-					}
-					else
-					{
-						hsa.setNoSchedulePrompt(getMillisTimeByDate(curSelectedDate));
-					}
-					c.close();
-					
-//				    c3.requery();
-//				    c4.requery();
+					listdata = calendarData.getMonthSchedule(curScrollYear, curScrollMonth);
+	        		handler.sendEmptyMessage(LOAD_DATA_OVER);
 				}});
 			break;
 		}

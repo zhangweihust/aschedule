@@ -183,14 +183,15 @@
                         android:layout_height="wrap_content"
                         android:cacheColorHint="#00000000"
                         android:listSelector="@drawable/listview_selector"
-                        android:divider="@drawable/listview_divider" />
+                        android:dividerHeight="1px"
+                        android:divider="#d6dfe7" />
                     
                     <TextView
                         android:id="@+id/gototoday"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_gravity="right"
-                        android:layout_marginTop="5dip"
+                        android:layout_marginTop="30dip"
                         android:gravity="center"
                         android:text="回今天"
                         android:textColor="@android:color/white"

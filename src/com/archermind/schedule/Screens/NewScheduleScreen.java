@@ -278,6 +278,7 @@ public class NewScheduleScreen extends Screen implements OnClickListener {
 				weekType = alarmPopwindow.getWeekValue();
 				remindCycle = alarmPopwindow.getRepeatType();
 				mType = eventTypeDialog.getEventType();
+				cv.put(DatabaseHelper.COLUMN_SCHEDULE_USER_ID, ServiceManager.getUserId());
 				cv.put(DatabaseHelper.COLUMN_SCHEDULE_TYPE, mType);
 				cv.put(DatabaseHelper.COLUMN_SCHEDULE_SHARE, mShare);
 				cv.put(DatabaseHelper.COLUMN_SCHEDULE_OPER_FLAG, oper_flag);

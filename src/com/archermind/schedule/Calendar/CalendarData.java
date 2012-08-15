@@ -5,7 +5,10 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.Date;
+import java.util.List;
 import java.util.Locale;
 
 import android.database.Cursor;
@@ -17,6 +20,7 @@ import com.archermind.schedule.Model.ScheduleBean;
 import com.archermind.schedule.Provider.DatabaseHelper;
 import com.archermind.schedule.Provider.DatabaseManager;
 import com.archermind.schedule.Services.ServiceManager;
+import com.archermind.schedule.Utils.ScheduleData;
 
 public class CalendarData {
     private DatabaseManager database;
@@ -80,6 +84,7 @@ public class CalendarData {
     private String sch_day = "";
 
     private int mark_count[];
+    private List<ScheduleData> scheduleList = new ArrayList<ScheduleData>();
 
     public CalendarData(int jumpMonth, int jumpYear, int year_c, int month_c, int day_c, int mark,
             int flagType) {
@@ -239,6 +244,61 @@ public class CalendarData {
 
     }
 
+    public List<ScheduleData> getMonthSchedule(int year,int month)
+    {
+    	int i;
+    	int days = SpecialCalendar.getDaysOfMonth(SpecialCalendar.isLeapYear(year), month);
+    	String startData = "";
+        String dayOfYear = "";
+        String dayOfMonth = "";
+        String dayOfWeek = "";
+        List<ScheduleData> todayscheduleList = new ArrayList<ScheduleData>();
+        long starTimeInMillis = 0;
+    	
+        scheduleList.clear();
+    	for (i = 1; i < days; i++)
+    	{
+    		 startData = year + "." + month + "." + i;
+             dayOfYear = month + "." + i;
+             dayOfMonth = String.valueOf(i);
+             dayOfWeek = SpecialCalendar.getNumberWeekDay(year, month,i);
+
+             Cursor cursor = null;
+
+             starTimeInMillis = getMillisTimeByDate(startData);
+             cursor = database.queryIsMarkWithDay(starTimeInMillis, dayOfYear, dayOfMonth,
+                     dayOfWeek);
+             
+             todayscheduleList.clear();
+             while (cursor.moveToNext()) {
+            	 ScheduleData scheduledata = new ScheduleData();
+                 scheduledata.id = cursor.getInt(cursor.getColumnIndex(DatabaseHelper.COLUMN_SCHEDULE_ID));
+                 scheduledata.content = cursor.getString(cursor.getColumnIndex(DatabaseHelper.COLUMN_SCHEDULE_CONTENT));
+                 scheduledata.time = cursor.getLong(cursor.getColumnIndex(DatabaseHelper.COLUMN_SCHEDULE_START_TIME));
+                 scheduledata.share = cursor.getInt(cursor.getColumnIndex(DatabaseHelper.COLUMN_SCHEDULE_SHARE)) == 1;
+                 scheduledata.notice_flag = cursor.getInt(cursor.getColumnIndex(DatabaseHelper.COLUMN_SCHEDULE_NOTICE_FLAG)) == 1;
+                 scheduledata.type = cursor.getInt(cursor.getColumnIndex(DatabaseHelper.COLUMN_SCHEDULE_TYPE));
+                 scheduledata.pastsecomds = scheduledata.time % (24 * 3600 * 1000);
+                 scheduledata.time = starTimeInMillis + scheduledata.pastsecomds;
+                 todayscheduleList.add(scheduledata);
+             }
+             Collections.sort(todayscheduleList,new SortByPastsecond());
+             ScheduleData scheduledata = new ScheduleData();
+             scheduledata.id = -1;
+             scheduledata.time = starTimeInMillis;
+             scheduleList.add(scheduledata);
+             
+             scheduleList.addAll(todayscheduleList);
+             
+             
+             if (cursor != null) {
+                 cursor.close();
+             }
+    	}
+    	
+    	return scheduleList;
+    }
+    
     public String getShowYear() {
         return showYear;
     }
@@ -306,5 +366,27 @@ public class CalendarData {
     public int[] getSchDateTagFlag() {
         return this.schDateTagFlag;
     }
+    
+    class SortByPastsecond implements Comparator
+    {
 
+		@Override
+		public int compare(Object object1, Object object2) {
+			// TODO Auto-generated method stub
+			long time1 = ((ScheduleData)object1).pastsecomds;
+			long time2 = ((ScheduleData)object2).pastsecomds;
+			if (time1 > time2)
+			{
+				return 1;
+			}
+			else if (time1 == time2)
+			{
+				return 0;
+			}
+			
+			return -1;
+		}
+    	
+    }
+    
 }
