@@ -303,7 +303,7 @@ public class NewScheduleScreen extends Screen implements OnClickListener {
 				cv.put(DatabaseHelper.COLUMN_SCHEDULE_NOTICE_MONTHDAY, monthday);
 				if (DatabaseHelper.SCHEDULE_NOTICE_PERIOD_MODE_YEAR
 						.equals(remindCycle)) {
-					yearday = DateTimeUtils.time2String("M", startTime);
+					yearday = DateTimeUtils.time2String("M.d", startTime);
 				}
 				cv.put(DatabaseHelper.COLUMN_SCHEDULE_NOTICE_YEARDAY, yearday);
 				cv.put(DatabaseHelper.COLUMN_SCHEDULE_CONTENT, scheduleText);

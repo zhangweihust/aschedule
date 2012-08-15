@@ -2,10 +2,13 @@ package com.archermind.schedule.Dialog;
 
 import com.archermind.schedule.R;
 import com.archermind.schedule.Events.EventArgs;
+import com.archermind.schedule.Provider.DatabaseHelper;
 import com.archermind.schedule.Screens.EditScheduleScreen;
 import com.archermind.schedule.Screens.ScheduleScreen;
+import com.archermind.schedule.Services.ServiceManager;
 
 import android.app.Dialog;
+import android.content.ContentValues;
 import android.content.Context;
 import android.content.Intent;
 import android.view.Gravity;
@@ -79,6 +82,10 @@ public class ScheduleOperateDialog implements OnClickListener{
 			context.startActivity(mIntent);
 			break;
 		case R.id.schedule_operate_delete:
+			ContentValues contentvalues = new ContentValues();
+			contentvalues.put(DatabaseHelper.COLUMN_SCHEDULE_OPER_FLAG, DatabaseHelper.SCHEDULE_OPER_DELETE);
+			ServiceManager.getDbManager().updateLocalSchedules(contentvalues, (Integer) args.getExtra("id"));
+			ServiceManager.getServerInterface().uploadSchedule("0", "1");
 			break;
 		case R.id.schedule_operate_goback:
 			break;

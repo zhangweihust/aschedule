@@ -189,7 +189,7 @@ public class DatabaseManager {
 		+DatabaseHelper.COLUMN_SCHEDULE_NOTICE_PERIOD+" ="+" '"+DatabaseHelper.SCHEDULE_NOTICE_PERIOD_MODE_NONE+"' and "
 		+DatabaseHelper.COLUMN_SCHEDULE_START_TIME+" <="+" '"+String.valueOf(DateTimeUtils.getToday(
 				Calendar.PM, timeInMillis))+"' and "
-		+DatabaseHelper.COLUMN_SCHEDULE_NOTICE_END+" >="+" '"+String.valueOf(DateTimeUtils.getToday(
+		+DatabaseHelper.COLUMN_SCHEDULE_START_TIME+" >="+" '"+String.valueOf(DateTimeUtils.getToday(
 				Calendar.AM, timeInMillis))+"')"
 		;
 		return database.rawQuery(sql, null);

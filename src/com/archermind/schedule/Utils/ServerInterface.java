@@ -257,9 +257,11 @@ public class ServerInterface {
 	 * //ERROR_WEB_ERROR —— 网络异常或其他原因注册失败
 	 */
 	public String login(String username, String password, String imsi) {
-		username = username.replace(" ", "");
-		password = password.replace(" ", "");
-		imsi = imsi.replace(" ", "");
+		if (username != null && password != null && imsi != null) {
+			username = username.replace(" ", "");
+			password = password.replace(" ", "");
+			imsi = imsi.replace(" ", "");
+		}
 		Map<String, String> map = new HashMap<String, String>();
 		map.put("user", username);
 		map.put("password", password);
@@ -881,5 +883,45 @@ public class ServerInterface {
 						"http://player.archermind.com/ci/index.php/aschedule/Binlogin");
 		System.out.println("Bin_Info===="+ret);
 		return ret;
+	}
+	/*获取手机验证码
+	 * appid 1 爱音乐 2 话费通 3 微日程 4 微笔记
+	 * Mobile 手机号
+	 * Action：default*/
+	public String sendSMS(String appid,String Mobile,String Action) {
+		Map<String, String> map = new HashMap<String, String>();
+		map.put("appid", appid);
+		map.put("Mobile", Mobile);
+		map.put("Action", Action);
+		String ret = HttpUtils
+				.doPost(map,
+						"http://player.archermind.com/ci/index.php/SMSUtils/sendSMS");
+		System.out.println("sendSMS===="+ret);
+		return ret;
+	}
+	/*获取手机验证码
+	 * appid 1 爱音乐 2 话费通 3 微日程 4 微笔记
+	 * smsID sendSMS返回的id号，对应一条消息
+	 * code  验证码
+	 * Action：default*/
+	public int checkSMS(String appid,String code,String smsID,String Action,String user_id,String tel) {
+		Map<String, String> map = new HashMap<String, String>();
+		map.put("appid", appid);
+		map.put("code", code);
+		map.put("smsID", smsID);
+		map.put("Action", Action);
+		map.put("user_id", user_id);
+		map.put("tel", tel);
+		String ret = HttpUtils
+				.doPost(map,
+						"http://player.archermind.com/ci/index.php/SMSUtils/checkSMS");
+		System.out.println("sendSMS===="+ret);
+		int result =0;
+		try{
+			result =Integer.parseInt(ret);
+		}catch (Exception e){
+			result =-1;
+		}
+		return result;
 	}
 }
