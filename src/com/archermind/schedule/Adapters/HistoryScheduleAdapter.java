@@ -65,9 +65,9 @@ public class HistoryScheduleAdapter extends BaseAdapter{
 			convertView = inflater.inflate(R.layout.local_schedule_item, null);
 			item = new ScheduleItem();
 			item.date = (TextView) convertView.findViewById(R.id.date);
-			item.yearandmonth = (TextView) convertView.findViewById(R.id.yearandmonth);
+//			item.yearandmonth = (TextView) convertView.findViewById(R.id.yearandmonth);
 			item.time = (TextView) convertView.findViewById(R.id.time);
-			item.week = (TextView) convertView.findViewById(R.id.week);
+//			item.week = (TextView) convertView.findViewById(R.id.week);
 			item.location = (TextView) convertView.findViewById(R.id.location);
 			item.content = (TextView) convertView.findViewById(R.id.content);
 			item.weather = (ImageView) convertView.findViewById(R.id.weather);
@@ -75,7 +75,7 @@ public class HistoryScheduleAdapter extends BaseAdapter{
 			item.alarm = (ImageView) convertView.findViewById(R.id.alarm);
 			item.share = (ImageView) convertView.findViewById(R.id.share);
 			item.important = (ImageView) convertView.findViewById(R.id.important);
-			item.dateLayout = convertView.findViewById(R.id.date_layout);
+//			item.dateLayout = convertView.findViewById(R.id.date_layout);
 			
 			item.title_date = (TextView) convertView.findViewById(R.id.schedule_date);
 			item.title_week = (TextView) convertView.findViewById(R.id.schedule_week);
@@ -134,13 +134,13 @@ public class HistoryScheduleAdapter extends BaseAdapter{
 //				item.date.setText(DateTimeUtils.time2String("dd", data.time));
 //				item.yearandmonth.setText(DateTimeUtils.time2String("yyyy年MM月", data.time));
 //			} else {
-				item.dateLayout.setVisibility(View.INVISIBLE);
-				item.yearandmonth.setVisibility(View.GONE);
+//				item.dateLayout.setVisibility(View.INVISIBLE);
+//				item.yearandmonth.setVisibility(View.GONE);
 //			}
 			if(data.notice_flag){
 				item.alarm.setVisibility(View.VISIBLE);
 			} else {
-				item.alarm.setVisibility(View.INVISIBLE);
+				item.alarm.setVisibility(View.GONE);
 			}
 			if(data.share){
 				item.share.setVisibility(View.VISIBLE);
@@ -325,9 +325,9 @@ public class HistoryScheduleAdapter extends BaseAdapter{
 	
 	private class ScheduleItem{
 		private TextView date;
-		private TextView week;
+//		private TextView week;
 		private TextView location;
-		private TextView yearandmonth;
+//		private TextView yearandmonth;
 		private TextView time;
 		private TextView content;
 		private ImageView weather;
@@ -336,7 +336,7 @@ public class HistoryScheduleAdapter extends BaseAdapter{
 		private ImageView share;
 		private ImageView important;
 		private int type;
-		private View dateLayout;
+//		private View dateLayout;
 		
 		private TextView title_date;
 		private TextView title_week;

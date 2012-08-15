@@ -57,65 +57,14 @@
     <RelativeLayout
         android:id="@+id/local_schedule_item_info"
         android:layout_width="fill_parent"
-    	android:layout_height="wrap_content" >
-	    <RelativeLayout
-	        android:id="@+id/date_layout"
-	        android:layout_width="52.0dip"
-	        android:layout_height="wrap_content"
-	        android:layout_marginLeft="10dip" >
-	
-	        <TextView
-	            android:id="@+id/date"
-	            android:layout_width="wrap_content"
-	            android:layout_height="wrap_content"
-	            android:layout_centerHorizontal="true"
-	            android:layout_marginTop="12dip"
-	            android:gravity="center"
-	            android:text="12"
-	            android:textColor="#252524"
-	            android:textSize="28sp"
-	            android:textStyle="bold" />
-	
-	        <TextView
-	            android:id="@+id/week"
-	            android:layout_width="wrap_content"
-	            android:layout_height="wrap_content"
-	            android:layout_below="@id/date"
-	            android:layout_centerHorizontal="true"
-	            android:layout_gravity="center"
-	            android:gravity="center"
-	            android:text="星期六"
-	            android:textColor="#252524"
-	            android:textSize="10sp" />
-	
-	        <ImageView
-	            android:id="@+id/weather"
-	            android:layout_width="20dip"
-	            android:layout_height="20dip"
-	            android:layout_below="@id/week"
-	            android:layout_marginLeft="4.0dip"
-	            android:src="@drawable/sun" />
-	
-	        <TextView
-	            android:id="@+id/location"
-	            android:layout_width="wrap_content"
-	            android:layout_height="wrap_content"
-	            android:layout_alignBottom="@id/weather"
-	            android:layout_alignTop="@id/weather"
-	            android:layout_below="@id/week"
-	            android:layout_marginLeft="2.0dip"
-	            android:layout_toRightOf="@id/weather"
-	            android:gravity="center"
-	            android:text="武汉"
-	            android:textColor="#252524"
-	            android:textSize="10sp" />
-	    </RelativeLayout>
+    	android:layout_height="wrap_content"
+    	android:layout_marginLeft="@dimen/local_schedule_type_left_distance" >
+	    
 	
 	    <RelativeLayout
 	        android:layout_width="fill_parent"
 	        android:layout_height="fill_parent"
 	        android:layout_alignParentRight="true"
-	        android:layout_toRightOf="@id/date_layout"
 	        android:orientation="horizontal" >
 	
 	        <ImageView
@@ -123,32 +72,22 @@
 	            android:layout_width="wrap_content"
 	            android:layout_height="wrap_content"
 	            android:layout_marginLeft="1.5dip"
-	            android:layout_marginTop="23.0dip"
+	            android:layout_marginTop="10.0dip"
 	            android:gravity="center"
 	             />
 	
 	        <RelativeLayout
 	            android:layout_width="fill_parent"
 	            android:layout_height="wrap_content"
-	            android:layout_marginTop="10.0dip"
+	            android:layout_alignTop="@id/type"
 	            android:layout_marginLeft="14.0dip"
 	            android:gravity="center"
 	            android:layout_toRightOf="@id/type" >
 	
 	            <TextView
-	                android:id="@+id/yearandmonth"
-	                android:layout_width="wrap_content"
-	                android:layout_height="wrap_content"
-	                android:textColor="#252524"
-	                android:textSize="12sp"
-	                android:visibility="gone" />
-	            <TextView
 	                android:id="@+id/time"
 	                android:layout_width="wrap_content"
 	                android:layout_height="wrap_content"
-	                android:layout_alignBottom="@id/yearandmonth"
-	                android:layout_alignTop="@id/yearandmonth"
-	                android:layout_toRightOf="@id/yearandmonth"
 	                android:background="@drawable/pm"
 	                android:text="6:30"
 	                android:textColor="#252524"
@@ -188,6 +127,10 @@
 	                android:layout_below="@id/important"
 	                android:text="have a good time!"
 	                android:textColor="#252524" />
+	            <TextView
+	                android:layout_width="wrap_content"
+	                android:layout_height="10dip"
+	                android:layout_below="@id/content" />
 	        </RelativeLayout>
 	    </RelativeLayout>
     </RelativeLayout>

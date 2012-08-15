@@ -45,4 +45,5 @@
 	<dimen name="time_select_button_marginLeft">20dp</dimen>
 	<!--weather_layout.xml.xml -->
 	<dimen name="weather_max_temp_textsize">20dp</dimen>  
+	<dimen name="local_schedule_type_left_distance">62dip</dimen>
 </resources>

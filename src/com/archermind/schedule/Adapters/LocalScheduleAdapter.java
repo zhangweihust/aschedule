@@ -39,13 +39,13 @@ public class LocalScheduleAdapter  extends CursorAdapter {
 		} else if("下午".equals(amORpm)){
 			item.time.setBackgroundResource(R.drawable.pm);
 		}
-		if(first){
-			item.dateLayout.setVisibility(View.VISIBLE);
-			item.week.setText(DateTimeUtils.time2String("EEEE", time));
-			item.date.setText(DateTimeUtils.time2String("dd", time));
-		} else {
-			item.dateLayout.setVisibility(View.INVISIBLE);
-		}
+//		if(first){
+//			item.dateLayout.setVisibility(View.VISIBLE);
+//			item.week.setText(DateTimeUtils.time2String("EEEE", time));
+//			item.date.setText(DateTimeUtils.time2String("dd", time));
+//		} else {
+//			item.dateLayout.setVisibility(View.INVISIBLE);
+//		}
 		if(alarm){
 			item.alarm.setVisibility(View.GONE);
 		} else {
@@ -93,7 +93,7 @@ public class LocalScheduleAdapter  extends CursorAdapter {
 		ScheduleItem item = new ScheduleItem();
 		item.date = (TextView) view.findViewById(R.id.date);
 		item.time = (TextView) view.findViewById(R.id.time);
-		item.week = (TextView) view.findViewById(R.id.week);
+//		item.week = (TextView) view.findViewById(R.id.week);
 		item.location = (TextView) view.findViewById(R.id.location);
 		item.content = (TextView) view.findViewById(R.id.content);
 		item.weather = (ImageView) view.findViewById(R.id.weather);
@@ -101,14 +101,14 @@ public class LocalScheduleAdapter  extends CursorAdapter {
 		item.alarm = (ImageView) view.findViewById(R.id.alarm);
 		item.share = (ImageView) view.findViewById(R.id.share);
 		item.important = (ImageView) view.findViewById(R.id.important);
-		item.dateLayout = view.findViewById(R.id.date_layout);
+//		item.dateLayout = view.findViewById(R.id.date_layout);
 		view.setTag(R.layout.local_schedule_item,item);
 		return view;
 	}
 	
 	private class ScheduleItem{
 		private TextView date;
-		private TextView week;
+//		private TextView week;
 		private TextView location;
 		private TextView time;
 		private TextView content;
@@ -118,7 +118,7 @@ public class LocalScheduleAdapter  extends CursorAdapter {
 		private ImageView share;
 		private ImageView important;
 		private int type;
-		private View dateLayout;
+//		private View dateLayout;
 	}
 
 
