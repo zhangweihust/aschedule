@@ -43,8 +43,11 @@ public class HttpUtils implements Runnable{
 			UrlEncodedFormEntity p_entity = new UrlEncodedFormEntity(pairs,
 					HTTP.UTF_8);
 
-			httpPost.setEntity(p_entity);			
-			//httpPost.setHeader("Cookie", "sid=" + "hhtest");
+			httpPost.setEntity(p_entity);
+			if(httphead!=null && !httphead.equals("")){
+				httphead= httphead.replace("\r\n", "");
+			}
+			httpPost.setHeader("Cookie", "sid=" + httphead);
 			HttpResponse response = client.execute(httpPost);
 			
 			if(response.getStatusLine().getStatusCode() == 200){
@@ -57,7 +60,7 @@ public class HttpUtils implements Runnable{
 //						}
 						httphead = httphead + "header:" + head[i] + "\r\n";
 					}
-					System.out.println("xiaopashu-------:"+httphead);
+					//System.out.println("xiaopashu-------:"+httphead);
 					httphead =java.net.URLDecoder.decode(httphead ,"utf8");
 //					Pattern p = Pattern.compile("s:32:\"([^\"]+)\"");
 //					Matcher m = p.matcher(httphead);
@@ -70,7 +73,7 @@ public class HttpUtils implements Runnable{
 					if(httphead.indexOf("sid=")>0)
 						httphead =httphead.substring(httphead.indexOf("sid=")+4);
 					else
-						httphead ="xiaopashu";
+						httphead ="";
 					System.out.println("xiaopashu:"+httphead);
 				}
 				String strResult = EntityUtils.toString(response.getEntity(),HTTP.UTF_8);

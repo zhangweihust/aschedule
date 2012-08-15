@@ -395,6 +395,20 @@ public class ServerInterface {
 			return -1;  // 消息发送失败
 		}
 	}
+	//接受信息回执
+	public int acceptConfirm(String user_id,String duser_id) {
+		Map<String, String> map = new HashMap<String, String>();
+		map.put("user_id", user_id);
+		map.put("duser_id", duser_id);
+		String ret = HttpUtils
+				.doPost(map,
+						"http://player.archermind.com/ci/index.php/aschedule/acceptConfirm");
+		if (ret.equals("0")){
+			return 0; // 消息发送成功
+		}else{
+			return -1;  // 消息发送失败
+		}
+	}
 	public int removeFriend(String user_id, String duser_id) {
 		Map<String, String> map = new HashMap<String, String>();
 		map.put("user_id", user_id);
@@ -490,19 +504,6 @@ public class ServerInterface {
 									 * notice_time, notice_period, notice_week,
 									 * notice_start, notice_end, content...
 									 */) {
-//		int userID = 3;
-//		int share = 1;
-//		int type = 4;
-//		String start_time = "13311111111";
-//		String update_time = "";
-//		String city = "";
-//		int notice_time = 0;
-//		String notice_period = "";
-//		String notice_week = "";
-//		String notice_start = "";
-//		String notice_end = "";
-//		String content = "xiaopashu test!";
-//		String oper_flag = "A";
 
 		int result = 0;
 		int tid = 0;
@@ -525,22 +526,23 @@ public class ServerInterface {
 					map.put("start_time",
 							cursor.getString(cursor
 									.getColumnIndex(DatabaseHelper.COLUMN_SCHEDULE_START_TIME)));
-					map.put("first_flag",
-							cursor.getString(cursor
-									.getColumnIndex(DatabaseHelper.COLUMN_SCHEDULE_FIRST_FLAG)));
-					map.put("city", "武汉");
+//					map.put("first_flag",
+//							cursor.getString(cursor
+//									.getColumnIndex(DatabaseHelper.COLUMN_SCHEDULE_FIRST_FLAG)));
+					//map.put("city", "武汉");
+					//notice_time 改为是否有闹钟的标识
 					map.put("notice_time",
 							Integer.toString(cursor.getInt(cursor
-									.getColumnIndex(DatabaseHelper.COLUMN_SCHEDULE_NOTICE_TIME))));
+									.getColumnIndex(DatabaseHelper.COLUMN_SCHEDULE_NOTICE_FLAG))));
 					map.put("notice_period",
 							cursor.getString(cursor
 									.getColumnIndex(DatabaseHelper.COLUMN_SCHEDULE_NOTICE_PERIOD)));
 					map.put("notice_week",
 							cursor.getString(cursor
 									.getColumnIndex(DatabaseHelper.COLUMN_SCHEDULE_NOTICE_WEEK)));
-//					map.put("notice_start",
-//							cursor.getString(cursor
-//									.getColumnIndex(DatabaseHelper.COLUMN_SCHEDULE_NOTICE_START)));
+					map.put("notice_start",
+							cursor.getString(cursor
+									.getColumnIndex(DatabaseHelper.COLUMN_SCHEDULE_NOTICE_DAY)));
 					map.put("notice_end",
 							cursor.getString(cursor
 									.getColumnIndex(DatabaseHelper.COLUMN_SCHEDULE_NOTICE_END)));
@@ -582,8 +584,12 @@ public class ServerInterface {
 								.doPost(map,
 										"http://player.archermind.com/ci/index.php/aschedule/uploadSchedule");
 						// ContentValues cv = new ContentValues();
-						System.out.println("xiaopashu test!=======" + ret);
-						if (Integer.parseInt(ret) > 0) {				
+						try{
+							result =Integer.parseInt(ret);
+						}catch (Exception e){
+							result =-1;
+						}
+						if (result > 0) {				
 							ContentValues cv = new ContentValues();
 							cv.put(DatabaseHelper.COLUMN_SCHEDULE_T_ID, ret);
 							cv.put(DatabaseHelper.COLUMN_SCHEDULE_OPER_FLAG,
@@ -604,8 +610,12 @@ public class ServerInterface {
 						String ret = HttpUtils
 								.doPost(map,
 										"http://player.archermind.com/ci/index.php/aschedule/uploadSchedule");
-
-						if (Integer.parseInt(ret) >= 0) {
+						try{
+							result =Integer.parseInt(ret);
+						}catch (Exception e){
+							result =-1;
+						}
+						if (result >= 0) {
 
 							ContentValues cv = new ContentValues();
 							cv.put(DatabaseHelper.COLUMN_SCHEDULE_UPDATE_TIME,
@@ -627,8 +637,12 @@ public class ServerInterface {
 						String ret = HttpUtils
 								.doPost(map,
 										"http://player.archermind.com/ci/index.php/aschedule/uploadSchedule");
-
-						if (Integer.parseInt(ret) >= 0) {
+						try{
+							result =Integer.parseInt(ret);
+						}catch (Exception e){
+							result =-1;
+						}
+						if (result >= 0) {
 
 							// 删除当前记录
 							ServiceManager
