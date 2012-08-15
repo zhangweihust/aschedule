@@ -68,34 +68,7 @@ public class DatabaseManager {
 				null, null, null);
 	}
 
-	public void deleteLocalSchedules(int id, boolean firstFlag,
-			long timeInMillis) {
-		ContentValues contentvalues = new ContentValues();
-		contentvalues.put(DatabaseHelper.COLUMN_SCHEDULE_OPER_FLAG, DatabaseHelper.SCHEDULE_OPER_DELETE);
-		database.update(DatabaseHelper.TAB_LOCAL_SCHEDULE, contentvalues,
-				DatabaseHelper.COLUMN_SCHEDULE_ID + " =? ",
-				new String[] { String.valueOf(id) });
-		if (firstFlag) {// 如果该日程是一天的第一条日程，则修改该天的第二条日程的标志位
-			Cursor c = queryTodayLocalSchedules(timeInMillis);
-			if (c.getCount() > 0) {
-				c.moveToFirst();
-				int _id = c.getInt(c
-						.getColumnIndex(DatabaseHelper.COLUMN_SCHEDULE_ID));
-				ContentValues values = new ContentValues();
-				updateLocalSchedules(values, _id);
-				c.close();
-			}
-		}
-		eventService.onUpdateEvent(new EventArgs(EventTypes.LOCAL_SCHEDULE_UPDATE));
-	}
-	
-	
 
-	public void updateLocalSchedules(ContentValues values, int id) {
-		database.update(DatabaseHelper.TAB_LOCAL_SCHEDULE, values,
-				DatabaseHelper.COLUMN_SCHEDULE_ID + " =? ",
-				new String[] { String.valueOf(id) });
-	}
 
 	public Cursor queryWeekLocalSchedules(long timeInMillis) {
 		return database
@@ -235,6 +208,17 @@ public class DatabaseManager {
 						DatabaseHelper.COLUMN_SCHEDULE_START_TIME + " DESC " + " LIMIT ? , ? ");
 	}
 	
+	public Cursor queryShareSchedules() {
+		return database
+				.query(DatabaseHelper.TAB_SHARE_SCHEDULE,
+						new String[] { DatabaseHelper.COLUMN_SCHEDULE_UPDATE_TIME },
+						null,
+						null, 
+						null,
+						null,
+						DatabaseHelper.COLUMN_SCHEDULE_UPDATE_TIME + " DESC ");
+	}
+	
 	public Cursor queryShareSchedules(long time, int size) {
 		return database
 				.query(DatabaseHelper.TAB_SHARE_SCHEDULE,
@@ -372,8 +356,6 @@ public void deleteFriend(String id){
 		 database.update(DatabaseHelper.TAB_LOCAL_SCHEDULE, cv,
 				DatabaseHelper.COLUMN_SCHEDULE_ID + " =? ",
 				new String[] { String.valueOf(id) });
-		eventService.onUpdateEvent(new EventArgs(EventTypes.LOCAL_SCHEDULE_UPDATE));
-
 	}
 
 	public Cursor queryScheduleById(long id) {

@@ -1,22 +1,22 @@
 package com.archermind.schedule.Dialog;
 
-import com.archermind.schedule.R;
-import com.archermind.schedule.Events.EventArgs;
-import com.archermind.schedule.Provider.DatabaseHelper;
-import com.archermind.schedule.Screens.EditScheduleScreen;
-import com.archermind.schedule.Screens.ScheduleScreen;
-import com.archermind.schedule.Services.ServiceManager;
-
 import android.app.Dialog;
 import android.content.ContentValues;
 import android.content.Context;
 import android.content.Intent;
 import android.view.Gravity;
 import android.view.View;
+import android.view.View.OnClickListener;
 import android.view.Window;
 import android.view.WindowManager;
-import android.view.View.OnClickListener;
 import android.widget.Button;
+
+import com.archermind.schedule.R;
+import com.archermind.schedule.Events.EventArgs;
+import com.archermind.schedule.Events.EventTypes;
+import com.archermind.schedule.Provider.DatabaseHelper;
+import com.archermind.schedule.Screens.EditScheduleScreen;
+import com.archermind.schedule.Services.ServiceManager;
 
 public class ScheduleOperateDialog implements OnClickListener{
 
@@ -82,10 +82,15 @@ public class ScheduleOperateDialog implements OnClickListener{
 			context.startActivity(mIntent);
 			break;
 		case R.id.schedule_operate_delete:
-			ContentValues contentvalues = new ContentValues();
-			contentvalues.put(DatabaseHelper.COLUMN_SCHEDULE_OPER_FLAG, DatabaseHelper.SCHEDULE_OPER_DELETE);
-			ServiceManager.getDbManager().updateLocalSchedules(contentvalues, (Integer) args.getExtra("id"));
-			ServiceManager.getServerInterface().uploadSchedule("0", "1");
+			new Thread(new Runnable(){
+				@Override
+				public void run() {
+					ContentValues contentvalues = new ContentValues();
+					contentvalues.put(DatabaseHelper.COLUMN_SCHEDULE_OPER_FLAG, DatabaseHelper.SCHEDULE_OPER_DELETE);
+					ServiceManager.getDbManager().updateScheduleById((Integer) args.getExtra("id"), contentvalues);
+					ServiceManager.getServerInterface().uploadSchedule("0", "1");
+					ServiceManager.getEventservice().onUpdateEvent(new EventArgs(EventTypes.LOCAL_SCHEDULE_UPDATE));
+				}}).start();
 			break;
 		case R.id.schedule_operate_goback:
 			break;

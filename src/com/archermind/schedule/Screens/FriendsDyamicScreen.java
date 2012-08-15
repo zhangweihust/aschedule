@@ -165,7 +165,7 @@ public class FriendsDyamicScreen extends Screen implements IXListViewListener, O
 		new Thread(new Runnable(){
 			@Override
 			public void run() {
-				getSchedulesFromWeb("3", "1343203371");
+				getSchedulesFromWeb(String.valueOf(ServiceManager.getUserId()));
 				dataArrayList.clear();
 				c = ServiceManager.getDbManager().queryShareSchedules(start, end);
 				cursorToArrayList(c);
@@ -178,44 +178,55 @@ public class FriendsDyamicScreen extends Screen implements IXListViewListener, O
 		new Thread(new Runnable() {
 			@Override
 			public void run() {
-				ScheduleBean bean = dataArrayList.get(dataArrayList.size() - 1);
-				c = ServiceManager.getDbManager().queryShareSchedules(
-						bean.getTime(), LOAD_DATA_SIZE);
-				if (c.getCount() != 0) {
-					cursorToArrayList(c);
-					mHandler.sendEmptyMessage(ON_LoadMore);
-				} else {
-					FriendsDyamicScreen.this.runOnUiThread(new Runnable(){
+				if (dataArrayList.size() != 0){
+					ScheduleBean bean = dataArrayList.get(dataArrayList.size() - 1);
+					c = ServiceManager.getDbManager().queryShareSchedules(
+							bean.getTime(), LOAD_DATA_SIZE);
+					if (c.getCount() != 0) {
+						cursorToArrayList(c);
+						mHandler.sendEmptyMessage(ON_LoadMore);
+						return;
+					} 
+				}
+				FriendsDyamicScreen.this.runOnUiThread(new Runnable(){
 						@Override
 						public void run() {
 							Toast.makeText(FriendsDyamicScreen.this,
 									"onLoadMore is lastone", Toast.LENGTH_SHORT).show();
 							onLoad();
-						}});
-				}
+				}});
 			}
 		}).start();
 	}
 	
 	private void loadSchedules(){
-		getSchedulesFromWeb("3", "1343203369");
+		getSchedulesFromWeb(String.valueOf(ServiceManager.getUserId()));
 		c = ServiceManager.getDbManager().queryShareSchedules(start, end);
-		if (c.getCount() == 0) {
-				list.addFooterView(mListFooter);
-				list.setHeaderGone(false);
-				insertDefaultSchedules();
-				c.requery();
-		} 
+//		if (c.getCount() == 0) {
+//				list.addFooterView(mListFooter);
+//				list.setHeaderGone(false);
+//				insertDefaultSchedules();
+//				c.requery();
+//		} 
 		cursorToArrayList(c);
 		mHandler.sendEmptyMessage(ON_LoadData);
 	}
 	
 
-	private void getSchedulesFromWeb(String userId, String time) {
+	private void getSchedulesFromWeb(String userId) {
 		if (NetworkUtils.getNetworkState(this) != NetworkUtils.NETWORN_NONE) {
-			
+			Cursor updateTimeCursor = ServiceManager.getDbManager().queryShareSchedules();
+			String time;
+			if(updateTimeCursor != null && updateTimeCursor.getCount() > 0 ){
+				updateTimeCursor.moveToFirst();
+				time = c.getString(c.getColumnIndex(DatabaseHelper.COLUMN_SCHEDULE_UPDATE_TIME));
+			} else {
+				time = "0";
+			}
 			String jsonString = ServiceManager.getServerInterface()
 					.syncFriendShare(userId, time);
+			ScheduleApplication.LogD(FriendsDyamicScreen.class, "userid:" + userId);
+			ScheduleApplication.LogD(FriendsDyamicScreen.class, "jsonString:" + jsonString);
 			try {
 				JSONArray jsonArray = new JSONArray(jsonString);
 				ScheduleApplication.LogD(FriendsDyamicScreen.class, jsonString

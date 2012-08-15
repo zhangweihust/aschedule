@@ -40,6 +40,7 @@ import android.widget.TextView;
 import android.widget.ViewFlipper;
 
 import com.archermind.schedule.R;
+import com.archermind.schedule.ScheduleApplication;
 import com.archermind.schedule.Adapters.CalendarAdapter;
 import com.archermind.schedule.Adapters.HistoryScheduleAdapter;
 import com.archermind.schedule.Calendar.CalendarData;
@@ -793,11 +794,15 @@ private ViewFlipper flipper = null;
 	public boolean onEvent(Object sender, EventArgs e) {
 		switch(e.getType()){
 		case LOCAL_SCHEDULE_UPDATE:
+			calendarData = new CalendarData(jumpMonth, jumpYear, year_c, month_c, day_c, 1, Constant.flagType);
+			calV = new CalendarAdapter(this,flipper.getHeight(), calendarData);
+			ScheduleApplication.LogD(ScheduleScreen.class, "LOCAL_SCHEDULE_UPDATE");
 			ScheduleScreen.this.runOnUiThread(new Runnable(){
 				@Override
 				public void run() {
 					listdata = calendarData.getMonthSchedule(curScrollYear, curScrollMonth);
 	        		handler.sendEmptyMessage(LOAD_DATA_OVER);
+	        	    gridView.setAdapter(calV);
 				}});
 			break;
 		}
@@ -846,11 +851,6 @@ private ViewFlipper flipper = null;
 	protected void onResume() {
 		// TODO Auto-generated method stub
 		super.onResume();
-		if(calV != null){
-			calendarData = new CalendarData(jumpMonth, jumpYear, year_c, month_c, day_c, 1, Constant.flagType);
-			 calV = new CalendarAdapter(this,flipper.getHeight(), calendarData);
-	        gridView.setAdapter(calV);
-		}
 	}
 	
 }
