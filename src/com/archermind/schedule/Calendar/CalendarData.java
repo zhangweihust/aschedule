@@ -256,7 +256,7 @@ public class CalendarData {
         long starTimeInMillis = 0;
     	
         scheduleList.clear();
-    	for (i = 1; i < days; i++)
+    	for (i = 1; i <= days; i++)
     	{
     		 startData = year + "." + month + "." + i;
              dayOfYear = month + "." + i;
@@ -279,7 +279,7 @@ public class CalendarData {
                  scheduledata.notice_flag = cursor.getInt(cursor.getColumnIndex(DatabaseHelper.COLUMN_SCHEDULE_NOTICE_FLAG)) == 1;
                  scheduledata.type = cursor.getInt(cursor.getColumnIndex(DatabaseHelper.COLUMN_SCHEDULE_TYPE));
                  scheduledata.pastsecomds = scheduledata.time % (24 * 3600 * 1000);
-                 scheduledata.time = starTimeInMillis + scheduledata.pastsecomds;
+//                 scheduledata.time = starTimeInMillis + scheduledata.pastsecomds;
                  todayscheduleList.add(scheduledata);
              }
              Collections.sort(todayscheduleList,new SortByPastsecond());
