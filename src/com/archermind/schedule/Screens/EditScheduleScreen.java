@@ -242,6 +242,11 @@ public class EditScheduleScreen extends Screen implements OnClickListener {
 			}
 
 		} else if (v.getId() == share.getId()) {
+			if(mShare == false && ServiceManager.getUserId() == 0){
+            	Toast.makeText(EditScheduleScreen.this, "请登录以后再分享日程",
+						Toast.LENGTH_SHORT).show();
+            	return;
+            }
 			// 判断时间是否可以分享，如果大于当前时间则可以分享
 			if (startTime < System.currentTimeMillis()) {
 				// 提示不能分享；
@@ -295,10 +300,6 @@ public class EditScheduleScreen extends Screen implements OnClickListener {
 
 				startTime = alarmPopwindow.getStartTime();
 				endTime = alarmPopwindow.getEndTime();
-				Calendar tmpTime = Calendar.getInstance(Locale.CHINA);
-				tmpTime.setTimeInMillis(endTime);
-				tmpTime.add(Calendar.DAY_OF_MONTH, 1);
-				endTime = tmpTime.getTimeInMillis();
 				mRemind = alarmPopwindow.getRemind();
 				mStageRemind = alarmPopwindow.getStageRemind();
 				weekType = alarmPopwindow.getWeekValue();

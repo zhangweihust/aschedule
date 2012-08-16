@@ -11,6 +11,7 @@ import org.json.JSONObject;
 
 import android.content.ContentValues;
 import android.content.Context;
+import android.content.Intent;
 import android.database.Cursor;
 import android.graphics.drawable.BitmapDrawable;
 import android.os.Bundle;
@@ -124,12 +125,16 @@ public class FriendsDyamicScreen extends Screen implements IXListViewListener, O
             @Override
             public void onClick(View v) {
                 Toast.makeText(FriendsDyamicScreen.this, "login", Toast.LENGTH_SHORT).show();
+                Intent it = new Intent(FriendsDyamicScreen.this,LoginScreen.class);
+				startActivity(it);
             }
         });
         registerBtn.setOnClickListener(new OnClickListener() {
             @Override
             public void onClick(View v) {
                 Toast.makeText(FriendsDyamicScreen.this, "register", Toast.LENGTH_SHORT).show();
+                Intent it = new Intent(FriendsDyamicScreen.this,RegisterScreen.class);
+				startActivity(it);
             }
         });
         new Thread(new Runnable() {
@@ -202,12 +207,31 @@ public class FriendsDyamicScreen extends Screen implements IXListViewListener, O
 	private void loadSchedules(){
 		getSchedulesFromWeb(String.valueOf(ServiceManager.getUserId()));
 		c = ServiceManager.getDbManager().queryShareSchedules(start, end);
-//		if (c.getCount() == 0) {
-//				list.addFooterView(mListFooter);
-//				list.setHeaderGone(false);
-//				insertDefaultSchedules();
-//				c.requery();
-//		} 
+		if (c.getCount() == 0) {
+			FriendsDyamicScreen.this.runOnUiThread(new Runnable(){
+				@Override
+				public void run() {
+					list.addFooterView(mListFooter);
+					list.setHeaderGone(false);
+					list.setPullRefreshEnable(false);
+					list.setPullLoadEnable(false);
+				}});
+				insertDefaultSchedules();
+				c.requery();
+		} else {
+			c.moveToFirst();
+			boolean default_data = c.getInt(c.getColumnIndex(DatabaseHelper.COLUMN_SCHEDULE_DEFAULT)) == 1;
+			if(default_data){
+				FriendsDyamicScreen.this.runOnUiThread(new Runnable(){
+					@Override
+					public void run() {
+						list.addFooterView(mListFooter);
+						list.setHeaderGone(false);
+						list.setPullRefreshEnable(false);
+						list.setPullLoadEnable(false);
+					}});
+			}
+		}
 		cursorToArrayList(c);
 		mHandler.sendEmptyMessage(ON_LoadData);
 	}
@@ -219,10 +243,11 @@ public class FriendsDyamicScreen extends Screen implements IXListViewListener, O
 			String time;
 			if(updateTimeCursor != null && updateTimeCursor.getCount() > 0 ){
 				updateTimeCursor.moveToFirst();
-				time = c.getString(c.getColumnIndex(DatabaseHelper.COLUMN_SCHEDULE_UPDATE_TIME));
+				time = updateTimeCursor.getString(updateTimeCursor.getColumnIndex(DatabaseHelper.COLUMN_SCHEDULE_UPDATE_TIME));
 			} else {
 				time = "0";
 			}
+			updateTimeCursor.close();
 			String jsonString = ServiceManager.getServerInterface()
 					.syncFriendShare(userId, time);
 			ScheduleApplication.LogD(FriendsDyamicScreen.class, "userid:" + userId);
@@ -232,7 +257,10 @@ public class FriendsDyamicScreen extends Screen implements IXListViewListener, O
 				ScheduleApplication.LogD(FriendsDyamicScreen.class, jsonString
 						+ jsonArray.length());
 				ContentValues contentvalues;
-				//ScheduleBean bean = null;
+				if(jsonArray.length() > 0){
+					ScheduleApplication.LogD(FriendsDyamicScreen.class, jsonArray.length() + "清除本地的默认初始数据");
+					ServiceManager.getDbManager().deleteShareDefaultSchedules();
+				}
 				for (int i = 0; i < jsonArray.length(); i++) {
 					JSONObject jsonObject = (JSONObject) jsonArray.opt(i);
 					contentvalues = new ContentValues();
@@ -257,13 +285,6 @@ public class FriendsDyamicScreen extends Screen implements IXListViewListener, O
 							jsonObject.getString("city"));
 					contentvalues.put(DatabaseHelper.COLUMN_SCHEDULE_CONTENT,
 							jsonObject.getString("content"));
-//					bean = new ScheduleBean();
-//					bean.setContent(jsonObject.getString("content"));
-//					bean.setLocation(jsonObject.getString("city"));
-//					bean.setT_id(Integer.parseInt(t_id));
-//					bean.setTime(Long.parseLong(jsonObject.getString("start_time")));
-//					bean.setType(Integer.parseInt(jsonObject.getString("type")));
-//					dataArrayList.add(0,bean);
 					if (!ServiceManager.getDbManager().isInShareSchedules(t_id)) {
 						ServiceManager.getDbManager().insertShareSchedules(
 								contentvalues);
@@ -309,21 +330,6 @@ public class FriendsDyamicScreen extends Screen implements IXListViewListener, O
 		 */
 		popupWindow.showAtLocation(list,Gravity.CENTER,0,0);
 
-//		Button joinBtn = (Button) contentView.findViewById(R.id.joinBtn);
-//		joinBtn.setOnClickListener(new OnClickListener() {
-//			@Override
-//			public void onClick(View v) {
-//				popupWindow.dismiss();
-//			}
-//		});
-//
-//		Button forwardBtn = (Button) contentView.findViewById(R.id.forwardBtn);
-//		forwardBtn.setOnClickListener(new OnClickListener() {
-//			@Override
-//			public void onClick(View v) {
-//				popupWindow.dismiss();
-//			}
-//		});
 
 		Button publishBtn = (Button) contentView.findViewById(R.id.publishBtn);
 		publishBtn.setOnClickListener(new OnClickListener() {
@@ -360,6 +366,7 @@ public class FriendsDyamicScreen extends Screen implements IXListViewListener, O
 				bean.setT_id(c.getInt(c.getColumnIndex(DatabaseHelper.COLUMN_SCHEDULE_T_ID)));
 				bean.setTime(c.getLong(c.getColumnIndex(DatabaseHelper.COLUMN_SCHEDULE_START_TIME)));
 				bean.setType(c.getInt(c.getColumnIndex(DatabaseHelper.COLUMN_SCHEDULE_TYPE)));
+				bean.setDefault_data(c.getInt(c.getColumnIndex(DatabaseHelper.COLUMN_SCHEDULE_DEFAULT)) == 1);
 				dataArrayList.add(bean);
 			}
 			c.close();
@@ -368,67 +375,74 @@ public class FriendsDyamicScreen extends Screen implements IXListViewListener, O
 
 	private void insertDefaultSchedules() {
 		ContentValues contentvalues = new ContentValues();
-		contentvalues.put(DatabaseHelper.COLUMN_SCHEDULE_T_ID, 1);
-		contentvalues.put(DatabaseHelper.COLUMN_SCHEDULE_SLAVE_ID, -1);
+		contentvalues.put(DatabaseHelper.COLUMN_SCHEDULE_T_ID, -1);
+		contentvalues.put(DatabaseHelper.COLUMN_SCHEDULE_SLAVE_ID, 1);
 		contentvalues.put(DatabaseHelper.COLUMN_SCHEDULE_ORDER, 0);
 		contentvalues.put(DatabaseHelper.COLUMN_SCHEDULE_TYPE, 1);
+		contentvalues.put(DatabaseHelper.COLUMN_SCHEDULE_DEFAULT,true);
 		contentvalues.put(DatabaseHelper.COLUMN_SCHEDULE_START_TIME,
 				System.currentTimeMillis());
 		contentvalues.put(DatabaseHelper.COLUMN_SCHEDULE_CITY, "武汉");
 		contentvalues.put(DatabaseHelper.COLUMN_SCHEDULE_CONTENT,
 				"hi all 让我们一起微日程吧");
 		ServiceManager.getDbManager().insertShareSchedules(contentvalues);
-		contentvalues.put(DatabaseHelper.COLUMN_SCHEDULE_T_ID, 2);
-		contentvalues.put(DatabaseHelper.COLUMN_SCHEDULE_SLAVE_ID, -1);
+		contentvalues.put(DatabaseHelper.COLUMN_SCHEDULE_T_ID, -2);
+		contentvalues.put(DatabaseHelper.COLUMN_SCHEDULE_SLAVE_ID, 1);
 		contentvalues.put(DatabaseHelper.COLUMN_SCHEDULE_ORDER, 0);
 		contentvalues.put(DatabaseHelper.COLUMN_SCHEDULE_TYPE, 2);
+		contentvalues.put(DatabaseHelper.COLUMN_SCHEDULE_DEFAULT,true);
 		contentvalues.put(DatabaseHelper.COLUMN_SCHEDULE_START_TIME,
 				System.currentTimeMillis());
 		contentvalues.put(DatabaseHelper.COLUMN_SCHEDULE_CITY, "北京");
 		contentvalues
 				.put(DatabaseHelper.COLUMN_SCHEDULE_CONTENT, "这周同学聚会大家要来啊");
 		ServiceManager.getDbManager().insertShareSchedules(contentvalues);
-		contentvalues.put(DatabaseHelper.COLUMN_SCHEDULE_T_ID, 3);
-		contentvalues.put(DatabaseHelper.COLUMN_SCHEDULE_SLAVE_ID, 2);
+		contentvalues.put(DatabaseHelper.COLUMN_SCHEDULE_T_ID, -3);
+		contentvalues.put(DatabaseHelper.COLUMN_SCHEDULE_SLAVE_ID, -2);
 		contentvalues.put(DatabaseHelper.COLUMN_SCHEDULE_ORDER, 1);
 		contentvalues.put(DatabaseHelper.COLUMN_SCHEDULE_TYPE, 3);
+		contentvalues.put(DatabaseHelper.COLUMN_SCHEDULE_DEFAULT,true);
 		contentvalues.put(DatabaseHelper.COLUMN_SCHEDULE_START_TIME,
 				System.currentTimeMillis());
 		contentvalues.put(DatabaseHelper.COLUMN_SCHEDULE_CITY, "北京");
 		contentvalues.put(DatabaseHelper.COLUMN_SCHEDULE_CONTENT, "班长组织一定要捧场啊");
 		ServiceManager.getDbManager().insertShareSchedules(contentvalues);
-		contentvalues.put(DatabaseHelper.COLUMN_SCHEDULE_T_ID, 4);
-		contentvalues.put(DatabaseHelper.COLUMN_SCHEDULE_SLAVE_ID, 1);
+		contentvalues.put(DatabaseHelper.COLUMN_SCHEDULE_T_ID, -4);
+		contentvalues.put(DatabaseHelper.COLUMN_SCHEDULE_SLAVE_ID, -1);
 		contentvalues.put(DatabaseHelper.COLUMN_SCHEDULE_ORDER, 1);
 		contentvalues.put(DatabaseHelper.COLUMN_SCHEDULE_TYPE, 2);
+		contentvalues.put(DatabaseHelper.COLUMN_SCHEDULE_DEFAULT,true);
 		contentvalues.put(DatabaseHelper.COLUMN_SCHEDULE_START_TIME,
 				System.currentTimeMillis());
 		contentvalues.put(DatabaseHelper.COLUMN_SCHEDULE_CITY, "北京");
 		contentvalues.put(DatabaseHelper.COLUMN_SCHEDULE_CONTENT, "恩，大家聚会方便多了");
 		ServiceManager.getDbManager().insertShareSchedules(contentvalues);
-		contentvalues.put(DatabaseHelper.COLUMN_SCHEDULE_T_ID, 5);
-		contentvalues.put(DatabaseHelper.COLUMN_SCHEDULE_SLAVE_ID, 1);
+		contentvalues.put(DatabaseHelper.COLUMN_SCHEDULE_T_ID, -5);
+		contentvalues.put(DatabaseHelper.COLUMN_SCHEDULE_SLAVE_ID, -1);
 		contentvalues.put(DatabaseHelper.COLUMN_SCHEDULE_ORDER, 2);
 		contentvalues.put(DatabaseHelper.COLUMN_SCHEDULE_TYPE, 2);
+		contentvalues.put(DatabaseHelper.COLUMN_SCHEDULE_DEFAULT,true);
 		contentvalues.put(DatabaseHelper.COLUMN_SCHEDULE_START_TIME,
 				System.currentTimeMillis());
 		contentvalues.put(DatabaseHelper.COLUMN_SCHEDULE_CITY, "北京");
 		contentvalues.put(DatabaseHelper.COLUMN_SCHEDULE_CONTENT, "哈哈，这东东蛮好用的");
 		ServiceManager.getDbManager().insertShareSchedules(contentvalues);
-		contentvalues.put(DatabaseHelper.COLUMN_SCHEDULE_T_ID, 6);
-		contentvalues.put(DatabaseHelper.COLUMN_SCHEDULE_SLAVE_ID, -1);
+		contentvalues.put(DatabaseHelper.COLUMN_SCHEDULE_T_ID, -6);
+		contentvalues.put(DatabaseHelper.COLUMN_SCHEDULE_SLAVE_ID, 1);
 		contentvalues.put(DatabaseHelper.COLUMN_SCHEDULE_ORDER, 0);
 		contentvalues.put(DatabaseHelper.COLUMN_SCHEDULE_TYPE, 3);
+		contentvalues.put(DatabaseHelper.COLUMN_SCHEDULE_DEFAULT,true);
 		contentvalues.put(DatabaseHelper.COLUMN_SCHEDULE_START_TIME,
 				System.currentTimeMillis());
 		contentvalues.put(DatabaseHelper.COLUMN_SCHEDULE_CITY, "北京");
 		contentvalues.put(DatabaseHelper.COLUMN_SCHEDULE_CONTENT,
 				"想吃火锅~各种流口水啊，有木有想吃的同去");
 		ServiceManager.getDbManager().insertShareSchedules(contentvalues);
-		contentvalues.put(DatabaseHelper.COLUMN_SCHEDULE_T_ID, 7);
-		contentvalues.put(DatabaseHelper.COLUMN_SCHEDULE_SLAVE_ID, 6);
+		contentvalues.put(DatabaseHelper.COLUMN_SCHEDULE_T_ID, -7);
+		contentvalues.put(DatabaseHelper.COLUMN_SCHEDULE_SLAVE_ID, -6);
 		contentvalues.put(DatabaseHelper.COLUMN_SCHEDULE_ORDER, 1);
 		contentvalues.put(DatabaseHelper.COLUMN_SCHEDULE_TYPE, 3);
+		contentvalues.put(DatabaseHelper.COLUMN_SCHEDULE_DEFAULT,true);
 		contentvalues.put(DatabaseHelper.COLUMN_SCHEDULE_START_TIME,
 				System.currentTimeMillis());
 		contentvalues.put(DatabaseHelper.COLUMN_SCHEDULE_CITY, "北京");
@@ -445,7 +459,9 @@ public class FriendsDyamicScreen extends Screen implements IXListViewListener, O
 				FriendsDyamicScreen.this,
 				"position:" + position, Toast.LENGTH_SHORT)
 				.show();
-		initPopWindow(FriendsDyamicScreen.this, dataArrayList.get(position-1).getT_id());
+		if(!dataArrayList.get(position-1).isDefault_data()){
+			initPopWindow(FriendsDyamicScreen.this, dataArrayList.get(position-1).getT_id());
+		}
 	}
 	
 	public void saveScheduleToDb(final String content, final int t_id) {

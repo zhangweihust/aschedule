@@ -23,6 +23,13 @@ public class BootRecevier extends BroadcastReceiver {
 	public void onReceive(Context context, Intent intent) {
 		// TODO Auto-generated method stub
 		Log.d(TAG, "--------------BOOT receiver");
+		 if (ServiceManager.isStarted()) {
+			} else {
+				if (!ServiceManager.start()) {
+					ServiceManager.exit();
+					return;
+				}
+			}
 		Cursor c = ServiceManager.getDbManager().queryNotOutdateschedule();
 		Log.d(TAG, "-------------not outdate count :" + c.getCount());
 		if (c != null) {

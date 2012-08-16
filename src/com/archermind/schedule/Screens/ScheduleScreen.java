@@ -756,9 +756,9 @@ private ViewFlipper flipper = null;
         	jumpMonth = 0;
         	jumpYear = 0;
         	addGridView();   //添加一个gridview
-        	year_c = Integer.parseInt(currentDate.split("-")[0]);
-        	month_c = Integer.parseInt(currentDate.split("-")[1]);
-        	day_c = Integer.parseInt(currentDate.split("-")[2]);
+        	this.year = year_c = Integer.parseInt(currentDate.split("-")[0]);
+        	this.month = month_c = Integer.parseInt(currentDate.split("-")[1]);
+        	this.day = day_c = Integer.parseInt(currentDate.split("-")[2]);
         	calendarData = new CalendarData(jumpMonth, jumpYear, year_c, month_c, day_c, 1, Constant.flagType);
 			 calV = new CalendarAdapter(this,flipper.getHeight(), calendarData);
 	        gridView.setAdapter(calV);

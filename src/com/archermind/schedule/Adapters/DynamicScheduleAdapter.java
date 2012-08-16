@@ -96,7 +96,7 @@ public class DynamicScheduleAdapter extends BaseAdapter {
             item.content.setText(data.getContent());
             long time = data.getTime();
             item.time.setText(DateTimeUtils.time2String("hh:mm", time));
-            item.date.setText(DateTimeUtils.time2String("yyyy/MM/dd", time));
+            item.date.setText(DateTimeUtils.time2String("yyyy.MM.dd", time));
             String amORpm = DateTimeUtils.time2String("a", time);
             if ("上午".equals(amORpm)) {
                 item.time.setBackgroundResource(R.drawable.am);

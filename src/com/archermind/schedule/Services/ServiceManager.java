@@ -16,6 +16,7 @@ import android.content.ContentValues;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.database.Cursor;
 import android.os.Handler;
 import android.os.IBinder;
 import android.os.Message;
@@ -131,7 +132,7 @@ public class ServiceManager extends Service implements OnClickListener{
                 myTask = new MyTimerTask();
                 mTimer.schedule(myTask, mTaskTime, mTaskTime);
             }
-            getSchedulesFromWeb("3", "1343203371");           
+            getSchedulesFromWeb(String.valueOf(ServiceManager.getUserId()));        
             makeFriendFromInet();
             eventService.onUpdateEvent(new EventArgs(EventTypes.CONTACT_SYNC_SUCCESS));
             Log.i(TAG, "get data in service!the time is " + mTaskTime);
@@ -257,9 +258,17 @@ public class ServiceManager extends Service implements OnClickListener{
     	homeScreen = mHomeScreen;
     }
 
-    private void getSchedulesFromWeb(String userId, String time) {
+    private void getSchedulesFromWeb(String userId) {
         if (NetworkUtils.getNetworkState(this) != NetworkUtils.NETWORN_NONE) {
-
+        	Cursor updateTimeCursor = ServiceManager.getDbManager().queryShareSchedules();
+			String time;
+			if(updateTimeCursor != null && updateTimeCursor.getCount() > 0 ){
+				updateTimeCursor.moveToFirst();
+				time = updateTimeCursor.getString(updateTimeCursor.getColumnIndex(DatabaseHelper.COLUMN_SCHEDULE_UPDATE_TIME));
+			} else {
+				time = "0";
+			}
+			updateTimeCursor.close();
             String jsonString = ServiceManager.getServerInterface().syncFriendShare(userId, time);
             try {
 

@@ -6,6 +6,8 @@ import android.app.TabActivity;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
+import android.os.Handler;
+import android.util.Log;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -260,6 +262,12 @@ public class HomeScreen extends TabActivity implements OnTabChangeListener, IEve
 				Toast.makeText(this, getString(R.string.exit), Toast.LENGTH_SHORT)
 						.show();
 				mExit_Flag = true;
+				new Handler().postDelayed(new Runnable(){
+					@Override
+					public void run() {
+						mExit_Flag = false;
+					}
+				}, 10000);
 			}
 	        return true;
         }

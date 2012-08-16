@@ -63,6 +63,7 @@ public class AlarmRecevier extends BroadcastReceiver {
 		mNotification = new Notification();
 		mNotification.icon = R.drawable.schedule_icon;
 		mNotification.tickerText = "你有一个新日程";
+		mNotification.flags = Notification.FLAG_AUTO_CANCEL; 
 		// 设置通知为默认声音
 		mNotification.defaults = Notification.DEFAULT_SOUND;
 		mNotification.setLatestEventInfo(context, "你有一个新日程", schedule_content,

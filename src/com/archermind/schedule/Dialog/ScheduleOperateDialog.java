@@ -17,6 +17,7 @@ import com.archermind.schedule.Events.EventTypes;
 import com.archermind.schedule.Provider.DatabaseHelper;
 import com.archermind.schedule.Screens.EditScheduleScreen;
 import com.archermind.schedule.Services.ServiceManager;
+import com.archermind.schedule.Utils.DateTimeUtils;
 
 public class ScheduleOperateDialog implements OnClickListener{
 
@@ -88,6 +89,7 @@ public class ScheduleOperateDialog implements OnClickListener{
 					ContentValues contentvalues = new ContentValues();
 					contentvalues.put(DatabaseHelper.COLUMN_SCHEDULE_OPER_FLAG, DatabaseHelper.SCHEDULE_OPER_DELETE);
 					ServiceManager.getDbManager().updateScheduleById((Integer) args.getExtra("id"), contentvalues);
+					DateTimeUtils.cancelAlarm((Integer) args.getExtra("id"));
 					ServiceManager.getServerInterface().uploadSchedule("0", "1");
 					ServiceManager.getEventservice().onUpdateEvent(new EventArgs(EventTypes.LOCAL_SCHEDULE_UPDATE));
 				}}).start();

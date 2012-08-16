@@ -50,6 +50,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 	public static final String COLUMN_SCHEDULE_CONTENT = "content";// 日程内容
 	public static final String COLUMN_SCHEDULE_SLAVE_ID = "slave_id";// 隶属于哪个主贴
 	public static final String COLUMN_SCHEDULE_ORDER = "queue";// 回帖顺序
+	public static final String COLUMN_SCHEDULE_DEFAULT = "default_data";// 好友动态的默认数据标示
 	private static final String CRETAE_TAB_LOCAL_SCHEDULE = " CREATE TABLE IF NOT EXISTS "
 			+ TAB_LOCAL_SCHEDULE
 			+ " ( "
@@ -117,6 +118,8 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 		+ " TEXT, "
 		+ COLUMN_SCHEDULE_CITY
 		+ " TEXT, "
+		+ COLUMN_SCHEDULE_DEFAULT
+		+ " BOOLEAN, "
 		+ COLUMN_SCHEDULE_CONTENT
 		+ " TEXT "
 		+ ")";

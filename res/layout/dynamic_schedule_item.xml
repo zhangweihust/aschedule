@@ -48,7 +48,8 @@
             android:layout_height="20dip"
             android:layout_below="@id/name"
             android:layout_marginLeft="4.0dip"
-            android:src="@drawable/sun" />
+            android:src="@drawable/sun"
+            android:visibility="invisible" />
 
         <TextView
             android:id="@+id/location"
@@ -62,7 +63,8 @@
             android:gravity="center"
             android:text="武汉"
             android:textColor="#252524"
-            android:textSize="10sp" />
+            android:textSize="10sp"
+            android:visibility="invisible"/>
     </RelativeLayout>
 
     <RelativeLayout
@@ -116,7 +118,8 @@
                 android:layout_toRightOf="@id/time"
                 android:background="@drawable/partner"
                 android:text="3"
-                android:textColor="#ffffffff" />
+                android:textColor="#ffffffff" 
+                android:visibility="invisible"/>
 
             <Button
                 android:id="@+id/message"
@@ -125,7 +128,8 @@
                 android:layout_alignParentRight="true"
                 android:background="@drawable/message_selector"
                 android:text="留言"
-                android:textColor="#ffffffff" />
+                android:textColor="#ffffffff" 
+                android:visibility="invisible"/>
 
             <TextView
                 android:id="@+id/content"
