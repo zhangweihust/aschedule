@@ -147,7 +147,7 @@ private ViewFlipper flipper = null;
 					break;
 					
 				case LOAD_OVERD_GOTO_TODAY:
-					hsa.setData(listdata);
+//					hsa.setData(listdata);
 					int pos = hsa.getTodayPosition(getDateByMillisTime(System.currentTimeMillis()));
 					if (pos >= 0)
 					{
@@ -268,6 +268,14 @@ private ViewFlipper flipper = null;
 		        
 		        listdata = calendarData.getMonthSchedule(curScrollYear, curScrollMonth);
         		handler.sendEmptyMessage(LOAD_DATA_OVER);
+        		handler.post(new Runnable() {
+					
+					@Override
+					public void run() {
+						// TODO Auto-generated method stub
+						handler.sendEmptyMessage(LOAD_OVERD_GOTO_TODAY);
+					}
+				});
 
 		        //flipper.addView(gridView);
 		        flipper.addView(gridView,0);
@@ -781,7 +789,15 @@ private ViewFlipper flipper = null;
 		        	public void run() 
 		        	{
 		        		listdata = calendarData.getMonthSchedule(curScrollYear, curScrollMonth);
-		        		handler.sendEmptyMessage(LOAD_OVERD_GOTO_TODAY);
+		        		handler.sendEmptyMessage(LOAD_DATA_OVER);
+		        		handler.post(new Runnable() {
+							
+							@Override
+							public void run() {
+								// TODO Auto-generated method stub
+								handler.sendEmptyMessage(LOAD_OVERD_GOTO_TODAY);
+							}
+						});
 		        	};
 		        }.start();
 			}
