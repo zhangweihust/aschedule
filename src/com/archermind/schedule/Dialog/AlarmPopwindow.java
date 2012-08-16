@@ -223,6 +223,7 @@ public class AlarmPopwindow implements OnClickListener {
 					public void onCheckedChanged(RadioGroup group, int checkedId) {
 						// TODO Auto-generated method stub
 						if (checkedId == remind_on.getId()) {
+						    
 							mRemind = true;
 							setRepeatRemindTrue();
 							mOnRemindSelectListener
@@ -284,7 +285,6 @@ public class AlarmPopwindow implements OnClickListener {
 						}
 					}
 				});
-
 	}
 
 	public void show(View parent) {
@@ -301,9 +301,23 @@ public class AlarmPopwindow implements OnClickListener {
 	}
  
 	
-	public void setStartTime(long startTime) {
+	public void setStartTime(long startPopTime) {
 
-		this.startTime = startTime;
+        if (mStageRemind) {
+          
+            Calendar c = Calendar.getInstance();
+            c.setTimeInMillis(startTime);
+            c.set(Calendar.HOUR_OF_DAY, Integer.parseInt(DateTimeUtils.time2String("H", startPopTime)));
+            c.set(Calendar.MINUTE, Integer.parseInt(DateTimeUtils.time2String("m", startPopTime)));
+            
+            startTime = c.getTimeInMillis();
+            Log.i("pop NewScheduleScreen", "true  popSetStartTime = " + DateTimeUtils.time2String("yyyy-MM-dd-HH-mm", startTime));
+      
+        } else {
+
+            startTime = startPopTime;     
+            Log.i("pop NewScheduleScreen", "false  popSetStartTime = " + DateTimeUtils.time2String("yyyy-MM-dd-HH-mm", startTime));
+        }
 
 	}
 
@@ -403,6 +417,7 @@ public class AlarmPopwindow implements OnClickListener {
 	}
 
 	public long getStartTime() {
+	    
 		return startTime;
 	}
 
@@ -506,16 +521,20 @@ public class AlarmPopwindow implements OnClickListener {
 
 			// 获取时间选择器的值
 			Calendar c = Calendar.getInstance();
+			c.setTimeInMillis(startTime);
+			
 			c.set(Calendar.YEAR, Constant.VARY_YEAR);
 			c.set(Calendar.MONTH, Constant.VARY_MONTH - 1);
-			c.set(Calendar.DAY_OF_MONTH, Constant.VARY_DAY);
-			c.set(Calendar.HOUR_OF_DAY, 0);
-			c.set(Calendar.MINUTE, 0);
+			c.set(Calendar.DAY_OF_MONTH, Constant.VARY_DAY);			
 			c.set(Calendar.SECOND, 0);
-			c.set(Calendar.MILLISECOND, 0);
+			c.set(Calendar.MILLISECOND, 0);						
+			
 			startTime = c.getTimeInMillis();
+			
 			stage_remind_start_date.setText(DateTimeUtils.time2String(
 					"yyyy-MM-dd", startTime));
+		
+		    Log.i("pop NewScheduleScreen", " select startTime = " + DateTimeUtils.time2String("yyyy-MM-dd-HH-mm", startTime));
 
 		}
 	}

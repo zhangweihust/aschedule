@@ -36,6 +36,7 @@ public class NewScheduleScreen extends Screen implements OnClickListener {
 
 	private View dateView, share, remind, event;
 	private ImageView shareImg, remindImg, eventImg;
+	
 	private ScheduleEditText schedule_text;
 	private TextView mScheduleMonthTv, mScheduleYearTv, mScheduleTimeTv;
 	private Button saveBtn, backBtn;
@@ -49,6 +50,8 @@ public class NewScheduleScreen extends Screen implements OnClickListener {
 	private boolean mRemind = false;
 	private int mType = -1;
 	private long startTime = 0;
+	private long mSelectTime = 0;
+	private long mDatabaseTime = 0;
 	private long endTime = 0;
 	private String oper_flag = "N";
 	private String remindCycle = "0";
@@ -132,7 +135,7 @@ public class NewScheduleScreen extends Screen implements OnClickListener {
 		mCalendar.set(Calendar.YEAR, 2049);
 		endTime = mCalendar.getTimeInMillis();
 
-		// 向edittext中添加图片
+		
 		schedule_text = (ScheduleEditText) findViewById(R.id.schedule_note);
 
 		Display display = getWindowManager().getDefaultDisplay();
@@ -200,6 +203,7 @@ public class NewScheduleScreen extends Screen implements OnClickListener {
 			this.finish();
 
 		} else if (v.getId() == saveBtn.getId()) {
+		    
 			oper_flag = DatabaseHelper.SCHEDULE_OPER_ADD;
 			scheduleText = schedule_text.getText().toString();
 			// 日程内容为空，则提示用户
@@ -267,7 +271,12 @@ public class NewScheduleScreen extends Screen implements OnClickListener {
 			@Override
 			public void run() {
 				ContentValues cv = new ContentValues();
-				startTime = alarmPopwindow.getStartTime();
+				
+				
+				startTime = alarmPopwindow.getStartTime();				
+			    Log.i(TAG, " insert database startTime = " + DateTimeUtils.time2String("yyyy-MM-dd-HH-mm", startTime));
+	            
+			    
 				endTime = alarmPopwindow.getEndTime();
 				Calendar tmpTime = Calendar.getInstance(Locale.CHINA);
 				tmpTime.setTimeInMillis(endTime);
@@ -349,10 +358,13 @@ public class NewScheduleScreen extends Screen implements OnClickListener {
 
 			c.set(Calendar.SECOND, 0);
 			c.set(Calendar.MILLISECOND, 0);
-			startTime = c.getTimeInMillis();
-			setDisplayTime(startTime);
-			alarmPopwindow.setStartTime(startTime);
-			// 此时重复提醒默认为无，设置阶段提醒开始时间,结束时间显默认显示新建日程时间,；
+			mSelectTime = c.getTimeInMillis();
+			
+			Log.i(TAG, " mSelectTime = " + DateTimeUtils.time2String("yyyy-MM-dd-HH-mm", mSelectTime));
+			setDisplayTime(mSelectTime);
+			
+			alarmPopwindow.setStartTime(mSelectTime);
+			// 此时重复提醒默认为无，设置阶段提醒开始时间,结束时间显默认显示新建日程时间
 
 		}
 

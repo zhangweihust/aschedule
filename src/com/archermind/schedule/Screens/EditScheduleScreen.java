@@ -188,7 +188,9 @@ public class EditScheduleScreen extends Screen implements OnClickListener {
 
 			startTime = c.getLong(c
 					.getColumnIndex(DatabaseHelper.COLUMN_SCHEDULE_START_TIME));
-			Log.d(TAG, "=------------startTime=" + startTime);
+			
+		    Log.i(TAG, " read form database startTime = " + DateTimeUtils.time2String("yyyy-MM-dd-HH-mm", startTime));
+		        
 			endTime = Long
 					.parseLong(c.getString(c
 							.getColumnIndex(DatabaseHelper.COLUMN_SCHEDULE_NOTICE_END)));
