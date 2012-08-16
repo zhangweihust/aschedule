@@ -18,6 +18,10 @@ import org.apache.http.params.CoreConnectionPNames;
 import org.apache.http.protocol.HTTP;
 import org.apache.http.util.EntityUtils;
 
+import com.archermind.schedule.ScheduleApplication;
+import com.archermind.schedule.Screens.RegisterScreen;
+
+import android.content.SharedPreferences;
 import android.util.Log;
 
 public class HttpUtils implements Runnable{
@@ -44,10 +48,16 @@ public class HttpUtils implements Runnable{
 					HTTP.UTF_8);
 
 			httpPost.setEntity(p_entity);
-			if(httphead!=null && !httphead.equals("")){
-				httphead= httphead.replace("\r\n", "");
+			if (httphead != null && !httphead.equals("")) {
+				httphead = httphead.replace("\r\n", "");
 			}
-			httpPost.setHeader("Cookie", "sid=" + httphead);
+
+			SharedPreferences sh = ScheduleApplication.getContext()
+					.getSharedPreferences(RegisterScreen.USER_INFO,
+							ScheduleApplication.getContext().MODE_PRIVATE);
+			String m_cookie ="";
+			m_cookie =sh.getString("Cookie", "");
+			httpPost.setHeader("Cookie", "sid=" + m_cookie);
 			HttpResponse response = client.execute(httpPost);
 			
 			if(response.getStatusLine().getStatusCode() == 200){
@@ -70,9 +80,12 @@ public class HttpUtils implements Runnable{
 //						httphead =httphead.replace("\"", "");
 //					}
 					
-					if(httphead.indexOf("sid=")>0)
+					if(httphead.indexOf("sid=")>0){
 						httphead =httphead.substring(httphead.indexOf("sid=")+4);
-					else
+						if(httphead!=null && !httphead.equals("")){
+							httphead =httphead.replace("\r\n", "");
+						}
+					}else
 						httphead ="";
 					System.out.println("xiaopashu:"+httphead);
 				}

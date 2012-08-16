@@ -16,9 +16,12 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import android.content.ContentValues;
+import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 
+import com.amtcloud.mobile.android.core.AmtApplication;
+import com.amtcloud.mobile.android.file.AmtFileObject;
 import com.archermind.schedule.Provider.DatabaseHelper;
 import com.archermind.schedule.Services.ServiceManager;
 import com.google.gdata.client.calendar.CalendarQuery;
@@ -62,6 +65,8 @@ public class ServerInterface {
 	
 	public static final int ERROR_HTTP_UNKNOW = -500;
 
+	public static final String app_id = "c28ef592f8064025b948267ed6951e25";
+	public static final String app_secret = "608dfb50880843b3a50a8829f42bd69b";
 	// public static DatabaseManager mDatabaseManager= new
 	// DatabaseManager(ServerInterfaceActivity.getContext());;
 
@@ -923,5 +928,49 @@ public class ServerInterface {
 			result =-1;
 		}
 		return result;
+	}
+	/*
+	 * 初始化 在主界面启动的时候调用
+	 * 参数 ：上下文参数(this)
+	 * 返回值：void
+	 */
+	public void InitAmtCloud(Context context) {
+		AmtApplication.amtAppInitialize(context, app_id, app_secret);
+	}
+	/**
+	 * 上传头像 输入参数：用户id,文件路径，文件名，文件扩展名 
+	 * 返回值： 0 成功  -1 url为空  -2：数据库操作失败
+	 */
+	public static int uploadPhoto(Context context,String user_id,String filepath,String filename,String expandname) {
+		AmtFileObject fileObj = new AmtFileObject(context);
+		fileObj.uploadFile(app_id, user_id, filepath);
+		String url = "http://yun.archermind.com/mobile/service/showMedia?appId="
+			+ app_id
+			+ "&userName="
+			+ user_id
+			+ "&mediaName="
+			+ filename
+			+ "&mediaType=" + expandname;
+		Map<String, String> map = new HashMap<String, String>();
+		map.put("user_id", user_id);
+		map.put("photo_url", url);
+		String res= HttpUtils.doPost(map, "http://player.archermind.com/ci/index.php/SMSUtils/uploadPhoto");		
+		int result =0;
+		try{
+			result =Integer.parseInt(res);
+		}catch (Exception e){
+			result =-3;   //其他异常情况
+		}
+		return result;
+	}
+	/**
+	 * 获取头像 输入参数：用户id
+	 * 返回值： json 成功  -1 url为空  -2：数据库操作失败
+	 */
+	public static String getPhoto(String user_id) {
+		Map<String, String> map = new HashMap<String, String>();
+		map.put("user_id", user_id);
+		String res= HttpUtils.doPost(map, "http://player.archermind.com/ci/index.php/SMSUtils/downloadPhoto");		
+		return res;
 	}
 }
