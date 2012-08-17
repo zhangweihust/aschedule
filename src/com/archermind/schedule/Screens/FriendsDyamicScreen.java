@@ -5,10 +5,6 @@ import java.util.List;
 import java.util.Timer;
 import java.util.TimerTask;
 
-import org.json.JSONArray;
-import org.json.JSONException;
-import org.json.JSONObject;
-
 import android.content.ContentValues;
 import android.content.Context;
 import android.content.Intent;
@@ -43,7 +39,7 @@ import com.archermind.schedule.Model.ScheduleBean;
 import com.archermind.schedule.Provider.DatabaseHelper;
 import com.archermind.schedule.Services.ServiceManager;
 import com.archermind.schedule.Utils.DateTimeUtils;
-import com.archermind.schedule.Utils.NetworkUtils;
+import com.archermind.schedule.Utils.SyncDataUtil;
 import com.archermind.schedule.Views.XListView;
 import com.archermind.schedule.Views.XListView.IXListViewListener;
 
@@ -54,7 +50,7 @@ public class FriendsDyamicScreen extends Screen implements IXListViewListener, O
 
     private RelativeLayout mListFooter;
 
-    private Button loginBtn, registerBtn;
+    private Button loginBtn;
 
     private RelativeLayout loading;
 
@@ -107,8 +103,8 @@ public class FriendsDyamicScreen extends Screen implements IXListViewListener, O
         super.onCreate(savedInstanceState);
         setContentView(R.layout.friends_dynamic_screen);
         list = (XListView)findViewById(R.id.list);
-        list.setPullLoadEnable(true);
-        list.setPullRefreshEnable(true);
+//        list.setPullLoadEnable(true);
+//        list.setPullRefreshEnable(true);
         list.setOnItemClickListener(this);
         list.setXListViewListener(this);
         dataArrayList = new ArrayList<ScheduleBean>();
@@ -119,21 +115,12 @@ public class FriendsDyamicScreen extends Screen implements IXListViewListener, O
         mListFooter = (RelativeLayout)LayoutInflater.from(this).inflate(
                 R.layout.dynamic_listview_footer, null);
         loginBtn = (Button)mListFooter.findViewById(R.id.login);
-        registerBtn = (Button)mListFooter.findViewById(R.id.register);
         eventService.add(this);
         loginBtn.setOnClickListener(new OnClickListener() {
             @Override
             public void onClick(View v) {
                 Toast.makeText(FriendsDyamicScreen.this, "login", Toast.LENGTH_SHORT).show();
                 Intent it = new Intent(FriendsDyamicScreen.this,LoginScreen.class);
-				startActivity(it);
-            }
-        });
-        registerBtn.setOnClickListener(new OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Toast.makeText(FriendsDyamicScreen.this, "register", Toast.LENGTH_SHORT).show();
-                Intent it = new Intent(FriendsDyamicScreen.this,RegisterScreen.class);
 				startActivity(it);
             }
         });
@@ -165,17 +152,22 @@ public class FriendsDyamicScreen extends Screen implements IXListViewListener, O
 
 	@Override
 	public void onRefresh() {
-		Toast.makeText(FriendsDyamicScreen.this, "onRefresh",
-				Toast.LENGTH_SHORT).show();
-		new Thread(new Runnable(){
-			@Override
-			public void run() {
-				getSchedulesFromWeb(String.valueOf(ServiceManager.getUserId()));
-				dataArrayList.clear();
-				c = ServiceManager.getDbManager().queryShareSchedules(start, end);
-				cursorToArrayList(c);
-				mHandler.sendEmptyMessage(ON_Refresh);
-			}}).start();
+		if(ServiceManager.getUserId() == 0){
+			Toast.makeText(FriendsDyamicScreen.this, "请登录以后再刷新",
+					Toast.LENGTH_SHORT).show();
+		} else {
+			Toast.makeText(FriendsDyamicScreen.this, "onRefresh",
+					Toast.LENGTH_SHORT).show();
+			new Thread(new Runnable(){
+				@Override
+				public void run() {
+					SyncDataUtil.getSchedulesFromWeb(String.valueOf(ServiceManager.getUserId()));
+					dataArrayList.clear();
+					c = ServiceManager.getDbManager().queryShareSchedules(start, end);
+					cursorToArrayList(c);
+					mHandler.sendEmptyMessage(ON_Refresh);
+				}}).start();
+		}
 	}
 
 	@Override
@@ -205,101 +197,51 @@ public class FriendsDyamicScreen extends Screen implements IXListViewListener, O
 	}
 	
 	private void loadSchedules(){
-		getSchedulesFromWeb(String.valueOf(ServiceManager.getUserId()));
+		SyncDataUtil.getSchedulesFromWeb(String.valueOf(ServiceManager.getUserId()));
 		c = ServiceManager.getDbManager().queryShareSchedules(start, end);
 		if (c.getCount() == 0) {
-			FriendsDyamicScreen.this.runOnUiThread(new Runnable(){
-				@Override
-				public void run() {
-					list.addFooterView(mListFooter);
-					list.setHeaderGone(false);
-					list.setPullRefreshEnable(false);
-					list.setPullLoadEnable(false);
-				}});
-				insertDefaultSchedules();
+//			FriendsDyamicScreen.this.runOnUiThread(new Runnable(){
+//				@Override
+//				public void run() {
+//					if(ServiceManager.getUserId() == 0){
+//						list.addFooterView(mListFooter);
+//						list.setPullRefreshEnable(false);
+//						list.setPullLoadEnable(false);
+//						list.setHeaderGone(false);
+//					}
+//				}});
+			    SyncDataUtil.insertDefaultSchedules();
 				c.requery();
 		} else {
-			c.moveToFirst();
-			boolean default_data = c.getInt(c.getColumnIndex(DatabaseHelper.COLUMN_SCHEDULE_DEFAULT)) == 1;
-			if(default_data){
-				FriendsDyamicScreen.this.runOnUiThread(new Runnable(){
-					@Override
-					public void run() {
-						list.addFooterView(mListFooter);
-						list.setHeaderGone(false);
-						list.setPullRefreshEnable(false);
-						list.setPullLoadEnable(false);
-					}});
-			}
+//			c.moveToFirst();
+//			final boolean default_data = c.getInt(c
+//					.getColumnIndex(DatabaseHelper.COLUMN_SCHEDULE_DEFAULT)) == 1;
+//
+//			FriendsDyamicScreen.this.runOnUiThread(new Runnable() {
+//				@Override
+//				public void run() {
+//					if (default_data) {
+//						if (ServiceManager.getUserId() == 0) {
+//							list.addFooterView(mListFooter);
+//							list.setHeaderGone(false);
+//							list.setPullRefreshEnable(false);
+//							list.setPullLoadEnable(false);
+//						}
+//					} else {
+//						list.removeFooterView(mListFooter);
+//						list.setHeaderGone(true);
+//						list.setPullRefreshEnable(true);
+//						list.setPullLoadEnable(true);
+//					}
+//				}
+//			});
 		}
 		cursorToArrayList(c);
 		mHandler.sendEmptyMessage(ON_LoadData);
 	}
 	
 
-	private void getSchedulesFromWeb(String userId) {
-		if (NetworkUtils.getNetworkState(this) != NetworkUtils.NETWORN_NONE) {
-			Cursor updateTimeCursor = ServiceManager.getDbManager().queryShareSchedules();
-			String time;
-			if(updateTimeCursor != null && updateTimeCursor.getCount() > 0 ){
-				updateTimeCursor.moveToFirst();
-				time = updateTimeCursor.getString(updateTimeCursor.getColumnIndex(DatabaseHelper.COLUMN_SCHEDULE_UPDATE_TIME));
-			} else {
-				time = "0";
-			}
-			updateTimeCursor.close();
-			String jsonString = ServiceManager.getServerInterface()
-					.syncFriendShare(userId, time);
-			ScheduleApplication.LogD(FriendsDyamicScreen.class, "userid:" + userId);
-			ScheduleApplication.LogD(FriendsDyamicScreen.class, "jsonString:" + jsonString);
-			try {
-				JSONArray jsonArray = new JSONArray(jsonString);
-				ScheduleApplication.LogD(FriendsDyamicScreen.class, jsonString
-						+ jsonArray.length());
-				ContentValues contentvalues;
-				if(jsonArray.length() > 0){
-					ScheduleApplication.LogD(FriendsDyamicScreen.class, jsonArray.length() + "清除本地的默认初始数据");
-					ServiceManager.getDbManager().deleteShareDefaultSchedules();
-				}
-				for (int i = 0; i < jsonArray.length(); i++) {
-					JSONObject jsonObject = (JSONObject) jsonArray.opt(i);
-					contentvalues = new ContentValues();
-					String t_id = jsonObject.getString("TID");
-					contentvalues
-							.put(DatabaseHelper.COLUMN_SCHEDULE_T_ID, t_id);
-					contentvalues.put(DatabaseHelper.COLUMN_SCHEDULE_ORDER,
-							jsonObject.getString("num"));
-					contentvalues.put(DatabaseHelper.COLUMN_SCHEDULE_SLAVE_ID,
-							jsonObject.getString("host"));
-					contentvalues.put(DatabaseHelper.COLUMN_SCHEDULE_USER_ID,
-							jsonObject.getString("user_id"));
-					contentvalues.put(DatabaseHelper.COLUMN_SCHEDULE_TYPE,
-							jsonObject.getString("type"));
-					contentvalues.put(
-							DatabaseHelper.COLUMN_SCHEDULE_START_TIME,
-							jsonObject.getString("start_time"));
-					contentvalues.put(
-							DatabaseHelper.COLUMN_SCHEDULE_UPDATE_TIME,
-							jsonObject.getString("update_time"));
-					contentvalues.put(DatabaseHelper.COLUMN_SCHEDULE_CITY,
-							jsonObject.getString("city"));
-					contentvalues.put(DatabaseHelper.COLUMN_SCHEDULE_CONTENT,
-							jsonObject.getString("content"));
-					if (!ServiceManager.getDbManager().isInShareSchedules(t_id)) {
-						ServiceManager.getDbManager().insertShareSchedules(
-								contentvalues);
-					} else {
-						ServiceManager.getDbManager().updateShareSchedules(
-								contentvalues, t_id);
-						ScheduleApplication.LogD(FriendsDyamicScreen.class, "重复的TID：" + t_id);
-					}
-				}
-			} catch (JSONException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
-		}
-	}
+	
 	
 	
 	private void initPopWindow(Context context, final int t_id) {
@@ -373,82 +315,7 @@ public class FriendsDyamicScreen extends Screen implements IXListViewListener, O
 		} 
 	}
 
-	private void insertDefaultSchedules() {
-		ContentValues contentvalues = new ContentValues();
-		contentvalues.put(DatabaseHelper.COLUMN_SCHEDULE_T_ID, -1);
-		contentvalues.put(DatabaseHelper.COLUMN_SCHEDULE_SLAVE_ID, 1);
-		contentvalues.put(DatabaseHelper.COLUMN_SCHEDULE_ORDER, 0);
-		contentvalues.put(DatabaseHelper.COLUMN_SCHEDULE_TYPE, 1);
-		contentvalues.put(DatabaseHelper.COLUMN_SCHEDULE_DEFAULT,true);
-		contentvalues.put(DatabaseHelper.COLUMN_SCHEDULE_START_TIME,
-				System.currentTimeMillis());
-		contentvalues.put(DatabaseHelper.COLUMN_SCHEDULE_CITY, "武汉");
-		contentvalues.put(DatabaseHelper.COLUMN_SCHEDULE_CONTENT,
-				"hi all 让我们一起微日程吧");
-		ServiceManager.getDbManager().insertShareSchedules(contentvalues);
-		contentvalues.put(DatabaseHelper.COLUMN_SCHEDULE_T_ID, -2);
-		contentvalues.put(DatabaseHelper.COLUMN_SCHEDULE_SLAVE_ID, 1);
-		contentvalues.put(DatabaseHelper.COLUMN_SCHEDULE_ORDER, 0);
-		contentvalues.put(DatabaseHelper.COLUMN_SCHEDULE_TYPE, 2);
-		contentvalues.put(DatabaseHelper.COLUMN_SCHEDULE_DEFAULT,true);
-		contentvalues.put(DatabaseHelper.COLUMN_SCHEDULE_START_TIME,
-				System.currentTimeMillis());
-		contentvalues.put(DatabaseHelper.COLUMN_SCHEDULE_CITY, "北京");
-		contentvalues
-				.put(DatabaseHelper.COLUMN_SCHEDULE_CONTENT, "这周同学聚会大家要来啊");
-		ServiceManager.getDbManager().insertShareSchedules(contentvalues);
-		contentvalues.put(DatabaseHelper.COLUMN_SCHEDULE_T_ID, -3);
-		contentvalues.put(DatabaseHelper.COLUMN_SCHEDULE_SLAVE_ID, -2);
-		contentvalues.put(DatabaseHelper.COLUMN_SCHEDULE_ORDER, 1);
-		contentvalues.put(DatabaseHelper.COLUMN_SCHEDULE_TYPE, 3);
-		contentvalues.put(DatabaseHelper.COLUMN_SCHEDULE_DEFAULT,true);
-		contentvalues.put(DatabaseHelper.COLUMN_SCHEDULE_START_TIME,
-				System.currentTimeMillis());
-		contentvalues.put(DatabaseHelper.COLUMN_SCHEDULE_CITY, "北京");
-		contentvalues.put(DatabaseHelper.COLUMN_SCHEDULE_CONTENT, "班长组织一定要捧场啊");
-		ServiceManager.getDbManager().insertShareSchedules(contentvalues);
-		contentvalues.put(DatabaseHelper.COLUMN_SCHEDULE_T_ID, -4);
-		contentvalues.put(DatabaseHelper.COLUMN_SCHEDULE_SLAVE_ID, -1);
-		contentvalues.put(DatabaseHelper.COLUMN_SCHEDULE_ORDER, 1);
-		contentvalues.put(DatabaseHelper.COLUMN_SCHEDULE_TYPE, 2);
-		contentvalues.put(DatabaseHelper.COLUMN_SCHEDULE_DEFAULT,true);
-		contentvalues.put(DatabaseHelper.COLUMN_SCHEDULE_START_TIME,
-				System.currentTimeMillis());
-		contentvalues.put(DatabaseHelper.COLUMN_SCHEDULE_CITY, "北京");
-		contentvalues.put(DatabaseHelper.COLUMN_SCHEDULE_CONTENT, "恩，大家聚会方便多了");
-		ServiceManager.getDbManager().insertShareSchedules(contentvalues);
-		contentvalues.put(DatabaseHelper.COLUMN_SCHEDULE_T_ID, -5);
-		contentvalues.put(DatabaseHelper.COLUMN_SCHEDULE_SLAVE_ID, -1);
-		contentvalues.put(DatabaseHelper.COLUMN_SCHEDULE_ORDER, 2);
-		contentvalues.put(DatabaseHelper.COLUMN_SCHEDULE_TYPE, 2);
-		contentvalues.put(DatabaseHelper.COLUMN_SCHEDULE_DEFAULT,true);
-		contentvalues.put(DatabaseHelper.COLUMN_SCHEDULE_START_TIME,
-				System.currentTimeMillis());
-		contentvalues.put(DatabaseHelper.COLUMN_SCHEDULE_CITY, "北京");
-		contentvalues.put(DatabaseHelper.COLUMN_SCHEDULE_CONTENT, "哈哈，这东东蛮好用的");
-		ServiceManager.getDbManager().insertShareSchedules(contentvalues);
-		contentvalues.put(DatabaseHelper.COLUMN_SCHEDULE_T_ID, -6);
-		contentvalues.put(DatabaseHelper.COLUMN_SCHEDULE_SLAVE_ID, 1);
-		contentvalues.put(DatabaseHelper.COLUMN_SCHEDULE_ORDER, 0);
-		contentvalues.put(DatabaseHelper.COLUMN_SCHEDULE_TYPE, 3);
-		contentvalues.put(DatabaseHelper.COLUMN_SCHEDULE_DEFAULT,true);
-		contentvalues.put(DatabaseHelper.COLUMN_SCHEDULE_START_TIME,
-				System.currentTimeMillis());
-		contentvalues.put(DatabaseHelper.COLUMN_SCHEDULE_CITY, "北京");
-		contentvalues.put(DatabaseHelper.COLUMN_SCHEDULE_CONTENT,
-				"想吃火锅~各种流口水啊，有木有想吃的同去");
-		ServiceManager.getDbManager().insertShareSchedules(contentvalues);
-		contentvalues.put(DatabaseHelper.COLUMN_SCHEDULE_T_ID, -7);
-		contentvalues.put(DatabaseHelper.COLUMN_SCHEDULE_SLAVE_ID, -6);
-		contentvalues.put(DatabaseHelper.COLUMN_SCHEDULE_ORDER, 1);
-		contentvalues.put(DatabaseHelper.COLUMN_SCHEDULE_TYPE, 3);
-		contentvalues.put(DatabaseHelper.COLUMN_SCHEDULE_DEFAULT,true);
-		contentvalues.put(DatabaseHelper.COLUMN_SCHEDULE_START_TIME,
-				System.currentTimeMillis());
-		contentvalues.put(DatabaseHelper.COLUMN_SCHEDULE_CITY, "北京");
-		contentvalues.put(DatabaseHelper.COLUMN_SCHEDULE_CONTENT, "大馋猫，下班一起去咯");
-		ServiceManager.getDbManager().insertShareSchedules(contentvalues);
-	}
+
 
 
 
@@ -459,7 +326,7 @@ public class FriendsDyamicScreen extends Screen implements IXListViewListener, O
 				FriendsDyamicScreen.this,
 				"position:" + position, Toast.LENGTH_SHORT)
 				.show();
-		if(!dataArrayList.get(position-1).isDefault_data()){
+		if(dataArrayList.size() !=0 && !dataArrayList.get(position-1).isDefault_data()){
 			initPopWindow(FriendsDyamicScreen.this, dataArrayList.get(position-1).getT_id());
 		}
 	}
@@ -495,5 +362,31 @@ public class FriendsDyamicScreen extends Screen implements IXListViewListener, O
         // TODO Auto-generated method stub
         return false;
     }
+
+	@Override
+	protected void onResume() {
+		super.onResume();
+		if (ServiceManager.getUserId() == 0) {
+			if(!list.isFooterViewAdd()){
+				ScheduleApplication.LogD(FriendsDyamicScreen.class, " NOT list.isFooterViewAdd()");
+				list.addFooterView(mListFooter);
+				list.setFooterViewAdd(true);
+				list.setHeaderGone(false);
+				list.setPullRefreshEnable(false);
+				list.setPullLoadEnable(false);
+			} else {
+				ScheduleApplication.LogD(FriendsDyamicScreen.class, "list.isFooterViewAdd()");
+			}
+		} else {
+			//if(list.isFooterViewAdd()){
+				list.removeFooterView(mListFooter);
+				list.setFooterViewAdd(false);
+				list.setHeaderGone(true);
+				list.setPullRefreshEnable(true);
+				list.setPullLoadEnable(true);
+			//}
+		}
+	}
+    
 
 }

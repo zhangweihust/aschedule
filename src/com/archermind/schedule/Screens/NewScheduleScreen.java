@@ -224,7 +224,7 @@ public class NewScheduleScreen extends Screen implements OnClickListener {
             	return;
             }
 			// 判断时间是否可以分享，如果大于当前时间则可以分享
-			if (startTime < System.currentTimeMillis()) {
+			if (mSelectTime < System.currentTimeMillis()) {
 				// 提示不能分享；
 				Toast.makeText(NewScheduleScreen.this, "不能分享过去事件",
 						Toast.LENGTH_SHORT).show();

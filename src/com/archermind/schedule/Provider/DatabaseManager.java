@@ -253,8 +253,8 @@ public class DatabaseManager {
 	  public Cursor queryLocalSchedules(int start, int end) {
 
         return database.query(DatabaseHelper.TAB_LOCAL_SCHEDULE, null,
-               DatabaseHelper.COLUMN_SCHEDULE_SHARE + " =? " , new String[] {
-                       "1", String.valueOf(start), String.valueOf(end)
+               DatabaseHelper.COLUMN_SCHEDULE_SHARE + " =? AND " +   DatabaseHelper.COLUMN_SCHEDULE_ORDER + " =?", new String[] {
+                       "1", "0",  String.valueOf(start), String.valueOf(end)
                 }, null, null, DatabaseHelper.COLUMN_SCHEDULE_START_TIME + " DESC "
                         + " LIMIT ? , ? ");
 
@@ -264,8 +264,8 @@ public class DatabaseManager {
 
         return database.query(DatabaseHelper.TAB_LOCAL_SCHEDULE, null,
                 DatabaseHelper.COLUMN_SCHEDULE_SHARE + " =? AND "
-                        + DatabaseHelper.COLUMN_SCHEDULE_START_TIME + " < ? ", new String[] {
-                        "1", String.valueOf(time), String.valueOf(size)
+                        + DatabaseHelper.COLUMN_SCHEDULE_START_TIME + " < ? AND " +   DatabaseHelper.COLUMN_SCHEDULE_ORDER + " =?", new String[] {
+                        "1", String.valueOf(time), "0", String.valueOf(size)
                 }, null, null, DatabaseHelper.COLUMN_SCHEDULE_START_TIME + " DESC "
                         + " LIMIT ? ");
 
@@ -369,6 +369,7 @@ public void deleteFriend(String id){
 	public Cursor queryFriendTel(int id){
 		return database.query(DatabaseHelper.ASCHEDULE_FRIEND, null, DatabaseHelper.ASCHEDULE_FRIEND_ID + " =? ", new String[] { String.valueOf(id)}, null, null, null);
 	}
+
 	
 	public String queryNameByTel(String tel){
 		String name = null;

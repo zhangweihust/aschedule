@@ -64,6 +64,16 @@ public class XListView extends ListView implements OnScrollListener {
 														// load more.
 	private final static float OFFSET_RADIO = 1.8f; // support iOS like pull
 													// feature.
+    private boolean isFooterViewAdd = false;
+    
+    
+	public boolean isFooterViewAdd() {
+		return isFooterViewAdd;
+	}
+
+	public void setFooterViewAdd(boolean isFooterViewAdd) {
+		this.isFooterViewAdd = isFooterViewAdd;
+	}
 
 	/**
 	 * @param context

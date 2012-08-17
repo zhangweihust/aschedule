@@ -16,7 +16,6 @@ import android.content.ContentValues;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
-import android.database.Cursor;
 import android.os.Handler;
 import android.os.IBinder;
 import android.os.Message;
@@ -24,9 +23,9 @@ import android.util.Log;
 import android.view.Display;
 import android.view.Gravity;
 import android.view.View;
+import android.view.View.OnClickListener;
 import android.view.Window;
 import android.view.WindowManager;
-import android.view.View.OnClickListener;
 import android.widget.Button;
 import android.widget.Toast;
 
@@ -43,6 +42,7 @@ import com.archermind.schedule.Utils.Constant;
 import com.archermind.schedule.Utils.Contact;
 import com.archermind.schedule.Utils.NetworkUtils;
 import com.archermind.schedule.Utils.ServerInterface;
+import com.archermind.schedule.Utils.SyncDataUtil;
 
 public class ServiceManager extends Service implements OnClickListener{
 
@@ -133,7 +133,7 @@ public class ServiceManager extends Service implements OnClickListener{
                 myTask = new MyTimerTask();
                 mTimer.schedule(myTask, mTaskTime, mTaskTime);
             }
-            getSchedulesFromWeb(String.valueOf(ServiceManager.getUserId()));        
+            SyncDataUtil.getSchedulesFromWeb(String.valueOf(ServiceManager.getUserId()), true);        
             makeFriendFromInet();
             eventService.onUpdateEvent(new EventArgs(EventTypes.CONTACT_SYNC_SUCCESS));
             Log.i(TAG, "get data in service!the time is " + mTaskTime);
@@ -259,64 +259,6 @@ public class ServiceManager extends Service implements OnClickListener{
     	homeScreen = mHomeScreen;
     }
 
-    private void getSchedulesFromWeb(String userId) {
-        if (NetworkUtils.getNetworkState(this) != NetworkUtils.NETWORN_NONE) {
-        	Cursor updateTimeCursor = ServiceManager.getDbManager().queryShareSchedules();
-			String time;
-			if(updateTimeCursor != null && updateTimeCursor.getCount() > 0 ){
-				updateTimeCursor.moveToFirst();
-				time = updateTimeCursor.getString(updateTimeCursor.getColumnIndex(DatabaseHelper.COLUMN_SCHEDULE_UPDATE_TIME));
-			} else {
-				time = "0";
-			}
-			updateTimeCursor.close();
-            String jsonString = ServiceManager.getServerInterface().syncFriendShare(userId, time);
-            try {
-
-                JSONArray jsonArray = new JSONArray(jsonString);
-                ScheduleApplication
-                        .LogD(FriendsDyamicScreen.class, jsonString + jsonArray.length());
-                ContentValues contentvalues;
-
-                for (int i = 0; i < jsonArray.length(); i++) {
-                    JSONObject jsonObject = (JSONObject)jsonArray.opt(i);
-                    contentvalues = new ContentValues();
-                    String t_id = jsonObject.getString("TID");
-                    contentvalues.put(DatabaseHelper.COLUMN_SCHEDULE_T_ID, t_id);
-                    contentvalues.put(DatabaseHelper.COLUMN_SCHEDULE_ORDER,
-                            jsonObject.getString("num"));
-                    contentvalues.put(DatabaseHelper.COLUMN_SCHEDULE_SLAVE_ID,
-                            jsonObject.getString("host"));
-                    contentvalues.put(DatabaseHelper.COLUMN_SCHEDULE_USER_ID,
-                            jsonObject.getString("user_id"));
-                    contentvalues.put(DatabaseHelper.COLUMN_SCHEDULE_TYPE,
-                            jsonObject.getString("type"));
-                    contentvalues.put(DatabaseHelper.COLUMN_SCHEDULE_START_TIME,
-                            jsonObject.getString("start_time"));
-                    contentvalues.put(DatabaseHelper.COLUMN_SCHEDULE_UPDATE_TIME,
-                            jsonObject.getString("update_time"));
-                    contentvalues.put(DatabaseHelper.COLUMN_SCHEDULE_CITY,
-                            jsonObject.getString("city"));
-                    contentvalues.put(DatabaseHelper.COLUMN_SCHEDULE_CONTENT,
-                            jsonObject.getString("content"));
-
-                    if (!ServiceManager.getDbManager().isInShareSchedules(t_id)) {
-
-                        eventService.onUpdateEvent(new EventArgs(EventTypes.SERVICE_TIP_ON));
-                        ServiceManager.getDbManager().insertShareSchedules(contentvalues);
-                    
-                    } else {
-                    
-                        ServiceManager.getDbManager().updateShareSchedules(contentvalues, t_id);
-                        ScheduleApplication.LogD(FriendsDyamicScreen.class, "重复的TID：" + t_id);                    
-                    }
-                }
-            } catch (JSONException e) {
-
-                e.printStackTrace();
-            }
-        }
-    }
     
     private void makeFriendFromInet(){
 		if (NetworkUtils.getNetworkState(this) != NetworkUtils.NETWORN_NONE) {
