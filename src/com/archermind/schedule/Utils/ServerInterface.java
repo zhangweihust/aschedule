@@ -954,7 +954,7 @@ public class ServerInterface {
 		Map<String, String> map = new HashMap<String, String>();
 		map.put("user_id", user_id);
 		map.put("photo_url", url);
-		String res= HttpUtils.doPost(map, "http://player.archermind.com/ci/index.php/SMSUtils/uploadPhoto");		
+		String res= HttpUtils.doPost(map, "http://player.archermind.com/ci/index.php/aschedule/uploadPhoto");		
 		int result =0;
 		try{
 			result =Integer.parseInt(res);
@@ -970,7 +970,7 @@ public class ServerInterface {
 	public static String getPhoto(String user_id) {
 		Map<String, String> map = new HashMap<String, String>();
 		map.put("user_id", user_id);
-		String res= HttpUtils.doPost(map, "http://player.archermind.com/ci/index.php/SMSUtils/downloadPhoto");		
+		String res= HttpUtils.doPost(map, "http://player.archermind.com/ci/index.php/aschedule/downloadPhoto");		
 		return res;
 	}
 }

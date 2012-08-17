@@ -52,12 +52,12 @@ public class HttpUtils implements Runnable{
 				httphead = httphead.replace("\r\n", "");
 			}
 
-			SharedPreferences sh = ScheduleApplication.getContext()
-					.getSharedPreferences(RegisterScreen.USER_INFO,
-							ScheduleApplication.getContext().MODE_PRIVATE);
-			String m_cookie ="";
-			m_cookie =sh.getString("Cookie", "");
-			httpPost.setHeader("Cookie", "sid=" + m_cookie);
+//			SharedPreferences sh = ScheduleApplication.getContext()
+//					.getSharedPreferences(RegisterScreen.USER_INFO,
+//							ScheduleApplication.getContext().MODE_PRIVATE);
+//			String m_cookie ="";
+//			m_cookie =sh.getString("Cookie", "");
+//			httpPost.setHeader("Cookie", "sid=" + m_cookie);
 			HttpResponse response = client.execute(httpPost);
 			
 			if(response.getStatusLine().getStatusCode() == 200){
