@@ -1,4 +1,4 @@
-package com.archermind.schedule.Utils;
+package com.archermind.schedule.Model;
 
 public class ScheduleData {
 	public int id;

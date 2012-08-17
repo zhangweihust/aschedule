@@ -1,7 +1,12 @@
 package com.archermind.schedule.Screens;
 
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
+
 import android.R.integer;
 import android.app.Activity;
+import android.content.ContentValues;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -20,6 +25,7 @@ import android.widget.ImageView;
 import android.widget.Toast;
 
 import com.archermind.schedule.R;
+import com.archermind.schedule.Model.UserInfoData;
 import com.archermind.schedule.Services.ServiceManager;
 import com.archermind.schedule.Utils.HttpUtils;
 
@@ -48,11 +54,6 @@ public class RegisterScreen extends Activity implements OnClickListener {
 
     private static final int BIN_SUCCESS = 3;
 
-    public static final String USER_INFO = "userinfo";
-
-    public static final String USER_ID = "userid";
-    
-
     /** Called when the activity is first created. */
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -75,7 +76,7 @@ public class RegisterScreen extends Activity implements OnClickListener {
 
                 if (msg.what == REGISTER_SUCCESS) {
                     ServiceManager.ToastShow("注册成功!");
-                    onBackPressed();
+                    startActivity(new Intent(RegisterScreen.this,MenuScreen.class));
                 } else if (msg.what == REGISTER_FAILED) {
                     ServiceManager.ToastShow("注册失败!");
                 } else if (msg.what == BIN_SUCCESS) {
@@ -167,26 +168,19 @@ public class RegisterScreen extends Activity implements OnClickListener {
                 int ret = ServiceManager.getServerInterface().register(email, pswd, username, imsi,
                         null, null, null);
                 
-                Log.e("RegisterScreen", "ret = " + ret);
                 if (ret <= 0) {
                     handler.sendEmptyMessage(REGISTER_FAILED);
                 } else {
-
-                    ServiceManager.setUserId(ret); /* 设置服务器返回的Userid */
-                    SharedPreferences.Editor editor = getSharedPreferences(USER_INFO,
-                            Context.MODE_WORLD_WRITEABLE).edit();
-                    editor.putInt(USER_ID, ret);
-                    editor.putString("Cookie", HttpUtils.httphead);                 
-                    editor.commit();
                     String userBin = ServiceManager.getServerInterface().get_Bin_Info(
                             Integer.toString(ret), Integer.toString(binType), binId);
 
-                    if (userBin.length() > 10) {
-
-                        handler.sendEmptyMessage(BIN_SUCCESS);
-                    } else {
-
+                    
+                    if (userBin.contains("user_id")) {
                         handler.sendEmptyMessage(REGISTER_SUCCESS);
+                        writeUserinfo(userBin,HttpUtils.GetCookie());
+                        Log.i("RegisterScreen","服务器返回信息写入SharedPrefences成功!");
+                    } else {
+                        handler.sendEmptyMessage(REGISTER_FAILED);
                     }
                 }
                 
@@ -194,4 +188,36 @@ public class RegisterScreen extends Activity implements OnClickListener {
         }.start();
     }
 
+    /* 登录成功后将服务器返回的信息写入SharedPrefences，并在程序中保存userid和cookie */
+    public static void writeUserinfo(String userinfo,String cookie)
+    {
+    	JSONArray jsonArray;
+		try {
+			jsonArray = new JSONArray(userinfo);
+			for (int i = 0; i < jsonArray.length(); i++) {
+				JSONObject jsonObject = (JSONObject) jsonArray.opt(i);
+				
+				/* 将服务器返回的信息存到SharedPrefences中 */
+				ServiceManager.setSPUserInfo(UserInfoData.USER_ID, jsonObject.getString(UserInfoData.USER_ID));
+				ServiceManager.setSPUserInfo(UserInfoData.EMAIL, jsonObject.getString(UserInfoData.EMAIL));
+				ServiceManager.setSPUserInfo(UserInfoData.PSWD, jsonObject.getString(UserInfoData.PSWD));
+				ServiceManager.setSPUserInfo(UserInfoData.REGDATE, jsonObject.getString(UserInfoData.REGDATE));
+				ServiceManager.setSPUserInfo(UserInfoData.LGDATE, jsonObject.getString(UserInfoData.LGDATE));
+				ServiceManager.setSPUserInfo(UserInfoData.IMSI, jsonObject.getString(UserInfoData.IMSI));
+				ServiceManager.setSPUserInfo(UserInfoData.NICK, jsonObject.getString(UserInfoData.NICK));
+				ServiceManager.setSPUserInfo(UserInfoData.TEL, jsonObject.getString(UserInfoData.TEL));
+				ServiceManager.setSPUserInfo(UserInfoData.PHOTO_URL, jsonObject.getString(UserInfoData.PHOTO_URL));
+				ServiceManager.setSPUserInfo(UserInfoData.COOKIE, cookie);
+				
+				/* 保存userid和cookie */
+				ServiceManager.setUserId(jsonObject.getInt(UserInfoData.USER_ID));
+				ServiceManager.setCookie(cookie);
+				
+			}
+		} catch (JSONException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		
+    }
 }

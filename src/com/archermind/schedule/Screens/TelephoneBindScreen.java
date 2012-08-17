@@ -107,24 +107,27 @@ public class TelephoneBindScreen extends Activity implements OnClickListener{
 					{
 						public void run() 
 						{
-							String ret = ServiceManager.getServerInterface().sendSMS(SCHEDULE_APP_ID,requestTel,"default");
-							String smsid = parseJason(ret,"smsID");
-							if (!smsid.equals(""))
+							if (0 == ServiceManager.getServerInterface().is_tel_bind((String.valueOf(ServiceManager.getUserId())), requestTel))
 							{
-								if (Integer.parseInt(smsid) > 0)
+								String ret = ServiceManager.getServerInterface().sendSMS(SCHEDULE_APP_ID,requestTel,"default");
+								String smsid = parseJason(ret,"smsID");
+								if (!smsid.equals(""))
 								{
-									tel = requestTel;
-									smsID = smsid;
-									handler.sendEmptyMessage(GET_VERIFICATION_CODE_SUCCESS);
+									if (Integer.parseInt(smsid) > 0)
+									{
+										tel = requestTel;
+										smsID = smsid;
+										handler.sendEmptyMessage(GET_VERIFICATION_CODE_SUCCESS);
+									}
+									else
+									{
+										handler.sendEmptyMessage(GET_VERIFICATION_CODE_FAILED);
+									}
 								}
 								else
 								{
 									handler.sendEmptyMessage(GET_VERIFICATION_CODE_FAILED);
 								}
-							}
-							else
-							{
-								handler.sendEmptyMessage(GET_VERIFICATION_CODE_FAILED);
 							}
 						};
 					}.start();

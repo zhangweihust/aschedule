@@ -17,10 +17,10 @@ import android.util.Log;
 import com.archermind.schedule.Calendar.LunarCalendar;
 import com.archermind.schedule.Calendar.SpecialCalendar;
 import com.archermind.schedule.Model.ScheduleBean;
+import com.archermind.schedule.Model.ScheduleData;
 import com.archermind.schedule.Provider.DatabaseHelper;
 import com.archermind.schedule.Provider.DatabaseManager;
 import com.archermind.schedule.Services.ServiceManager;
-import com.archermind.schedule.Utils.ScheduleData;
 
 public class CalendarData {
     private DatabaseManager database;

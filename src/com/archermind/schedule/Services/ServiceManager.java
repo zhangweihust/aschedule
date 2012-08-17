@@ -33,6 +33,7 @@ import com.archermind.schedule.R;
 import com.archermind.schedule.ScheduleApplication;
 import com.archermind.schedule.Events.EventArgs;
 import com.archermind.schedule.Events.EventTypes;
+import com.archermind.schedule.Model.UserInfoData;
 import com.archermind.schedule.Provider.DatabaseHelper;
 import com.archermind.schedule.Provider.DatabaseManager;
 import com.archermind.schedule.Screens.FriendsDyamicScreen;
@@ -61,6 +62,9 @@ public class ServiceManager extends Service implements OnClickListener{
     private static Contact contact = new Contact();
 
     private static int user_id = 0;
+    private static String cookie = "";
+    private static SharedPreferences sharedPreferences;
+    private static SharedPreferences.Editor spEditor;
 
     private static Toast toast;
 
@@ -146,9 +150,11 @@ public class ServiceManager extends Service implements OnClickListener{
 
         toast = Toast.makeText(getApplicationContext(), "service start", Toast.LENGTH_SHORT);
         // toast.show();
-        SharedPreferences sp = getSharedPreferences(RegisterScreen.USER_INFO,
+        sharedPreferences = getSharedPreferences(UserInfoData.USER_INFO,
                 Context.MODE_WORLD_READABLE);
-        user_id = sp.getInt(RegisterScreen.USER_ID, 0);
+        spEditor = sharedPreferences.edit();
+        user_id = sharedPreferences.getInt(UserInfoData.USER_ID, 0);
+        cookie = sharedPreferences.getString(UserInfoData.COOKIE, "");
         mTimer = new Timer();
         myTask = new MyTimerTask();
         mTimer.schedule(myTask, mTaskTime, mTaskTime);
@@ -239,6 +245,16 @@ public class ServiceManager extends Service implements OnClickListener{
 
     public static int getUserId() {
         return user_id;
+    }
+    
+    public static void setCookie(String cookiestr)
+    {
+    	cookie = cookiestr;
+    }
+    
+    public static String getCookie()
+    {
+    	return cookie;
     }
 
     public static void ToastShow(String message) {
@@ -373,4 +389,30 @@ public class ServiceManager extends Service implements OnClickListener{
 		}
 
 
+	   public static void setSPUserInfo(String feild,String data)
+	   {
+		   spEditor.putString(feild, data);       
+           spEditor.commit();
+	   }
+	   
+	   public static String getSPUserInfo(String feild)
+	   {
+	       return sharedPreferences.getString(UserInfoData.USER_ID,"");
+	   }
+	   
+	   public static boolean isUserLogining(int userid)
+	   {
+//		   boolean ret = false;
+		   boolean ret = true;
+		   if (NetworkUtils.getNetworkState(ScheduleApplication.getContext()) != NetworkUtils.NETWORN_NONE)
+		   {
+			   /* 发送userid给服务器，服务器判断userid的用户是否登录 */
+//			   if (serverInerface.isLogining(userid))
+//			   {
+//				   ret = true;
+//			   }
+		   }
+		   
+		   return ret;
+	   }
 }

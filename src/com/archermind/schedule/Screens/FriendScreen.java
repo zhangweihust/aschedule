@@ -38,6 +38,7 @@ import com.archermind.schedule.Adapters.FriendContactAdapter.ListElement;
 import com.archermind.schedule.Events.EventArgs;
 import com.archermind.schedule.Events.IEventHandler;
 import com.archermind.schedule.Model.Friend;
+import com.archermind.schedule.Model.ScheduleData;
 import com.archermind.schedule.Provider.DatabaseHelper;
 import com.archermind.schedule.Provider.DatabaseManager;
 import com.archermind.schedule.Services.ServiceManager;
@@ -46,7 +47,6 @@ import com.archermind.schedule.Utils.Constant;
 import com.archermind.schedule.Utils.Contact;
 import com.archermind.schedule.Utils.ListViewUtil;
 import com.archermind.schedule.Utils.NetworkUtils;
-import com.archermind.schedule.Utils.ScheduleData;
 import com.archermind.schedule.Utils.ServerInterface;
 
 public class FriendScreen extends Screen implements OnClickListener, IEventHandler{

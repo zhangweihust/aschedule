@@ -9,9 +9,9 @@ import java.util.List;
 import com.archermind.schedule.R;
 import com.archermind.schedule.Calendar.LunarCalendar;
 import com.archermind.schedule.Events.EventArgs;
+import com.archermind.schedule.Model.ScheduleData;
 import com.archermind.schedule.Provider.DatabaseHelper;
 import com.archermind.schedule.Utils.DateTimeUtils;
-import com.archermind.schedule.Utils.ScheduleData;
 
 import android.content.Context;
 import android.view.LayoutInflater;

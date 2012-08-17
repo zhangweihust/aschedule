@@ -19,7 +19,7 @@ import org.apache.http.protocol.HTTP;
 import org.apache.http.util.EntityUtils;
 
 import com.archermind.schedule.ScheduleApplication;
-import com.archermind.schedule.Screens.RegisterScreen;
+import com.archermind.schedule.Model.UserInfoData;
 
 import android.content.SharedPreferences;
 import android.util.Log;
@@ -53,7 +53,7 @@ public class HttpUtils implements Runnable{
 			}
 
 			SharedPreferences sh = ScheduleApplication.getContext()
-					.getSharedPreferences(RegisterScreen.USER_INFO,
+					.getSharedPreferences(UserInfoData.USER_INFO,
 							ScheduleApplication.getContext().MODE_PRIVATE);
 			String m_cookie ="";
 			m_cookie =sh.getString("Cookie", "");

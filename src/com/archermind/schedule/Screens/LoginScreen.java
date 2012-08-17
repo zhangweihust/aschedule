@@ -21,6 +21,7 @@ import android.widget.EditText;
 import android.widget.Toast;
 
 import com.archermind.schedule.R;
+import com.archermind.schedule.Model.UserInfoData;
 import com.archermind.schedule.Services.ServiceManager;
 import com.archermind.schedule.Utils.HttpUtils;
 import com.renren.api.connect.android.Renren;
@@ -326,9 +327,10 @@ public class LoginScreen extends Activity implements OnClickListener {
     public void binAccount(String uid, int tag) {
 
         String isBin = ServiceManager.getServerInterface().Bin_login(Integer.toString(tag), uid);
-        if (isBin.length() > 10) {
-
-            insertUserId(isBin);
+        if (isBin.contains("user_id")) {
+        	
+            handler.sendEmptyMessage(LOGIN_SUCCESS);
+            RegisterScreen.writeUserinfo(isBin,HttpUtils.GetCookie());
             
         } else {
 
@@ -340,39 +342,35 @@ public class LoginScreen extends Activity implements OnClickListener {
         }
     }
 
-    private void insertUserId(String userData) {
-
-        String user_id = "";
-        JSONArray jsonArray;
-        try {
-
-            jsonArray = new JSONArray(userData);
-            for (int i = 0; i < jsonArray.length(); i++) {
-
-                JSONObject jsonObject = (JSONObject)jsonArray.opt(i);
-                user_id = jsonObject.getString("user_id");
-            }
-
-            if (!user_id.equals("")) {
-
-                handler.sendEmptyMessage(LOGIN_SUCCESS);
-                ServiceManager.setUserId(Integer.parseInt(user_id)); /* 设置服务器返回的Userid */
-                SharedPreferences.Editor editor = getSharedPreferences(RegisterScreen.USER_INFO,
-                        Context.MODE_WORLD_WRITEABLE).edit();
-
-                editor.putInt(RegisterScreen.USER_ID, Integer.parseInt(user_id));
-                editor.putString("Cookie", HttpUtils.httphead);
-
-                editor.commit();
-            } else {
-
-                handler.sendEmptyMessage(LOGIN_FAILED);
-            }
-        } catch (JSONException e) {
-
-            e.printStackTrace();
-        }
-    }
+//    private void insertUserId(String userData) {
+//
+//        String user_id = "";
+//        JSONArray jsonArray;
+//        try {
+//
+//            jsonArray = new JSONArray(userData);
+//            for (int i = 0; i < jsonArray.length(); i++) {
+//
+//                JSONObject jsonObject = (JSONObject)jsonArray.opt(i);
+//                user_id = jsonObject.getString("user_id");
+//            }
+//
+//            if (!user_id.equals("")) {
+//
+//                handler.sendEmptyMessage(LOGIN_SUCCESS);
+//                ServiceManager.setUserId(Integer.parseInt(user_id)); /* 设置服务器返回的Userid */
+//                ServiceManager.setSPUserInfo(UserInfoData.USER_ID, user_id);
+//                ServiceManager.setSPUserInfo(UserInfoData.COOKIE, HttpUtils.httphead);
+//
+//            } else {
+//
+//                handler.sendEmptyMessage(LOGIN_FAILED);
+//            }
+//        } catch (JSONException e) {
+//
+//            e.printStackTrace();
+//        }
+//    }
 
     @Override
     public void onBackPressed() {
@@ -402,11 +400,16 @@ public class LoginScreen extends Activity implements OnClickListener {
         new Thread() {
             public void run() {
                 String ret = ServiceManager.getServerInterface().login(username, password, imsi);
-                // String user_id = "";
 
-                if (ret.length() > 10) {
+                if (ret.contains("user_id")) {
 
-                    insertUserId(ret);
+                	handler.sendEmptyMessage(LOGIN_SUCCESS);
+                    RegisterScreen.writeUserinfo(ret,HttpUtils.GetCookie());
+                    Log.i("LoginScreen","服务器返回信息写入SharedPrefences成功!");
+                }
+                else
+                {
+                	handler.sendEmptyMessage(LOGIN_FAILED);
                 }
 
                 // try {
