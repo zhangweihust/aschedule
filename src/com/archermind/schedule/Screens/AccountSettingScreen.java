@@ -29,12 +29,14 @@ import android.view.Window;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 
 import com.archermind.schedule.R;
 import com.archermind.schedule.Services.ServiceManager;
 
 public class AccountSettingScreen extends Activity implements OnClickListener{
 	private ImageView headImage;
+	private LinearLayout bindTelephone;
 	
     /** Called when the activity is first created. */
     @Override
@@ -46,8 +48,10 @@ public class AccountSettingScreen extends Activity implements OnClickListener{
         setContentView(R.layout.account_setting);
         
         headImage = (ImageView)findViewById(R.id.headImage);
+        bindTelephone = (LinearLayout)findViewById(R.id.bindTelephone);
         
         headImage.setOnClickListener(this);
+        bindTelephone.setOnClickListener(this);
     }
 
 	public void onClick(View v) {
@@ -56,6 +60,10 @@ public class AccountSettingScreen extends Activity implements OnClickListener{
 		{
 		case R.id.headImage:
 			ShowPickDialog();
+			break;
+		case R.id.bindTelephone:
+			Intent it = new Intent(AccountSettingScreen.this,TelephoneBindScreen.class);
+			startActivity(it);
 			break;
 		}
 	}  

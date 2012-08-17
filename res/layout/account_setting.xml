@@ -115,6 +115,7 @@
             android:background="@drawable/schedule_new_line" />
 
         <LinearLayout
+            android:id="@+id/bindTelephone"
             android:layout_width="fill_parent"
             android:layout_height="40dp"
             android:clickable="true"
@@ -126,7 +127,7 @@
                 android:layout_height="wrap_content"
                 android:layout_marginLeft="20dp"
                 android:layout_weight="1"
-                android:text="电话"
+                android:text="绑定帐号"
                 android:textColor="#000000" />
 
             <Button

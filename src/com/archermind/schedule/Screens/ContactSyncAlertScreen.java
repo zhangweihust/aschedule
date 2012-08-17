@@ -69,7 +69,7 @@ public class ContactSyncAlertScreen extends Activity implements OnClickListener{
 					}
 					else
 					{
-						handler.sendEmptyMessage(SUCCESS);
+						handler.sendEmptyMessage(FAILED);
 					}
 					ServiceManager.getEventservice().onUpdateEvent(new EventArgs(EventTypes.CONTACT_SYNC_SUCCESS));
 					

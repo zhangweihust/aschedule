@@ -46,6 +46,7 @@
          <activity android:name=".Screens.AboutScreen"></activity>
          <activity android:name=".Screens.FeedbackScreen"></activity>
          <activity android:name=".Screens.SettingScreen"></activity>
+         <activity android:name=".Screens.TelephoneBindScreen"></activity>
         <activity android:name=".Screens.LoadingScreen"> <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
