@@ -310,7 +310,7 @@ public class ServerInterface {
 	/**************************************
 	 * 绑定手机号 包含解除绑定(将手机号转换成16进制数： 15927130379 ——> 3B554B90B) 0 : 已绑定 n : 错误码
 	 ***************************************/
-	public int telBind(int tel) {
+	public int telBind(String user_id,String tel) {
 		return SUCCESS;
 	}
 
@@ -489,7 +489,7 @@ public class ServerInterface {
 			return SUCCESS;
 		} else {
 			System.out.println("uploadContact-----" + ret);
-			return -1;
+			return -4;
 		}
 		// return (ret != 0) ? ret : SUCCESS;
 		// return SUCCESS;
@@ -904,7 +904,7 @@ public class ServerInterface {
 		System.out.println("sendSMS===="+ret);
 		return ret;
 	}
-	/*获取手机验证码
+	/*验证手机验证码
 	 * appid 1 爱音乐 2 话费通 3 微日程 4 微笔记
 	 * smsID sendSMS返回的id号，对应一条消息
 	 * code  验证码
@@ -925,7 +925,22 @@ public class ServerInterface {
 		try{
 			result =Integer.parseInt(ret);
 		}catch (Exception e){
-			result =-1;
+			result =-4;
+		}
+		return result;
+	}
+	public int is_tel_bind(String user_id,String tel){
+		Map<String, String> map = new HashMap<String, String>();
+		map.put("user_id", user_id);
+		map.put("tel", tel);
+		String ret = HttpUtils
+				.doPost(map,
+						"http://player.archermind.com/ci/index.php/aschedule/is_tel_bind");
+		int result =0;
+		try{
+			result =Integer.parseInt(ret);
+		}catch (Exception e){
+			result =-4;
 		}
 		return result;
 	}
