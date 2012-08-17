@@ -247,7 +247,7 @@ public class FriendScreen extends Screen implements OnClickListener, IEventHandl
 								friend.setNick(nick);
 								friend.setHeadImagePath(photo_url);
 								friends.add(friend);
-									 
+									 								
 								 values = new ContentValues();
 								 values.put(DatabaseHelper.ASCHEDULE_FRIEND_ID, id);
 								 values.put(DatabaseHelper.ASCHEDULE_FRIEND_TYPE, type);
@@ -291,13 +291,14 @@ public class FriendScreen extends Screen implements OnClickListener, IEventHandl
 
 								if(friendList.contains(user_id)){
 									break;
-								}
+								}								
 								Friend friend = new Friend();
 								friend.setId(user_id);
 								friend.setTelephone(tel);
 								friend.setType(type);
 								friend.setNick(nick);
 								friend.setHeadImagePath(photo_url);
+								friend.setName(database.queryNameByTel(tel));
 								
 								friendContactUs.add(friend);
 									 
@@ -313,7 +314,6 @@ public class FriendScreen extends Screen implements OnClickListener, IEventHandl
 
 			}
 		}
-
 	
 	protected HashMap<String, List<Friend>> getData() {
 		// TODO Auto-generated method stub
@@ -375,9 +375,19 @@ public class FriendScreen extends Screen implements OnClickListener, IEventHandl
 				 cursor = database.queryFriendTel(Integer.parseInt(id));
 				 if(cursor.moveToNext()){
 					 String telephone = cursor.getString(cursor.getColumnIndex(DatabaseHelper.ASCHEDULE_FRIEND_NUM));
-					 contactToalList.remove(telephone);
-					 Friend friend = new Friend(id,telephone,Constant.FriendType.friend_yes);
+					 String name = cursor.getString(cursor.getColumnIndex(DatabaseHelper.ASCHEDULE_FRIEND_NAME));
+					 String nick = cursor.getString(cursor.getColumnIndex(DatabaseHelper.ASCHEDULE_FRIEND_NICK));
+					 String headImagePath = cursor.getString(cursor.getColumnIndex(DatabaseHelper.ASCHEDULE_FRIEND_PHOTO_URL));
+					 Friend friend = new Friend();
+					 friend.setId(id);
+					 friend.setTelephone(telephone);
+					 friend.setName(name);
+					 friend.setNick(nick);
+					 friend.setHeadImagePath(headImagePath);
+					 friend.setType(Constant.FriendType.friend_yes);
 					 friends.add(friend);
+					 
+					 contactToalList.remove(telephone);
 				 }else{
 					 //向服务器查询数据(构造Friend,向本地数据库插入数据)
 					 makeFriendFromInet(friends, id, Constant.FriendType.friend_yes, contactToalList);
@@ -391,54 +401,49 @@ public class FriendScreen extends Screen implements OnClickListener, IEventHandl
 				 cursor = database.queryFriendTel(Integer.parseInt(id));
 				 if(cursor.moveToNext()){
 					 String telephone = cursor.getString(cursor.getColumnIndex(DatabaseHelper.ASCHEDULE_FRIEND_NUM));
-					 contactToalList.remove(telephone);
-					 Friend friend = new Friend(id,telephone,Constant.FriendType.friend_Ignore);
+					 String name = cursor.getString(cursor.getColumnIndex(DatabaseHelper.ASCHEDULE_FRIEND_NAME));
+					 String nick = cursor.getString(cursor.getColumnIndex(DatabaseHelper.ASCHEDULE_FRIEND_NICK));
+					 String headImagePath = cursor.getString(cursor.getColumnIndex(DatabaseHelper.ASCHEDULE_FRIEND_PHOTO_URL));
+					 Friend friend = new Friend();
+					 friend.setId(id);
+					 friend.setTelephone(telephone);
+					 friend.setName(name);
+					 friend.setNick(nick);
+					 friend.setHeadImagePath(headImagePath);
+					 friend.setType(Constant.FriendType.friend_Ignore);
 					 ignores.add(friend);
+					 
+					 contactToalList.remove(telephone);
 				 }else{
 					//向服务器查询数据(构造Friend,向本地数据库插入数据)
 					 makeFriendFromInet(ignores, id, Constant.FriendType.friend_Ignore, contactToalList);
 				 }
 			 }
 
-		 }
-
-		 
+		 }		 		 
 		 
 		 List<Friend> contact_use = new ArrayList<Friend>();
-		 cursor = database.queryContactUse();
-		 if(cursor.getCount() > 0){
-			 while(cursor.moveToNext()){
-				 String id = cursor.getString(cursor.getColumnIndex(DatabaseHelper.COLUMN_CONTACT_ID));
-				 String tel = cursor.getString(cursor.getColumnIndex(DatabaseHelper.ASCHEDULE_CONTACT_NUM));
-				 String imgPath = cursor.getString(cursor.getColumnIndex(DatabaseHelper.COLUMN_CONTACT_ID));
-				 Friend friend = new Friend();	
-				 friend.setId(id);
-				 friend.setHeadImagePath(imgPath);
-				 friend.setTelephone(tel);
-				 friend.setType(Constant.FriendType.friend_contact_use);
-				 contact_use.add(friend);
-				 contactToalList.remove(tel);
-			 }
-		 }else{
-			 List<String> tempList = new ArrayList<String>();
-			 for(String tel : contactToalList){
-				 makeFriendContactUseFromInet(contact_use, tel, Constant.FriendType.friend_contact_use, tempList, friendList);
-			 }
-			 for(String tel : tempList){
-				 contactToalList.remove(tel);
-			 }
-		 }		 		 		 
-			 
+		 List<String> tempList = new ArrayList<String>();
+		 for(String tel : contactToalList){
+			 makeFriendContactUseFromInet(contact_use, tel, Constant.FriendType.friend_contact_use, tempList, friendList);
+		 }
+		 for(String tel : tempList){
+			 contactToalList.remove(tel);
+		 }
+		 		 		 		 			 
 		 List<Friend> contact = new ArrayList<Friend>();
 		 for(String tel : contactToalList){
 			 cursor = database.queryContactIdByTel(tel);
 			 if(cursor.moveToNext()){
 				 String id = cursor.getString(cursor.getColumnIndex(DatabaseHelper.COLUMN_CONTACT_ID));
-				 String imgPath = cursor.getString(cursor.getColumnIndex(DatabaseHelper.COLUMN_CONTACT_ID));
+				 String telephone = cursor.getString(cursor.getColumnIndex(DatabaseHelper.ASCHEDULE_CONTACT_NUM));
+				 String name = cursor.getString(cursor.getColumnIndex(DatabaseHelper.ASCHEDULE_CONTACT_NAME));
+				 String headImagePath = cursor.getString(cursor.getColumnIndex(DatabaseHelper.ASCHEDULE_CONTACT_IMGPATH));
 				 Friend friend = new Friend();	
 				 friend.setId(id);
-				 friend.setHeadImagePath(imgPath);
-				 friend.setTelephone(tel);
+				 friend.setTelephone(telephone);
+				 friend.setName(name);
+				 friend.setHeadImagePath(headImagePath);
 				 friend.setType(Constant.FriendType.friend_contact);
 				 contact.add(friend);
 			 }

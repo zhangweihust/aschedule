@@ -367,10 +367,18 @@ public void deleteFriend(String id){
 	}
 
 	public Cursor queryFriendTel(int id){
-		return database.query(DatabaseHelper.ASCHEDULE_FRIEND, new String[]{DatabaseHelper.ASCHEDULE_FRIEND_NUM}, DatabaseHelper.ASCHEDULE_FRIEND_ID + " =? ", new String[] { String.valueOf(id)}, null, null, null);
+		return database.query(DatabaseHelper.ASCHEDULE_FRIEND, null, DatabaseHelper.ASCHEDULE_FRIEND_ID + " =? ", new String[] { String.valueOf(id)}, null, null, null);
 	}
-
 	
+	public String queryNameByTel(String tel){
+		String name = null;
+		Cursor cursor = database.query(DatabaseHelper.ASCHEDULE_CONTACT, null, DatabaseHelper.ASCHEDULE_CONTACT_NUM+ " =? ", new String[] {tel}, null, null, null);
+		if(cursor.moveToNext()){
+			name = cursor.getString(cursor.getColumnIndex(DatabaseHelper.ASCHEDULE_CONTACT_NAME));
+		}
+		cursor.close();
+		return name;
+	}	
 
 	public void updateScheduleById(long id, ContentValues cv) {
 		 database.update(DatabaseHelper.TAB_LOCAL_SCHEDULE, cv,

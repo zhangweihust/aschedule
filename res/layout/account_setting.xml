@@ -47,7 +47,7 @@
         <LinearLayout
             android:id="@+id/datatime"
             android:layout_width="fill_parent"
-            android:layout_height="40dp"
+            android:layout_height="60dp"
             android:clickable="true"
             android:gravity="center_vertical"
             android:orientation="horizontal" >
@@ -60,12 +60,12 @@
                 android:text="头像设置"
                 android:textColor="#000000" />
 
-            <ImageView
+            <com.archermind.schedule.Image.SmartImageView
                 android:id="@+id/headImage"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
+                android:layout_width="@android:dimen/app_icon_size"
+                android:layout_height="@android:dimen/app_icon_size"
                 android:layout_weight="0"
-                android:src="@drawable/friend_item_img" />
+                 />
 
             <Button
                 android:layout_width="wrap_content"
@@ -83,7 +83,7 @@
 
         <LinearLayout
             android:layout_width="fill_parent"
-            android:layout_height="40dp"
+            android:layout_height="60dp"
             android:clickable="true"
             android:gravity="center_vertical"
             android:orientation="horizontal" >
@@ -115,9 +115,8 @@
             android:background="@drawable/schedule_new_line" />
 
         <LinearLayout
-            android:id="@+id/bindTelephone"
             android:layout_width="fill_parent"
-            android:layout_height="40dp"
+            android:layout_height="60dp"
             android:clickable="true"
             android:gravity="center_vertical"
             android:orientation="horizontal" >
@@ -127,7 +126,7 @@
                 android:layout_height="wrap_content"
                 android:layout_marginLeft="20dp"
                 android:layout_weight="1"
-                android:text="绑定帐号"
+                android:text="电话"
                 android:textColor="#000000" />
 
             <Button

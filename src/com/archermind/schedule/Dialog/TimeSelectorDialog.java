@@ -80,7 +80,6 @@ public class TimeSelectorDialog implements OnClickListener {
 
 	private void initWheel(int id) {
 		WheelView wheel = getWheel(id);
-		wheel.setCyclic(false);
 		switch (id) {
 		case R.id.wheelView_year:
 			wheel.setAdapter(new NumericWheelAdapter(1901, 2048,

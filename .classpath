@@ -8,11 +8,11 @@
 	<classpathentry kind="lib" path="libs/gdata-client-meta-1.0.jar"/>
 	<classpathentry kind="lib" path="libs/gdata-core-1.0.jar"/>
 	<classpathentry kind="lib" path="libs/guava-11.0.2.jar"/>
-	<classpathentry kind="src" path="src"/>
-	<classpathentry kind="src" path="gen"/>
 	<classpathentry kind="lib" path="libs/RenrenAthou2SDK2.jar"/>
 	<classpathentry kind="lib" path="libs/sinav2.jar"/>
 	<classpathentry kind="lib" path="libs/tenxun_SDK_v1.2_Fix.jar"/>
 	<classpathentry kind="lib" path="libs/amtcloud_sdk_alpha0.8.1.jar"/>
+	<classpathentry kind="src" path="src"/>
+	<classpathentry kind="src" path="gen"/>
 	<classpathentry kind="output" path="bin/classes"/>
 </classpath>

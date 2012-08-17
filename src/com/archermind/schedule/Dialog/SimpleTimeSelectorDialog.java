@@ -70,7 +70,6 @@ public class SimpleTimeSelectorDialog implements OnClickListener {
 
 	private void initWheel(int id) {
 		WheelView wheel = getWheel(id);
-		wheel.setCyclic(false);
 		switch (id) {
 		case R.id.wheelView_year:
 			wheel.setType(Constant.wheel_year);

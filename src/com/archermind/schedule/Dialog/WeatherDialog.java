@@ -185,9 +185,14 @@ public class WeatherDialog implements OnClickListener {
 		}
 
 		// 设置城市信息
-		cityInfoTv.setText(cityInfoMap.get("province") + "省"
-				+ cityInfoMap.get("city") + "市");
-
+		if("北京".equals(cityInfoMap.get("city"))||"上海".equals(cityInfoMap.get("city"))||"重庆".equals(cityInfoMap.get("city"))||"天津".equals(cityInfoMap.get("city"))){
+			cityInfoTv.setText(cityInfoMap.get("city") + "市");
+			
+		}else{
+			cityInfoTv.setText(cityInfoMap.get("province") + "省"
+					+ cityInfoMap.get("city") + "市");
+		}
+		
 		// 设置今天当前温度
 		Log.i(TAG, "-------st1-" + itemsmap.get("st1"));
 		if(itemsmap.get("st1")!=null){
@@ -202,22 +207,26 @@ public class WeatherDialog implements OnClickListener {
 		if (mWeather1 == null) {
 			mWeather1 = "  ";
 		}
+		
 		todayWeather.setText(mWeather1);
 		Log.i(TAG, "-------weather1-" + mWeather1);
 		Log.i(TAG, "-------weather1-" + weathermap.get(mWeather1));
-		if (weathermap.get(mWeather1) != null) {
+		if (itemsmap.get("weather1") !=null &&!itemsmap.get("weather1").equals("")) {
 			todayImg.setImageResource(weathermap.get(mWeather1));
 		}
 
 		// 设置一天后
-		if (itemsmap.get("temp2") != null) {
+		if (itemsmap.get("temp2") !=null &&!itemsmap.get("temp2").equals("")) {
 			mTemp2 = itemsmap.get("temp2").split("~");
-			oneDAfterMinTemp.setText(mTemp2[0] + "~");
-			oneDAfterMaxTemp.setText(mTemp2[1]);
+			maxtemp2=mTemp2[0]+"~";
+			mintemp2=mTemp2[1];
+		}else{
+			maxtemp2=" ";
+			mintemp2=" ";
 		}
-		mTemp2 = itemsmap.get("temp2").split("~");
-		oneDAfterMinTemp.setText(mTemp2[0] + "~");
-		oneDAfterMaxTemp.setText(mTemp2[1]);
+	
+		oneDAfterMinTemp.setText(maxtemp3);
+		oneDAfterMaxTemp.setText(mintemp3);
 
 		mWeather2 = itemsmap.get("weather2");
 		if (mWeather2 == null) {
@@ -226,13 +235,13 @@ public class WeatherDialog implements OnClickListener {
 		oneDAfterWeather.setText(mWeather2);
 		Log.i(TAG, "------weather2-" + mWeather2);
 		Log.i(TAG, "-------weather2-" + weathermap.get(mWeather2));
-		if (weathermap.get(mWeather2) != null) {
+		if (itemsmap.get("weather2") !=null &&!itemsmap.get("weather2").equals("")) {
 			oneDAfterImg.setImageResource(weathermap.get(mWeather2));
 		}
 
 		// 设置两天后
 		
-		if (itemsmap.get("temp3") != null) {
+		if (itemsmap.get("temp3") !=null &&!itemsmap.get("temp3").equals("")) {
 			mTemp3 = itemsmap.get("temp3").split("~");
 			maxtemp3=mTemp3[0]+"~";
 			mintemp3=mTemp3[1];
@@ -249,12 +258,12 @@ public class WeatherDialog implements OnClickListener {
 		twoDAfterWeather.setText(mWeather3);
 		Log.i(TAG, "-------weather3---" + mWeather3);
 		Log.i(TAG, "-------weather3-" + weathermap.get(mWeather3));
-		if (weathermap.get(mWeather3) != null) {
+		if (itemsmap.get("weather3") !=null &&!itemsmap.get("weather3").equals("")) {
 			twoDAfterImg.setImageResource(weathermap.get(mWeather3));
 		}
 
 		// 设置三天后
-		if (itemsmap.get("temp4") != null) {
+		if (itemsmap.get("temp4") !=null &&!itemsmap.get("temp4").equals("")) {
 			mTemp4 = itemsmap.get("temp4").split("~");
 			maxtemp4=mTemp4[0]+"~";
 			mintemp4=mTemp4[1];
@@ -268,7 +277,7 @@ public class WeatherDialog implements OnClickListener {
 		threeDAfterWeather.setText(mWeather4);
 		Log.i(TAG, "----weather4---" + mWeather4);
 		Log.i(TAG, "-------weather4-" + weathermap.get(mWeather4));
-		if (weathermap.get(mWeather4) != null) {
+		if (itemsmap.get("weather4") !=null &&!itemsmap.get("weather4").equals("")) {
 			threeDAfterImg.setImageResource(weathermap.get(mWeather4));
 		}
 

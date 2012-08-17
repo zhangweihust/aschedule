@@ -1,6 +1,9 @@
 package com.archermind.schedule.Screens;
 
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.Calendar;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -16,6 +19,9 @@ import com.archermind.schedule.Services.ServiceManager;
 import com.archermind.schedule.Utils.DateTimeUtils;
 import com.archermind.schedule.Utils.HttpUtils;
 import com.archermind.schedule.Utils.NetworkUtils;
+import com.archermind.schedule.Utils.ServerInterface;
+
+
 import android.content.ContentValues;
 import android.content.Context;
 import android.content.SharedPreferences;
@@ -31,9 +37,9 @@ public class WeatherScreen extends Screen implements
 	private Map<String, String> cityInfoMap = new HashMap<String, String>();
 	private Map<String, String> itemsmap = new HashMap<String, String>();
 	Map<String, Integer> weatherMap = new HashMap<String, Integer>();
-	private String[] date = new String[4];
-	private String[] week = new String[4];
 
+	private ServerInterface si;
+	private String weatherDate;
 
 	WeatherDialog mwWeatherDialog;
 
@@ -74,14 +80,13 @@ public class WeatherScreen extends Screen implements
 	public void getWeatherData(String province,String city){
 		// 获取天气图片地址
 		weatherMap = getWeathermap();
-
+		si = ServiceManager.getServerInterface();
 		// 获取四天的日期
 		Calendar mCalendar = Calendar.getInstance();
+		String[] date = new String[4];
 		for (int i = 0; i < date.length; i++) {
-			date[i] = DateTimeUtils.time2String("M月d日",
-					mCalendar.getTimeInMillis());
-			week[i] = DateTimeUtils.time2String("E",
-					mCalendar.getTimeInMillis());
+			date[i] = DateTimeUtils.time2String("yyyy年M月d日",
+					mCalendar.getTimeInMillis());;
 			mCalendar.add(Calendar.DAY_OF_MONTH, 1);
 		}
 		
@@ -92,10 +97,7 @@ public class WeatherScreen extends Screen implements
 		//
 		if (NetworkUtils.getNetworkState(this) != NetworkUtils.NETWORN_NONE) {
 
-			String strResult = HttpUtils
-					.doPost(cityInfoMap,
-							"http://player.archermind.com/ci/index.php/aschedule/getWeather");
-			Log.d(TAG, "-------strResult:" + strResult);
+			String strResult = si.getWeather(province, city);
 
 			// [{"city":"武汉","province":"湖北","cid":"101200101","weather":"\"st1 \":\"33\",\"temp1\":\"33℃~27℃\",\"weather1\":\"多云\",\"temp2\": \"34℃~28℃\",\"weather2\":\"多云\",\"temp3\":\"35℃~28℃\",\"weather3 \":\"多云\",\"temp4\":\"34℃~24℃\",\"weather4\":\"多云\""}]
 			if (strResult != null && !strResult.equals("")) {
@@ -105,107 +107,138 @@ public class WeatherScreen extends Screen implements
 				}
 			}
 
-		} else {
+		} 
+			
 			// 没有联网，则读取本地数据库
-			Cursor c = ServiceManager.getDbManager().queryScheduleWeather(
-					date[0]);
-			// 如果不存在当天天气，则什么都不显示
-			if (c.getCount() != 0) {
-
-				if (c.moveToFirst()) {
-
-					itemsmap.put(
-							"st1",
-							c.getString(c
-									.getColumnIndex(DatabaseHelper.COLUMN_WEATHER_TEMP)));
-					itemsmap.put(
-							"temp1",
-							c.getString(c
-									.getColumnIndex(DatabaseHelper.COLUMN_WEATHER_TEMP_RANGE)));
-					itemsmap.put(
-							"weather1",
-							c.getString(c
-									.getColumnIndex(DatabaseHelper.COLUMN_WEATHER_WEATHER)));
-					c.getString(c
-							.getColumnIndex(DatabaseHelper.COLUMN_WEATHER_TEMP));
-					c.close();
-
-					Cursor cursor1 = ServiceManager.getDbManager()
-							.queryScheduleWeather(date[1]);
-					if (cursor1.moveToFirst()) {
-						itemsmap.put(
-								"temp2",
-								cursor1.getString(cursor1
-										.getColumnIndex(DatabaseHelper.COLUMN_WEATHER_TEMP_RANGE)));
-						itemsmap.put(
-								"weather2",
-								cursor1.getString(cursor1
-										.getColumnIndex(DatabaseHelper.COLUMN_WEATHER_WEATHER)));
-
-				} else {
-					itemsmap.put("temp2", "");
-					itemsmap.put("weather2", "");
-
-				}
-
-				cursor1.close();
-
-					Cursor cursor2 = ServiceManager.getDbManager()
-							.queryScheduleWeather(date[2]);
-					if (cursor2.moveToFirst()) {
-
-						itemsmap.put(
-								"temp3",
-								cursor2.getString(cursor2
-										.getColumnIndex(DatabaseHelper.COLUMN_WEATHER_TEMP_RANGE)));
-						itemsmap.put(
-								"weather3",
-								cursor2.getString(cursor2
-										.getColumnIndex(DatabaseHelper.COLUMN_WEATHER_WEATHER)));
-						cursor2.close();
-
-					} else {
-						itemsmap.put("temp3", "");
-						itemsmap.put("weather3", "");
-
-				}
-
-					Cursor cursor3 = ServiceManager.getDbManager()
-							.queryScheduleWeather(date[3]);
-					if (cursor3.moveToFirst()) {
-						itemsmap.put(
-								"temp4",
-								cursor3.getString(cursor3
-										.getColumnIndex(DatabaseHelper.COLUMN_WEATHER_TEMP_RANGE)));
-						itemsmap.put(
-								"weather4",
-								cursor3.getString(cursor3
-										.getColumnIndex(DatabaseHelper.COLUMN_WEATHER_WEATHER)));
-						cursor3.close();
-
-					} else {
-						itemsmap.put("temp4", "");
-						itemsmap.put("weather4", "");
-
-					}
-
-					Log.d(TAG, "-------" + itemsmap.get("st1"));
-					Log.d(TAG, "-------" + itemsmap.get("temp1"));
-					Log.d(TAG, "-------" + itemsmap.get("weather1"));
-					Log.d(TAG, "-------" + itemsmap.get("temp2"));
-					Log.d(TAG, "-------" + itemsmap.get("weather2"));
-					Log.d(TAG, "-------" + itemsmap.get("temp3"));
-					Log.d(TAG, "-------" + itemsmap.get("weather3"));
-					Log.d(TAG, "-------" + itemsmap.get("temp4"));
-					Log.d(TAG, "-------" + itemsmap.get("weather4"));
-
-				}
-			}
-
-		 }
+			readLocalWeather();
+		
 
 	}
+    private void readLocalWeather(){
+    	
 
+    	Calendar mCalendar = Calendar.getInstance();
+		String[] date = new String[4];
+		for (int i = 0; i < date.length; i++) {
+			date[i] = DateTimeUtils.time2String("yyyy年M月d日",
+					mCalendar.getTimeInMillis());;
+			mCalendar.add(Calendar.DAY_OF_MONTH, 1);
+		}
+		Cursor c = ServiceManager.getDbManager().queryScheduleWeather(
+				date[0]);
+		// 如果不存在当天天气，则什么都不显示
+		if (c.getCount() != 0) {
+
+			if (c.moveToFirst()) {
+
+				itemsmap.put(
+						"st1",
+						c.getString(c
+								.getColumnIndex(DatabaseHelper.COLUMN_WEATHER_TEMP)));
+				itemsmap.put(
+						"temp1",
+						c.getString(c
+								.getColumnIndex(DatabaseHelper.COLUMN_WEATHER_TEMP_RANGE)));
+				itemsmap.put(
+						"weather1",
+						c.getString(c
+								.getColumnIndex(DatabaseHelper.COLUMN_WEATHER_WEATHER)));
+				c.getString(c
+						.getColumnIndex(DatabaseHelper.COLUMN_WEATHER_TEMP));
+				c.close();
+
+				Cursor cursor1 = ServiceManager.getDbManager()
+						.queryScheduleWeather(date[1]);
+				if (cursor1.moveToFirst()) {
+					itemsmap.put(
+							"temp2",
+							cursor1.getString(cursor1
+									.getColumnIndex(DatabaseHelper.COLUMN_WEATHER_TEMP_RANGE)));
+					itemsmap.put(
+							"weather2",
+							cursor1.getString(cursor1
+									.getColumnIndex(DatabaseHelper.COLUMN_WEATHER_WEATHER)));
+
+			} else {
+				itemsmap.put("temp2", "");
+				itemsmap.put("weather2", "");
+
+			}
+
+			cursor1.close();
+
+				Cursor cursor2 = ServiceManager.getDbManager()
+						.queryScheduleWeather(date[2]);
+				if (cursor2.moveToFirst()) {
+
+					itemsmap.put(
+							"temp3",
+							cursor2.getString(cursor2
+									.getColumnIndex(DatabaseHelper.COLUMN_WEATHER_TEMP_RANGE)));
+					itemsmap.put(
+							"weather3",
+							cursor2.getString(cursor2
+									.getColumnIndex(DatabaseHelper.COLUMN_WEATHER_WEATHER)));
+					cursor2.close();
+
+				} else {
+					itemsmap.put("temp3", "");
+					itemsmap.put("weather3", "");
+
+			}
+
+				Cursor cursor3 = ServiceManager.getDbManager()
+						.queryScheduleWeather(date[3]);
+				if (cursor3.moveToFirst()) {
+					itemsmap.put(
+							"temp4",
+							cursor3.getString(cursor3
+									.getColumnIndex(DatabaseHelper.COLUMN_WEATHER_TEMP_RANGE)));
+					itemsmap.put(
+							"weather4",
+							cursor3.getString(cursor3
+									.getColumnIndex(DatabaseHelper.COLUMN_WEATHER_WEATHER)));
+					cursor3.close();
+
+				} else {
+					itemsmap.put("temp4", "");
+					itemsmap.put("weather4", "");
+
+				}
+
+				Log.d(TAG, "-------" + itemsmap.get("st1"));
+				Log.d(TAG, "-------" + itemsmap.get("temp1"));
+				Log.d(TAG, "-------" + itemsmap.get("weather1"));
+				Log.d(TAG, "-------" + itemsmap.get("temp2"));
+				Log.d(TAG, "-------" + itemsmap.get("weather2"));
+				Log.d(TAG, "-------" + itemsmap.get("temp3"));
+				Log.d(TAG, "-------" + itemsmap.get("weather3"));
+				Log.d(TAG, "-------" + itemsmap.get("temp4"));
+				Log.d(TAG, "-------" + itemsmap.get("weather4"));
+
+			}
+		}
+
+	 
+    	
+    	
+    	
+    	
+    }
+    
+    private    Date 	string2Date(String time){
+    	Date date = new Date();;
+    	SimpleDateFormat sdf = new SimpleDateFormat("yyyy年M月d日");
+    	try {
+			date=sdf.parse(time);
+		} catch (ParseException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+       return date ; 
+    }
+    
+    
 	public Map<String, Integer> getWeathermap() {
 		Map<String, Integer> weathermap = new HashMap<String, Integer>();
 		weathermap.put("晴", R.drawable.clear);
@@ -254,6 +287,8 @@ public class WeatherScreen extends Screen implements
 			for (int i = 0; i < jsonArray.length(); i++) {
 
 				JSONObject jsonObject = (JSONObject) jsonArray.opt(i);
+				weatherDate =jsonObject.getString("date");
+				Log.d(TAG, "----weatherDate=" + weatherDate);
 				city = jsonObject.getString("city");
 				Log.d(TAG, "----province=" + city);
 				province = jsonObject.getString("province");
@@ -328,6 +363,15 @@ public class WeatherScreen extends Screen implements
 
 		// 删除之前的数据
 		ServiceManager.getDbManager().deleteScheduleWeather();
+		Calendar mCalendar = Calendar.getInstance();
+		mCalendar.setTime(string2Date(weatherDate));
+		String[] date = new String[4];
+		for (int i = 0; i < date.length; i++) {
+			date[i] = DateTimeUtils.time2String("yyyy年M月d日",
+					mCalendar.getTimeInMillis());;
+			mCalendar.add(Calendar.DAY_OF_MONTH, 1);
+		}
+		
 		// 保存到数据库
 		ContentValues cv1 = new ContentValues();
 		cv1.put(DatabaseHelper.COLUMN_WEATHER_DATE, date[0]);

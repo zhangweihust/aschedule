@@ -5,6 +5,7 @@ import java.util.List;
 import java.util.Map;
 
 import com.archermind.schedule.R;
+import com.archermind.schedule.Image.SmartImageView;
 import com.archermind.schedule.Model.Friend;
 import com.archermind.schedule.Provider.DatabaseHelper;
 import com.archermind.schedule.Provider.DatabaseManager;
@@ -193,7 +194,7 @@ public class FriendContactAdapter extends BaseAdapter implements OnClickListener
 //			if(view == null){
 				contentHolderView = new ContentHolderView();
 				view = layoutInflater.inflate(getLayoutId(), null);
-				contentHolderView.headImg = (ImageView) view.findViewById(R.id.head_image);
+				contentHolderView.headImg = (SmartImageView) view.findViewById(R.id.head_image);
 				contentHolderView.name = (TextView) view.findViewById(R.id.name);
 				contentHolderView.friend_button2 = (Button) view.findViewById(R.id.friend_button2);
 				contentHolderView.friend_button2.setVisibility(View.VISIBLE);
@@ -204,10 +205,11 @@ public class FriendContactAdapter extends BaseAdapter implements OnClickListener
 //				contentHolderView = (ContentHolderView) view.getTag();
 //			}
 			if(friend != null){
-				contentHolderView.name.setText(friend.getTelephone());
+				contentHolderView.name.setText(friend.getName());
 				if(Constant.FriendType.friend_contact_use == friend.getType()){
 					contentHolderView.friend_button2.setText(context.getResources().getString(R.string.friend_add));
 					contentHolderView.friend_button2.setTag(this);
+					contentHolderView.headImg.setImageUrl(friend.getHeadImagePath(), R.drawable.friend_item_img, R.drawable.friend_item_img);
 				}else if(Constant.FriendType.friend_contact == friend.getType()){
 					contentHolderView.friend_button2.setText(context.getResources().getString(R.string.friend_invite));
 					contentHolderView.friend_button2.setTag(this);
@@ -228,7 +230,7 @@ public class FriendContactAdapter extends BaseAdapter implements OnClickListener
 	}
 	
 	public class ContentHolderView{
-		private ImageView headImg;
+		private SmartImageView headImg;
 		private TextView name;
 		private Button friend_button2;
 	}

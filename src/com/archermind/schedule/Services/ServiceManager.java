@@ -87,6 +87,7 @@ public class ServiceManager extends Service implements OnClickListener{
     		}
     		for(int i = 0; i < msg_accepets.size(); i++){
     			makeFriendFromInet(msg_accepets.get(i),Constant.FriendType.friend_yes);
+    			serverInerface.acceptConfirm(msg_accepets.get(i), String.valueOf(getUserId()));
     		}
     	};
     };
@@ -416,6 +417,7 @@ public class ServiceManager extends Service implements OnClickListener{
 								 values.put(DatabaseHelper.ASCHEDULE_FRIEND_NUM, tel);
 								 values.put(DatabaseHelper.ASCHEDULE_FRIEND_NICK, nick);
 								 values.put(DatabaseHelper.ASCHEDULE_FRIEND_PHOTO_URL, photo_url);
+								 values.put(DatabaseHelper.ASCHEDULE_FRIEND_PHOTO_URL, dbManager.queryNameByTel(tel));
 								 dbManager.addFriend(values);								
 							}
 						} catch (JSONException e) {

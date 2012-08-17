@@ -108,6 +108,7 @@ public class Contact {
 	{
 		int contactid = 0;
 		String number = "";
+		String name = "";
 		ContentValues cv = new ContentValues();
 		Cursor LocalContact = ServiceManager.getDbManager().getLocalContacts();
 		
@@ -117,8 +118,10 @@ public class Contact {
 		{
 			contactid = Integer.parseInt(LocalContact.getString(LocalContact.getColumnIndex(ContactsContract.CommonDataKinds.Phone.CONTACT_ID)));
 			number = LocalContact.getString(LocalContact.getColumnIndex(ContactsContract.CommonDataKinds.Phone.NUMBER));
+			name = LocalContact.getString(LocalContact.getColumnIndex(ContactsContract.CommonDataKinds.Phone.DISPLAY_NAME));
 			cv.put(DatabaseHelper.COLUMN_CONTACT_ID,contactid);
 			cv.put(DatabaseHelper.ASCHEDULE_CONTACT_NUM, number);
+			cv.put(DatabaseHelper.ASCHEDULE_CONTACT_NAME, name);
 			ServiceManager.getDbManager().insertContact(cv);
 		}
 		

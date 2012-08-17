@@ -11,10 +11,10 @@
         android:gravity="center"
         android:maxHeight="60dip" >
 
-        <ImageView
+        <com.archermind.schedule.Image.SmartImageView
             android:id="@+id/head_image"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
+            android:layout_width="@android:dimen/app_icon_size"
+            android:layout_height="@android:dimen/app_icon_size"
             android:layout_alignParentLeft="true"
             android:layout_marginLeft="10dip"
             android:layout_weight="0"

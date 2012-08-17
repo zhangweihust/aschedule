@@ -23,6 +23,7 @@ import android.widget.TextView;
 import com.archermind.schedule.R;
 import com.archermind.schedule.Adapters.FriendContactAdapter.ContentListElement;
 import com.archermind.schedule.Adapters.FriendContactAdapter.ListElement;
+import com.archermind.schedule.Image.SmartImageView;
 import com.archermind.schedule.Model.Friend;
 import com.archermind.schedule.Provider.DatabaseManager;
 import com.archermind.schedule.Services.ServiceManager;
@@ -98,7 +99,7 @@ public class FriendAdapter extends BaseAdapter implements OnClickListener{
 			holderView.friend_layout = (LinearLayout) convertView.findViewById(R.id.friend_layout);
 			holderView.friend_layout.setOnClickListener(this);
 			holderView.friend_layout.setBackgroundColor(0xebeaea);
-			holderView.headImg = (ImageView) convertView.findViewById(R.id.head_image);
+			holderView.headImg = (SmartImageView) convertView.findViewById(R.id.head_image);
 			holderView.name = (TextView) convertView.findViewById(R.id.name);
 			convertView.setTag(holderView);
 		}else{
@@ -106,8 +107,14 @@ public class FriendAdapter extends BaseAdapter implements OnClickListener{
 		}
 		Friend friend = friends.get(position);
 		if(friend != null){
-			holderView.name.setText(friend.getTelephone());
-
+			String name = friend.getName();
+			if(name != null && !name.equals("")){
+				holderView.name.setText(friend.getName());
+			}else{
+				holderView.name.setText(friend.getTelephone());
+			}
+			holderView.headImg.setImageUrl(friend.getHeadImagePath(),
+                    R.drawable.friend_item_img, R.drawable.friend_item_img);
 			holderView.friend_layout.setTag(friend);
 			
 		}
@@ -116,7 +123,7 @@ public class FriendAdapter extends BaseAdapter implements OnClickListener{
 	
 	public class HolderView{
 		private LinearLayout friend_layout;
-		private ImageView headImg;
+		private SmartImageView headImg;
 		private TextView name;
 	}
 

@@ -150,7 +150,7 @@ public class WheelView extends View {
 	private int lastScrollY;
 
 	// Cyclic
-	boolean isCyclic = false;
+	boolean isCyclic = true;
 	
 	// Listeners
 	private List<OnWheelChangedListener> changingListeners = new LinkedList<OnWheelChangedListener>();
