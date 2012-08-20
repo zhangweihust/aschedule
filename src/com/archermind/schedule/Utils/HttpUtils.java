@@ -19,7 +19,11 @@ import org.apache.http.protocol.HTTP;
 import org.apache.http.util.EntityUtils;
 
 import com.archermind.schedule.ScheduleApplication;
+import com.archermind.schedule.Events.EventArgs;
+import com.archermind.schedule.Events.EventTypes;
 import com.archermind.schedule.Model.UserInfoData;
+import com.archermind.schedule.Screens.RegisterScreen;
+import com.archermind.schedule.Services.ServiceManager;
 
 import android.content.SharedPreferences;
 import android.util.Log;
@@ -51,12 +55,12 @@ public class HttpUtils implements Runnable{
 			if (httphead != null && !httphead.equals("")) {
 				httphead = httphead.replace("\r\n", "");
 			}
-
-			SharedPreferences sh = ScheduleApplication.getContext()
-					.getSharedPreferences(UserInfoData.USER_INFO,
-							ScheduleApplication.getContext().MODE_PRIVATE);
+//
+//			SharedPreferences sh = ScheduleApplication.getContext()
+//					.getSharedPreferences(UserInfoData.USER_INFO,
+//							ScheduleApplication.getContext().MODE_PRIVATE);
 			String m_cookie ="";
-			m_cookie =sh.getString("Cookie", "");
+			m_cookie =ServiceManager.getSPUserInfo(UserInfoData.COOKIE);
 			System.out.println("testcookie:"+m_cookie);
 			if (m_cookie != null && !m_cookie.equals("")) {
 				m_cookie = m_cookie.replace("\r\n", "");
@@ -96,12 +100,18 @@ public class HttpUtils implements Runnable{
 				String strResult = EntityUtils.toString(response.getEntity(),HTTP.UTF_8);
 				//strResult = strResult.replace("\"", "");
 				Log.e("HttpUtils", "strResult:"+strResult);
+				if(strResult.equals("-600")){
+					ServiceManager.getEventservice().onUpdateEvent(new EventArgs(EventTypes.COOKIE_ERROR));
+				}
 				return strResult;
 			}else{
 				for(int i=0;i<2;i++){
 					response = client.execute(httpPost);
 					if(response.getStatusLine().getStatusCode() == 200){
 						String strResult = EntityUtils.toString(response.getEntity(),HTTP.UTF_8);
+						if(strResult.equals("-600")){
+							ServiceManager.getEventservice().onUpdateEvent(new EventArgs(EventTypes.COOKIE_ERROR));
+						}
 						return strResult;
 					}
 				}

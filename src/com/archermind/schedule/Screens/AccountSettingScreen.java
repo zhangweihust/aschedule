@@ -32,19 +32,29 @@ import android.view.Window;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.Toast;
 
 import com.archermind.schedule.R;
 import com.archermind.schedule.ScheduleApplication;
 import com.archermind.schedule.Image.SmartImageView;
+import com.archermind.schedule.Model.UserInfoData;
 import com.archermind.schedule.Provider.DatabaseHelper;
 import com.archermind.schedule.Services.ServiceManager;
 import com.archermind.schedule.Utils.NetworkUtils;
 import com.archermind.schedule.Utils.ServerInterface;
 
 public class AccountSettingScreen extends Activity implements OnClickListener{
+	
+	private static final int LOGOUT_FAILED = 0;
+	private static final int LOGOUT_SUCCESS = 1;
+	
 	private SmartImageView headImage;
 	private String headImagePath;
+	private LinearLayout bindTelephone;
+	private Button logout;
+	private Button goback;
+	private Handler handler;
 	
     /** Called when the activity is first created. */
     @Override
@@ -56,8 +66,32 @@ public class AccountSettingScreen extends Activity implements OnClickListener{
         setContentView(R.layout.account_setting);
         
         headImage = (SmartImageView)findViewById(R.id.headImage);
+        bindTelephone = (LinearLayout)findViewById(R.id.bindTelephone);
+        logout = (Button)findViewById(R.id.logout);
+        goback = (Button)findViewById(R.id.title_bar_setting_btn);
+        
         headImage.setOnClickListener(this);
+        bindTelephone.setOnClickListener(this);
+        logout.setOnClickListener(this);
+        goback.setOnClickListener(this);
         initHeadImage();
+        
+        handler = new Handler()
+        {
+        	public void handleMessage(Message msg) 
+        	{
+        		switch(msg.what)
+        		{
+        		case LOGOUT_FAILED:
+        			ServiceManager.ToastShow("注销失败");
+        			break;
+        		case LOGOUT_SUCCESS:
+        			ServiceManager.ToastShow("注销成功");
+        			onBackPressed();
+        			break;
+        		}
+        	};
+        };
     }
 
 	public void onClick(View v) {
@@ -66,6 +100,27 @@ public class AccountSettingScreen extends Activity implements OnClickListener{
 		{
 		case R.id.headImage:
 			ShowPickDialog();
+			break;
+		case R.id.bindTelephone:
+			Intent it = new Intent(AccountSettingScreen.this,TelephoneBindScreen.class);
+			startActivity(it); 
+			break;
+		case R.id.logout:
+			new Thread()
+			{
+				public void run() 
+				{
+					if (ServiceManager.getServerInterface().logout(String.valueOf(ServiceManager.getUserId())).equals("0"))
+					{
+						ServiceManager.setCookie("");
+						handler.sendEmptyMessage(LOGOUT_SUCCESS);
+					}
+					else
+					{
+						handler.sendEmptyMessage(LOGOUT_FAILED);
+					}
+				};
+			}.start();
 			break;
 		}
 	}  
@@ -112,6 +167,13 @@ public class AccountSettingScreen extends Activity implements OnClickListener{
 				}).show();
 	}
 
+	@Override
+	public void onBackPressed() {
+		// TODO Auto-generated method stub
+		super.onBackPressed();
+		overridePendingTransition(R.anim.left_in,R.anim.left_out);
+	}
+	
 	@Override
 	protected void onActivityResult(int requestCode, int resultCode, Intent data) {
 		Uri uri = null;

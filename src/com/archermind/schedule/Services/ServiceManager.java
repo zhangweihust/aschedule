@@ -153,7 +153,7 @@ public class ServiceManager extends Service implements OnClickListener{
         sharedPreferences = getSharedPreferences(UserInfoData.USER_INFO,
                 Context.MODE_WORLD_READABLE);
         spEditor = sharedPreferences.edit();
-        user_id = sharedPreferences.getInt(UserInfoData.USER_ID, 0);
+        user_id = Integer.parseInt(sharedPreferences.getString(UserInfoData.USER_ID, "0"));
         cookie = sharedPreferences.getString(UserInfoData.COOKIE, "");
         mTimer = new Timer();
         myTask = new MyTimerTask();
@@ -241,6 +241,7 @@ public class ServiceManager extends Service implements OnClickListener{
 
     public static void setUserId(int userid) {
         user_id = userid;
+        setSPUserInfo(UserInfoData.USER_ID,String.valueOf(userid));
     }
 
     public static int getUserId() {
@@ -250,6 +251,7 @@ public class ServiceManager extends Service implements OnClickListener{
     public static void setCookie(String cookiestr)
     {
     	cookie = cookiestr;
+    	setSPUserInfo(UserInfoData.COOKIE,cookiestr);
     }
     
     public static String getCookie()
@@ -397,20 +399,19 @@ public class ServiceManager extends Service implements OnClickListener{
 	   
 	   public static String getSPUserInfo(String feild)
 	   {
-	       return sharedPreferences.getString(UserInfoData.USER_ID,"");
+	       return sharedPreferences.getString(feild,"");
 	   }
 	   
 	   public static boolean isUserLogining(int userid)
 	   {
-//		   boolean ret = false;
-		   boolean ret = true;
+		   boolean ret = false;
 		   if (NetworkUtils.getNetworkState(ScheduleApplication.getContext()) != NetworkUtils.NETWORN_NONE)
 		   {
 			   /* 发送userid给服务器，服务器判断userid的用户是否登录 */
-//			   if (serverInerface.isLogining(userid))
-//			   {
-//				   ret = true;
-//			   }
+			   if (serverInerface.session_check(String.valueOf(user_id)).equals("0"))
+			   {
+				   ret = true;
+			   }
 		   }
 		   
 		   return ret;

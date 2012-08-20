@@ -7,6 +7,8 @@ import com.archermind.schedule.Services.ServiceManager;
 import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.Message;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.Window;
@@ -14,12 +16,16 @@ import android.widget.Button;
 
 public class MenuScreen extends Activity implements OnClickListener{
 	
+	private static final int LOGIN_STATUS_FAILED = 0;
+	private static final int LOGIN_STATUS_SUCCESS = 1;
+	
 	private Button gotonext;
 	private Button menu_account;
 	private Button menu_weather;
 	private Button menu_setting;
 	private Button menu_feedback;
 	private Button menu_about;
+	private Handler handler;
 	
     /** Called when the activity is first created. */
     @Override
@@ -44,6 +50,30 @@ public class MenuScreen extends Activity implements OnClickListener{
         menu_setting.setOnClickListener(this);
         menu_feedback.setOnClickListener(this);
         menu_about.setOnClickListener(this);
+        
+        handler = new Handler()
+        {
+        	public void handleMessage(Message msg) 
+        	{
+        		Intent it;
+    			
+        		switch(msg.what)
+        		{
+        		case LOGIN_STATUS_FAILED:
+        			it = new Intent(MenuScreen.this,LoginScreen.class);
+        			break;
+        		case LOGIN_STATUS_SUCCESS:
+        			it = new Intent(MenuScreen.this,AccountSettingScreen.class);
+        			break;
+    			default:
+    				it = new Intent(MenuScreen.this,LoginScreen.class);
+    				break;
+        		}
+        		
+        		startActivity(it);
+    			overridePendingTransition(R.anim.right_in,R.anim.right_out);
+        	};
+        };
     }
     
 	public void onClick(View v) {
@@ -56,17 +86,20 @@ public class MenuScreen extends Activity implements OnClickListener{
 			onBackPressed();
 			break;
 		case R.id.menu_account_btn:
-			Intent it;
-			if (ServiceManager.getUserId() > 0)
+			new Thread()
 			{
-				it = new Intent(MenuScreen.this,AccountSettingScreen.class);
-			}
-			else
-			{
-				it = new Intent(MenuScreen.this,LoginScreen.class);
-			}
-			startActivity(it);
-			overridePendingTransition(R.anim.right_in,R.anim.right_out);
+				public void run() 
+				{
+					if (ServiceManager.isUserLogining(ServiceManager.getUserId()))
+					{
+						handler.sendEmptyMessage(LOGIN_STATUS_SUCCESS);
+					}
+					else
+					{
+						handler.sendEmptyMessage(LOGIN_STATUS_FAILED);
+					}
+				};
+			}.start();
 			break;
 		case R.id.menu_weather_btn:
 			startActivity(new Intent(MenuScreen.this,WeatherScreen.class));

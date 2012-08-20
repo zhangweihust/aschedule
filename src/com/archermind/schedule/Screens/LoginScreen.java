@@ -92,6 +92,9 @@ public class LoginScreen extends Activity implements OnClickListener {
         login_submit = (Button)findViewById(R.id.login_submit);
         login_username = (EditText)findViewById(R.id.login_username);
         login_password = (EditText)findViewById(R.id.login_password);
+        
+        login_username.setText(ServiceManager.getSPUserInfo(UserInfoData.EMAIL));
+        login_password.setText(ServiceManager.getSPUserInfo(UserInfoData.PSWD));
 
         login_goback.setOnClickListener(this);
         login_sina.setOnClickListener(this);

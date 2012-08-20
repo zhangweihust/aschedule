@@ -299,7 +299,14 @@ public class ServerInterface {
 		return ret;
 		// return SUCCESS;
 	}
-
+	public String logout(String user_id) {
+		Map<String, String> map = new HashMap<String, String>();
+		map.put("user_id", user_id);
+		String ret = HttpUtils
+				.doPost(map,
+						"http://player.archermind.com/ci/index.php/aschedule/logout");
+		return ret;
+	}
 	/**************************************
 	 * 找回密码 调用SDK发送密码至指定邮箱 0 : 已发送至指定邮箱 n : 错误码
 	 ***************************************/
@@ -988,4 +995,14 @@ public class ServerInterface {
 		String res= HttpUtils.doPost(map, "http://player.archermind.com/ci/index.php/aschedule/downloadPhoto");		
 		return res;
 	}
+	
+	public String session_check(String user_id) {
+		Map<String, String> map = new HashMap<String, String>();
+		map.put("user_id", user_id);
+		String ret = HttpUtils
+				.doPost(map,
+						"http://player.archermind.com/ci/index.php/aschedule/session_check_2");
+		return ret;
+	}
+	
 }
