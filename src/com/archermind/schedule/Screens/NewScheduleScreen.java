@@ -1,7 +1,6 @@
 package com.archermind.schedule.Screens;
 
 import java.util.Calendar;
-import java.util.Locale;
 
 import android.content.ContentValues;
 import android.content.Intent;
@@ -275,13 +274,26 @@ public class NewScheduleScreen extends Screen implements OnClickListener {
 			@Override
 			public void run() {
 				ContentValues cv = new ContentValues();
+
+				mStageRemind = alarmPopwindow.getStageRemind(); 
 				
+				if (mStageRemind) {
+				    
+	                startTime = alarmPopwindow.getStartTime();                              
+	                Log.i(TAG,
+	                        " insert database startTime = "
+	                                + DateTimeUtils.time2String("yyyy-MM-dd-HH-mm", startTime));
+	                endTime = alarmPopwindow.getEndTime();
+                
+				}  else {
+				    
+				    startTime = mSelectTime;				    
+				    Calendar mCalendar = Calendar.getInstance();
+			        mCalendar.set(Calendar.YEAR, 2049);			        
+			        endTime = mCalendar.getTimeInMillis();			        
+                }
 				
-				startTime = alarmPopwindow.getStartTime();				
-			    Log.i(TAG, " insert database startTime = " + DateTimeUtils.time2String("yyyy-MM-dd-HH-mm", startTime));
-				endTime = alarmPopwindow.getEndTime();
-				mRemind = alarmPopwindow.getRemind();
-				mStageRemind = alarmPopwindow.getStageRemind();				
+				mRemind = alarmPopwindow.getRemind();								
 				weekType = alarmPopwindow.getWeekValue();
 				remindCycle = alarmPopwindow.getRepeatType();
 				mType = eventTypeDialog.getEventType();
@@ -343,16 +355,16 @@ public class NewScheduleScreen extends Screen implements OnClickListener {
 	// 监听时间选择器的“完成”按钮事件
 	class TimeSelectorOkListener implements OnOkButtonClickListener {
 
-		public void onOkButtonClick(TimeSelectorDialog timeSelectorDialog) {
-			// Constant.
-			// 获取时间选择器的值
-			Calendar c = Calendar.getInstance();
-			c.set(Calendar.YEAR, Constant.VARY_YEAR);
-			c.set(Calendar.MONTH, Constant.VARY_MONTH - 1);
-			c.set(Calendar.DAY_OF_MONTH, Constant.VARY_DAY);
-			c.set(Calendar.HOUR_OF_DAY, Constant.VARY_HOUR);
-			Log.i(TAG, "---------HOUR=" + c.get(Calendar.HOUR_OF_DAY));
-			c.set(Calendar.MINUTE, Constant.VARY_MIN);
+        public void onOkButtonClick(TimeSelectorDialog timeSelectorDialog) {
+            
+            // 获取时间选择器的值
+            Calendar c = Calendar.getInstance();
+            c.set(Calendar.YEAR, Constant.VARY_YEAR);
+            c.set(Calendar.MONTH, Constant.VARY_MONTH - 1);
+            c.set(Calendar.DAY_OF_MONTH, Constant.VARY_DAY);
+            c.set(Calendar.HOUR_OF_DAY, Constant.VARY_HOUR);
+            Log.i(TAG, "---------HOUR=" + c.get(Calendar.HOUR_OF_DAY));
+            c.set(Calendar.MINUTE, Constant.VARY_MIN);
 
 			c.set(Calendar.SECOND, 0);
 			c.set(Calendar.MILLISECOND, 0);
@@ -390,13 +402,13 @@ public class NewScheduleScreen extends Screen implements OnClickListener {
 			remind_selector.setVisibility(View.INVISIBLE);
 		}
 
-		@Override
-		public void onShowListener(AlarmPopwindow alarmPopupWindow) {
-			// TODO Auto-generated method stub
-			remind_selector.setVisibility(View.VISIBLE);
-		}
-
-	}
+        @Override
+        public void onShowListener(AlarmPopwindow alarmPopupWindow) {
+            
+            remind_selector.setVisibility(View.VISIBLE);
+        }
+        
+    }
 
 	class EventTypeSelectListner implements OnEventTypeSelectListener {
 

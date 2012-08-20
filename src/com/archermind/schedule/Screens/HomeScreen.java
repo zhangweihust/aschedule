@@ -1,7 +1,10 @@
+
 package com.archermind.schedule.Screens;
 
 import android.app.Activity;
+import android.app.AlarmManager;
 import android.app.NotificationManager;
+import android.app.PendingIntent;
 import android.app.TabActivity;
 import android.content.Context;
 import android.content.Intent;
@@ -29,6 +32,7 @@ import com.archermind.schedule.R;
 import com.archermind.schedule.ScheduleApplication;
 import com.archermind.schedule.Events.EventArgs;
 import com.archermind.schedule.Events.IEventHandler;
+import com.archermind.schedule.Services.AlarmServiceReceiver;
 import com.archermind.schedule.Services.EventService;
 import com.archermind.schedule.Services.ServiceManager;
 
@@ -255,6 +259,7 @@ public class HomeScreen extends TabActivity implements OnTabChangeListener, IEve
 		ScheduleApplication.LogD(HomeScreen.class, "onKeyDown" + event.getKeyCode());
 		if(event.getKeyCode() == KeyEvent.KEYCODE_BACK && event.getAction() == KeyEvent.ACTION_UP){
 			if (mExit_Flag) {
+                CancelRestartService();
 				ScheduleApplication.LogD(HomeScreen.class, "mExit_Flag");
 				this.finish();
 				ServiceManager.exit();
@@ -272,7 +277,18 @@ public class HomeScreen extends TabActivity implements OnTabChangeListener, IEve
 	        return true;
         }
         return super.dispatchKeyEvent(event);
-	}
+    }
+
+    // 关闭每10秒发送一次启动servicemanager的消息
+    private void CancelRestartService() {
+        
+        Intent myIntent = new Intent(this, AlarmServiceReceiver.class);
+        PendingIntent senderIntent = PendingIntent.getBroadcast(this, 0, myIntent, 0);
+        AlarmManager am = (AlarmManager)HomeScreen.this.getSystemService(Context.ALARM_SERVICE);
+        am.cancel(senderIntent);
+        
+    }
+
     @Override
     public boolean onEvent(Object sender, EventArgs e) {
 
