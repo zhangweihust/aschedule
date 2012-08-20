@@ -242,8 +242,13 @@ public class MyDynamicScreen extends Screen implements IXListViewListener, OnIte
 				if(editText.getText().toString().equals("")){
 					Toast.makeText(getApplicationContext(), "留言不能为空", Toast.LENGTH_SHORT).show();
 				} else {
+					if(saveScheduleToDb(editText.getText().toString(), t_id)){
+						Toast.makeText(getApplicationContext(), "留言提交成功", Toast.LENGTH_SHORT).show();
+						onRefresh();
+					} else {
+						Toast.makeText(getApplicationContext(), "留言提交失败", Toast.LENGTH_SHORT).show();
+					}
 					popupWindow.dismiss();
-					saveScheduleToDb(editText.getText().toString(), t_id);
 				}
 			}
 		});
@@ -269,10 +274,11 @@ public class MyDynamicScreen extends Screen implements IXListViewListener, OnIte
 				bean.setT_id(c.getInt(c.getColumnIndex(DatabaseHelper.COLUMN_SCHEDULE_T_ID)));
 				bean.setTime(c.getLong(c.getColumnIndex(DatabaseHelper.COLUMN_SCHEDULE_START_TIME)));
 				bean.setType(c.getInt(c.getColumnIndex(DatabaseHelper.COLUMN_SCHEDULE_TYPE)));
+				bean.setUser_id(c.getInt(c.getColumnIndex(DatabaseHelper.COLUMN_SCHEDULE_USER_ID)));
 				dataArrayList.add(bean);
 			}
-			c.close();
 		} 
+		c.close();
 	}
 
 
@@ -291,25 +297,24 @@ public class MyDynamicScreen extends Screen implements IXListViewListener, OnIte
 		}
 	}
 	
-	public void saveScheduleToDb(final String content, final int t_id) {
-		new Thread( new Runnable(){
-			@Override
-			public void run() {
-				ScheduleApplication.LogD(MyDynamicScreen.class, content + " id = " + t_id + " USER:" + ServiceManager.getUserId());
-				ContentValues cv = new ContentValues();
-				cv.put(DatabaseHelper.COLUMN_SCHEDULE_OPER_FLAG, DatabaseHelper.SCHEDULE_OPER_ADD);
-				cv.put(DatabaseHelper.COLUMN_SCHEDULE_SLAVE_ID, t_id);
-				cv.put(DatabaseHelper.COLUMN_SCHEDULE_USER_ID, ServiceManager.getUserId());
-				cv.put(DatabaseHelper.COLUMN_SCHEDULE_SHARE, true);
-				cv.put(DatabaseHelper.COLUMN_SCHEDULE_ORDER, 1);
-				cv.put(DatabaseHelper.COLUMN_SCHEDULE_START_TIME, System.currentTimeMillis());
-				cv.put(DatabaseHelper.COLUMN_SCHEDULE_CONTENT, content);
-				ServiceManager.getDbManager().insertLocalSchedules(cv);
-				ServiceManager.getServerInterface().uploadSchedule("1", String.valueOf(t_id));
-			}
-			
-		}).start();
-	}
+	public boolean saveScheduleToDb(final String content, final int t_id) {
+		ScheduleApplication.LogD(FriendsDyamicScreen.class, content + " id = " + t_id + " USER:" + ServiceManager.getUserId());
+		ContentValues cv = new ContentValues();
+		cv.put(DatabaseHelper.COLUMN_SCHEDULE_OPER_FLAG, DatabaseHelper.SCHEDULE_OPER_ADD);
+		cv.put(DatabaseHelper.COLUMN_SCHEDULE_SLAVE_ID, t_id);
+		cv.put(DatabaseHelper.COLUMN_SCHEDULE_USER_ID, ServiceManager.getUserId());
+		cv.put(DatabaseHelper.COLUMN_SCHEDULE_SHARE, true);
+		cv.put(DatabaseHelper.COLUMN_SCHEDULE_ORDER, 1);
+		cv.put(DatabaseHelper.COLUMN_SCHEDULE_START_TIME, System.currentTimeMillis());
+		cv.put(DatabaseHelper.COLUMN_SCHEDULE_CONTENT, content);
+		ServiceManager.getDbManager().insertLocalSchedules(cv);
+		int result = ServiceManager.getServerInterface().uploadSchedule("1", String.valueOf(t_id));
+		if(result > 0){
+			return true;
+		}
+		return false;
+}
+
 
     protected void onDestroy() {
 

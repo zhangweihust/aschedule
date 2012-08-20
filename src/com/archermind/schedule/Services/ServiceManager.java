@@ -63,6 +63,7 @@ public class ServiceManager extends Service implements OnClickListener{
 
     private static int user_id = 0;
     private static String cookie = "";
+    private static String avator_url = "";
     private static SharedPreferences sharedPreferences;
     private static SharedPreferences.Editor spEditor;
 
@@ -155,6 +156,7 @@ public class ServiceManager extends Service implements OnClickListener{
         spEditor = sharedPreferences.edit();
         user_id = Integer.parseInt(sharedPreferences.getString(UserInfoData.USER_ID, "0"));
         cookie = sharedPreferences.getString(UserInfoData.COOKIE, "");
+        avator_url = sharedPreferences.getString(UserInfoData.PHOTO_URL, "");
         mTimer = new Timer();
         myTask = new MyTimerTask();
         mTimer.schedule(myTask, mTaskTime, mTaskTime);
@@ -416,4 +418,10 @@ public class ServiceManager extends Service implements OnClickListener{
 		   
 		   return ret;
 	   }
+	   
+	public static String getAvator_url() {
+		return avator_url;
+	}
+	   
+	   
 }

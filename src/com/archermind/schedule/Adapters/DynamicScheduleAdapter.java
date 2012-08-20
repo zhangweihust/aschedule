@@ -3,6 +3,7 @@ package com.archermind.schedule.Adapters;
 import java.util.List;
 
 import android.content.Context;
+import android.database.Cursor;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -18,6 +19,7 @@ import com.archermind.schedule.Events.EventArgs;
 import com.archermind.schedule.Image.SmartImageView;
 import com.archermind.schedule.Model.ScheduleBean;
 import com.archermind.schedule.Provider.DatabaseHelper;
+import com.archermind.schedule.Services.ServiceManager;
 import com.archermind.schedule.Task.AsyncScheduleLoader;
 import com.archermind.schedule.Task.AsyncScheduleLoader.ScheduleCallback;
 import com.archermind.schedule.Utils.DateTimeUtils;
@@ -133,8 +135,21 @@ public class DynamicScheduleAdapter extends BaseAdapter {
 
             item.commentsLayout.setVisibility(View.GONE);
             item.avatarLayout.setVisibility(View.VISIBLE);
-            item.avatar.setImageUrl("http://i0.sinaimg.cn/IT/cr/2010/0120/4105794628.jpg",
-                    R.drawable.avatar, R.drawable.avatar);
+            Cursor friendCursor = ServiceManager.getDbManager().queryFriendTel(data.getUser_id());
+            if(friendCursor != null && friendCursor.getCount() > 0){
+            	friendCursor.moveToFirst();
+            	String nick = friendCursor.getString(friendCursor
+                        .getColumnIndex(DatabaseHelper.ASCHEDULE_FRIEND_NICK));
+            	item.name.setText(nick);
+            	item.avatar.setImageUrl(friendCursor.getString(friendCursor
+                                .getColumnIndex(DatabaseHelper.ASCHEDULE_FRIEND_PHOTO_URL)),
+                                R.drawable.avatar, R.drawable.avatar);
+            }
+            friendCursor.close();
+            if (data.getUser_id() == ServiceManager.getUserId()){
+            	item.avatar.setImageUrl(ServiceManager.getAvator_url(),
+                        R.drawable.avatar, R.drawable.avatar);
+            }
             switch (data.getType()) {
                 case DatabaseHelper.SCHEDULE_EVENT_TYPE_NONE:
                     item.typeView.setBackgroundResource(R.drawable.type_notice);

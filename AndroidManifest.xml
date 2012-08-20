@@ -40,6 +40,7 @@
 		    	  android:label="HI~ 通讯录有更新"
 		    	  android:theme="@style/AScheduleDialog" />
 		<service android:name=".Services.ServiceManager"/>
+		<service android:name=".Services.AppUpgradeService"/>
 		<activity android:name=".Screens.NewScheduleScreen"/>
         <activity android:name=".Screens.EditScheduleScreen"></activity>
          <activity android:name=".Screens.WeatherScreen"/>
@@ -57,7 +58,7 @@
             android:label="@string/app_name" >
         </activity>
         
-        <receiver android:name=".Services.AlarmRecevier" >
+        <receiver android:name=".Services.AlarmRecevier" android:process=":remote">
         </receiver>
         <receiver android:name=".Services.BootRecevier" >
             <intent-filter >

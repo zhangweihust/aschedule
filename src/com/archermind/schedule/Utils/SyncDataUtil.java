@@ -94,7 +94,7 @@ public class SyncDataUtil {
 	}
 	
 	public static  void insertDefaultSchedules() {
-		long time = System.currentTimeMillis();
+		long time = 0;
 		ContentValues contentvalues = new ContentValues();
 		contentvalues.put(DatabaseHelper.COLUMN_SCHEDULE_T_ID, -1);
 		contentvalues.put(DatabaseHelper.COLUMN_SCHEDULE_SLAVE_ID, -100);

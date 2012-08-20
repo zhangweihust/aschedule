@@ -48,24 +48,41 @@ public class AsyncScheduleLoader {
 
                 Cursor slaveCursors = ServiceManager.getDbManager().querySlaveShareSchedules(t_id);
                 Log.i(TAG, "loadSchedule" + t_id);
-                
+                int user_id;
+                String nick = "";
                 LinearLayout layout = new LinearLayout(context);
                 layout.setOrientation(LinearLayout.VERTICAL);
                 if ((slaveCursors != null) && (slaveCursors.getCount() > 0)) {
                     for (slaveCursors.moveToFirst(); !slaveCursors.isAfterLast(); slaveCursors
                             .moveToNext()) {
                         View commentView = inflater.inflate(R.layout.feed_comments_item, null);
-                        CommentItem commentItem = new CommentItem();
+                        final CommentItem commentItem = new CommentItem();
                         commentItem.avatar = (SmartImageView)commentView
                                 .findViewById(R.id.comment_profile_photo);
+                        user_id =  slaveCursors.getInt(slaveCursors
+                                .getColumnIndex(DatabaseHelper.COLUMN_SCHEDULE_USER_ID));
+                        final Cursor friendCursor = ServiceManager.getDbManager().queryFriendTel(user_id);
+                        if(friendCursor != null && friendCursor.getCount() > 0){
+                        	friendCursor.moveToFirst();
+                        	nick = friendCursor.getString(friendCursor
+                                    .getColumnIndex(DatabaseHelper.ASCHEDULE_FRIEND_NICK));
+                        	handler.post(new Runnable(){
+								@Override
+								public void run() {
+									commentItem.avatar.setImageUrl(friendCursor.getString(friendCursor
+		                                    .getColumnIndex(DatabaseHelper.ASCHEDULE_FRIEND_PHOTO_URL)),
+		                                    R.drawable.avatar, R.drawable.avatar);
+									 friendCursor.close();
+								}});
+                        }
                         commentItem.content = (TextView)commentView.findViewById(R.id.comment_body);
                         commentItem.time = (TextView)commentView.findViewById(R.id.comment_time);
                         commentItem.avatar.setBackgroundResource(R.drawable.avatar);
-                        commentItem.content.setText(slaveCursors.getString(slaveCursors
+                        commentItem.content.setText(nick + ":" + slaveCursors.getString(slaveCursors
                                 .getColumnIndex(DatabaseHelper.COLUMN_SCHEDULE_CONTENT)));
                         long commentTime = slaveCursors.getLong(slaveCursors
                                 .getColumnIndex(DatabaseHelper.COLUMN_SCHEDULE_START_TIME));
-                        commentItem.time.setText(DateTimeUtils.time2String("yyyy/MM/dd hh:mm:ss",
+                        commentItem.time.setText(DateTimeUtils.time2String("yyyy.MM.dd hh:mm:ss",
                                 commentTime));
                         layout.addView(commentView);
                     }

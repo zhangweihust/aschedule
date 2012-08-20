@@ -13,11 +13,20 @@ public class ScheduleBean {
 	private int slave;
 	private int order;
     private int t_id;
+    private int user_id;
     private boolean default_data;
 	
 
     
     
+	public int getUser_id() {
+		return user_id;
+	}
+
+	public void setUser_id(int user_id) {
+		this.user_id = user_id;
+	}
+
 	public boolean isDefault_data() {
 		return default_data;
 	}

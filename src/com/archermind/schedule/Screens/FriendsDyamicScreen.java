@@ -280,8 +280,13 @@ public class FriendsDyamicScreen extends Screen implements IXListViewListener, O
 				if(editText.getText().toString().equals("")){
 					Toast.makeText(getApplicationContext(), "留言不能为空", Toast.LENGTH_SHORT).show();
 				} else {
+					if(saveScheduleToDb(editText.getText().toString(), t_id)){
+						Toast.makeText(getApplicationContext(), "留言提交成功", Toast.LENGTH_SHORT).show();
+						onRefresh();
+					} else {
+						Toast.makeText(getApplicationContext(), "留言提交失败", Toast.LENGTH_SHORT).show();
+					}
 					popupWindow.dismiss();
-					saveScheduleToDb(editText.getText().toString(), t_id);
 				}
 			}
 		});
@@ -306,13 +311,14 @@ public class FriendsDyamicScreen extends Screen implements IXListViewListener, O
 				bean.setContent(c.getString(c.getColumnIndex(DatabaseHelper.COLUMN_SCHEDULE_CONTENT)));
 				bean.setLocation(c.getString(c.getColumnIndex(DatabaseHelper.COLUMN_SCHEDULE_CITY)));
 				bean.setT_id(c.getInt(c.getColumnIndex(DatabaseHelper.COLUMN_SCHEDULE_T_ID)));
+				bean.setUser_id(c.getInt(c.getColumnIndex(DatabaseHelper.COLUMN_SCHEDULE_USER_ID)));
 				bean.setTime(c.getLong(c.getColumnIndex(DatabaseHelper.COLUMN_SCHEDULE_START_TIME)));
 				bean.setType(c.getInt(c.getColumnIndex(DatabaseHelper.COLUMN_SCHEDULE_TYPE)));
 				bean.setDefault_data(c.getInt(c.getColumnIndex(DatabaseHelper.COLUMN_SCHEDULE_DEFAULT)) == 1);
 				dataArrayList.add(bean);
 			}
-			c.close();
 		} 
+		c.close();
 	}
 
 
@@ -331,10 +337,7 @@ public class FriendsDyamicScreen extends Screen implements IXListViewListener, O
 		}
 	}
 	
-	public void saveScheduleToDb(final String content, final int t_id) {
-		new Thread( new Runnable(){
-			@Override
-			public void run() {
+	public boolean saveScheduleToDb(final String content, final int t_id) {
 				ScheduleApplication.LogD(FriendsDyamicScreen.class, content + " id = " + t_id + " USER:" + ServiceManager.getUserId());
 				ContentValues cv = new ContentValues();
 				cv.put(DatabaseHelper.COLUMN_SCHEDULE_OPER_FLAG, DatabaseHelper.SCHEDULE_OPER_ADD);
@@ -345,10 +348,11 @@ public class FriendsDyamicScreen extends Screen implements IXListViewListener, O
 				cv.put(DatabaseHelper.COLUMN_SCHEDULE_START_TIME, System.currentTimeMillis());
 				cv.put(DatabaseHelper.COLUMN_SCHEDULE_CONTENT, content);
 				ServiceManager.getDbManager().insertLocalSchedules(cv);
-				ServiceManager.getServerInterface().uploadSchedule("1", String.valueOf(t_id));
-			}
-			
-		}).start();
+				int result = ServiceManager.getServerInterface().uploadSchedule("1", String.valueOf(t_id));
+				if(result > 0){
+					return true;
+				}
+				return false;
 	}
 
     protected void onDestroy() {
