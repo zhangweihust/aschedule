@@ -11,6 +11,7 @@ public class SpecialCalendar {
 	private static int daysOfMonth = 0; // 某月的天数
 	private static int dayOfWeek = 0; // 具体某一天是星期几
 	private static HashMap<String,String> hashMap = new HashMap<String, String>();
+	private static HashMap<String,String> capitelHashMap = new HashMap<String, String>();
 	static{
 		
 		hashMap.put("周一", "1");
@@ -20,6 +21,14 @@ public class SpecialCalendar {
 		hashMap.put("周五", "5");
 		hashMap.put("周六", "6");
 		hashMap.put("周日", "7");
+		
+		capitelHashMap.put("周一", "一");
+		capitelHashMap.put("周二", "二");
+		capitelHashMap.put("周三", "三");
+		capitelHashMap.put("周四", "四");
+		capitelHashMap.put("周五", "五");
+		capitelHashMap.put("周六", "六");
+		capitelHashMap.put("周日", "日");
 	}
 
 	// 判断是否为闰年
@@ -81,12 +90,15 @@ public class SpecialCalendar {
 		} catch (ParseException e) {
 			e.printStackTrace();
 		}
-		System.out.println(sdw.format(d));
 		return /*getRealWeekDay(Integer.parseInt(sdw.format(d)) - 1)*/sdw.format(d);
 	}
 	
 	public static String getNumberWeekDay(int year,int month,int day){
 		return hashMap.get(getWeekDay(year,month,day));
+	}
+	
+	public static String getCapitelNumberWeekDay(int year,int month,int day){
+		return capitelHashMap.get(getWeekDay(year,month,day));
 	}
 	private static String getRealWeekDay(int weekDay){
 		String[] week = {"周日","周一","周二","周三","周四","周五","周六"};

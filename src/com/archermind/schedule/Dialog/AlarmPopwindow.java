@@ -760,13 +760,11 @@ public class AlarmPopwindow implements OnClickListener {
         } else if (v.getId() == stage_remind_end_date.getId()) {
 
             // 启动时间选择器
-            Constant.wheelViewFlag = 1;
             mSimpleTimeSelectorDialogend.setCurrentItem(endTime);
             mSimpleTimeSelectorDialogend.show();
         } else if (v.getId() == stage_remind_start_date.getId()) {
 
             // 启动时间选择器
-            Constant.wheelViewFlag = 1;
             mSimpleTimeSelectorDialog.setCurrentItem(startTime);
             mSimpleTimeSelectorDialog.show();
         }

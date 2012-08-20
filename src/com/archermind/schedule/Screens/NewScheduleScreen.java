@@ -258,7 +258,6 @@ public class NewScheduleScreen extends Screen implements OnClickListener {
 
 		} else if (v.getId() == dateView.getId()) {
 			// 启动时间选择器
-			Constant.wheelViewFlag = 0;
 			timeselectordialog.setCurrentItem(startTime);
 			timeselectordialog.show();
 

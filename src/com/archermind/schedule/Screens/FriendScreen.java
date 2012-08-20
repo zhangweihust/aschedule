@@ -208,6 +208,10 @@ public class FriendScreen extends Screen implements OnClickListener, IEventHandl
 			editor.commit();
 			break;
 		case CONTACT_SYNC_FAILED:
+			break;
+		case CONTACT_SYNC_CANCEL:
+			getData();
+			break;
 		}
 		return true;
 	}
@@ -289,7 +293,7 @@ public class FriendScreen extends Screen implements OnClickListener, IEventHandl
 								
 								tempList.add(tel);
 
-								if(friendList.contains(user_id)){
+								if(friendList.contains(user_id) || user_id.equals(ServiceManager.getUserId())){
 									break;
 								}								
 								Friend friend = new Friend();
@@ -301,7 +305,6 @@ public class FriendScreen extends Screen implements OnClickListener, IEventHandl
 								friend.setName(database.queryNameByTel(tel));
 								
 								friendContactUs.add(friend);
-									 
 								database.updateContactType(database.queryContactIdByTel(tel), type,user_id);
 								
 							}

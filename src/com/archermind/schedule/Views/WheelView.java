@@ -65,34 +65,29 @@ public class WheelView extends View {
 
 	/** Current value & label text color */
 	private static final int VALUE_TEXT_COLOR = 0xF0000000;
-//	private static final int VALUE_TEXT_COLOR = Color.RED;
 
 	/** Items text color */
 	private static final int ITEMS_TEXT_COLOR = 0xFF000000;
-//	private static final int ITEMS_TEXT_COLOR = Color.BLUE;
 
 	/** Top and bottom shadows colors */
 	private static final int[] SHADOWS_COLORS = new int[] { 0xFF111111,
 			0x00AAAAAA, 0x00AAAAAA };
 
 	/** Additional items height (is added to standard text item height) */
-	private static final int ADDITIONAL_ITEM_HEIGHT = 0;
-	private static  int ITEM_HEIGHT = 18;
-//	private static final int ITEM_HEIGHT = 36;
+	private static final int ADDITIONAL_ITEM_HEIGHT = 26;
 	
-	private float startOffset;
+//	private static final int ITEM_HEIGHT = 26;
 
 	/** Text size */
-	private static int TEXT_SIZE = 14;
-	private static int LABEL_SIZE;
+	private static int TEXT_SIZE = 24;
+	
+	private static int LABEL_TEXT_SIZE = 14;
 
 	/** Top and bottom items offset (to hide that) */
-//	private static final int ITEM_OFFSET = TEXT_SIZE / 5;
-	private static final int ITEM_OFFSET = 0;
+	private static final int ITEM_OFFSET = /*TEXT_SIZE / 5*/0;
 
 	/** Additional width for items layout */
 	private static final int ADDITIONAL_ITEMS_SPACE = 10;
-//	private static final int ADDITIONAL_ITEMS_SPACE = 0;
 
 	/** Label offset */
 	private static final int LABEL_OFFSET = 8;
@@ -101,7 +96,6 @@ public class WheelView extends View {
 	private static final int PADDING = 10;
 
 	/** Default count of visible items */
-//	private static final int DEF_VISIBLE_ITEMS = 3;
 	private static final int DEF_VISIBLE_ITEMS = 5;
 	
 	// Wheel Values
@@ -136,9 +130,7 @@ public class WheelView extends View {
 
 	// Shadows drawables
 	private GradientDrawable topShadow;
-//	private Drawable topShadow;
 	private GradientDrawable bottomShadow;
-//	private Drawable bottomShadow;
 
 	// Scrolling
 	private boolean isScrollingPerformed; 
@@ -157,9 +149,12 @@ public class WheelView extends View {
 	private List<OnWheelScrollListener> scrollingListeners = new LinkedList<OnWheelScrollListener>();
 
 	
-	private float startLabel;
 	private boolean isHadScroll = false;
 	
+	
+	private int labelOff = 0;
+	
+	private String realLabel;
 	/**
 	 * Constructor
 	 */
@@ -210,89 +205,11 @@ public class WheelView extends View {
 	 */
 	public void setAdapter(WheelAdapter adapter) {
 		this.adapter = adapter;
-		int num = adapter.getMaximumLength();
-		System.out.println("num = "+num);
-		
 		DisplayMetrics dm = ScheduleApplication.getContext().getResources().getDisplayMetrics();
-		String value = String.valueOf(dm.widthPixels) + "*" + String.valueOf(dm.heightPixels);
-		if(Constant.wheelViewFlag == 0){
-			if(value.equals("480*800")){
-				ITEM_HEIGHT = 36;
-				TEXT_SIZE = 24;
-				startLabel = 26;
-				startOffset = 18;
-				LABEL_SIZE = TEXT_SIZE -10;
-				if(wheel_type == Constant.wheel_year){
-					startLabel = 32;
-				}
-				if(wheel_type == Constant.wheel_day){
-					startLabel = 19;
-				}
-			}else if(value.equals("320*480")){
-				ITEM_HEIGHT = 22;
-				TEXT_SIZE = 18;
-				startLabel = 16;
-				startOffset = 2;
-				LABEL_SIZE = TEXT_SIZE -10;
-				if(wheel_type == Constant.wheel_year){
-					startLabel = 26;
-					startOffset = 0;
-				}
-				if(wheel_type == Constant.wheel_day){
-					startLabel = 12;
-				}
-			}else if(value.equals("240*320")){
-				ITEM_HEIGHT = 17;
-				TEXT_SIZE = 14;
-				startLabel = 10;
-				startOffset = -7;
-				LABEL_SIZE = TEXT_SIZE -7;
-				if(wheel_type == Constant.wheel_year){
-					startOffset = -16;
-					startLabel = 16;
-				}
-				if(wheel_type == Constant.wheel_day){
-					startLabel = 8;
-				}
-			}
-		}else if(Constant.wheelViewFlag == 1){
-			if(value.equals("480*800")){
-				ITEM_HEIGHT = 36;
-				TEXT_SIZE = 24;
-				startLabel = 56;
-				startOffset = 50;
-				LABEL_SIZE = TEXT_SIZE -10;
-				if(wheel_type == Constant.wheel_year){
-					startOffset = 37;
-				}
-				if(wheel_type == Constant.wheel_day){
-					startLabel = 50;
-				}
-			}else if(value.equals("320*480")){
-				ITEM_HEIGHT = 22;
-				TEXT_SIZE = 18;
-				startLabel = 38;
-				startOffset = 26;
-				LABEL_SIZE = TEXT_SIZE -10;
-				if(wheel_type == Constant.wheel_year){
-					startOffset = 8;
-				}
-				if(wheel_type == Constant.wheel_day){
-					startLabel = 33;
-				}
-			}else if(value.equals("240*320")){
-				ITEM_HEIGHT = 17;
-				TEXT_SIZE = 14;
-				startLabel = 22;
-				startOffset = 10;
-				LABEL_SIZE = TEXT_SIZE -7;
-				if(wheel_type == Constant.wheel_year){
-					startOffset = -9;
-				}
-				if(wheel_type == Constant.wheel_day){
-					startLabel = 20;
-				}
-			}
+		int width = dm.widthPixels;
+		if(width <= 300){
+			TEXT_SIZE = 14;
+			LABEL_TEXT_SIZE = 8;
 		}
 		invalidateLayouts();
 		invalidate();
@@ -348,6 +265,10 @@ public class WheelView extends View {
 			labelLayout = null;
 			invalidate();
 		}
+	}
+
+	public void setRealLabel(String newLabel) {
+		this.realLabel = newLabel;
 	}
 	
 	public void setType(int wheel_type){
@@ -518,11 +439,10 @@ public class WheelView extends View {
 		
 		if (labelPaint == null) {
 			labelPaint = new TextPaint(Paint.ANTI_ALIAS_FLAG
-					| Paint.FAKE_BOLD_TEXT_FLAG | Paint.DITHER_FLAG);
-			//valuePaint.density = getResources().getDisplayMetrics().density;
-			labelPaint.setTextSize(LABEL_SIZE);
-			labelPaint.setShadowLayer(0.1f, 0, 0.1f, 0xFFC0C0C0);
-		}
+					| Paint.FAKE_BOLD_TEXT_FLAG);
+			//itemsPaint.density = getResources().getDisplayMetrics().density;
+			labelPaint.setTextSize(LABEL_TEXT_SIZE);
+		}	
 
 		if (centerDrawable == null) {
 			centerDrawable = getContext().getResources().getDrawable(R.drawable.wheel_val);
@@ -530,12 +450,10 @@ public class WheelView extends View {
 
 		if (topShadow == null) {
 			topShadow = new GradientDrawable(Orientation.TOP_BOTTOM, SHADOWS_COLORS);
-//			topShadow = getContext().getResources().getDrawable(R.drawable.wheel_val222);
 		}
 
 		if (bottomShadow == null) {
 			bottomShadow = new GradientDrawable(Orientation.BOTTOM_TOP, SHADOWS_COLORS);
-//			bottomShadow = getContext().getResources().getDrawable(R.drawable.wheel_val222);
 		}
 
 		setBackgroundResource(R.drawable.wheel_bg);
@@ -646,10 +564,9 @@ public class WheelView extends View {
 			return itemHeight;
 		} else if (itemsLayout != null && itemsLayout.getLineCount() > 2) {
 			itemHeight = itemsLayout.getLineTop(2) - itemsLayout.getLineTop(1);
-			System.out.println("getLineTop(2) = "+ itemsLayout.getLineTop(2));
-			System.out.println("getLineTop(1) = "+ itemsLayout.getLineTop(1));
 			return itemHeight;
 		}
+
 		return getHeight() / visibleItems;
 	}
 
@@ -732,15 +649,13 @@ public class WheelView extends View {
 	 * @param widthLabel width of label layout
 	 */
 	private void createLayouts(int widthItems, int widthLabel) {
-		if(wheel_type == Constant.wheel_year){
-			itemsWidth = widthItems = 52;
-		}else{
-			itemsWidth = widthItems = 26;
+		if(wheel_type == Constant.wheel_day){
+			widthItems += labelOff;
 		}
 		if (itemsLayout == null || itemsLayout.getWidth() > widthItems) {
 			itemsLayout = new StaticLayout(buildText(isScrollingPerformed), itemsPaint, widthItems,
 					widthLabel > 0 ? Layout.Alignment.ALIGN_OPPOSITE : Layout.Alignment.ALIGN_CENTER,
-					1, ITEM_HEIGHT, false);
+					1, ADDITIONAL_ITEM_HEIGHT, false);
 		} else {
 			itemsLayout.increaseWidthTo(widthItems);
 		}
@@ -817,30 +732,29 @@ public class WheelView extends View {
 		}
 
 		
-		if (widthLabel > 0) {
+//		if (widthLabel > 0) {
 			if (!isScrollingPerformed && (labelLayout == null || labelLayout.getWidth() > widthLabel)) {
 				if(wheel_type == Constant.wheel_day){
-					System.out.println("***************************Constant.VARY_DAY ="+Constant.VARY_DAY);
-					
 					if(text == null){
 						if(isHadScroll){
-							label = "日";
+							realLabel = "天";
 						}else{
-							label = SpecialCalendar.getWeekDay(Constant.YEAR,Constant.MONTH, Constant.DAY);
+							realLabel = SpecialCalendar.getCapitelNumberWeekDay(Constant.YEAR,Constant.MONTH, Constant.DAY);
 						}
 					}else{
-						label = SpecialCalendar.getWeekDay(Constant.VARY_YEAR, Constant.VARY_MONTH, Constant.VARY_DAY);
+						realLabel = SpecialCalendar.getCapitelNumberWeekDay(Constant.VARY_YEAR, Constant.VARY_MONTH, Constant.VARY_DAY);
 					}
 				}
-				labelLayout = new StaticLayout(label, labelPaint,
-						widthLabel, Layout.Alignment.ALIGN_NORMAL, 1,
+				labelLayout = new StaticLayout(realLabel, labelPaint,
+						widthItems,  Layout.Alignment.ALIGN_CENTER, 0.5f,
 						ADDITIONAL_ITEM_HEIGHT, false);
+
 			}else if (isScrollingPerformed) {
 				labelLayout = null;
 			} else {
-				labelLayout.increaseWidthTo(widthLabel);
+				labelLayout.increaseWidthTo(widthItems);
 			}
-		}
+//		}
 	}
 
 	@Override
@@ -907,18 +821,23 @@ public class WheelView extends View {
 	 * Draws value and label layout
 	 * @param canvas the canvas for drawing
 	 */
-	private void drawValue(Canvas canvas) {
+		private void drawValue(Canvas canvas) {
 		valuePaint.setColor(VALUE_TEXT_COLOR);
 		valuePaint.drawableState = getDrawableState();
 
 		Rect bounds = new Rect();
 		itemsLayout.getLineBounds(visibleItems / 2, bounds);
-		
 
+		int start = 0;
+		if(wheel_type == Constant.wheel_day){
+			start += labelOff / 2;
+		}
+		
+		// draw label
 		// draw label
 		if (labelLayout != null) {
 			canvas.save();
-			canvas.translate(startLabel, bounds.top + ITEM_HEIGHT + 2);
+			canvas.translate(2 * start, bounds.top + ADDITIONAL_ITEM_HEIGHT * 5/6);
 			labelLayout.draw(canvas);
 			canvas.restore();
 		}
@@ -926,7 +845,7 @@ public class WheelView extends View {
 		// draw current value
 		if (valueLayout != null) {
 			canvas.save();
-			canvas.translate(startOffset, bounds.top + scrollingOffset + 5);
+			canvas.translate(start, bounds.top + scrollingOffset);
 			valueLayout.draw(canvas);
 			canvas.restore();
 		}
@@ -936,11 +855,14 @@ public class WheelView extends View {
 	 * Draws items
 	 * @param canvas the canvas for drawing
 	 */
-	private void drawItems(Canvas canvas) {
+private void drawItems(Canvas canvas) {
 		canvas.save();
-		
+		int start = 0;
+		if(wheel_type == Constant.wheel_day){
+			start += labelOff / 2;
+		}
 		int top = itemsLayout.getLineTop(1);
-		canvas.translate(startOffset, - top + scrollingOffset + ITEM_HEIGHT/2);
+		canvas.translate(start, - top + scrollingOffset);
 		
 		itemsPaint.setColor(ITEMS_TEXT_COLOR);
 		itemsPaint.drawableState = getDrawableState();
@@ -948,69 +870,13 @@ public class WheelView extends View {
 		
 		canvas.restore();
 	}
-
-	
-	
-//	/**
-//	 * Draws value and label layout
-//	 * @param canvas the canvas for drawing
-//	 */
-//	private void drawValue(Canvas canvas) {
-//		valuePaint.setColor(VALUE_TEXT_COLOR);
-//		valuePaint.drawableState = getDrawableState();
-//
-//		Rect bounds = new Rect();
-//		itemsLayout.getLineBounds(visibleItems / 2, bounds);
-//
-//		// draw label
-//		if (labelLayout != null) {
-//			canvas.save();
-//			canvas.translate(itemsLayout.getWidth() + LABEL_OFFSET, bounds.top + 30);
-//			labelLayout.draw(canvas);
-//			canvas.restore();
-//		}
-//
-//		// draw current value
-//		if (valueLayout != null) {
-//			canvas.save();
-//			canvas.translate(0, bounds.top + scrollingOffset);
-//			valueLayout.draw(canvas);
-//			canvas.restore();
-//		}
-//	}
-//
-//	/**
-//	 * Draws items
-//	 * @param canvas the canvas for drawing
-//	 */
-//	private void drawItems(Canvas canvas) {
-//		canvas.save();
-//		
-//		int top = itemsLayout.getLineTop(1);
-//		canvas.translate(0, - top + scrollingOffset);
-//		
-//		itemsPaint.setColor(ITEMS_TEXT_COLOR);
-//		itemsPaint.drawableState = getDrawableState();
-//		itemsLayout.draw(canvas);
-//		
-//		canvas.restore();
-//	}
-	
-	
-	
-	
-	
 	/**
 	 * Draws rect for current value
 	 * @param canvas the canvas for drawing
 	 */
 	private void drawCenterRect(Canvas canvas) {
-		System.out.println("itemHeight = "+ getItemHeight());
-		System.out.println("height = "+ getHeight());
 		int center = getHeight() / 2;
 		int offset = getItemHeight() / 2;
-		System.out.println("center = "+ center);
-		System.out.println("offset = "+ offset);
 		centerDrawable.setBounds(0, center - offset, getWidth(), center + offset);
 		centerDrawable.draw(canvas);
 	}

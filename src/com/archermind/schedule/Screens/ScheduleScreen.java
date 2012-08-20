@@ -618,9 +618,6 @@ private ViewFlipper flipper = null;
 		gridView.setNumColumns(7);
 		gridView.setColumnWidth(Width/7 + 1);
 		
-//		if(Width == 480 && Height == 800){
-//			gridView.setColumnWidth(69);
-//		}
       gridView.setVerticalScrollBarEnabled(false);
       gridView.setSelector(new ColorDrawable(Color.TRANSPARENT)); 
 		gridView.setGravity(Gravity.CENTER);

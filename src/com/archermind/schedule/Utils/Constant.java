@@ -24,8 +24,6 @@ public class Constant {
 	public static int wheel_day = 3;
 	public static int wheel_hour = 4;
 	public static int wheel_min = 5;
-public static int wheelViewFlag = 0;
-	
 	
 	public final static class FriendType{
 		public final static int friend_yes = 0;

@@ -107,9 +107,9 @@ public class FriendAdapter extends BaseAdapter implements OnClickListener{
 		}
 		Friend friend = friends.get(position);
 		if(friend != null){
-			String name = friend.getName();
-			if(name != null && !name.equals("")){
-				holderView.name.setText(friend.getName());
+			String nick = friend.getNick();
+			if(nick != null && !nick.equals("")){
+				holderView.name.setText(nick);
 			}else{
 				holderView.name.setText(friend.getTelephone());
 			}

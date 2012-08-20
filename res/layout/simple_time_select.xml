@@ -14,25 +14,28 @@
         <LinearLayout
             android:id="@+id/wheelView_layout"
             android:layout_width="fill_parent"
-            android:layout_height="@dimen/wheelView_layout_height" 
+            android:layout_height="wrap_content" 
             android:orientation="horizontal"
-            android:layout_marginLeft="@dimen/wheelView_layout_marginLeft"
-            android:layout_marginRight="@dimen/wheelView_layout_marginLeft">
+            android:layout_marginLeft="2dip"
+            android:layout_marginRight="2dip">
 
             <com.archermind.schedule.Views.WheelView
                 android:id="@+id/wheelView_year"
-                android:layout_width="@dimen/simple_wheelView_year_width"
-                android:layout_height="wrap_content"/>
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"/>
 
             <com.archermind.schedule.Views.WheelView
                 android:id="@+id/wheelView_month"
-                android:layout_width="@dimen/simple_wheelView_year_width"
-                android:layout_height="wrap_content" />
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_weight="1" />
 
             <com.archermind.schedule.Views.WheelView
                 android:id="@+id/wheelView_day"
-                android:layout_width="@dimen/simple_wheelView_year_width"
-                android:layout_height="wrap_content" />
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_weight="1" />
         </LinearLayout>
 
         <ImageView
@@ -40,7 +43,8 @@
             android:layout_height="@dimen/wheelView_layout_height"
             android:layout_alignParentRight="true"
             android:layout_marginRight="@dimen/wheelView_layout_marginRight"
-            android:src="@drawable/time_selector_img" />
+            android:src="@drawable/time_selector_img"
+            android:visibility="gone" />
     </RelativeLayout>
     
     <LinearLayout

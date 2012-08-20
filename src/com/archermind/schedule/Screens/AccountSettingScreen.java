@@ -54,6 +54,7 @@ public class AccountSettingScreen extends Activity implements OnClickListener{
 	private LinearLayout bindTelephone;
 	private Button logout;
 	private Button goback;
+	private EditText loginNick;
 	private Handler handler;
 	
     /** Called when the activity is first created. */
@@ -66,6 +67,7 @@ public class AccountSettingScreen extends Activity implements OnClickListener{
         setContentView(R.layout.account_setting);
         
         headImage = (SmartImageView)findViewById(R.id.headImage);
+        loginNick = (EditText)findViewById(R.id.login_nick);
         bindTelephone = (LinearLayout)findViewById(R.id.bindTelephone);
         logout = (Button)findViewById(R.id.logout);
         goback = (Button)findViewById(R.id.title_bar_setting_btn);
@@ -74,7 +76,11 @@ public class AccountSettingScreen extends Activity implements OnClickListener{
         bindTelephone.setOnClickListener(this);
         logout.setOnClickListener(this);
         goback.setOnClickListener(this);
-        initHeadImage();
+        
+        
+        loginNick.setText(ServiceManager.getSPUserInfo(UserInfoData.NICK));
+		headImage.setImageUrl(getUriFormWeb(),
+                R.drawable.friend_item_img, R.drawable.friend_item_img);
         
         handler = new Handler()
         {
@@ -161,7 +167,7 @@ public class AccountSettingScreen extends Activity implements OnClickListener{
 						intent.putExtra(MediaStore.EXTRA_OUTPUT, Uri
 								.fromFile(new File(Environment
 										.getExternalStorageDirectory(),
-										"xiaoma.jpg")));
+										"headImage.jpg")));
 						startActivityForResult(intent, 2);
 					}
 				}).show();
@@ -187,7 +193,7 @@ public class AccountSettingScreen extends Activity implements OnClickListener{
 			break;
 		case 2:
 			File temp = new File(Environment.getExternalStorageDirectory()
-					+ "/xiaoma.jpg");
+					+ "/headImage.jpg");
 			uri = Uri.fromFile(temp);
 			startPhotoZoom(uri);
 			headImagePath = uri.getPath();
@@ -227,12 +233,6 @@ public class AccountSettingScreen extends Activity implements OnClickListener{
 			return null;
 		}
 
-	private void initHeadImage(){
-		String uri = getUriFormWeb();
-		headImage.setImageUrl(uri,
-                    R.drawable.friend_item_img, R.drawable.friend_item_img);
-	}
-	
 	public void startPhotoZoom(Uri uri) {
 		Intent intent = new Intent("com.android.camera.action.CROP");
 		intent.setDataAndType(uri, "image/*");

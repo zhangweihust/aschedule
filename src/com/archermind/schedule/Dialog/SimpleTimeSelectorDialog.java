@@ -77,7 +77,7 @@ public class SimpleTimeSelectorDialog implements OnClickListener {
 			wheel.setAdapter(new NumericWheelAdapter(1901, 2048,
 					NumericWheelAdapter.DEFAULT_CALENDER));
 
-			wheel.setLabel("年");
+			wheel.setRealLabel("年");
 			wheel.setCurrentItem(Constant.YEAR - 1901);
 			wheel.addScrollingListener(scrolledListener);
 			wheelView_year = wheel;
@@ -88,7 +88,7 @@ public class SimpleTimeSelectorDialog implements OnClickListener {
 			wheel.setAdapter(new NumericWheelAdapter(1, 12,
 					NumericWheelAdapter.DEFAULT_CALENDER));
 			
-			wheel.setLabel("月");
+			wheel.setRealLabel("月");
 			wheel.setCurrentItem(Constant.MONTH - 1);
 			wheel.addScrollingListener(scrolledListener);
 			wheelView_month = wheel;
@@ -100,8 +100,7 @@ public class SimpleTimeSelectorDialog implements OnClickListener {
 					.getDaysOfMonth(SpecialCalendar.isLeapYear(Constant.YEAR),
 							Constant.MONTH),
 					NumericWheelAdapter.DEFAULT_CALENDER));
-			
-			wheel.setLabel(SpecialCalendar.getWeekDay(Constant.YEAR,
+			wheel.setRealLabel(SpecialCalendar.getCapitelNumberWeekDay(Constant.YEAR,
 					Constant.MONTH, Constant.DAY));
 			wheel.setCurrentItem(Constant.DAY - 1);
 			wheel.addScrollingListener(scrolledListener);

@@ -205,12 +205,13 @@ public class FriendContactAdapter extends BaseAdapter implements OnClickListener
 //				contentHolderView = (ContentHolderView) view.getTag();
 //			}
 			if(friend != null){
-				contentHolderView.name.setText(friend.getName());
 				if(Constant.FriendType.friend_contact_use == friend.getType()){
+					contentHolderView.name.setText(friend.getNick());
 					contentHolderView.friend_button2.setText(context.getResources().getString(R.string.friend_add));
 					contentHolderView.friend_button2.setTag(this);
 					contentHolderView.headImg.setImageUrl(friend.getHeadImagePath(), R.drawable.friend_item_img, R.drawable.friend_item_img);
 				}else if(Constant.FriendType.friend_contact == friend.getType()){
+					contentHolderView.name.setText(friend.getName());
 					contentHolderView.friend_button2.setText(context.getResources().getString(R.string.friend_invite));
 					contentHolderView.friend_button2.setTag(this);
 				}

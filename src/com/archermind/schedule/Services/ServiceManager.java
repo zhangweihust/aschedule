@@ -91,7 +91,7 @@ public class ServiceManager extends Service implements OnClickListener{
     		}
     		for(int i = 0; i < msg_accepets.size(); i++){
     			makeFriendFromInet(msg_accepets.get(i),Constant.FriendType.friend_yes);
-    			serverInerface.acceptConfirm(msg_accepets.get(i), String.valueOf(getUserId()));
+    			serverInerface.acceptConfirm(String.valueOf(getUserId()), msg_accepets.get(i));
     		}
     	};
     };
@@ -339,7 +339,7 @@ public class ServiceManager extends Service implements OnClickListener{
 			if(0 == serverInerface.acceptFriend(String.valueOf(ServiceManager.getUserId()), id)){
 				//成功添加好r友
 				makeFriendFromInet(id,Constant.FriendType.friend_yes);
-				ServiceManager.getEventservice().onUpdateEvent(new EventArgs(EventTypes.CONTACT_SYNC_SUCCESS));
+				eventService.onUpdateEvent(new EventArgs(EventTypes.CONTACT_SYNC_SUCCESS));
 			}
 			
 			break;

@@ -4,8 +4,7 @@
   android:id="@+id/calendar_layout"
   android:layout_width="fill_parent"
   android:layout_height="fill_parent"
-  android:background="@drawable/gridview_bk"
->
+  android:background="@drawable/gridview_bk">
   
   <TextView 
       android:id="@+id/calendar_number"

@@ -94,11 +94,10 @@ public class CalendarAdapter extends BaseAdapter {
 		 }
 		RelativeLayout layout = (RelativeLayout) convertView.findViewById(R.id.calendar_layout);
 		TextView calendar_number = (TextView) convertView.findViewById(R.id.calendar_number);
-//		calendar_number.setTextSize(height1/4);
-		if(position < 35){
-			calendar_number.setHeight(height1);
-		}else{
+		if(position < 7){
 			calendar_number.setHeight(height2);
+		}else{
+			calendar_number.setHeight(height1);
 		}
 		TextView calendar_schedule_number = (TextView) convertView.findViewById(R.id.calendar_schedule_number);
 		ImageView holiday = (ImageView) convertView.findViewById(R.id.calendar_holiday);

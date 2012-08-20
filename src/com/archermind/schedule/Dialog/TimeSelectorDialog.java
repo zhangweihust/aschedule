@@ -85,7 +85,7 @@ public class TimeSelectorDialog implements OnClickListener {
 			wheel.setAdapter(new NumericWheelAdapter(1901, 2048,
 					NumericWheelAdapter.DEFAULT_CALENDER));
 			wheel.setType(Constant.wheel_year);
-			wheel.setLabel("年");
+			wheel.setRealLabel("年");
 			wheel.setCurrentItem(Constant.YEAR - 1901);
 			wheel.addScrollingListener(scrolledListener);
 			wheelView_year = wheel;
@@ -94,7 +94,7 @@ public class TimeSelectorDialog implements OnClickListener {
 			wheel.setAdapter(new NumericWheelAdapter(1, 12,
 					NumericWheelAdapter.DEFAULT_CALENDER));
 			wheel.setType(Constant.wheel_month);
-			wheel.setLabel("月");
+			wheel.setRealLabel("月");
 			wheel.setCurrentItem(Constant.MONTH - 1);
 			wheel.addScrollingListener(scrolledListener);
 			wheelView_month = wheel;
@@ -105,7 +105,7 @@ public class TimeSelectorDialog implements OnClickListener {
 							Constant.MONTH),
 					NumericWheelAdapter.DEFAULT_CALENDER));
 			wheel.setType(Constant.wheel_day);
-			wheel.setLabel(SpecialCalendar.getWeekDay(Constant.YEAR,
+			wheel.setRealLabel(SpecialCalendar.getCapitelNumberWeekDay(Constant.YEAR,
 					Constant.MONTH, Constant.DAY));
 			wheel.setCurrentItem(Constant.DAY - 1);
 			wheel.addScrollingListener(scrolledListener);
@@ -115,7 +115,7 @@ public class TimeSelectorDialog implements OnClickListener {
 			wheel.setAdapter(new NumericWheelAdapter(0, 23,
 					NumericWheelAdapter.DEFAULT_CALENDER));
 			wheel.setType(Constant.wheel_hour);
-			wheel.setLabel("时");
+			wheel.setRealLabel("时");
 			wheel.setCurrentItem(Constant.HOUR - 0);
 			wheelView_hour = wheel;
 			break;
@@ -123,7 +123,7 @@ public class TimeSelectorDialog implements OnClickListener {
 			wheel.setAdapter(new NumericWheelAdapter(0, 59,
 					NumericWheelAdapter.DEFAULT_CALENDER));
 			wheel.setType(Constant.wheel_min);
-			wheel.setLabel("分");
+			wheel.setRealLabel("分");
 			wheel.setCurrentItem(Constant.MIN - 0);
 			wheelView_min = wheel;
 			break;
