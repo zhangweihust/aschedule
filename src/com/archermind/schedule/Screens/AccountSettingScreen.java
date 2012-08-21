@@ -79,7 +79,7 @@ public class AccountSettingScreen extends Activity implements OnClickListener{
         
         
         loginNick.setText(ServiceManager.getSPUserInfo(UserInfoData.NICK));
-		headImage.setImageUrl(getUriFormWeb(),
+		headImage.setImageUrl(ServiceManager.getAvator_url(),
                 R.drawable.friend_item_img, R.drawable.friend_item_img);
         
         handler = new Handler()
@@ -264,6 +264,7 @@ public class AccountSettingScreen extends Activity implements OnClickListener{
 				Drawable drawable = new BitmapDrawable(photo);			
 				headImage.setImageDrawable(drawable);
 				Toast.makeText(this, "上传图片成功！", Toast.LENGTH_LONG).show();
+				ServiceManager.setAvator_url(getUriFormWeb());
 			}else{
 				Toast.makeText(this, "上传图片失败！", Toast.LENGTH_LONG).show();
 			}

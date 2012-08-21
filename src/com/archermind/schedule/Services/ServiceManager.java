@@ -426,8 +426,14 @@ public class ServiceManager extends Service implements OnClickListener{
 	public static String getAvator_url() {
 		return avator_url;
 	}
+	public static void setAvator_url(String avator_url) {
+		if(avator_url == null)
+			avator_url = "";
+		ServiceManager.avator_url = avator_url;
+		sharedPreferences.edit().putString(UserInfoData.PHOTO_URL, avator_url).commit();
+	}
 	   
-	   public long calculateTimeDifference()
+   public long calculateTimeDifference()
 	   {
 		   Date date = new Date();
 		   return date.getTimezoneOffset() * 60 * 1000;

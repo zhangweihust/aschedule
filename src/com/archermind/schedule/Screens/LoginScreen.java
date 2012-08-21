@@ -408,7 +408,7 @@ public class LoginScreen extends Activity implements OnClickListener {
 
                 	handler.sendEmptyMessage(LOGIN_SUCCESS);
                     RegisterScreen.writeUserinfo(ret,HttpUtils.GetCookie());
-                    Log.i("LoginScreen","服务器返回信息写入SharedPrefences成功!");
+                    Log.i("LoginScreen","ret = " + ret);
                 }
                 else
                 {

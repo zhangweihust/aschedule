@@ -383,6 +383,7 @@ public class FriendsDyamicScreen extends Screen implements IXListViewListener, O
 			}
 		} else {
 			//if(list.isFooterViewAdd()){
+			    ScheduleApplication.LogD(FriendsDyamicScreen.class, "list.removeFooterView");
 				list.removeFooterView(mListFooter);
 				list.setFooterViewAdd(false);
 				list.setHeaderGone(true);

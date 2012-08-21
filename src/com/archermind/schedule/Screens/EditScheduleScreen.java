@@ -332,8 +332,8 @@ public class EditScheduleScreen extends Screen implements OnClickListener {
                     endTime = alarmPopwindow.getEndTime();
 
                 } else {
-
-                    startTime = mSelectTime;
+                	if(mSelectTime != 0)
+				        startTime = mSelectTime;
                     Calendar mCalendar = Calendar.getInstance();
                     mCalendar.set(Calendar.YEAR, 2049);
                     endTime = mCalendar.getTimeInMillis();
