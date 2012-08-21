@@ -79,6 +79,7 @@ public class TelephoneBindScreen extends Activity implements OnClickListener{
         			ServiceManager.ToastShow("绑定失败!");
         			break;
         		case TELEPHONE_BIND_SUCCESS:
+        			telephone_bind_prompt.setVisibility(View.INVISIBLE);
         			ServiceManager.ToastShow("绑定成功!");
         			break;
     			default:

@@ -21,6 +21,7 @@ import android.view.GestureDetector;
 import android.view.GestureDetector.OnGestureListener;
 import android.view.Gravity;
 import android.view.KeyEvent;
+import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.View.OnClickListener;
@@ -35,6 +36,7 @@ import android.widget.Button;
 import android.widget.FrameLayout;
 import android.widget.GridView;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.ViewFlipper;
@@ -65,6 +67,10 @@ public class ScheduleScreen extends Screen implements IXListViewListener,OnXScro
 	private static final int LOAD_OVERD_GOTO_TODAY = 2;
 	
 	private ImageView mListHeader;
+	private View schedulelistHeadView;
+	private int headViewHeight = 0;
+	private TextView schedule_headview_prompt;
+	private VerticalScrollView pager;
 //	private TextView tv1;
 //	private TextView tv2;
 //	private TextView tv3;
@@ -134,6 +140,9 @@ private ViewFlipper flipper = null;
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.schedule_screen);
 		
+		schedulelistHeadView = LayoutInflater.from(ScheduleScreen.this).inflate(R.layout.schedule_list_headview,null);
+		schedule_headview_prompt = (TextView)schedulelistHeadView.findViewById(R.id.schedule_headview_prompt);
+		
 		handler = new Handler()
 		{
 			@Override
@@ -148,11 +157,7 @@ private ViewFlipper flipper = null;
 					
 				case LOAD_OVERD_GOTO_TODAY:
 //					hsa.setData(listdata);
-					int pos = hsa.getTodayPosition(getDateByMillisTime(System.currentTimeMillis()));
-					if (pos >= 0)
-					{
-						list2.setSelection(pos + 1);	/* 最上面的上翻更新数据也算一个位置,,所以+1 */
-					}
+					gototodaypos();
 					break;
 				}
 				super.handleMessage(msg);
@@ -169,8 +174,7 @@ private ViewFlipper flipper = null;
 			}
 		});
 		curSelectedDate = getDateByMillisTime(System.currentTimeMillis());
-		final VerticalScrollView pager = (VerticalScrollView) findViewById(R.id.pager);
-		setupView();
+		pager = (VerticalScrollView) findViewById(R.id.pager);
 		flag = true;
 		eventService.add(this);
 		mListHeader = (ImageView) findViewById(R.id.list_header);
@@ -199,14 +203,26 @@ private ViewFlipper flipper = null;
 			@Override
 			public void snapToPage(int whichPage) {
 				if (whichPage == 1) {
+					LayoutParams lp = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.FILL_PARENT, 0);
+			        schedule_headview_prompt.setLayoutParams(lp);
+					schedulelistHeadView.setVisibility(View.GONE);
+					gototodaypos();
+					
 					mListHeader
 							.setBackgroundResource(R.drawable.listview_header_down);
 					mListHeader.setTag(R.drawable.listview_header_down);
+					
 //					tv2.setTextColor(Color.parseColor("#4f810f"));
 //					list2.setHeaderGone(true);
 //					tv3.setVisibility(View.VISIBLE);
 //					tv4.setVisibility(View.VISIBLE);
 				} else {
+					LayoutParams lp = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.FILL_PARENT, headViewHeight);
+					schedule_headview_prompt.setLayoutParams(lp);
+					schedulelistHeadView.setVisibility(View.VISIBLE);
+					list2.setSelection(1);
+					gototoday.setVisibility(View.INVISIBLE);
+					
 					mListHeader
 							.setBackgroundResource(R.drawable.listview_header_up);
 					mListHeader.setTag(R.drawable.listview_header_up);
@@ -222,8 +238,11 @@ private ViewFlipper flipper = null;
 			}
 		});
 		
+		
+		setupView();
+		
 		hsa = new HistoryScheduleAdapter(this);
-		list2.setAdapter(hsa);
+		
 		
 	}
 
@@ -266,16 +285,16 @@ private ViewFlipper flipper = null;
 		        addGridView();
 		        gridView.setAdapter(calV);
 		        
+		        headViewHeight = (int) (pager.getMeasuredHeight() * 0.25 - mListHeader.getMeasuredHeight());
+		        LayoutParams lp = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.FILL_PARENT, headViewHeight);
+		        schedule_headview_prompt.setLayoutParams(lp);
+		        schedule_headview_prompt.setText(getHeadViewText());
+				list2.addHeaderView(schedulelistHeadView,null,false);
+		        
+				list2.setAdapter(hsa);
 		        listdata = calendarData.getMonthSchedule(curScrollYear, curScrollMonth);
         		handler.sendEmptyMessage(LOAD_DATA_OVER);
-        		handler.post(new Runnable() {
-					
-					@Override
-					public void run() {
-						// TODO Auto-generated method stub
-						handler.sendEmptyMessage(LOAD_OVERD_GOTO_TODAY);
-					}
-				});
+        		
 
 		        //flipper.addView(gridView);
 		        flipper.addView(gridView,0);
@@ -661,22 +680,22 @@ private ViewFlipper flipper = null;
 	                	  ((RelativeLayout)view).setBackgroundColor(getResources().getColor(R.color.selector));
 		                  calV.setOldPosition(position);
 	                  }
-				String date = getDate(position);
-				if (!curSelectedDate.equals(date))	
-				{
-					curSelectedDate = date;
-
-					if (!hsa.isEmpty())
-					{
-						int pos = hsa.getTodayPosition(curSelectedDate);
-						if (pos >= 0)
-						{
-							list2.setSelection(pos + 1);	/* 最上面的上翻更新数据也算一个位置,,所以+1 */
-						}
-					}
-
-				}
-				gototoday.setVisibility(View.INVISIBLE);
+//				String date = getDate(position);
+//				if (!curSelectedDate.equals(date))	
+//				{
+//					curSelectedDate = date;
+//
+//					if (!hsa.isEmpty())
+//					{
+//						int pos = hsa.getTodayPosition(curSelectedDate);
+//						if (pos >= 0)
+//						{
+//							list2.setSelection(pos + 1);	/* 最上面的上翻更新数据也算一个位置,,所以+1 */
+//						}
+//					}
+//
+//				}
+//				gototoday.setVisibility(View.INVISIBLE);
 			}
         }
 		});
@@ -832,12 +851,13 @@ private ViewFlipper flipper = null;
 	public void onScroll(AbsListView view, int firstVisibleItem,
 			int visibleItemCount, int totalItemCount) {
 		// TODO Auto-generated method stub
-		if (firstVisibleItem < 1 || firstVisibleItem > hsa.getCount())
+		
+		if (firstVisibleItem < 2 || firstVisibleItem > hsa.getCount())
 		{
 			return;
 		}
 		
-		if (hsa.containTodaySchedule(firstVisibleItem - 1, firstVisibleItem + visibleItemCount - 1, getDateByMillisTime(System.currentTimeMillis())))
+		if (hsa.containTodaySchedule(firstVisibleItem - 2, firstVisibleItem + visibleItemCount - 2, getDateByMillisTime(System.currentTimeMillis())))
 		{
 			/* 当前显示中包含今天的日程，要让回今天按钮消失 */
 			gototoday.setVisibility(View.INVISIBLE);
@@ -864,6 +884,62 @@ private ViewFlipper flipper = null;
 	protected void onResume() {
 		// TODO Auto-generated method stub
 		super.onResume();
+	}
+	
+	public void gototodaypos()
+	{
+		int pos = hsa.getTodayPosition(getDateByMillisTime(System.currentTimeMillis()));
+		if (pos >= 0)
+		{
+			list2.setSelection(pos + 2);	/* 最上面的上翻更新数据也算一个位置,再加上一个headview */
+		}
+	}
+	
+	public String getHeadViewText()
+	{
+		String strtext = "";
+		int[] schedulecount = calendarData.getSchDateTagFlag();
+		int i = 0;
+		int k = 0;
+		int count = 32;		/*一个月最多31天*/
+		
+		for(i = 0; i < schedulecount.length; i++)
+		{
+			if ((schedulecount[i] - 1) == day)
+			{
+				strtext = "今天有 " + calendarData.getMarkcount()[i] + " 条日程";
+				break;
+			}
+			else if(schedulecount[i] == -1)
+			{
+				if (i == 0)
+				{
+					strtext = String.format("%04d年%02d月没有日程", year,month);
+					break;
+				}
+				
+				for (k = 0; k < i; k++)
+				{
+					if (count > (day - schedulecount[k] + 1))
+					{
+						count = day - schedulecount[k] + 1;
+					}
+				}
+				
+				if ((count > 0) && (count <= 31))
+				{
+					strtext = "已经有 " + count + " 天没写日程了哦";
+				}
+				else
+				{
+					strtext = "已经有 " + day + " 天没写日程了哦";
+				}
+				break;
+			}
+		}
+		
+		
+		return strtext;
 	}
 	
 }

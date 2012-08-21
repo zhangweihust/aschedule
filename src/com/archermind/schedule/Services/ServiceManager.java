@@ -2,6 +2,7 @@
 package com.archermind.schedule.Services;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 import java.util.Timer;
 import java.util.TimerTask;
@@ -66,6 +67,8 @@ public class ServiceManager extends Service implements OnClickListener{
     private static String avator_url = "";
     private static SharedPreferences sharedPreferences;
     private static SharedPreferences.Editor spEditor;
+    
+    private static long timeDifference = 0;
 
     private static Toast toast;
 
@@ -149,6 +152,7 @@ public class ServiceManager extends Service implements OnClickListener{
     public void onCreate() {
         super.onCreate();
 
+        timeDifference = calculateTimeDifference();
         toast = Toast.makeText(getApplicationContext(), "service start", Toast.LENGTH_SHORT);
         // toast.show();
         sharedPreferences = getSharedPreferences(UserInfoData.USER_INFO,
@@ -423,5 +427,14 @@ public class ServiceManager extends Service implements OnClickListener{
 		return avator_url;
 	}
 	   
+	   public long calculateTimeDifference()
+	   {
+		   Date date = new Date();
+		   return date.getTimezoneOffset() * 60 * 1000;
+	   }
 	   
+	   public static long getTimeDifference()
+	   {
+		   return timeDifference;
+	   }
 }

@@ -1005,4 +1005,18 @@ public class ServerInterface {
 		return ret;
 	}
 	
+	public int tel_unbind(String user_id) {
+		Map<String, String> map = new HashMap<String, String>();
+		map.put("user_id", user_id);
+		String ret = HttpUtils
+				.doPost(map,
+						"http://player.archermind.com/ci/index.php/aschedule/tel_unbind");
+		int result =0;
+		try{
+			result =Integer.parseInt(ret);
+		}catch (Exception e){
+			result =-3;
+		}
+		return result;
+	}
 }
