@@ -76,7 +76,8 @@ public class RegisterScreen extends Activity implements OnClickListener {
 
                 if (msg.what == REGISTER_SUCCESS) {
                     ServiceManager.ToastShow("注册成功!");
-                    startActivity(new Intent(RegisterScreen.this,MenuScreen.class));
+//                    startActivity(new Intent(RegisterScreen.this,MenuScreen.class));
+                    finish();
                 } else if (msg.what == REGISTER_FAILED) {
                     ServiceManager.ToastShow("注册失败!");
                 } else if (msg.what == BIN_SUCCESS) {

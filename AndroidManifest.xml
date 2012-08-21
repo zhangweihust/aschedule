@@ -58,11 +58,13 @@
             android:label="@string/app_name" >
         </activity>
         
-        <receiver android:name=".Services.AlarmRecevier" android:process=":remote">
+        <receiver android:name=".Services.AlarmRecevier" >
         </receiver>
         <receiver android:name=".Services.BootRecevier" >
             <intent-filter >
                 <action android:name="android.intent.action.BOOT_COMPLETED" />
+                <action android:name="android.intent.action.TIME_SET" />
+                <action android:name="android.intent.action.TIMEZONE_CHANGED" />  
             </intent-filter>
         </receiver>
         <receiver android:name=".Services.AlarmServiceReceiver"></receiver>

@@ -112,8 +112,8 @@ public class LoginScreen extends Activity implements OnClickListener {
                 if (msg.what == LOGIN_SUCCESS) {
 
                     ServiceManager.ToastShow("登录成功!");
-                    startActivity(new Intent(LoginScreen.this, MenuScreen.class));
-
+//                    startActivity(new Intent(LoginScreen.this, MenuScreen.class));
+                    finish();
                 } else if (msg.what == LOGIN_FAILED) {
                     ServiceManager.ToastShow("登录失败!");
                 }

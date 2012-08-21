@@ -430,11 +430,12 @@ public class DateTimeUtils {
 		c.close();
 	}
 
-	public static void sendAlarm(Long time, long flagAlarm, long schedule_id) {
+	public static void sendAlarm(long time, long flagAlarm, long schedule_id) {
 		Intent alarmIntent = new Intent(ScheduleApplication.getContext(),
 				AlarmRecevier.class);
 		alarmIntent.setAction("" + flagAlarm);
 		alarmIntent.putExtra("schedule_id", schedule_id);
+		alarmIntent.putExtra("alarmtime", time);
 		ScheduleApplication.LogD(DateTimeUtils.class, "set schedule_id:" + schedule_id + " flagAlarm:" + flagAlarm);
 		PendingIntent pi = PendingIntent.getBroadcast(ScheduleApplication.getContext(),
 				1, alarmIntent, 0);
