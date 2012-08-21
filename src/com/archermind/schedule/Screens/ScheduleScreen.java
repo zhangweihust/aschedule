@@ -694,7 +694,7 @@ private ViewFlipper flipper = null;
             //向左滑动
 			addGridView();   //添加一个gridview
 			jumpYear--;     //下一年
-			calendarData = new CalendarData(jumpMonth, jumpYear, year_c, month_c, day_c, 0, Constant.flagType);
+			calendarData = new CalendarData(jumpMonth, jumpYear, year_c, month_c, day_c, 1, Constant.flagType);
 			 calV = new CalendarAdapter(this,flipper.getHeight(), calendarData);
 	        gridView.setAdapter(calV);
 	        //flipper.addView(gridView);
@@ -722,7 +722,7 @@ private ViewFlipper flipper = null;
 			 //向右滑动
 			addGridView();   //添加一个gridview
 			jumpYear++;     //上一年
-			calendarData = new CalendarData(jumpMonth, jumpYear, year_c, month_c, day_c, 0, Constant.flagType);
+			calendarData = new CalendarData(jumpMonth, jumpYear, year_c, month_c, day_c, 1, Constant.flagType);
 			 calV = new CalendarAdapter(this,flipper.getHeight(), calendarData);
 	        gridView.setAdapter(calV);
 	        gvFlag++;

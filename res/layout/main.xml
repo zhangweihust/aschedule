@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:id="@+id/loadinglayout"
+    android:orientation="vertical"
     android:layout_width="fill_parent"
     android:layout_height="fill_parent"
     android:background="@drawable/repeat_register_bg" >
@@ -10,6 +11,7 @@
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
         android:layout_marginTop="50dp"
+        android:layout_weight="2"
         android:gravity="center_horizontal" >
 
         <ImageView
@@ -21,11 +23,10 @@
     </LinearLayout>
 
     <RelativeLayout
+        android:layout_weight="1"
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
-        android:layout_below="@+id/loadinglogo"
-        android:layout_marginTop="50dp"
-        android:gravity="center_horizontal" >
+        android:gravity="center" >
 
         <ImageView
             android:id="@+id/ivloadingslogan"
@@ -48,12 +49,12 @@
 
     
     <LinearLayout
+        android:layout_weight="1"
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
         android:layout_marginBottom="14dp"
         android:layout_alignParentBottom="true"
-        
-        android:gravity="center_horizontal" >
+        android:gravity="center" >
 
         <ImageView
             android:id="@+id/ivloadingreserved"
@@ -65,4 +66,4 @@
     
     
     
-</RelativeLayout>
+</LinearLayout>

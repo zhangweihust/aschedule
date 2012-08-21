@@ -734,17 +734,17 @@ public class WheelView extends View {
 		
 //		if (widthLabel > 0) {
 			if (!isScrollingPerformed && (labelLayout == null || labelLayout.getWidth() > widthLabel)) {
-				if(wheel_type == Constant.wheel_day){
-					if(text == null){
-						if(isHadScroll){
-							realLabel = "天";
-						}else{
-							realLabel = SpecialCalendar.getCapitelNumberWeekDay(Constant.YEAR,Constant.MONTH, Constant.DAY);
-						}
-					}else{
-						realLabel = SpecialCalendar.getCapitelNumberWeekDay(Constant.VARY_YEAR, Constant.VARY_MONTH, Constant.VARY_DAY);
-					}
-				}
+//				if(wheel_type == Constant.wheel_day){
+//					if(text == null){
+//						if(isHadScroll){
+//							realLabel = "日";
+//						}else{
+//							realLabel = SpecialCalendar.getCapitelNumberWeekDay(Constant.YEAR,Constant.MONTH, Constant.DAY);
+//						}
+//					}else{
+//						realLabel = SpecialCalendar.getCapitelNumberWeekDay(Constant.VARY_YEAR, Constant.VARY_MONTH, Constant.VARY_DAY);
+//					}
+//				}
 				labelLayout = new StaticLayout(realLabel, labelPaint,
 						widthItems,  Layout.Alignment.ALIGN_CENTER, 0.5f,
 						ADDITIONAL_ITEM_HEIGHT, false);

@@ -45,8 +45,8 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 	public static final String COLUMN_SCHEDULE_NOTICE_MONTHDAY="notice_monthday";//闹钟按每月重复提醒的日（本地，取的是notice_day 中的日）
 	public static final String COLUMN_SCHEDULE_NOTICE_YEARDAY="notice_yearday";//闹钟按每年重复提醒的月和日（本地，取的是notice_day 中的日，月）
 	public static final String COLUMN_SCHEDULE_NOTICE_STAGE_FLAG = "notice_stage_flag";//闹钟阶段提醒标志
+	public static final String COLUMN_SCHEDULE_NOTICE_BEGIN = "notice_begin";// 日程开始时间
 	public static final String COLUMN_SCHEDULE_NOTICE_END = "notice_end";// 日程结束时间
-	public static final String COLUMN_SCHEDULE_FLAG_OUTDATE = "notice_outdate";//闹钟是否过期
 	public static final String COLUMN_SCHEDULE_CONTENT = "content";// 日程内容
 	public static final String COLUMN_SCHEDULE_SLAVE_ID = "slave_id";// 隶属于哪个主贴
 	public static final String COLUMN_SCHEDULE_ORDER = "queue";// 回帖顺序
@@ -86,10 +86,10 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 			+ " TEXT, "
 			+ COLUMN_SCHEDULE_NOTICE_YEARDAY
 			+ " TEXT,"
+			+ COLUMN_SCHEDULE_NOTICE_BEGIN
+			+ " TEXT, "
 			+ COLUMN_SCHEDULE_NOTICE_END
 			+ " TEXT, "
-			+ COLUMN_SCHEDULE_FLAG_OUTDATE
-			+ " BOOLEAN, "
 			+ COLUMN_SCHEDULE_NOTICE_STAGE_FLAG
 			+ " BOOLEAN, "
 			+ COLUMN_SCHEDULE_CONTENT + " TEXT " + ")";

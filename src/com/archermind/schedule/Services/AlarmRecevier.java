@@ -1,24 +1,20 @@
 package com.archermind.schedule.Services;
 
-import android.R.layout;
 import android.app.Notification;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.content.BroadcastReceiver;
-import android.content.ContentValues;
 import android.content.Context;
 import android.content.Intent;
 import android.database.Cursor;
-import android.util.Log;
 
 import com.archermind.schedule.R;
+import com.archermind.schedule.ScheduleApplication;
 import com.archermind.schedule.Provider.DatabaseHelper;
 import com.archermind.schedule.Screens.HomeScreen;
 import com.archermind.schedule.Utils.DateTimeUtils;
 
 public class AlarmRecevier extends BroadcastReceiver {
-    private static final String TAG = "AlarmRecever";
-
     private NotificationManager mNotificationManager;
 
     private Notification mNotification;
@@ -44,19 +40,11 @@ public class AlarmRecevier extends BroadcastReceiver {
     public void onReceive(Context context, Intent intent) {
         long schedule_id = intent.getLongExtra("schedule_id", 1);
         long alarmTime = intent.getLongExtra("alarmtime", 1);
-
-        Log.i(TAG,
-                " schedule alarm time is  alarmTime = "
-                        + DateTimeUtils.time2String("yyyy-MM-dd-HH-mm", alarmTime)
-                        + "  alarmTime = " + alarmTime);
-
+        ScheduleApplication.LogD(AlarmRecevier.class, " schedule alarm time is  alarmTime = "
+                + DateTimeUtils.time2String("yyyy-MM-dd-HH-mm", alarmTime));
         long currentTime = System.currentTimeMillis() + 10 * 1000;// 加10秒是为了区分是正常的到时触发，还是用户设
-
-        Log.i(TAG,
-                " current time is  currentTime = "
-                        + DateTimeUtils.time2String("yyyy-MM-dd-HH-mm", currentTime)
-                        + " currentTime =" + currentTime);
-
+        ScheduleApplication.LogD(AlarmRecevier.class, " current time is  currentTime = "
+                + DateTimeUtils.time2String("yyyy-MM-dd-HH-mm", currentTime));
         // 读取数据库
         Cursor c = ServiceManager.getDbManager().queryScheduleById((int)schedule_id);
         if (c != null && c.getCount() > 0) {
@@ -91,28 +79,14 @@ public class AlarmRecevier extends BroadcastReceiver {
             mNotification.defaults = Notification.DEFAULT_SOUND;
             mNotification.setLatestEventInfo(context, "你有一个新日程", schedule_content, mPendingIntent);
             mNotificationManager.notify((int)schedule_id, mNotification);
-            Log.d(TAG, "-----------shedule_id=" + schedule_id);
-
         } else { // 说明是系统自动触发已过期的闹钟，不提示
-            
-            Log.i(TAG," out of date! ");            
+        	ScheduleApplication.LogD(AlarmRecevier.class, "currentTime > alarmTime ");      
         }
 
         long nextTime = DateTimeUtils.getNextAlarmTime(mStageRemind, startTime, endTime, startTime,
                 remindCycle, weekValue);
-        System.out.println("AlarmRecevier  nextTime = "
-                + DateTimeUtils.time2String("yyyy-MM-dd HH:mm:ss", nextTime));
-
-        // 设置闹钟过期
-        if (nextTime == 0) {
-            
-
-            ContentValues cv = new ContentValues();
-            cv.put(DatabaseHelper.COLUMN_SCHEDULE_FLAG_OUTDATE, true);
-            ServiceManager.getDbManager().updateScheduleById(schedule_id, cv);
-
-        } else {
-
+        ScheduleApplication.LogD(AlarmRecevier.class, "nextTime: " + DateTimeUtils.time2String("yyyy-MM-dd-HH-mm", nextTime));    
+        if (nextTime != 0) {
             // 设置闹钟
             DateTimeUtils.sendAlarm(nextTime, flagAlarm, schedule_id);
         }

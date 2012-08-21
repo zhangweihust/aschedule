@@ -18,6 +18,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.archermind.schedule.R;
+import com.archermind.schedule.ScheduleApplication;
 import com.archermind.schedule.Dialog.AlarmPopwindow;
 import com.archermind.schedule.Dialog.AlarmPopwindow.OnRemindSelectListener;
 import com.archermind.schedule.Dialog.EventTypeDialog;
@@ -347,6 +348,15 @@ public class EditScheduleScreen extends Screen implements OnClickListener {
                 cv.put(DatabaseHelper.COLUMN_SCHEDULE_SHARE, mShare);
                 cv.put(DatabaseHelper.COLUMN_SCHEDULE_OPER_FLAG, oper_flag);
                 cv.put(DatabaseHelper.COLUMN_SCHEDULE_START_TIME, startTime);
+                
+            	
+				Calendar beginTime = Calendar.getInstance(Locale.CHINA);
+				beginTime.setTimeInMillis(startTime);
+				beginTime.set(Calendar.HOUR_OF_DAY, 0);
+				beginTime.set(Calendar.MINUTE, 0);
+				beginTime.set(Calendar.SECOND, 0);
+				beginTime.set(Calendar.MILLISECOND, 0);
+				cv.put(DatabaseHelper.COLUMN_SCHEDULE_NOTICE_BEGIN, beginTime.getTimeInMillis());
 
                 cv.put(DatabaseHelper.COLUMN_SCHEDULE_NOTICE_FLAG, mRemind);
                 cv.put(DatabaseHelper.COLUMN_SCHEDULE_NOTICE_PERIOD, remindCycle);
@@ -372,18 +382,15 @@ public class EditScheduleScreen extends Screen implements OnClickListener {
                             + DateTimeUtils.time2String("yyyy-MM-dd HH:mm:ss", time));
                     if (time != 0) {
                         DateTimeUtils.sendAlarm(time, flagAlarm, schedule_id);
-                        cv.put(DatabaseHelper.COLUMN_SCHEDULE_FLAG_OUTDATE, false);
+                        ScheduleApplication.LogD(EditScheduleScreen.class, " set alarm = "
+    			                + DateTimeUtils.time2String("yyyy-MM-dd-HH-mm", time));
                     } else {
                         DateTimeUtils.cancelAlarm(schedule_id);
-                        cv.put(DatabaseHelper.COLUMN_SCHEDULE_FLAG_OUTDATE, true);
                     }
                 } else {
                     DateTimeUtils.cancelAlarm(schedule_id);
-                    cv.put(DatabaseHelper.COLUMN_SCHEDULE_FLAG_OUTDATE, true);
                 }
-                ServiceManager.getDbManager().updateScheduleById(schedule_id, cv);
                 si.uploadSchedule("0", "1");
-
             }
 
         }).start();

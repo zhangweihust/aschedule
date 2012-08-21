@@ -100,8 +100,9 @@ public class SimpleTimeSelectorDialog implements OnClickListener {
 					.getDaysOfMonth(SpecialCalendar.isLeapYear(Constant.YEAR),
 							Constant.MONTH),
 					NumericWheelAdapter.DEFAULT_CALENDER));
-			wheel.setRealLabel(SpecialCalendar.getCapitelNumberWeekDay(Constant.YEAR,
-					Constant.MONTH, Constant.DAY));
+//			wheel.setRealLabel(SpecialCalendar.getCapitelNumberWeekDay(Constant.YEAR,
+//					Constant.MONTH, Constant.DAY));
+			wheel.setRealLabel("日");
 			wheel.setCurrentItem(Constant.DAY - 1);
 			wheel.addScrollingListener(scrolledListener);
 			wheelView_day = wheel;

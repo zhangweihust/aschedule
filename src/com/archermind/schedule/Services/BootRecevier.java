@@ -4,15 +4,13 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.database.Cursor;
-import android.util.Log;
 
+import com.archermind.schedule.ScheduleApplication;
 import com.archermind.schedule.Provider.DatabaseHelper;
 import com.archermind.schedule.Provider.DatabaseManager;
 import com.archermind.schedule.Utils.DateTimeUtils;
 
 public class BootRecevier extends BroadcastReceiver {
-    private static final String TAG = "BootRecevier";
-
     private String remindCycle;
 
     private String weekValue;
@@ -32,25 +30,14 @@ public class BootRecevier extends BroadcastReceiver {
     private DatabaseManager dbManager;
 
     public void onReceive(Context context, Intent intent) {
+    	ScheduleApplication.LogD(BootRecevier.class, "action:" + intent.getAction());
         mContext = context;
-        //
-        // Log.d(TAG, "--------------BOOT receiver");
-        // if (ServiceManager.isStarted()) {
-        // } else {
-        // if (!ServiceManager.start()) {
-        // ServiceManager.exit();
-        // return;
-        // }
-        // }
-
         new Thread() {
-
             public void run() {
-
                 dbManager = new DatabaseManager(mContext);
                 dbManager.open();
-                Cursor c = dbManager.queryNotOutdateschedule();
-                Log.d(TAG, "-------------not outdate count :" + c.getCount());
+                Cursor c = dbManager.queryNotOutdateschedule(System.currentTimeMillis());
+                ScheduleApplication.LogD(BootRecevier.class, "not outdate count ::" + c.getCount());
                 if (c != null) {
                     for (c.moveToFirst(); !c.isAfterLast(); c.moveToNext()) {
                         schedule_id = c
@@ -69,18 +56,11 @@ public class BootRecevier extends BroadcastReceiver {
                                 .getColumnIndex(DatabaseHelper.COLUMN_SCHEDULE_NOTICE_STAGE_FLAG)) == 1;
                         long nextTime = DateTimeUtils.getNextAlarmTime(mStageRemind, startTime,
                                 endTime, startTime, remindCycle, weekValue);
+                        ScheduleApplication.LogD(BootRecevier.class, "nextTime: " + DateTimeUtils.time2String("yyyy-MM-dd-HH-mm", nextTime)); 
                         DateTimeUtils.sendAlarm(nextTime, flagAlarm, schedule_id);
-
-                        Log.i(TAG,
-                                "" + nextTime + "  "
-                                        + DateTimeUtils.time2String("yyyy-MM-dd-HH-mm", nextTime)
-                                        + schedule_id);
-
                     }
-
                     c.close();
                 }
-
                 dbManager.close();
             }
         }.start();

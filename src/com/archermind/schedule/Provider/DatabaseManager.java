@@ -175,7 +175,7 @@ public class DatabaseManager {
 		+DatabaseHelper.COLUMN_SCHEDULE_NOTICE_MONTHDAY+" ="+" '"+dayOfMonth+"' or "
 		+DatabaseHelper.COLUMN_SCHEDULE_NOTICE_PERIOD+" ="+" '"+DatabaseHelper.SCHEDULE_NOTICE_PERIOD_MODE_DAY+"' or "
 		+DatabaseHelper.COLUMN_SCHEDULE_NOTICE_WEEK+" like"+" '%"+dayOfWeek+"%' ) and ("
-		+DatabaseHelper.COLUMN_SCHEDULE_START_TIME+" <="+" '"+timeInMillis+"' and "
+		+DatabaseHelper.COLUMN_SCHEDULE_NOTICE_BEGIN+" <="+" '"+timeInMillis+"' and "
 		+DatabaseHelper.COLUMN_SCHEDULE_NOTICE_END+" >="+" '"+timeInMillis+"' and "
 		+DatabaseHelper.COLUMN_SCHEDULE_NOTICE_PERIOD+" !="+" '"+DatabaseHelper.SCHEDULE_NOTICE_PERIOD_MODE_NONE+"' ) and (" 
 		+DatabaseHelper.COLUMN_SCHEDULE_OPER_FLAG+" !="+" '"+DatabaseHelper.SCHEDULE_OPER_DELETE+"')) or ("
@@ -412,10 +412,11 @@ public void deleteFriend(String id){
 	}
 
 
-	public Cursor queryNotOutdateschedule( ){
-		return database.query(DatabaseHelper.TAB_LOCAL_SCHEDULE, null, DatabaseHelper.COLUMN_SCHEDULE_FLAG_OUTDATE + " = ? AND " + DatabaseHelper.COLUMN_SCHEDULE_NOTICE_FLAG + " =?",
-				new String[] { String.valueOf(0) , String.valueOf(1)}, null, null, null);
-		
+	public Cursor queryNotOutdateschedule(long time){
+		return database.query(DatabaseHelper.TAB_LOCAL_SCHEDULE, null, 
+				DatabaseHelper.COLUMN_SCHEDULE_NOTICE_END + " >= ? AND " 
+				+ DatabaseHelper.COLUMN_SCHEDULE_NOTICE_FLAG + " = ?",
+				new String[] { String.valueOf(time) , String.valueOf(1)}, null, null, null);
 	}
 	public long insertSchedules(ContentValues values) {
 		return database.insert(DatabaseHelper.TAB_LOCAL_SCHEDULE, null, values) ;

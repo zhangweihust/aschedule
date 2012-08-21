@@ -4,8 +4,6 @@ import android.app.Application;
 import android.content.Context;
 import android.util.Log;
 
-import com.archermind.schedule.Services.ServiceManager;
-
 public class ScheduleApplication extends Application{
 	
 	private static ScheduleApplication instance;
