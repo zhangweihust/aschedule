@@ -25,6 +25,7 @@ import android.widget.ImageView;
 import android.widget.Toast;
 
 import com.archermind.schedule.R;
+import com.archermind.schedule.ScheduleApplication;
 import com.archermind.schedule.Model.UserInfoData;
 import com.archermind.schedule.Services.ServiceManager;
 import com.archermind.schedule.Utils.HttpUtils;
@@ -39,6 +40,7 @@ public class RegisterScreen extends Activity implements OnClickListener {
     private EditText et_email;
 
     private EditText et_pswd;
+    private EditText et_pswd_confirm;
 
     private ImageView photoselect;
 
@@ -52,7 +54,7 @@ public class RegisterScreen extends Activity implements OnClickListener {
 
     private static final int REGISTER_FAILED = 2;
 
-    private static final int BIN_SUCCESS = 3;
+//    private static final int BIN_SUCCESS = 3;
 
     /** Called when the activity is first created. */
     @Override
@@ -80,11 +82,11 @@ public class RegisterScreen extends Activity implements OnClickListener {
                     finish();
                 } else if (msg.what == REGISTER_FAILED) {
                     ServiceManager.ToastShow("注册失败!");
-                } else if (msg.what == BIN_SUCCESS) {
+                } /*else if (msg.what == BIN_SUCCESS) {
                     ServiceManager.ToastShow("绑定成功!");
 
                     startActivity(new Intent(RegisterScreen.this,MenuScreen.class));
-                }
+                }*/
             }
         };
 
@@ -94,6 +96,7 @@ public class RegisterScreen extends Activity implements OnClickListener {
         et_username = (EditText)findViewById(R.id.register_username);
         et_email = (EditText)findViewById(R.id.register_email);
         et_pswd = (EditText)findViewById(R.id.register_pswd);
+        et_pswd_confirm = (EditText)findViewById(R.id.register_pswd_confirm);
 
         goback.setOnClickListener(this);
         submit.setOnClickListener(this);
@@ -151,6 +154,13 @@ public class RegisterScreen extends Activity implements OnClickListener {
         }
 
         final String pswd = et_pswd.getText().toString();
+        if (!pswd.equals(et_pswd_confirm.getText().toString()))
+        {
+        	ServiceManager.ToastShow("两次输入的密码不一致");
+        	et_pswd.setText("");
+        	et_pswd_confirm.setText("");
+            return;
+        }
         if (pswd.length() < 6 || pswd.length() > 15) {
             ServiceManager.ToastShow("密码长度应该在6-15个字符之间!");
             return;
@@ -179,7 +189,7 @@ public class RegisterScreen extends Activity implements OnClickListener {
                     if (userBin.contains("user_id")) {
                         handler.sendEmptyMessage(REGISTER_SUCCESS);
                         writeUserinfo(userBin,HttpUtils.GetCookie());
-                        Log.i("RegisterScreen","服务器返回信息写入SharedPrefences成功!");
+                        ScheduleApplication.LogD(RegisterScreen.class,"服务器返回信息写入SharedPrefences成功! ret = " + ret);
                     } else {
                         handler.sendEmptyMessage(REGISTER_FAILED);
                     }

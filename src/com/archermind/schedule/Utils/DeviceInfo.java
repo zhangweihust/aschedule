@@ -82,4 +82,17 @@ public class DeviceInfo {
 						Context.TELEPHONY_SERVICE);
 		return telephonyManager.getNetworkOperatorName();
 	}
+	
+	/**
+	 * 获取IMSI
+	 * 
+	 * @return
+	 */
+	public static String getDeviceIMSI() {
+		TelephonyManager telephonyManager = (TelephonyManager) ScheduleApplication
+				.getContext().getSystemService(
+						Context.TELEPHONY_SERVICE);
+		return telephonyManager.getSubscriberId();
+	}
+	
 }

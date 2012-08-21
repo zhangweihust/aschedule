@@ -936,10 +936,11 @@ public class ServerInterface {
 		}
 		return result;
 	}
-	public int is_tel_bind(String user_id,String tel){
+	public int is_tel_bind(String user_id,String tel,String imsi){
 		Map<String, String> map = new HashMap<String, String>();
 		map.put("user_id", user_id);
 		map.put("tel", tel);
+		map.put("imsi", imsi);
 		String ret = HttpUtils
 				.doPost(map,
 						"http://player.archermind.com/ci/index.php/aschedule/is_tel_bind");

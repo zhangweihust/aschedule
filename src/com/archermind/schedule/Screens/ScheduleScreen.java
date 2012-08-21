@@ -153,6 +153,7 @@ private ViewFlipper flipper = null;
 				case LOAD_DATA_OVER:
 					hsa.setData(listdata);
 					gototoday.setVisibility(View.INVISIBLE);
+					schedule_headview_prompt.setText(getHeadViewText(curSelectedDate));
 					break;
 					
 				case LOAD_OVERD_GOTO_TODAY:
@@ -288,7 +289,6 @@ private ViewFlipper flipper = null;
 		        headViewHeight = (int) (pager.getMeasuredHeight() * 0.25 - mListHeader.getMeasuredHeight());
 		        LayoutParams lp = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.FILL_PARENT, headViewHeight);
 		        schedule_headview_prompt.setLayoutParams(lp);
-		        schedule_headview_prompt.setText(getHeadViewText());
 				list2.addHeaderView(schedulelistHeadView,null,false);
 		        
 				list2.setAdapter(hsa);
@@ -680,22 +680,24 @@ private ViewFlipper flipper = null;
 	                	  ((RelativeLayout)view).setBackgroundColor(getResources().getColor(R.color.selector));
 		                  calV.setOldPosition(position);
 	                  }
-//				String date = getDate(position);
-//				if (!curSelectedDate.equals(date))	
-//				{
-//					curSelectedDate = date;
-//
-//					if (!hsa.isEmpty())
-//					{
+				String date = getDate(position);
+				if (!curSelectedDate.equals(date))	
+				{
+					curSelectedDate = date;
+
+					if (!hsa.isEmpty())
+					{
 //						int pos = hsa.getTodayPosition(curSelectedDate);
 //						if (pos >= 0)
 //						{
 //							list2.setSelection(pos + 1);	/* 最上面的上翻更新数据也算一个位置,,所以+1 */
 //						}
-//					}
-//
-//				}
-//				gototoday.setVisibility(View.INVISIBLE);
+						
+						schedule_headview_prompt.setText(getHeadViewText(curSelectedDate));
+					}
+
+				}
+				gototoday.setVisibility(View.INVISIBLE);
 			}
         }
 		});
@@ -836,6 +838,7 @@ private ViewFlipper flipper = null;
 	        		handler.sendEmptyMessage(LOAD_DATA_OVER);
 	        	    gridView.setAdapter(calV);
 				}});
+			
 			break;
 		}
 		return true;
@@ -895,49 +898,62 @@ private ViewFlipper flipper = null;
 		}
 	}
 	
-	public String getHeadViewText()
+	public String getHeadViewText(String date)
 	{
+//		String strtext = "";
+//		int[] schedulecount = calendarData.getSchDateTagFlag();
+//		int i = 0;
+//		int k = 0;
+//		int count = 32;		/*一个月最多31天*/
+//		
+//		for(i = 0; i < schedulecount.length; i++)
+//		{
+//			if ((schedulecount[i] - 1) == day)
+//			{
+//				strtext = "今天有 " + calendarData.getMarkcount()[i] + " 条日程";
+//				break;
+//			}
+//			else if(schedulecount[i] == -1)
+//			{
+//				if (i == 0)
+//				{
+//					strtext = String.format("%04d年%02d月没有日程", year,month);
+//					break;
+//				}
+//				
+//				for (k = 0; k < i; k++)
+//				{
+//					if (count > (day - schedulecount[k] + 1))
+//					{
+//						count = day - schedulecount[k] + 1;
+//					}
+//				}
+//				
+//				if ((count > 0) && (count <= 31))
+//				{
+//					strtext = "已经有 " + count + " 天没写日程了哦";
+//				}
+//				else
+//				{
+//					strtext = "已经有 " + day + " 天没写日程了哦";
+//				}
+//				break;
+//			}
+//		}
+//		
+//		
+//		return strtext;
+		
+		int count = hsa.getScheduleCountInDay(date);
 		String strtext = "";
-		int[] schedulecount = calendarData.getSchDateTagFlag();
-		int i = 0;
-		int k = 0;
-		int count = 32;		/*一个月最多31天*/
-		
-		for(i = 0; i < schedulecount.length; i++)
+		if (count > 0)
 		{
-			if ((schedulecount[i] - 1) == day)
-			{
-				strtext = "今天有 " + calendarData.getMarkcount()[i] + " 条日程";
-				break;
-			}
-			else if(schedulecount[i] == -1)
-			{
-				if (i == 0)
-				{
-					strtext = String.format("%04d年%02d月没有日程", year,month);
-					break;
-				}
-				
-				for (k = 0; k < i; k++)
-				{
-					if (count > (day - schedulecount[k] + 1))
-					{
-						count = day - schedulecount[k] + 1;
-					}
-				}
-				
-				if ((count > 0) && (count <= 31))
-				{
-					strtext = "已经有 " + count + " 天没写日程了哦";
-				}
-				else
-				{
-					strtext = "已经有 " + day + " 天没写日程了哦";
-				}
-				break;
-			}
+			strtext = date + " 有 " + count + " 条日程!";
 		}
-		
+		else
+		{
+			strtext = date + " 没有日程!";
+		}
 		
 		return strtext;
 	}

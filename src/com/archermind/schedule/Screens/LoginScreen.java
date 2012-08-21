@@ -21,8 +21,10 @@ import android.widget.EditText;
 import android.widget.Toast;
 
 import com.archermind.schedule.R;
+import com.archermind.schedule.ScheduleApplication;
 import com.archermind.schedule.Model.UserInfoData;
 import com.archermind.schedule.Services.ServiceManager;
+import com.archermind.schedule.Utils.DeviceInfo;
 import com.archermind.schedule.Utils.HttpUtils;
 import com.renren.api.connect.android.Renren;
 import com.renren.api.connect.android.exception.RenrenAuthError;
@@ -112,7 +114,14 @@ public class LoginScreen extends Activity implements OnClickListener {
                 if (msg.what == LOGIN_SUCCESS) {
 
                     ServiceManager.ToastShow("登录成功!");
+                    if (!DeviceInfo.getDeviceIMSI().
+                    		equals(ServiceManager.getSPUserInfo(UserInfoData.IMSI)))	/*IMSI发生变化*/
+                    {
+                    	ServiceManager.ToastShow("检测到您的手机号发生变化,请重新绑定!");
+                    	startActivity(new Intent(LoginScreen.this, TelephoneBindScreen.class));
+                    }
 //                    startActivity(new Intent(LoginScreen.this, MenuScreen.class));
+                    
                     finish();
                 } else if (msg.what == LOGIN_FAILED) {
                     ServiceManager.ToastShow("登录失败!");
@@ -408,7 +417,7 @@ public class LoginScreen extends Activity implements OnClickListener {
 
                 	handler.sendEmptyMessage(LOGIN_SUCCESS);
                     RegisterScreen.writeUserinfo(ret,HttpUtils.GetCookie());
-                    Log.i("LoginScreen","ret = " + ret);
+                    ScheduleApplication.LogD(LoginScreen.class,"ret = " + ret);
                 }
                 else
                 {

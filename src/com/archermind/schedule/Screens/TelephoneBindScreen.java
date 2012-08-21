@@ -5,6 +5,7 @@ import org.json.JSONObject;
 
 import com.archermind.schedule.R;
 import com.archermind.schedule.Services.ServiceManager;
+import com.archermind.schedule.Utils.DeviceInfo;
 
 import android.app.Activity;
 import android.os.Bundle;
@@ -14,6 +15,7 @@ import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 
 public class TelephoneBindScreen extends Activity implements OnClickListener{
@@ -29,6 +31,7 @@ public class TelephoneBindScreen extends Activity implements OnClickListener{
 	private Button telephone_bind_btn;
 	private Button telephone_bind_verification_btn;
 	private TextView telephone_bind_prompt;
+	private LinearLayout telephone_bind_verification;
 	
 	private String tel = "";
 	private String smsID = "";
@@ -47,6 +50,7 @@ public class TelephoneBindScreen extends Activity implements OnClickListener{
         telephone_bind_btn = (Button)findViewById(R.id.telephone_bind_btn);
         telephone_bind_verification_btn = (Button)findViewById(R.id.telephone_bind_verification_btn);
         telephone_bind_prompt = (TextView)findViewById(R.id.telephone_bind_prompt);
+        telephone_bind_verification = (LinearLayout)findViewById(R.id.telephone_bind_verification);
         
         telephone_bind_btn.setOnClickListener(this);
         telephone_bind_verification_btn.setOnClickListener(this);
@@ -65,6 +69,7 @@ public class TelephoneBindScreen extends Activity implements OnClickListener{
         			break;
         		case GET_VERIFICATION_CODE_SUCCESS:
         			telephone_bind_prompt.setVisibility(View.VISIBLE);
+        			telephone_bind_verification.setVisibility(View.VISIBLE);
         			canRequestVerification = false;
         			handler.postDelayed(new Runnable()
         			{
@@ -81,6 +86,7 @@ public class TelephoneBindScreen extends Activity implements OnClickListener{
         		case TELEPHONE_BIND_SUCCESS:
         			telephone_bind_prompt.setVisibility(View.INVISIBLE);
         			ServiceManager.ToastShow("绑定成功!");
+        			finish();
         			break;
     			default:
     				break;
@@ -99,7 +105,7 @@ public class TelephoneBindScreen extends Activity implements OnClickListener{
 			if (canRequestVerification)
 			{
 				inputstr = telephone_bind_tel_et.getText().toString();
-				if (inputstr.matches("^(\\+86)?1(3[0-9]|47|5[0-27-9]|8[278])\\d{8}$"))
+				if (inputstr.matches("^(\\+86)?1(3[0-9]|47|5[0-37-9]|8[278])\\d{8}$"))
 				{
 					inputstr = inputstr.replace("+86", "");
 					final String requestTel = inputstr;
@@ -108,7 +114,7 @@ public class TelephoneBindScreen extends Activity implements OnClickListener{
 					{
 						public void run() 
 						{
-							if (0 == ServiceManager.getServerInterface().is_tel_bind((String.valueOf(ServiceManager.getUserId())), requestTel))
+							if (0 == ServiceManager.getServerInterface().is_tel_bind((String.valueOf(ServiceManager.getUserId())), requestTel,DeviceInfo.getDeviceIMSI()))
 							{
 								String ret = ServiceManager.getServerInterface().sendSMS(SCHEDULE_APP_ID,requestTel,"default");
 								String smsid = parseJason(ret,"smsID");

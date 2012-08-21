@@ -93,7 +93,7 @@ public class Contact {
 //			contactid = Integer.parseInt(LocalContact.getString(LocalContact.getColumnIndex(ContactsContract.CommonDataKinds.Phone.CONTACT_ID)));
 			number = LocalContact.getString(LocalContact.getColumnIndex(ContactsContract.CommonDataKinds.Phone.NUMBER));
 
-			if (number.matches("^(\\+86)?1(3[0-9]|47|5[0-27-9]|8[278])\\d{8}$"))
+			if (number.matches("^(\\+86)?1(3[0-9]|47|5[0-37-9]|8[278])\\d{8}$"))
 			{
 				number = number.replace("+86", "");
 				Contactsb.append(number + ",");

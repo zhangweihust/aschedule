@@ -66,7 +66,7 @@
                 android:layout_width="fill_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="25dip"
-                android:layout_marginBottom="35dip"
+                android:layout_marginBottom="10dip"
                 android:gravity="center" >
                 
                 <ImageView 
@@ -78,10 +78,10 @@
                 <EditText
                     android:id="@+id/register_username"
                     android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
+                    android:layout_height="30dip"
                     android:layout_marginLeft="5dip"
                     android:background="#ffffffff"
-                    android:textSize="12sp"
+                    android:textSize="14sp"
                     android:hint="输入您的昵称" />
             </LinearLayout>
             
@@ -93,12 +93,12 @@
             <EditText
                     android:id="@+id/register_email"
                     android:layout_width="fill_parent"
-                    android:layout_height="20dip"
+                    android:layout_height="30dip"
                     android:layout_marginLeft="30dip"
                     android:layout_marginRight="3dip"
                     android:background="#ffffffff"
-                    android:textSize="12sp"
-                    android:hint="您的邮箱" />
+                    android:textSize="14sp"
+                    android:hint="诚迈账号:(合法的邮箱地址)" />
             
             <TextView 
                 android:layout_width="fill_parent"
@@ -106,20 +106,35 @@
                 style="@style/register_dividing" />
             
             <EditText
-                    android:id="@+id/register_pswd"
-                    android:layout_width="fill_parent"
-                    android:layout_height="20dip"
-                    android:layout_marginLeft="30dip"
-                    android:layout_marginRight="3dip"
-                    android:background="#ffffffff"
-                    android:textSize="12sp"
-                    android:password="true"
-                    android:hint="密码" />
+                android:id="@+id/register_pswd"
+                android:layout_width="fill_parent"
+                android:layout_height="30dip"
+                android:layout_marginLeft="30dip"
+                android:layout_marginRight="3dip"
+                android:background="#ffffffff"
+                android:textSize="14sp"
+                android:password="true"
+                android:hint="密码:(6位以上字母和数字的组合)" />
             
             <TextView 
                 android:layout_width="fill_parent"
                 android:layout_height="1px"
-                style="@style/register_dividing" />         
+                style="@style/register_dividing" />      
+            <EditText
+                android:id="@+id/register_pswd_confirm"
+                android:layout_width="fill_parent"
+                android:layout_height="30dip"
+                android:layout_marginLeft="30dip"
+                android:layout_marginRight="3dip"
+                android:background="#ffffffff"
+                android:textSize="14sp"
+                android:password="true"
+                android:hint="确认密码" />
+            
+            <TextView 
+                android:layout_width="fill_parent"
+                android:layout_height="1px"
+                style="@style/register_dividing" />   
         </LinearLayout>
         <Button
             android:id="@+id/register_submit"
@@ -131,49 +146,53 @@
             android:text="注    册"
             android:background="@drawable/register_btn_selector" />
         
-        <TextView 
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_margin="10dip"
-            android:layout_gravity="center"
-            android:textColor="#000000"
-            android:textSize="12sp"
-            android:text="也可以用以下帐号注册哦" />
         
         <LinearLayout
             android:layout_width="fill_parent"
             android:layout_height="wrap_content"
-            android:layout_marginLeft="30dip"
-            android:layout_marginRight="30dip"
-            android:weightSum="2"
-            android:gravity="center" >
-            
-            <Button
-                android:id="@+id/register_sina"
-                android:layout_width="fill_parent"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:layout_marginRight="5dip"
-                android:drawableLeft="@drawable/icon_register_sina"
-                android:drawablePadding="0dip"
-                android:textColor="#815024"
-                android:textSize="12sp"
-                android:text="新浪微博"
-                android:background="@drawable/register_btn_selector" />
-            
-            <Button
-                android:id="@+id/register_tencent"
-                android:layout_width="fill_parent"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:layout_marginLeft="5dip"
-                android:drawableLeft="@drawable/icon_register_tencent"
-                android:drawablePadding="0dip"
-                android:textColor="#815024"
-                android:textSize="12sp"
-                android:text="腾讯QQ"
-                android:background="@drawable/register_btn_selector" />
-            
+            android:visibility="invisible" >
+            <TextView 
+				android:layout_width="wrap_content"
+				android:layout_height="wrap_content"
+				android:layout_margin="10dip"
+				android:layout_gravity="center"
+				android:textColor="#000000"
+				android:textSize="12sp"
+				android:text="也可以用以下帐号注册哦" />
+            <LinearLayout
+	            android:layout_width="fill_parent"
+	            android:layout_height="wrap_content"
+	            android:layout_marginLeft="30dip"
+	            android:layout_marginRight="30dip"
+	            android:weightSum="2"
+	            android:gravity="center" >
+	            
+	            <Button
+	                android:id="@+id/register_sina"
+	                android:layout_width="fill_parent"
+	                android:layout_height="wrap_content"
+	                android:layout_weight="1"
+	                android:layout_marginRight="5dip"
+	                android:drawableLeft="@drawable/icon_register_sina"
+	                android:drawablePadding="0dip"
+	                android:textColor="#815024"
+	                android:textSize="12sp"
+	                android:text="新浪微博"
+	                android:background="@drawable/register_btn_selector" />
+	            
+	            <Button
+	                android:id="@+id/register_tencent"
+	                android:layout_width="fill_parent"
+	                android:layout_height="wrap_content"
+	                android:layout_weight="1"
+	                android:layout_marginLeft="5dip"
+	                android:drawableLeft="@drawable/icon_register_tencent"
+	                android:drawablePadding="0dip"
+	                android:textColor="#815024"
+	                android:textSize="12sp"
+	                android:text="腾讯QQ"
+	                android:background="@drawable/register_btn_selector" />
+        	</LinearLayout>
         </LinearLayout>
     </LinearLayout>
 

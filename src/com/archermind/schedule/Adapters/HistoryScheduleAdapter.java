@@ -294,6 +294,27 @@ public class HistoryScheduleAdapter extends BaseAdapter{
 		return ret;
 	}
 	
+	public int getScheduleCountInDay(String date)
+	{
+		int i = 0;
+		int count = 0;
+		int size = schedulelist.size();
+		String today = "";
+		SimpleDateFormat sdf = new SimpleDateFormat("yyyy.MM.dd");
+		Date d;
+		for (i = 0; i < size; i++)
+		{
+			d = new Date(schedulelist.get(i).time);
+			today = sdf.format(d);
+			if (today.equals(date) && schedulelist.get(i).id > 0)
+			{
+				count++;
+			}
+		}
+		
+		return count;
+	}
+	
 	public int getTodayPosition(String date)
 	{
 		int i = 0;
