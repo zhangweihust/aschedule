@@ -4,6 +4,17 @@
     android:layout_height="fill_parent"
     android:background="@drawable/sync_alert_bg"
     android:orientation="vertical" >
+    
+        <RelativeLayout
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content" >
+        <Button 
+            android:id="@+id/city_setting_dialog_close"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentRight="true"
+            android:background="@drawable/weather_dialog_cancel" />       
+    </RelativeLayout>
 
     <TextView
         android:layout_width="fill_parent"
@@ -12,12 +23,18 @@
         android:layout_marginTop="20dip"
         android:text="设置所在地" />
 
-    <FrameLayout
+    <RelativeLayout
         android:layout_width="fill_parent"
         android:layout_height="30dip"
         android:layout_marginLeft="25dip"
         android:layout_marginRight="25dip"
         android:layout_marginTop="20dip" >
+        
+          <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="fill_parent"
+            android:gravity="center_vertical"
+            android:text="省份" />
 
         <Button
             android:id="@+id/province_button"
@@ -25,6 +42,7 @@
             android:layout_height="fill_parent"
             android:background="@drawable/city_setting_selector"
             android:drawableRight="@drawable/city_setting_icon"
+            android:layout_marginLeft="50dip"
             android:paddingRight="10dip"
             android:textSize="18sp" />
 
@@ -32,18 +50,24 @@
             android:id="@+id/province_text"
             android:layout_width="wrap_content"
             android:layout_height="fill_parent"
-            android:layout_marginLeft="50dip"
+            android:layout_marginLeft="80dip"
             android:gravity="center_vertical"
             android:text="北京"
             android:textColor="@android:color/black" />
-    </FrameLayout>
+    </RelativeLayout>
 
-    <FrameLayout
+    <RelativeLayout
         android:layout_width="fill_parent"
         android:layout_height="30dip"
         android:layout_marginLeft="25dip"
         android:layout_marginRight="25dip"
         android:layout_marginTop="20dip" >
+        
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="fill_parent"
+            android:gravity="center_vertical"
+            android:text="城市" />
 
         <Button
             android:id="@+id/city_button"
@@ -51,6 +75,7 @@
             android:layout_height="fill_parent"
             android:background="@drawable/city_setting_selector"
             android:drawableRight="@drawable/city_setting_icon"
+            android:layout_marginLeft="50dip"
             android:paddingRight="10dip"
             android:textSize="18sp" />
 
@@ -58,11 +83,11 @@
             android:id="@+id/city_text"
             android:layout_width="wrap_content"
             android:layout_height="fill_parent"
-            android:layout_marginLeft="50dip"
+            android:layout_marginLeft="80dip"
             android:gravity="center_vertical"
             android:text="北京"
             android:textColor="@android:color/black" />
-    </FrameLayout>
+    </RelativeLayout>
 
     <RelativeLayout
         android:layout_width="fill_parent"
@@ -80,7 +105,8 @@
             android:layout_alignParentLeft="true"
             android:background="@drawable/time_button_selector"
             android:text="确定"
-            android:textSize="18sp" />
+            android:textSize="18sp"
+            android:visibility="gone" />
 
         <Button
             android:id="@+id/city_setting_cancel"
@@ -89,7 +115,8 @@
             android:layout_alignParentRight="true"
             android:background="@drawable/time_button_selector"
             android:text="取消"
-            android:textSize="18sp" />
+            android:textSize="18sp"
+            android:visibility="gone" />
     </RelativeLayout>
 
 </LinearLayout>

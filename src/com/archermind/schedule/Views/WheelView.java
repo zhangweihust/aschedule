@@ -662,7 +662,6 @@ public class WheelView extends View {
 		String text = null;
 		if (!isScrollingPerformed && (valueLayout == null || valueLayout.getWidth() > widthItems)) {
 			text = getAdapter() != null ? getAdapter().getItem(currentItem) : null;
-			System.out.println("text ="+text);
 			if(wheel_type == Constant.wheel_year){
 				if(calendar_flag == solar_calendar_flag){
 					Constant.VARY_YEAR = Integer.valueOf(text);
@@ -713,7 +712,6 @@ public class WheelView extends View {
 //						}
 //						Constant.VARY_LUNAR_DAY = day;
 //						String solarDate = LunarCalendar.getSolar(Constant.VARY_LUNAR_YEAR, Constant.VARY_LUNAR_MONTH, day);
-//					System.out.println("********   solarDate = " + solarDate);
 //						Constant.VARY_DAY = Integer.parseInt(solarDate.split(",")[2]);
 //					}
 				}

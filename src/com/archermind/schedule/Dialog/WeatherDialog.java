@@ -17,6 +17,7 @@ import android.view.Window;
 import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.archermind.schedule.R;
@@ -29,9 +30,11 @@ public class WeatherDialog implements OnClickListener {
 	private TextView cityInfoTv;
 	private TextView todayCurTemp;
 	private TextView todayDate;
+	private TextView todayWeek;
 	private ImageView todayImg, oneDAfterImg, twoDAfterImg, threeDAfterImg;
 	private TextView todayTemp;
 	private TextView oneDAfterMinTemp, oneDAfterMaxTemp;
+	private LinearLayout weatherInfo;
 
 	private TextView twoDAfterMinTemp, twoDAfterMaxTemp;
 	private TextView threeDAfterMinTemp, threeDAfterMaxTemp;
@@ -113,10 +116,7 @@ public class WeatherDialog implements OnClickListener {
 	// 初始化
 	public void init() {
 
-		cityInfoTv = (TextView) weatherDialog.findViewById(R.id.city_info);
-		
-		cityInfoTv.setOnClickListener(this);
-
+		cityInfoTv = (TextView) weatherDialog.findViewById(R.id.city_info);	
 		todayImg = (ImageView) weatherDialog.findViewById(R.id.today_image);
 		todayCurTemp = (TextView) weatherDialog
 				.findViewById(R.id.today_temperature);
@@ -125,6 +125,9 @@ public class WeatherDialog implements OnClickListener {
 		todayWeather = (TextView) weatherDialog
 				.findViewById(R.id.today_weather_condition);
 		todayDate = (TextView) weatherDialog.findViewById(R.id.today_date);
+		todayWeek = (TextView) weatherDialog.findViewById(R.id.today_week);
+		
+		weatherInfo = (LinearLayout) weatherDialog.findViewById(R.id.today_weather_info);
 
 		oneDAfterDate = (TextView) weatherDialog
 				.findViewById(R.id.one_day_after_date);
@@ -168,6 +171,7 @@ public class WeatherDialog implements OnClickListener {
 		cancelBtn = (Button) weatherDialog
 				.findViewById(R.id.weather_dialog_cancel);
 		cancelBtn.setOnClickListener(this);
+		weatherInfo.setOnClickListener(this);
 
 	}
 
@@ -202,7 +206,9 @@ public class WeatherDialog implements OnClickListener {
 		}
 		
 		todayTemp.setText(itemsmap.get("temp1"));
-		todayDate.setText(date[0] + week[0]);
+		todayDate.setText(date[0]);
+		todayWeek.setText(week[0]);
+		
 		mWeather1 = itemsmap.get("weather1");
 		if (mWeather1 == null) {
 			mWeather1 = "  ";
@@ -316,7 +322,7 @@ public class WeatherDialog implements OnClickListener {
 	public void onClick(View v) {
 		// TODO Auto-generated method stub
 		switch(v.getId()){
-		case R.id.city_info:
+		case R.id.today_weather_info:
 			citySettingDialog.show();
 			break;
 		case R.id.weather_dialog_cancel:

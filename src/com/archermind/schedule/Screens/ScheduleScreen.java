@@ -280,7 +280,7 @@ private ViewFlipper flipper = null;
 		super.onWindowFocusChanged(hasFocus);
 		if(flag){
 			flag = false;
-			calendarData = new CalendarData(jumpMonth, jumpYear, year_c, month_c, day_c, 1, Constant.flagType);
+			calendarData = new CalendarData(jumpMonth, jumpYear, year_c, month_c, day_c, Constant.flagType);
 			 calV = new CalendarAdapter(this,flipper.getHeight(), calendarData);
 		        
 		        addGridView();
@@ -432,7 +432,7 @@ private ViewFlipper flipper = null;
 			addGridView();   //添加一个gridview
 			jumpMonth++;     //下一个月
 			
-			calendarData = new CalendarData(jumpMonth, jumpYear, year_c, month_c, day_c, 1, Constant.flagType);
+			calendarData = new CalendarData(jumpMonth, jumpYear, year_c, month_c, day_c, Constant.flagType);
 			 calV = new CalendarAdapter(this,flipper.getHeight(), calendarData);
 	        gridView.setAdapter(calV);
 	        //flipper.addView(gridView);
@@ -461,7 +461,7 @@ private ViewFlipper flipper = null;
             //向右滑动
 			addGridView();   //添加一个gridview
 			jumpMonth--;     //上一个月
-			calendarData = new CalendarData(jumpMonth, jumpYear, year_c, month_c, day_c, 1, Constant.flagType);
+			calendarData = new CalendarData(jumpMonth, jumpYear, year_c, month_c, day_c, Constant.flagType);
 			 calV = new CalendarAdapter(this,flipper.getHeight(), calendarData);
 	        gridView.setAdapter(calV);
 	        gvFlag++;
@@ -705,6 +705,16 @@ private ViewFlipper flipper = null;
 
 
 	}
+	
+	private boolean isCurrenDay(int position){
+		int year = Integer.parseInt(calendarData.getShowYear());
+		int month = Integer.parseInt(calendarData.getShowMonth());
+		int day = Integer.parseInt(calV.getDateByClickItem(position).split("\\.")[0]);
+		if(year == year_c && month == month_c && day == day_c){
+			return true;
+		}
+		return false;
+	}
 
 	@Override
 	public void onClick(View v) {
@@ -714,8 +724,8 @@ private ViewFlipper flipper = null;
 		case R.id.previous_year:
             //向左滑动
 			addGridView();   //添加一个gridview
-			jumpYear--;     //下一年
-			calendarData = new CalendarData(jumpMonth, jumpYear, year_c, month_c, day_c, 1, Constant.flagType);
+			jumpMonth--;     //下一年
+			calendarData = new CalendarData(jumpMonth, jumpYear, year_c, month_c, day_c, Constant.flagType);
 			 calV = new CalendarAdapter(this,flipper.getHeight(), calendarData);
 	        gridView.setAdapter(calV);
 	        //flipper.addView(gridView);
@@ -742,8 +752,8 @@ private ViewFlipper flipper = null;
 		case R.id.next_year:
 			 //向右滑动
 			addGridView();   //添加一个gridview
-			jumpYear++;     //上一年
-			calendarData = new CalendarData(jumpMonth, jumpYear, year_c, month_c, day_c, 1, Constant.flagType);
+			jumpMonth++;     //上一年
+			calendarData = new CalendarData(jumpMonth, jumpYear, year_c, month_c, day_c, Constant.flagType);
 			 calV = new CalendarAdapter(this,flipper.getHeight(), calendarData);
 	        gridView.setAdapter(calV);
 	        gvFlag++;
@@ -777,7 +787,7 @@ private ViewFlipper flipper = null;
         	this.year = year_c = Integer.parseInt(currentDate.split("-")[0]);
         	this.month = month_c = Integer.parseInt(currentDate.split("-")[1]);
         	this.day = day_c = Integer.parseInt(currentDate.split("-")[2]);
-        	calendarData = new CalendarData(jumpMonth, jumpYear, year_c, month_c, day_c, 1, Constant.flagType);
+        	calendarData = new CalendarData(jumpMonth, jumpYear, year_c, month_c, day_c, Constant.flagType);
 			 calV = new CalendarAdapter(this,flipper.getHeight(), calendarData);
 	        gridView.setAdapter(calV);
 	        addTextToTopTextView(current_date);
@@ -828,7 +838,7 @@ private ViewFlipper flipper = null;
 	public boolean onEvent(Object sender, EventArgs e) {
 		switch(e.getType()){
 		case LOCAL_SCHEDULE_UPDATE:
-			calendarData = new CalendarData(jumpMonth, jumpYear, year_c, month_c, day_c, 1, Constant.flagType);
+			calendarData = new CalendarData(jumpMonth, jumpYear, year_c, month_c, day_c, Constant.flagType);
 			calV = new CalendarAdapter(this,flipper.getHeight(), calendarData);
 			ScheduleApplication.LogD(ScheduleScreen.class, "LOCAL_SCHEDULE_UPDATE");
 			ScheduleScreen.this.runOnUiThread(new Runnable(){

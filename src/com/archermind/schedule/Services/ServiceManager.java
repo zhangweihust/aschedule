@@ -28,6 +28,7 @@ import android.view.View.OnClickListener;
 import android.view.Window;
 import android.view.WindowManager;
 import android.widget.Button;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.archermind.schedule.R;
@@ -106,6 +107,8 @@ public class ServiceManager extends Service implements OnClickListener{
 			dialog.setContentView(R.layout.friend_dialog);
 			Button accept_friend = (Button) dialog.findViewById(R.id.accept_friend);
 			Button refuse_friend = (Button) dialog.findViewById(R.id.refuse_friend);
+			TextView fried_nick = (TextView) dialog.findViewById(R.id.frined_nick);
+			fried_nick.setText(getFriendInfoFromInet(id));
 			accept_friend.setOnClickListener(this);
 			refuse_friend.setOnClickListener(this);
 			accept_friend.setTag(id);
@@ -285,6 +288,10 @@ public class ServiceManager extends Service implements OnClickListener{
 
     
     private void makeFriendFromInet(){
+    	msg_adds.clear();
+    	msg_refuses.clear();
+    	msg_accepets.clear();
+    	msg_sys.clear();
 		if (NetworkUtils.getNetworkState(this) != NetworkUtils.NETWORN_NONE) {
 			
 			String jsonString = ServiceManager.getServerInterface().getMessage(String.valueOf(ServiceManager.getUserId()));
@@ -394,6 +401,30 @@ public class ServiceManager extends Service implements OnClickListener{
 				}
 
 			}
+		}
+	   
+	   private String getFriendInfoFromInet(String id){
+			if (NetworkUtils.getNetworkState(this) != NetworkUtils.NETWORN_NONE) {
+				
+				String jsonString = ServiceManager.getServerInterface().findUserInfobyUserId(id);
+				ContentValues values = null;
+				if(jsonString != null && !"".equals(jsonString)){
+					if(jsonString.indexOf("tel") >= 0){//防止返回错误码
+						try {
+							JSONArray jsonArray = new JSONArray(jsonString);
+							ScheduleApplication.LogD(FriendsDyamicScreen.class, jsonString
+									+ jsonArray.length());
+							JSONObject jsonObject = (JSONObject) jsonArray.opt(0);
+							return jsonObject.getString("nick");
+						} catch (JSONException e) {
+							// TODO Auto-generated catch block
+							e.printStackTrace();
+						}
+					}
+				}
+
+			}
+			return null;
 		}
 
 

@@ -330,7 +330,6 @@ public class FriendScreen extends Screen implements OnClickListener, IEventHandl
 				
 				String jsonString = ServiceManager.getServerInterface().getFriendRel(String.valueOf(ServiceManager.getUserId()));
 				
-				System.out.println("result = "+jsonString);
 				if(jsonString != null && !"".equals(jsonString)){
 					if(jsonString.indexOf("user_id") >= 0){//防止返回错误码
 						

@@ -1,6 +1,7 @@
 package com.archermind.schedule.Dialog;
 
 import com.archermind.schedule.R;
+import com.archermind.schedule.ScheduleApplication;
 import com.archermind.schedule.Events.EventArgs;
 import com.archermind.schedule.Screens.EditScheduleScreen;
 import com.archermind.schedule.Screens.ScheduleScreen;
@@ -12,6 +13,8 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.SharedPreferences.Editor;
+import android.util.DisplayMetrics;
+import android.view.Display;
 import android.view.Gravity;
 import android.view.View;
 import android.view.Window;
@@ -28,8 +31,9 @@ public class CitySettingDialog implements OnClickListener{
 	private Button city_button;
 	private TextView province_text;
 	private TextView city_text;
-	private Button city_setting_ok;
-	private Button city_setting_cancel;
+//	private Button city_setting_ok;
+//	private Button city_setting_cancel;
+	private Button city_setting_close;
 	private Context context;
 	// 定义相关的字符串存放信息
 	private String provinceStr = "";
@@ -69,16 +73,18 @@ public class CitySettingDialog implements OnClickListener{
 		
 		province_button = (Button)dialog.findViewById(R.id.province_button);
 		city_button = (Button)dialog.findViewById(R.id.city_button);
-		city_setting_ok = (Button)dialog.findViewById(R.id.city_setting_ok);
-		city_setting_cancel = (Button)dialog.findViewById(R.id.city_setting_cancel);
+		city_setting_close = (Button)dialog.findViewById(R.id.city_setting_dialog_close);
+//		city_setting_ok = (Button)dialog.findViewById(R.id.city_setting_ok);
+//		city_setting_cancel = (Button)dialog.findViewById(R.id.city_setting_cancel);
 		
 		province_text = (TextView)dialog.findViewById(R.id.province_text);
 		city_text = (TextView)dialog.findViewById(R.id.city_text);
 		
 		province_button.setOnClickListener(this);
 		city_button.setOnClickListener(this);
-		city_setting_ok.setOnClickListener(this);
-		city_setting_cancel.setOnClickListener(this);
+		city_setting_close.setOnClickListener(this);
+//		city_setting_ok.setOnClickListener(this);
+//		city_setting_cancel.setOnClickListener(this);
 		
 		sp = context.getSharedPreferences("com.archermind.schedule_preferences",Context.MODE_WORLD_WRITEABLE);
 	}
@@ -89,6 +95,14 @@ public class CitySettingDialog implements OnClickListener{
 	
 	 public void show() {
 		   initPersonal();
+		   
+		   DisplayMetrics dm = ScheduleApplication.getContext().getResources().getDisplayMetrics();
+			int screenWidth = dm.widthPixels;
+			Window window = dialog.getWindow(); // 得到对话框
+			WindowManager.LayoutParams wl = window.getAttributes();
+			wl.width = screenWidth * 7 / 8;
+			wl.gravity = Gravity.CENTER; // 设置重力
+			window.setAttributes(wl);
 			dialog.show();
 		}
 	 
@@ -107,7 +121,7 @@ public class CitySettingDialog implements OnClickListener{
 		case R.id.city_button:
 			showDialog(true);
 			break;
-		case R.id.city_setting_ok:
+			case R.id.city_setting_dialog_close:
 			dismiss();
 			
 			Editor editor = sp.edit();
@@ -116,9 +130,18 @@ public class CitySettingDialog implements OnClickListener{
 			editor.putInt("pro_position", pro_position);
 			editor.commit();
 			break;
-		case R.id.city_setting_cancel:
-			dismiss();
-			break;
+//		case R.id.city_setting_ok:
+//			dismiss();
+//			
+//			Editor editor = sp.edit();
+//			editor.putString("province", provinceStr);
+//			editor.putString("city", cityStr);
+//			editor.putInt("pro_position", pro_position);
+//			editor.commit();
+//			break;
+//		case R.id.city_setting_cancel:
+//			dismiss();
+//			break;
 		}
 	}
 	

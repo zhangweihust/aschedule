@@ -310,10 +310,6 @@ public class LunarCalendar {
 		// "��" + getChinaDayString(day);
 	}
 	
-	/*public static void main(String[] args) {
-		System.out.println(new LunarCalendar().getLunarDate(2012, 1, 23));
-	}*/
-	
 	public int getLeapMonth() {
 		return leapMonth;
 	}

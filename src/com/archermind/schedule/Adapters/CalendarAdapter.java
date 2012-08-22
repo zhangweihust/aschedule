@@ -35,7 +35,7 @@ public class CalendarAdapter extends BaseAdapter {
 //	private Resources res = null;
 //	private Drawable drawable = null;
 //	
-	private int[] schDateTagFlag = null;  //存储当月所有的日程日期
+//	private int[] schDateTagFlag = null;  //存储当月所有的日程日期
 //	
 	private int height;
 	private int old_position = -1;
@@ -43,6 +43,7 @@ public class CalendarAdapter extends BaseAdapter {
 	private int height1;
 	private int height2;
 	private CalendarData calendarData;
+	private String currentDay;
 	public CalendarAdapter(){
 //		Date date = new Date();
 //		sysDate = sdf.format(date);  //当前日期
@@ -53,11 +54,16 @@ public class CalendarAdapter extends BaseAdapter {
 	}
 	
 	public CalendarAdapter(Context context, int height, CalendarData calendarData){
+		
+		Date date = new Date();
+		SimpleDateFormat sdf = new SimpleDateFormat("yyyy-M-d");
+        String currentDate = sdf.format(date); // 当前日期
+        currentDay = currentDate.split("-")[2];
 		this.context= context;
 		this.height = height;
 		this.calendarData = calendarData;
 		this.dayNumber = calendarData.getDayNumber();
-		this.schDateTagFlag = calendarData.getSchDateTagFlag();
+//		this.schDateTagFlag = calendarData.getSchDateTagFlag();
 		
 		if(height % 6 == 0){
 			height1 = height2 = height / 6;
@@ -122,36 +128,25 @@ public class CalendarAdapter extends BaseAdapter {
 		calendar_number.setText(sp);
 		calendar_number.setTextColor(Color.GRAY);
 		
-//		if(dv.contains(LunarCalendar.suffix)){
-//			holiday.setImageResource(R.drawable.other_holiday);
-//		}
-		
 		if (position < calendarData.getDaysOfMonth() + calendarData.getDayOfWeek()+calendarData.getDaysOfWeek() && position >= calendarData.getDayOfWeek()+calendarData.getDaysOfWeek()) {
 			if(temp.contains(LunarCalendar.suffix)){
 				holiday.setImageResource(R.drawable.current_holiday);
 			}
 			// 当前月信息显示
 			calendar_number.setTextColor(Color.BLACK);// 当月字体设黑
-//			drawable = res.getDrawable(R.drawable.item);
-			//textView.setBackgroundDrawable(drawable);
-			//textView.setBackgroundColor(Color.WHITE);
 
 		}
-		if(schDateTagFlag != null && schDateTagFlag.length >0){
-			for(int i = 0; i < schDateTagFlag.length; i++){
-				if(schDateTagFlag[i] == position){
-					//设置日程标记背景
-					calendar_schedule_number.setVisibility(View.VISIBLE);
-					calendar_schedule_number.setText(calendarData.getMarkcount()[i]+"");
-					calendar_schedule_number.setBackgroundResource(R.drawable.calendar_schedule_number_bg);
-				}
-			}
+		if(calendarData.getMarkcount()[Integer.parseInt(d)] > 0){
+			//设置日程标记背景
+			calendar_schedule_number.setVisibility(View.VISIBLE);
+			calendar_schedule_number.setText(calendarData.getMarkcount()[Integer.parseInt(d)]+"");
+			calendar_schedule_number.setBackgroundResource(R.drawable.calendar_schedule_number_bg);
+			holiday.setImageDrawable(null);
 		}
-		if(calendarData.getCurrentFlag() == position){ 
+		if(d.equals(currentDay)){
 			//设置当天的背景
-//			calendar_number.setBackgroundDrawable(drawable);
-//			layout.setBackgroundResource(R.drawable.current_day_bg);
-			calendar_number.setTextColor(context.getResources().getColor(R.color.current_day));
+			calendar_number.setTextColor(Color.GREEN);
+			layout.setBackgroundColor(context.getResources().getColor(R.color.selector));
 			setOldPosition(position);
 		}
 		return convertView;

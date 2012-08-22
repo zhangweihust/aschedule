@@ -10,7 +10,7 @@
         android:layout_height="wrap_content"
         android:layout_marginLeft="10dip"
         android:gravity="center_horizontal"
-        android:text="好友请求"
+        android:text="修改昵称"
         android:textColor="@android:color/white"
         android:textSize="20dp" />
 
@@ -19,32 +19,26 @@
         android:layout_height="100dip"
         android:gravity="center"
         android:orientation="horizontal" >
-
-        <ImageView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:src="@drawable/friend_item_img" />
-
-        <LinearLayout
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:orientation="vertical" >
-
+        
             <TextView
-                android:id="@+id/frined_nick"
-                android:layout_width="fill_parent"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="10dip"
+        android:gravity="center_horizontal"
+        android:text="昵称："
+        android:textSize="20dp" 
+        android:textColor="#636363"/>
+            
+        <EditText
+                android:id="@+id/nick"
+                android:layout_width="120dip"
                 android:layout_height="wrap_content"
-                android:layout_marginLeft="10dip"
-                android:text="ZHANG"
+                android:layout_marginRight="40dip"
+                android:layout_weight="0"
+                android:focusable="true"
+                android:hint="ZHANG"
                 android:textColor="#636363" />
-
-            <TextView
-                android:layout_width="fill_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginLeft="10dip"
-                android:text="请求添加您为好友"
-                android:textColor="#636363" />
-        </LinearLayout>
+        
     </LinearLayout>
 
     <RelativeLayout
@@ -55,21 +49,21 @@
         android:orientation="horizontal" >
 
         <Button
-            android:id="@+id/accept_friend"
+            android:id="@+id/modify_nick__ok"
             android:layout_width="80dip"
             android:layout_height="40dip"
             android:layout_alignParentLeft="true"
             android:background="@drawable/friend_btn_selector"
-            android:text="加为好友"
+            android:text="确  定"
             android:textColor="#636363" />
 
         <Button
-            android:id="@+id/refuse_friend"
+            android:id="@+id/modify_nick_cancel"
             android:layout_width="80dip"
             android:layout_height="40dip"
             android:layout_alignParentRight="true"
             android:background="@drawable/friend_btn_selector"
-            android:text="拒  绝"
+            android:text="取  消"
             android:textColor="#636363" />
     </RelativeLayout>
 

@@ -55,8 +55,6 @@ public class CalendarData {
 
     private int currentFlag = -1; // 用于标记当天
 
-    private int[] schDateTagFlag = null; // 存储当月所有的日程日期
-
     private String showYear = ""; // 用于在头部显示的年份
 
     private String showMonth = ""; // 用于在头部显示的月份
@@ -86,63 +84,49 @@ public class CalendarData {
     private int mark_count[];
     private List<ScheduleData> scheduleList = new ArrayList<ScheduleData>();
 
-    public CalendarData(int jumpMonth, int jumpYear, int year_c, int month_c, int day_c, int mark,
+    public CalendarData(int jumpMonth, int jumpYear, int year_c, int month_c, int day_c,
             int flagType) {
-        database = ServiceManager.getDbManager();
+    	database = ServiceManager.getDbManager();
         Date date = new Date();
         sysDate = sdf.format(date); // 当前日期
         sys_year = sysDate.split("-")[0];
         sys_month = sysDate.split("-")[1];
         sys_day = sysDate.split("-")[2];
-        sc = new SpecialCalendar();
-        lc = new LunarCalendar();
-        System.out.println("jumpYear = " + jumpYear);
-        int stepYear = year_c + jumpYear;
-        int stepMonth = month_c + jumpMonth;
-        if (mark == 1) {
-            if (stepMonth > 0) {
-                // 往下一个月滑动
-                if (stepMonth % 12 == 0) {
-                    stepYear = /* year_c */stepYear + stepMonth / 12 - 1;
-                    stepMonth = 12;
-                } else {
-                    stepYear = /* year_c */stepYear + stepMonth / 12;
-                    stepMonth = stepMonth % 12;
-                }
-            } else {
-                // 往上一个月滑动
-                stepYear = /* year_c */stepYear - 1 + stepMonth / 12;
-                stepMonth = stepMonth % 12 + 12;
-            }
-        } else if (mark == 0) {
-            if (stepMonth > 0) {
-                // 往下一年滑动
-                if (stepMonth % 12 == 0) {
-                    stepMonth = 12;
-                } else {
-                    stepMonth = stepMonth % 12;
-                }
-            } else {
-                stepMonth = stepMonth % 12 + 12;
-            }
-        }
-
-        currentYear = String.valueOf(stepYear);
-        ; // 得到当前的年份
-        currentMonth = String.valueOf(stepMonth); // 得到本月（jumpMonth为滑动的次数，每滑动一次就增加一月或减一月）
-        currentDay = String.valueOf(day_c); // 得到当前日期是哪天
-
-        System.out.println("currentYear = " + currentYear);
-        getCalendar(Integer.parseInt(currentYear), Integer.parseInt(currentMonth), flagType);
-
-    }
+		sc = new SpecialCalendar();
+		lc = new LunarCalendar();
+		int stepYear = year_c+jumpYear;
+		int stepMonth = month_c+jumpMonth ;
+		if(stepMonth > 0){
+			//往下一个月滑动
+			if(stepMonth%12 == 0){
+				stepYear = stepYear + stepMonth/12 -1;
+				stepMonth = 12;
+			}else{
+				stepYear = stepYear + stepMonth/12;
+				stepMonth = stepMonth%12;
+			}
+		}else{
+			//往上一个月滑动
+			stepYear = stepYear - 1 + stepMonth/12;
+			stepMonth = stepMonth%12 + 12;
+			if(stepMonth%12 == 0){
+				
+			}
+		}
+	
+		currentYear = String.valueOf(stepYear);;  //得到当前的年份
+		currentMonth = String.valueOf(stepMonth);  //得到本月（jumpMonth为滑动的次数，每滑动一次就增加一月或减一月）
+		currentDay = String.valueOf(day_c);  //得到当前日期是哪天
+		getCalendar(Integer.parseInt(currentYear),Integer.parseInt(currentMonth), flagType);
+		
+	}
 
     public long getMillisTimeByDate(String date) {
         long time = 0;
         SimpleDateFormat sdf = new SimpleDateFormat("yy.MM.dd");
         try {
             Date d = sdf.parse(date);
-            time = d.getTime() - ServiceManager.getTimeDifference();
+            time = d.getTime();
         } catch (ParseException e) {
             // TODO Auto-generated catch block
             e.printStackTrace();
@@ -174,15 +158,8 @@ public class CalendarData {
             }
         }
         int j = 1;
-        int flag = 0;
         String lunarDay = "";
-
-        int days = SpecialCalendar.getDaysOfMonth(SpecialCalendar.isLeapYear(year), month);
-        schDateTagFlag = new int[days];
-        mark_count = new int[days];
-        for (int i = 0; i < days; i++) {
-            schDateTagFlag[i] = -1;
-        }
+        mark_count = new int[32];
         for (int i = 0; i < dayNumber.length; i++) {
             int k = 1;
             // 周一
@@ -225,9 +202,7 @@ public class CalendarData {
 
                 // 标记日程日期
                 if (count > 0) {
-                    schDateTagFlag[flag] = i;
-                    mark_count[flag] = count;
-                    flag++;
+                    mark_count[Integer.parseInt(day)] = count;
                 }
 
                 setShowYear(String.valueOf(year));
@@ -279,7 +254,7 @@ public class CalendarData {
                  scheduledata.notice_flag = cursor.getInt(cursor.getColumnIndex(DatabaseHelper.COLUMN_SCHEDULE_NOTICE_FLAG)) == 1;
                  scheduledata.type = cursor.getInt(cursor.getColumnIndex(DatabaseHelper.COLUMN_SCHEDULE_TYPE));
                  scheduledata.pastsecomds = scheduledata.time % (24 * 3600 * 1000);
-                 scheduledata.time = starTimeInMillis + scheduledata.pastsecomds;
+//                 scheduledata.time = starTimeInMillis + scheduledata.pastsecomds;
                  todayscheduleList.add(scheduledata);
              }
              Collections.sort(todayscheduleList,new SortByPastsecond());
@@ -363,10 +338,6 @@ public class CalendarData {
         return this.dayNumber;
     }
 
-    public int[] getSchDateTagFlag() {
-        return this.schDateTagFlag;
-    }
-    
     class SortByPastsecond implements Comparator
     {
 

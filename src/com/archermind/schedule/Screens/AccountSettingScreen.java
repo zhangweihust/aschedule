@@ -13,6 +13,7 @@ import android.content.ContentResolver;
 import android.content.ContentValues;
 import android.content.Context;
 import android.content.DialogInterface;
+import android.content.DialogInterface.OnDismissListener;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.database.Cursor;
@@ -33,10 +34,12 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.archermind.schedule.R;
 import com.archermind.schedule.ScheduleApplication;
+import com.archermind.schedule.Dialog.ModifyNickDialog;
 import com.archermind.schedule.Image.SmartImageView;
 import com.archermind.schedule.Model.UserInfoData;
 import com.archermind.schedule.Provider.DatabaseHelper;
@@ -54,7 +57,8 @@ public class AccountSettingScreen extends Activity implements OnClickListener{
 	private LinearLayout bindTelephone;
 	private Button logout;
 	private Button goback;
-	private EditText loginNick;
+	private TextView loginNick;
+	private ModifyNickDialog modifyNickDialog;
 	private Handler handler;
 	
     /** Called when the activity is first created. */
@@ -66,12 +70,24 @@ public class AccountSettingScreen extends Activity implements OnClickListener{
         requestWindowFeature(Window.FEATURE_NO_TITLE); 
         setContentView(R.layout.account_setting);
         
+        modifyNickDialog = new ModifyNickDialog(this);
+        
+        modifyNickDialog.getDialog().setOnDismissListener(new OnDismissListener() {
+			
+			@Override
+			public void onDismiss(DialogInterface dialog) {
+				// TODO Auto-generated method stub
+				loginNick.setText(ServiceManager.getSPUserInfo(UserInfoData.NICK));
+			}
+		});
+        
         headImage = (SmartImageView)findViewById(R.id.headImage);
-        loginNick = (EditText)findViewById(R.id.login_nick);
+        loginNick = (TextView)findViewById(R.id.login_nick);
         bindTelephone = (LinearLayout)findViewById(R.id.bindTelephone);
         logout = (Button)findViewById(R.id.logout);
         goback = (Button)findViewById(R.id.title_bar_setting_btn);
         
+        loginNick.setOnClickListener(this);
         headImage.setOnClickListener(this);
         bindTelephone.setOnClickListener(this);
         logout.setOnClickListener(this);
@@ -79,7 +95,7 @@ public class AccountSettingScreen extends Activity implements OnClickListener{
         
         
         loginNick.setText(ServiceManager.getSPUserInfo(UserInfoData.NICK));
-		headImage.setImageUrl(ServiceManager.getAvator_url(),
+		headImage.setImageUrl(getUriFormWeb(),
                 R.drawable.friend_item_img, R.drawable.friend_item_img);
         
         handler = new Handler()
@@ -104,6 +120,9 @@ public class AccountSettingScreen extends Activity implements OnClickListener{
 		// TODO Auto-generated method stub
 		switch(v.getId())
 		{
+		case R.id.login_nick:
+			modifyNickDialog.show();
+			break;
 		case R.id.headImage:
 			ShowPickDialog();
 			break;
@@ -127,9 +146,6 @@ public class AccountSettingScreen extends Activity implements OnClickListener{
 					}
 				};
 			}.start();
-			break;
-		case R.id.title_bar_setting_btn:
-			onBackPressed();
 			break;
 		}
 	}  
@@ -258,13 +274,11 @@ public class AccountSettingScreen extends Activity implements OnClickListener{
 			serverInterface.InitAmtCloud(this);
 			String filename = headImagePath.substring(headImagePath.lastIndexOf("/") + 1, headImagePath.lastIndexOf("."));
 			String expandname = headImagePath.substring(headImagePath.lastIndexOf(".") + 1, headImagePath.length());
-			System.out.println("***********  expandname = "+ expandname);
 			if(0 == serverInterface.uploadPhoto(this, String.valueOf(ServiceManager.getUserId()), headImagePath, filename, expandname)){
 				Bitmap photo = extras.getParcelable("data");
 				Drawable drawable = new BitmapDrawable(photo);			
 				headImage.setImageDrawable(drawable);
 				Toast.makeText(this, "上传图片成功！", Toast.LENGTH_LONG).show();
-				ServiceManager.setAvator_url(getUriFormWeb());
 			}else{
 				Toast.makeText(this, "上传图片失败！", Toast.LENGTH_LONG).show();
 			}

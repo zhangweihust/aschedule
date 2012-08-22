@@ -201,7 +201,6 @@ public class FriendContactAdapter extends BaseAdapter implements OnClickListener
 				contentHolderView.friend_button2.setOnClickListener(FriendContactAdapter.this);
 				view.setTag(contentHolderView);
 //			}else{
-//				System.out.println("tag = "+view.getTag());
 //				contentHolderView = (ContentHolderView) view.getTag();
 //			}
 			if(friend != null){
@@ -267,7 +266,6 @@ public class FriendContactAdapter extends BaseAdapter implements OnClickListener
 //		ListViewUtil.setListViewHeightBasedOnChildren(friendAdapter.getListView());
 //		
 //		removeFriendContactUse(element);
-//		System.out.println("count = "+getCount());
 //		notifyDataSetChanged();
 //		ListViewUtil.setListViewHeightBasedOnChildren(getListView());
 	}
