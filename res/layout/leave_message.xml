@@ -40,8 +40,8 @@
         android:layout_toRightOf="@id/textView1"
         android:background="@null"
         android:drawableTop="@drawable/join_selector"
-        android:text="参加活动" />
-
+        android:text="参加活动"
+        android:visibility="invisible"/>
     <Button
         android:id="@+id/forwardBtn"
         android:layout_width="wrap_content"
@@ -51,7 +51,8 @@
         android:layout_toRightOf="@+id/joinBtn"
         android:background="@null"
         android:drawableTop="@drawable/forward_selector"
-        android:text="转发活动" />
+        android:text="转发活动" 
+        android:visibility="invisible"/>
 
     <Button
         android:id="@+id/publishBtn"

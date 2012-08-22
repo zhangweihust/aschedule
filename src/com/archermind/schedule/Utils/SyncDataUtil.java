@@ -87,7 +87,6 @@ public class SyncDataUtil {
 					}
 				}
 			} catch (JSONException e) {
-				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
 		}
@@ -108,31 +107,6 @@ public class SyncDataUtil {
 		contentvalues.put(DatabaseHelper.COLUMN_SCHEDULE_CITY, "武汉");
 		contentvalues.put(DatabaseHelper.COLUMN_SCHEDULE_CONTENT,
 				"hi all 让我们一起微日程吧");
-		ServiceManager.getDbManager().insertShareSchedules(contentvalues);
-		contentvalues.put(DatabaseHelper.COLUMN_SCHEDULE_T_ID, -2);
-		contentvalues.put(DatabaseHelper.COLUMN_SCHEDULE_SLAVE_ID, -100);
-		contentvalues.put(DatabaseHelper.COLUMN_SCHEDULE_ORDER, 0);
-		contentvalues.put(DatabaseHelper.COLUMN_SCHEDULE_TYPE, 2);
-		contentvalues.put(DatabaseHelper.COLUMN_SCHEDULE_DEFAULT,true);
-		contentvalues.put(DatabaseHelper.COLUMN_SCHEDULE_START_TIME,
-				System.currentTimeMillis());
-		contentvalues.put(DatabaseHelper.COLUMN_SCHEDULE_UPDATE_TIME,
-				time);
-		contentvalues.put(DatabaseHelper.COLUMN_SCHEDULE_CITY, "北京");
-		contentvalues
-				.put(DatabaseHelper.COLUMN_SCHEDULE_CONTENT, "这周同学聚会大家要来啊");
-		ServiceManager.getDbManager().insertShareSchedules(contentvalues);
-		contentvalues.put(DatabaseHelper.COLUMN_SCHEDULE_T_ID, -3);
-		contentvalues.put(DatabaseHelper.COLUMN_SCHEDULE_SLAVE_ID, -2);
-		contentvalues.put(DatabaseHelper.COLUMN_SCHEDULE_ORDER, 1);
-		contentvalues.put(DatabaseHelper.COLUMN_SCHEDULE_TYPE, 3);
-		contentvalues.put(DatabaseHelper.COLUMN_SCHEDULE_DEFAULT,true);
-		contentvalues.put(DatabaseHelper.COLUMN_SCHEDULE_START_TIME,
-				System.currentTimeMillis());
-		contentvalues.put(DatabaseHelper.COLUMN_SCHEDULE_UPDATE_TIME,
-				time);
-		contentvalues.put(DatabaseHelper.COLUMN_SCHEDULE_CITY, "北京");
-		contentvalues.put(DatabaseHelper.COLUMN_SCHEDULE_CONTENT, "班长组织一定要捧场啊");
 		ServiceManager.getDbManager().insertShareSchedules(contentvalues);
 		contentvalues.put(DatabaseHelper.COLUMN_SCHEDULE_T_ID, -4);
 		contentvalues.put(DatabaseHelper.COLUMN_SCHEDULE_SLAVE_ID, -1);
@@ -157,31 +131,6 @@ public class SyncDataUtil {
 				time);
 		contentvalues.put(DatabaseHelper.COLUMN_SCHEDULE_CITY, "北京");
 		contentvalues.put(DatabaseHelper.COLUMN_SCHEDULE_CONTENT, "哈哈，这东东蛮好用的");
-		ServiceManager.getDbManager().insertShareSchedules(contentvalues);
-		contentvalues.put(DatabaseHelper.COLUMN_SCHEDULE_T_ID, -6);
-		contentvalues.put(DatabaseHelper.COLUMN_SCHEDULE_SLAVE_ID, -100);
-		contentvalues.put(DatabaseHelper.COLUMN_SCHEDULE_ORDER, 0);
-		contentvalues.put(DatabaseHelper.COLUMN_SCHEDULE_TYPE, 3);
-		contentvalues.put(DatabaseHelper.COLUMN_SCHEDULE_DEFAULT,true);
-		contentvalues.put(DatabaseHelper.COLUMN_SCHEDULE_START_TIME,
-				System.currentTimeMillis());
-		contentvalues.put(DatabaseHelper.COLUMN_SCHEDULE_UPDATE_TIME,
-				time);
-		contentvalues.put(DatabaseHelper.COLUMN_SCHEDULE_CITY, "北京");
-		contentvalues.put(DatabaseHelper.COLUMN_SCHEDULE_CONTENT,
-				"想吃火锅~各种流口水啊，有木有想吃的同去");
-		ServiceManager.getDbManager().insertShareSchedules(contentvalues);
-		contentvalues.put(DatabaseHelper.COLUMN_SCHEDULE_T_ID, -7);
-		contentvalues.put(DatabaseHelper.COLUMN_SCHEDULE_SLAVE_ID, -6);
-		contentvalues.put(DatabaseHelper.COLUMN_SCHEDULE_ORDER, 1);
-		contentvalues.put(DatabaseHelper.COLUMN_SCHEDULE_TYPE, 3);
-		contentvalues.put(DatabaseHelper.COLUMN_SCHEDULE_DEFAULT,true);
-		contentvalues.put(DatabaseHelper.COLUMN_SCHEDULE_START_TIME,
-				System.currentTimeMillis());
-		contentvalues.put(DatabaseHelper.COLUMN_SCHEDULE_UPDATE_TIME,
-				time);
-		contentvalues.put(DatabaseHelper.COLUMN_SCHEDULE_CITY, "北京");
-		contentvalues.put(DatabaseHelper.COLUMN_SCHEDULE_CONTENT, "大馋猫，下班一起去咯");
 		ServiceManager.getDbManager().insertShareSchedules(contentvalues);
 	}
 }

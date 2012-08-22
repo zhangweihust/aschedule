@@ -4,6 +4,7 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import com.archermind.schedule.R;
+import com.archermind.schedule.ScheduleApplication;
 import com.archermind.schedule.Services.ServiceManager;
 import com.archermind.schedule.Utils.DeviceInfo;
 
@@ -17,6 +18,7 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
 public class TelephoneBindScreen extends Activity implements OnClickListener{
 	
@@ -25,6 +27,7 @@ public class TelephoneBindScreen extends Activity implements OnClickListener{
 	private final static int GET_VERIFICATION_CODE_SUCCESS = 1;
 	private final static int TELEPHONE_BIND_FAILED = 2;
 	private final static int TELEPHONE_BIND_SUCCESS = 3;
+	private final static int TELEPHONE_BIND_ALREADY = 4;
 	
 	private EditText telephone_bind_tel_et;
 	private EditText telephone_bind_verification_et;
@@ -71,12 +74,14 @@ public class TelephoneBindScreen extends Activity implements OnClickListener{
         			telephone_bind_prompt.setVisibility(View.VISIBLE);
         			telephone_bind_verification.setVisibility(View.VISIBLE);
         			canRequestVerification = false;
+        			telephone_bind_btn.setEnabled(false);
         			handler.postDelayed(new Runnable()
         			{
         				@Override
         				public void run() {
         					// TODO Auto-generated method stub
         					canRequestVerification = true;
+        					telephone_bind_btn.setEnabled(true);
         				}
         			}, 60000);
         			break;
@@ -88,6 +93,11 @@ public class TelephoneBindScreen extends Activity implements OnClickListener{
         			ServiceManager.ToastShow("绑定成功!");
         			finish();
         			break;
+        		case TELEPHONE_BIND_ALREADY:
+        			Toast.makeText(TelephoneBindScreen.this, "这个手机号已经绑定!", Toast.LENGTH_SHORT).show();
+        			finish();
+        			break;
+        			
     			default:
     				break;
         		}
@@ -114,9 +124,10 @@ public class TelephoneBindScreen extends Activity implements OnClickListener{
 					{
 						public void run() 
 						{
-							if (0 == ServiceManager.getServerInterface().is_tel_bind((String.valueOf(ServiceManager.getUserId())), requestTel,DeviceInfo.getDeviceIMSI()))
+							if (0 == ServiceManager.getServerInterface().is_tel_bind((String.valueOf(ServiceManager.getUserId())), requestTel))
 							{
 								String ret = ServiceManager.getServerInterface().sendSMS(SCHEDULE_APP_ID,requestTel,"default");
+								ScheduleApplication.LogD(TelephoneBindScreen.class,"ret = " + ret);
 								String smsid = parseJason(ret,"smsID");
 								if (!smsid.equals(""))
 								{
@@ -135,6 +146,11 @@ public class TelephoneBindScreen extends Activity implements OnClickListener{
 								{
 									handler.sendEmptyMessage(GET_VERIFICATION_CODE_FAILED);
 								}
+							}
+							else
+							{
+								handler.sendEmptyMessage(TELEPHONE_BIND_ALREADY);
+								ScheduleApplication.LogD(TelephoneBindScreen.class,"这个手机号已经绑定");
 							}
 						};
 					}.start();
@@ -165,7 +181,8 @@ public class TelephoneBindScreen extends Activity implements OnClickListener{
 								 smsID, 
 								 "bind", 
 								 String.valueOf(ServiceManager.getUserId()), 
-								 tel);
+								 tel,
+								 DeviceInfo.getDeviceIMSI());
 						if (ret == 0)
 						{
 							handler.sendEmptyMessage(TELEPHONE_BIND_SUCCESS);

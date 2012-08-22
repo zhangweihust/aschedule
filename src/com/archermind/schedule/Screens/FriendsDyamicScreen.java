@@ -25,6 +25,7 @@ import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.LinearLayout;
 import android.widget.PopupWindow;
 import android.widget.RelativeLayout;
 import android.widget.Toast;
@@ -50,9 +51,11 @@ public class FriendsDyamicScreen extends Screen implements IXListViewListener, O
 
     private RelativeLayout mListFooter;
 
-    private Button loginBtn;
+    private Button loginBtn, bindBtn;
 
     private RelativeLayout loading;
+    
+    private LinearLayout bindLayout;;
 
     private Cursor c;
 
@@ -103,8 +106,6 @@ public class FriendsDyamicScreen extends Screen implements IXListViewListener, O
         super.onCreate(savedInstanceState);
         setContentView(R.layout.friends_dynamic_screen);
         list = (XListView)findViewById(R.id.list);
-//        list.setPullLoadEnable(true);
-//        list.setPullRefreshEnable(true);
         list.setOnItemClickListener(this);
         list.setXListViewListener(this);
         dataArrayList = new ArrayList<ScheduleBean>();
@@ -112,15 +113,23 @@ public class FriendsDyamicScreen extends Screen implements IXListViewListener, O
         mAdapter.setList(dataArrayList);
         list.setAdapter(mAdapter);
         loading = (RelativeLayout)findViewById(R.id.loading);
+        bindLayout = (LinearLayout)findViewById(R.id.bindTel);
         mListFooter = (RelativeLayout)LayoutInflater.from(this).inflate(
                 R.layout.dynamic_listview_footer, null);
         loginBtn = (Button)mListFooter.findViewById(R.id.login);
+        bindBtn = (Button)findViewById(R.id.bind);
         eventService.add(this);
         loginBtn.setOnClickListener(new OnClickListener() {
             @Override
             public void onClick(View v) {
-                Toast.makeText(FriendsDyamicScreen.this, "login", Toast.LENGTH_SHORT).show();
                 Intent it = new Intent(FriendsDyamicScreen.this,LoginScreen.class);
+				startActivity(it);
+            }
+        });
+        bindBtn.setOnClickListener(new OnClickListener() {
+            @Override
+            public void onClick(View v) {
+            	Intent it = new Intent(FriendsDyamicScreen.this,TelephoneBindScreen.class);
 				startActivity(it);
             }
         });
@@ -363,8 +372,22 @@ public class FriendsDyamicScreen extends Screen implements IXListViewListener, O
 
     @Override
     public boolean onEvent(Object sender, EventArgs e) {
-        // TODO Auto-generated method stub
-        return false;
+    	switch(e.getType()){
+		case LOGIN_SUCCESS:
+			this.runOnUiThread(new Runnable(){
+				@Override
+				public void run() {
+//					if(ServiceManager.getServerInterface().tel_unbind("") == 0){
+//						onRefresh();
+//						bindLayout.setVisibility(View.GONE);
+//					} else {
+//						bindLayout.setVisibility(View.VISIBLE);
+//					}
+				}
+			});
+			break;
+		}
+		return true;
     }
 
 	@Override

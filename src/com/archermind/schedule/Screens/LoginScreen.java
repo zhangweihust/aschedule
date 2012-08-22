@@ -22,6 +22,8 @@ import android.widget.Toast;
 
 import com.archermind.schedule.R;
 import com.archermind.schedule.ScheduleApplication;
+import com.archermind.schedule.Events.EventArgs;
+import com.archermind.schedule.Events.EventTypes;
 import com.archermind.schedule.Model.UserInfoData;
 import com.archermind.schedule.Services.ServiceManager;
 import com.archermind.schedule.Utils.DeviceInfo;
@@ -40,7 +42,7 @@ import com.weibo.net.Weibo;
 import com.weibo.net.WeiboDialogListener;
 import com.weibo.net.WeiboException;
 
-public class LoginScreen extends Activity implements OnClickListener {
+public class LoginScreen extends Screen implements OnClickListener {
     private Handler handler;
 
     private String mFisrtKey;
@@ -121,7 +123,7 @@ public class LoginScreen extends Activity implements OnClickListener {
                     	startActivity(new Intent(LoginScreen.this, TelephoneBindScreen.class));
                     }
 //                    startActivity(new Intent(LoginScreen.this, MenuScreen.class));
-                    
+                    eventService.onUpdateEvent(new EventArgs(EventTypes.LOGIN_SUCCESS));
                     finish();
                 } else if (msg.what == LOGIN_FAILED) {
                     ServiceManager.ToastShow("登录失败!");

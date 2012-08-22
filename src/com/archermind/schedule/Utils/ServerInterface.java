@@ -916,7 +916,7 @@ public class ServerInterface {
 	 * smsID sendSMS返回的id号，对应一条消息
 	 * code  验证码
 	 * Action：default*/
-	public int checkSMS(String appid,String code,String smsID,String Action,String user_id,String tel) {
+	public int checkSMS(String appid,String code,String smsID,String Action,String user_id,String tel,String imsi) {
 		Map<String, String> map = new HashMap<String, String>();
 		map.put("appid", appid);
 		map.put("code", code);
@@ -924,6 +924,7 @@ public class ServerInterface {
 		map.put("Action", Action);
 		map.put("user_id", user_id);
 		map.put("tel", tel);
+		map.put("imsi", imsi);
 		String ret = HttpUtils
 				.doPost(map,
 						"http://player.archermind.com/ci/index.php/SMSUtils/checkSMS");
@@ -936,11 +937,10 @@ public class ServerInterface {
 		}
 		return result;
 	}
-	public int is_tel_bind(String user_id,String tel,String imsi){
+	public int is_tel_bind(String user_id,String tel){
 		Map<String, String> map = new HashMap<String, String>();
 		map.put("user_id", user_id);
 		map.put("tel", tel);
-		map.put("imsi", imsi);
 		String ret = HttpUtils
 				.doPost(map,
 						"http://player.archermind.com/ci/index.php/aschedule/is_tel_bind");
