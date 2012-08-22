@@ -35,8 +35,8 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_weight="1"
-                        android:textSize="20sp"
-                        android:text="提醒" />
+                        android:text="提醒"
+                        android:textSize="20sp" />
 
                     <Button
                         android:id="@+id/time_remind_option"
@@ -125,9 +125,8 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_weight="1"
-                        android:textSize="20sp"
-                        
-                        android:text="重复提醒" />
+                        android:text="重复提醒"
+                        android:textSize="20sp" />
 
                     <Button
                         android:id="@+id/repeat_remind_option"
@@ -144,8 +143,7 @@
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
                 android:gravity="center_vertical"
-                android:orientation="vertical"
-                android:visibility="gone" >
+                android:orientation="vertical" >
 
                 <LinearLayout
                     android:layout_width="fill_parent"
@@ -186,6 +184,22 @@
                         android:layout_height="wrap_content"
                         android:layout_weight="1"
                         android:text="每年" />
+                </LinearLayout>
+
+                <LinearLayout
+                    android:id="@+id/repeat_remind_week"
+                    android:layout_width="fill_parent"
+                    android:layout_height="fill_parent"
+                    android:layout_weight="1"
+                    android:gravity="center"
+                    android:orientation="horizontal" >
+
+                    <TextView
+                        android:layout_width="fill_parent"
+                        android:layout_height="fill_parent"
+                        android:gravity="bottom"
+                        android:textColor="#FFFFFF"
+                        android:text="   每周" />
                 </LinearLayout>
 
                 <LinearLayout
@@ -324,8 +338,8 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_weight="1"
-                        android:textSize="20sp"
-                        android:text="@string/stage_remind" />
+                        android:text="@string/stage_remind"
+                        android:textSize="20sp" />
 
                     <Button
                         android:id="@+id/stage_remind_option"
@@ -342,26 +356,23 @@
                 android:layout_height="wrap_content"
                 android:layout_weight="3"
                 android:gravity="left|center_vertical"
-                android:orientation="vertical"   
-                android:visibility="gone" 
-                >
+                android:orientation="vertical"
+                android:visibility="gone" >
 
                 <LinearLayout
                     android:layout_width="fill_parent"
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
                     android:gravity="center_vertical"
-                    android:orientation="horizontal" 
-                     
-                    >
+                    android:orientation="horizontal" >
 
                     <CheckBox
                         android:id="@+id/stage_remind_checkbox"
                         style="@style/CustomLeftRadioBtn"
-                        android:textSize="15sp"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="阶段时间设置" />
+                        android:text="阶段时间设置"
+                        android:textSize="15sp" />
                 </LinearLayout>
 
                 <LinearLayout
@@ -375,9 +386,9 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:paddingLeft="30dp"
-                        android:textSize="15sp"
                         android:paddingRight="5dp"
-                        android:text="开始时间" />
+                        android:text="开始时间"
+                        android:textSize="15sp" />
 
                     <TextView
                         android:id="@+id/stage_remind_start_date"
@@ -400,9 +411,9 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:paddingLeft="30dp"
-                        android:textSize="15sp"
                         android:paddingRight="5dp"
-                        android:text="结束时间" />
+                        android:text="结束时间"
+                        android:textSize="15sp" />
 
                     <TextView
                         android:id="@+id/stage_remind_end_date"

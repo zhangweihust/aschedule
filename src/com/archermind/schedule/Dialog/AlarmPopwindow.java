@@ -5,6 +5,7 @@ import java.util.Calendar;
 import java.util.HashMap;
 import android.content.Context;
 import android.graphics.drawable.BitmapDrawable;
+import android.os.Handler;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -48,7 +49,7 @@ public class AlarmPopwindow implements OnClickListener {
 
     private Button time_remind_option, repeat_remind_option, stage_remind_option;
 
-    private Boolean time_remind_flag = true, repeat_remind_flag = false, stage_remind_flag = false;
+    private Boolean time_remind_flag = true, repeat_remind_flag = false, stage_remind_flag = false;// 三个阶段的标志
 
     private TextView stage_remind_start_date, stage_remind_end_date;
 
@@ -226,11 +227,24 @@ public class AlarmPopwindow implements OnClickListener {
                     mRemind = true;
                     setRepeatRemindTrue();
                     mOnRemindSelectListener.onRemindSelect(AlarmPopwindow.this);
+
+                    repeat_remind_option
+                            .setBackgroundResource(R.drawable.schedule_alarm_remind_option_select);
+                    repeat_remind_linear.setVisibility(View.VISIBLE);
+                    repeat_remind_flag = true;
+
                 } else if (checkedId == remind_off.getId()) {
+
                     mRemind = false;
                     Log.d("alarmpopwindow", "---------off_checked");
                     setRepeatRemindfalse();
                     mOnRemindSelectListener.onRemindUnSelect(AlarmPopwindow.this);
+
+                    repeat_remind_option
+                            .setBackgroundResource(R.drawable.schedule_alarm_remind_option_unselect);
+                    repeat_remind_linear.setVisibility(View.GONE);
+                    repeat_remind_flag = false;
+
                 }
             }
         });
@@ -368,7 +382,8 @@ public class AlarmPopwindow implements OnClickListener {
                     stage_remind_checkbox.setChecked(true);
                     stage_remind_end_date.setText(DateTimeUtils.time2String("yyyy-MM-dd", endTime));
                 } else {
-                    stage_remind_end_date.setText(DateTimeUtils.time2String("yyyy-MM-dd", startTime));
+                    stage_remind_end_date.setText(DateTimeUtils
+                            .time2String("yyyy-MM-dd", startTime));
                 }
 
             }
@@ -414,8 +429,7 @@ public class AlarmPopwindow implements OnClickListener {
     }
 
     public long getEndTime() {
-        
-        
+
         return endTime;
     }
 
@@ -568,16 +582,17 @@ public class AlarmPopwindow implements OnClickListener {
 
             if (repeat_remind_none.getId() == buttonView.getId()) {
                 if (isChecked) {
+
                     remindCycle = DatabaseHelper.SCHEDULE_NOTICE_PERIOD_MODE_NONE;
                     Log.d("alarmpopwindow", "---------none_checked");
                     repeat_remind_day.setChecked(false);
                     repeat_remind_month.setChecked(false);
                     repeat_remind_year.setChecked(false);
-
                     setWeekDayFalse();
-
                     stage_remind_checkbox.setChecked(false);
                     stage_remind_checkbox.setEnabled(false);
+                    hideStageBar();
+                    
                 } else {
                     stage_remind_checkbox.setEnabled(true);
                 }
@@ -592,6 +607,7 @@ public class AlarmPopwindow implements OnClickListener {
                     // stage_remind_start_date.getText()
                     // stage_remind_start_date.setText(text)
 
+                    showStageBar();
                     setWeekDayFalse();
                 }
 
@@ -604,6 +620,7 @@ public class AlarmPopwindow implements OnClickListener {
                     repeat_remind_day.setChecked(false);
                     repeat_remind_year.setChecked(false);
                     setWeekDayFalse();
+                    showStageBar();
                 }
             } else if (repeat_remind_year.getId() == buttonView.getId()) {
                 if (isChecked) {
@@ -613,16 +630,15 @@ public class AlarmPopwindow implements OnClickListener {
                     repeat_remind_month.setChecked(false);
                     repeat_remind_day.setChecked(false);
                     setWeekDayFalse();
+                    showStageBar();
                 }
 
             }
+            
             stage_remind_checkbox.setChecked(false);
-
             stage_remind_start_date.setText(DateTimeUtils.time2String("yyyy-MM-dd", startTime));
             stage_remind_end_date.setText(DateTimeUtils.time2String("yyyy-MM-dd", startTime));
-
         }
-
     }
 
     class WeekListener implements CompoundButton.OnCheckedChangeListener {
@@ -639,6 +655,7 @@ public class AlarmPopwindow implements OnClickListener {
                 repeat_remind_none.setChecked(false);
                 repeat_remind_month.setChecked(false);
                 repeat_remind_year.setChecked(false);
+                showStageBar();
             }
 
             if (mMonday.getId() == buttonView.getId()) {
@@ -706,16 +723,13 @@ public class AlarmPopwindow implements OnClickListener {
 
             }
         }
-
     }
 
     @Override
     public void onClick(View v) {
-        // TODO Auto-generated method stub
-
-        // TODO Auto-generated method stub
 
         if (v.getId() == time_remind_title.getId()) {
+
             if (time_remind_flag == false) {
                 time_remind_option
                         .setBackgroundResource(R.drawable.schedule_alarm_remind_option_select);
@@ -731,31 +745,37 @@ public class AlarmPopwindow implements OnClickListener {
             }
 
         } else if (v.getId() == repeat_remind_title.getId()) {
-            if (repeat_remind_flag == false) {
-                repeat_remind_option
-                        .setBackgroundResource(R.drawable.schedule_alarm_remind_option_select);
-                repeat_remind_linear.setVisibility(View.VISIBLE);
-                repeat_remind_flag = true;
-            }
 
-            else {
-                repeat_remind_option
-                        .setBackgroundResource(R.drawable.schedule_alarm_remind_option_unselect);
-                repeat_remind_linear.setVisibility(View.GONE);
-                repeat_remind_flag = false;
+            if (mRemind) {
+
+                if (repeat_remind_flag == false) {
+                    repeat_remind_option
+                            .setBackgroundResource(R.drawable.schedule_alarm_remind_option_select);
+                    repeat_remind_linear.setVisibility(View.VISIBLE);
+                    repeat_remind_flag = true;
+                }
+
+                else {
+                    repeat_remind_option
+                            .setBackgroundResource(R.drawable.schedule_alarm_remind_option_unselect);
+                    repeat_remind_linear.setVisibility(View.GONE);
+                    repeat_remind_flag = false;
+                }
             }
 
         } else if (v.getId() == stage_remind_title.getId()) {
-            if (stage_remind_flag == false) {
-                stage_remind_option
-                        .setBackgroundResource(R.drawable.schedule_alarm_remind_option_select);
-                stage_remind_linear.setVisibility(View.VISIBLE);
-                stage_remind_flag = true;
-            } else {
-                stage_remind_option
-                        .setBackgroundResource(R.drawable.schedule_alarm_remind_option_unselect);
-                stage_remind_linear.setVisibility(View.GONE);
-                stage_remind_flag = false;
+
+            if (!repeat_remind_none.isChecked()) {
+
+                if (stage_remind_flag == false) {
+
+                    showStageBar();
+
+                } else {
+
+                    hideStageBar();
+
+                }
             }
 
         } else if (v.getId() == stage_remind_end_date.getId()) {
@@ -772,4 +792,17 @@ public class AlarmPopwindow implements OnClickListener {
 
     }
 
+    private void hideStageBar() {
+
+        stage_remind_option.setBackgroundResource(R.drawable.schedule_alarm_remind_option_unselect);
+        stage_remind_linear.setVisibility(View.GONE);
+        stage_remind_flag = false;
+    }
+
+    private void showStageBar() {
+
+        stage_remind_option.setBackgroundResource(R.drawable.schedule_alarm_remind_option_select);
+        stage_remind_linear.setVisibility(View.VISIBLE);
+        stage_remind_flag = true;
+    }
 }

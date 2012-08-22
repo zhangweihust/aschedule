@@ -424,7 +424,7 @@ public class DateTimeUtils {
 			ScheduleApplication.LogD(DateTimeUtils.class, "cancel schedule_id:" + schedule_id + " flagAlarm:" + flagAlarm);
 			AlarmManager am = (AlarmManager) ScheduleApplication.getContext().getSystemService(Context.ALARM_SERVICE);
 			PendingIntent pi = PendingIntent.getBroadcast(
-					ScheduleApplication.getContext(), 1, alarmIntent, 0);
+					ScheduleApplication.getContext(), 1, alarmIntent, PendingIntent.FLAG_NO_CREATE);
 			am.cancel(pi);
 		}
 		c.close();
@@ -433,12 +433,14 @@ public class DateTimeUtils {
 	public static void sendAlarm(long time, long flagAlarm, long schedule_id) {
 		Intent alarmIntent = new Intent(ScheduleApplication.getContext(),
 				AlarmRecevier.class);
+		
 		alarmIntent.setAction("" + flagAlarm);
 		alarmIntent.putExtra("schedule_id", schedule_id);
-		alarmIntent.putExtra("alarmtime", time);
+		alarmIntent.putExtra("alarmtime", time);		
+	    
 		ScheduleApplication.LogD(DateTimeUtils.class, "set schedule_id:" + schedule_id + " flagAlarm:" + flagAlarm);
 		PendingIntent pi = PendingIntent.getBroadcast(ScheduleApplication.getContext(),
-				1, alarmIntent, 0);
+				1, alarmIntent, PendingIntent.FLAG_CANCEL_CURRENT);
 		AlarmManager am = (AlarmManager) ScheduleApplication.getContext().getSystemService(Context.ALARM_SERVICE);
 		am.set(AlarmManager.RTC_WAKEUP, time, pi);
 	}
