@@ -333,7 +333,10 @@ public class EditScheduleScreen extends Screen implements OnClickListener {
 
                 } else {
                 	if(mSelectTime != 0)
-				        startTime = mSelectTime;
+					{
+					      startTime = mSelectTime;
+					}
+				       
                     Calendar mCalendar = Calendar.getInstance();
                     mCalendar.set(Calendar.YEAR, 2049);
                     endTime = mCalendar.getTimeInMillis();

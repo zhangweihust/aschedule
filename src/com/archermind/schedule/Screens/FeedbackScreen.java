@@ -1,6 +1,7 @@
 
 package com.archermind.schedule.Screens;
 
+import android.R.integer;
 import android.os.Bundle;
 import android.view.View;
 import android.view.View.OnClickListener;
@@ -11,6 +12,10 @@ import android.widget.Toast;
 import com.archermind.schedule.R;
 import com.archermind.schedule.Events.EventArgs;
 import com.archermind.schedule.Events.IEventHandler;
+import com.archermind.schedule.Model.UserInfoData;
+import com.archermind.schedule.Services.ServiceManager;
+import com.archermind.schedule.Utils.ServerInterface;
+import com.weibo.net.Utility;
 
 public class FeedbackScreen extends Screen implements IEventHandler, OnClickListener {
 
@@ -50,8 +55,33 @@ public class FeedbackScreen extends Screen implements IEventHandler, OnClickList
 
             case R.id.title_feedback_button_send:
 
-                Toast.makeText(getApplicationContext(),
-                        "等待发送接口！！！" + etContentSend.getText().toString().trim(), 1).show();
+                String telephone = ServiceManager.getSPUserInfo(UserInfoData.TEL);
+                String userid = ServiceManager.getSPUserInfo(UserInfoData.USER_ID);
+                String suggestion = etContentSend.getText().toString().trim();
+                
+                ServerInterface sfInterface = new ServerInterface();
+                
+                if (suggestion.length()>160) {
+                    
+                    Toast.makeText(getApplicationContext(), "字数超过160，请减少字数", 1).show();                    
+                    
+                } else {
+                                        
+                    int result = sfInterface.suggestionfeedback(userid, telephone, suggestion);
+                    
+                    
+                    if (0 == result) {
+                        
+                        Toast.makeText(getApplicationContext(), "反馈成功"+suggestion.length(), 1).show();                    
+                        finish();
+                        
+                    } else {
+                        
+                        
+                    }
+                }
+              
+                
                 break;
 
             default:

@@ -276,7 +276,8 @@ public class AlarmPopwindow implements OnClickListener {
                             stage_remind_end_date.setEnabled(false);
                             stage_remind_start_date.setText(DateTimeUtils.time2String("yyyy-MM-dd",
                                     startTime));
-                            stage_remind_end_date.setText(" ");
+                            stage_remind_end_date.setText(DateTimeUtils.time2String("yyyy-MM-dd",
+                                    startTime));
 
                         }
                     }
@@ -338,7 +339,7 @@ public class AlarmPopwindow implements OnClickListener {
             stage_remind_start_date.setEnabled(false);
             stage_remind_end_date.setEnabled(false);
             stage_remind_start_date.setText(DateTimeUtils.time2String("yyyy-MM-dd", startTime));
-            stage_remind_end_date.setText(" ");
+            stage_remind_end_date.setText(DateTimeUtils.time2String("yyyy-MM-dd", startTime));
         } else {
             remind_on.setChecked(true);
             if (DatabaseHelper.SCHEDULE_NOTICE_PERIOD_MODE_NONE.equals(remindCycle)) {
@@ -348,7 +349,7 @@ public class AlarmPopwindow implements OnClickListener {
                 stage_remind_start_date.setEnabled(false);
                 stage_remind_end_date.setEnabled(false);
                 stage_remind_start_date.setText(DateTimeUtils.time2String("yyyy-MM-dd", startTime));
-                stage_remind_end_date.setText(" ");
+                stage_remind_end_date.setText(DateTimeUtils.time2String("yyyy-MM-dd", startTime));
 
             } else {
                 if (DatabaseHelper.SCHEDULE_NOTICE_PERIOD_MODE_DAY.equals(remindCycle)) {
@@ -367,7 +368,7 @@ public class AlarmPopwindow implements OnClickListener {
                     stage_remind_checkbox.setChecked(true);
                     stage_remind_end_date.setText(DateTimeUtils.time2String("yyyy-MM-dd", endTime));
                 } else {
-                    stage_remind_end_date.setText(" ");
+                    stage_remind_end_date.setText(DateTimeUtils.time2String("yyyy-MM-dd", startTime));
                 }
 
             }
@@ -618,7 +619,7 @@ public class AlarmPopwindow implements OnClickListener {
             stage_remind_checkbox.setChecked(false);
 
             stage_remind_start_date.setText(DateTimeUtils.time2String("yyyy-MM-dd", startTime));
-            stage_remind_end_date.setText(" ");
+            stage_remind_end_date.setText(DateTimeUtils.time2String("yyyy-MM-dd", startTime));
 
         }
 

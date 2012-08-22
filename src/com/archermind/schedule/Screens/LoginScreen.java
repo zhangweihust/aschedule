@@ -351,6 +351,7 @@ public class LoginScreen extends Activity implements OnClickListener {
             intent.putExtra("uid", uid);
             intent.putExtra("type", tag);
             startActivity(intent);
+            finish();
         }
     }
 

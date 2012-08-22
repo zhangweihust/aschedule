@@ -123,9 +123,9 @@ public class NewScheduleScreen extends Screen implements OnClickListener {
 		mCalendar.set(Calendar.DAY_OF_MONTH,
 				Integer.parseInt(DateTimeUtils.time2String("d", calendarTime)));
 		mCalendar.set(Calendar.HOUR_OF_DAY,
-				Integer.parseInt(DateTimeUtils.time2String("H", currentTime)));
+				Integer.parseInt(DateTimeUtils.time2String("H", currentTime-5*60*1000)));
 		mCalendar.set(Calendar.MINUTE,
-				Integer.parseInt(DateTimeUtils.time2String("m", currentTime)));
+				Integer.parseInt(DateTimeUtils.time2String("m", currentTime-5*60*1000)));
 		mCalendar.set(Calendar.SECOND, 0);
 		mCalendar.set(Calendar.MILLISECOND, 0);
 		startTime = mCalendar.getTimeInMillis();
@@ -286,8 +286,11 @@ public class NewScheduleScreen extends Screen implements OnClickListener {
 	                endTime = alarmPopwindow.getEndTime();
                 
 				}  else {
+				
 				    if(mSelectTime != 0)
-				        startTime = mSelectTime;				    
+					{
+        					startTime = mSelectTime;
+					}				        				    
 				    Calendar mCalendar = Calendar.getInstance();
 			        mCalendar.set(Calendar.YEAR, 2049);			        
 			        endTime = mCalendar.getTimeInMillis();			        

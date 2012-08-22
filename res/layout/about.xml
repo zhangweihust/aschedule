@@ -18,9 +18,9 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="center_vertical"
-            android:textColor="#FFFFFF"
             android:background="@drawable/schedule_new_back_selector"
-            android:text="@string/schedule_new_back" />
+            android:text="@string/schedule_new_back"
+            android:textColor="#FFFFFF" />
 
         <TextView
             android:id="@+id/title_bar_about_text"
@@ -31,7 +31,6 @@
             android:textColor="#FFFFFF"
             android:textSize="21sp"
             android:textStyle="bold" />
-        
     </FrameLayout>
 
     <LinearLayout
@@ -65,10 +64,49 @@
     </LinearLayout>
 
     <LinearLayout
+        android:id="@+id/linearLayout1"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:layout_above="@+id/aboutresverse"
+        android:layout_marginBottom="50dp"
+        android:layout_marginLeft="30dp"
+        android:layout_marginRight="30dp"
+        android:background="@drawable/aboutconnect"
+        android:gravity="center"
+        android:orientation="vertical" >
+        
+        <LinearLayout
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:layout_weight="1" >
+            <TextView 
+                android:layout_width="fill_parent"
+                android:layout_height="fill_parent"
+                android:text="     客服：027-87491770"
+                android:textColor="#000000"
+                />
+        </LinearLayout>
+        
+        <LinearLayout
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:layout_weight="1" >
+              <TextView 
+                android:layout_width="fill_parent"
+                android:layout_height="fill_parent"
+                android:gravity="bottom"
+                 android:textColor="#000000"
+                android:text="     邮箱：player_support@163.com"
+                />
+        </LinearLayout>
+        
+    </LinearLayout>
+
+    <LinearLayout
+        android:id="@+id/aboutresverse"
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
         android:layout_alignParentBottom="true"
-        android:layout_marginTop="20dp"
         android:gravity="center_horizontal"
         android:orientation="vertical" >
 
@@ -76,17 +114,17 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginBottom="3dp"
-            android:textSize="12sp"
             android:text="@+string/aboutresverseone"
-            android:textColor="#000000" />
+            android:textColor="#000000"
+            android:textSize="12sp" />
 
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginBottom="20dp"
-            android:textSize="12sp"
             android:text="@+string/aboutresversetwo"
-            android:textColor="#000000" />
+            android:textColor="#000000"
+            android:textSize="12sp" />
     </LinearLayout>
 
 </RelativeLayout>

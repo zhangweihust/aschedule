@@ -1006,6 +1006,22 @@ public class ServerInterface {
 		return ret;
 	}
 	
+		public int suggestionfeedback(String user_id,String tel,String suggestion) {
+        Map<String, String> map = new HashMap<String, String>();
+        map.put("user_id", user_id);
+        map.put("tel", tel);
+        map.put("suggestion", suggestion);
+        String ret = HttpUtils
+                .doPost(map,
+                        "http://player.archermind.com/ci/index.php/aschedule/suggestionfeedback");
+        int result =0;
+        try{
+            result =Integer.parseInt(ret);
+        }catch (Exception e){
+            result =-3;
+        }
+        return result;
+    }
 	public int tel_unbind(String user_id) {
 		Map<String, String> map = new HashMap<String, String>();
 		map.put("user_id", user_id);
