@@ -147,7 +147,7 @@ public class CalendarData {
     }
 
     // 将一个月中的每一天的值添加入数组dayNuber中
-    private void getweek(int year, int month, int flagType) {
+    private synchronized void getweek(int year, int month, int flagType) {
         if (flagType == 1) {
             week = new String[] {
                     "周一", "周二", "周三", "周四", "周五", "周六", "周日"
@@ -219,7 +219,7 @@ public class CalendarData {
 
     }
 
-    public List<ScheduleData> getMonthSchedule(int year,int month)
+    public synchronized List<ScheduleData> getMonthSchedule(int year,int month)
     {
     	int i;
     	int days = SpecialCalendar.getDaysOfMonth(SpecialCalendar.isLeapYear(year), month);
@@ -227,12 +227,16 @@ public class CalendarData {
         String dayOfYear = "";
         String dayOfMonth = "";
         String dayOfWeek = "";
+        String lunar = "";
         List<ScheduleData> todayscheduleList = new ArrayList<ScheduleData>();
         long starTimeInMillis = 0;
+        LunarCalendar lunarcalendar = new LunarCalendar();
     	
         scheduleList.clear();
     	for (i = 1; i <= days; i++)
     	{
+    		lunar = lunarcalendar.getLunarDate(year, month, i, false);
+    		
     		 startData = year + "." + month + "." + i;
              dayOfYear = month + "." + i;
              dayOfMonth = String.valueOf(i);
@@ -258,12 +262,15 @@ public class CalendarData {
                  todayscheduleList.add(scheduledata);
              }
              Collections.sort(todayscheduleList,new SortByPastsecond());
-             ScheduleData scheduledata = new ScheduleData();
-             scheduledata.id = -1;
-             scheduledata.time = starTimeInMillis;
-             scheduleList.add(scheduledata);
              
-             scheduleList.addAll(todayscheduleList);
+            if (lunarcalendar.isHolidays(lunar) || todayscheduleList.size() > 0)
+     		{
+     			ScheduleData scheduledata = new ScheduleData();
+                scheduledata.id = -1;
+                scheduledata.time = starTimeInMillis;
+                scheduleList.add(scheduledata);
+                scheduleList.addAll(todayscheduleList);
+     		}
              
              
              if (cursor != null) {
@@ -341,7 +348,7 @@ public class CalendarData {
     public String[] getWeek(){
     	return this.week;
     }
-
+    
     class SortByPastsecond implements Comparator
     {
 

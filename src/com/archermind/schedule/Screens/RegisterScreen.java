@@ -48,6 +48,8 @@ public class RegisterScreen extends Activity implements OnClickListener {
     private static final int REGISTER_SUCCESS = 1;
 
     private static final int REGISTER_FAILED = 2;
+    
+    private boolean registerflag = false;
 
 //    private static final int BIN_SUCCESS = 3;
 
@@ -82,6 +84,7 @@ public class RegisterScreen extends Activity implements OnClickListener {
 
                     startActivity(new Intent(RegisterScreen.this,MenuScreen.class));
                 }*/
+                registerflag = false;
             }
         };
 
@@ -106,7 +109,11 @@ public class RegisterScreen extends Activity implements OnClickListener {
 
     public void onClick(View v) {
         // TODO Auto-generated method stub
-        switch (v.getId()) {
+    	
+    	if (!registerflag)
+    	{
+    		registerflag = true;
+    		switch (v.getId()) {
             case R.id.register_goback:
                 onBackPressed();
                 break;
@@ -119,6 +126,7 @@ public class RegisterScreen extends Activity implements OnClickListener {
             default:
                 break;
         }
+    	}
     }
 
     @Override

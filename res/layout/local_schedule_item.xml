@@ -34,9 +34,9 @@
 	    <TextView
 	        android:id="@+id/schedule_year_month"
 	        android:layout_toRightOf="@id/schedule_week"
-	        android:layout_width="wrap_content"
+	        android:layout_width="60dip"
 	        android:layout_height="wrap_content"
-	        android:layout_marginLeft="5dip"
+	        android:layout_marginLeft="20dip"
 	        android:layout_centerVertical="true"
 	        android:textSize="12sp"
 	        android:gravity="center"

@@ -180,13 +180,16 @@ public class ServiceManager extends Service implements OnClickListener{
 			@Override
 			public void run() {
 				// TODO Auto-generated method stub
-		        if (getSPUserInfo(UserInfoData.IMSI).equals("") && getSPUserInfo(UserInfoData.TEL).equals(""))
+				String imsi = getSPUserInfo(UserInfoData.IMSI);
+				String tel = getSPUserInfo(UserInfoData.TEL);
+		        if ((imsi.equals("") || imsi.equals("null"))
+		        		&& (tel.equals("") || tel.equals("null")))
 		        {
 		        	bIsBindFlag = false;
 		        }
 		        else
 		        {
-		        	if (getSPUserInfo(UserInfoData.IMSI).equals(DeviceInfo.getDeviceIMSI()))
+		        	if (imsi.equals(DeviceInfo.getDeviceIMSI()))
 		        	{
 		        		bIsBindFlag = true;
 		        	}

@@ -2,6 +2,7 @@ package com.archermind.schedule.Screens;
 
 
 import com.archermind.schedule.R;
+import com.archermind.schedule.Calendar.LunarCalendar;
 import com.archermind.schedule.Model.UserInfoData;
 import com.archermind.schedule.Services.ServiceManager;
 import com.archermind.schedule.Utils.DeviceInfo;
@@ -11,6 +12,7 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
+import android.util.Log;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.Window;
@@ -29,6 +31,8 @@ public class MenuScreen extends Activity implements OnClickListener{
 	private Button menu_feedback;
 	private Button menu_about;
 	private Handler handler;
+	
+	private boolean account_btn_flag = false;
 	
     /** Called when the activity is first created. */
     @Override
@@ -78,6 +82,7 @@ public class MenuScreen extends Activity implements OnClickListener{
         		}
         		
         		startActivity(it);
+        		account_btn_flag = false;
     			overridePendingTransition(R.anim.right_in,R.anim.right_out);
         	};
         };
@@ -93,27 +98,31 @@ public class MenuScreen extends Activity implements OnClickListener{
 			onBackPressed();
 			break;
 		case R.id.menu_account_btn:
-			new Thread()
+			if (!account_btn_flag)
 			{
-				public void run() 
+				account_btn_flag = true;
+				new Thread()
 				{
-					if (ServiceManager.isUserLogining(ServiceManager.getUserId()))
+					public void run() 
 					{
-						if (ServiceManager.getBindFlag())
+						if (ServiceManager.isUserLogining(ServiceManager.getUserId()))
 						{
-							handler.sendEmptyMessage(LOGIN_STATUS_SUCCESS);
+							if (ServiceManager.getBindFlag())
+							{
+								handler.sendEmptyMessage(LOGIN_STATUS_SUCCESS);
+							}
+							else
+							{
+								handler.sendEmptyMessage(LOGIN_STATUS_UNBIND);
+							}
 						}
 						else
 						{
-							handler.sendEmptyMessage(LOGIN_STATUS_UNBIND);
+							handler.sendEmptyMessage(LOGIN_STATUS_FAILED);
 						}
-					}
-					else
-					{
-						handler.sendEmptyMessage(LOGIN_STATUS_FAILED);
-					}
-				};
-			}.start();
+					};
+				}.start();
+			}
 			break;
 		case R.id.menu_weather_btn:
 			startActivity(new Intent(MenuScreen.this,WeatherScreen.class));

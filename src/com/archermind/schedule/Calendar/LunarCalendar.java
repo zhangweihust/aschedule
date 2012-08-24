@@ -341,4 +341,46 @@ public class LunarCalendar {
 	public void setYear(int year) {
 		this.year = year;
 	}
+	
+	public String getHolidays(long times)
+    {
+    	String holiday = "";
+    	String strdate = "";
+    	int year = 0;
+    	int month = 0;
+    	int day = 0;
+    	Date date = new Date(times);
+    	SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+    	strdate = sdf.format(date);
+    	year = Integer.parseInt(strdate.split("-")[0]);
+    	month = Integer.parseInt(strdate.split("-")[1]);
+    	day = Integer.parseInt(strdate.split("-")[2]);
+    	
+    	holiday = getLunarDate(year, month, day, false);
+    	
+    	if (!isHolidays(holiday))
+    	{
+    		holiday = "false";
+    	}
+    	else
+    	{
+    		holiday = holiday.replace("_", "");
+    	}
+    	
+    	return holiday;
+    }
+    
+    public boolean isHolidays(String lunar)
+    {	
+    	if (lunar.contains("初") 
+    			|| lunar.contains("十") 
+    			|| lunar.contains("廿") 
+    			|| lunar.contains("卅")
+    			|| lunar.contains("月"))
+    	{
+    		return false;
+    	}
+    	
+    	return true;
+    }
 }

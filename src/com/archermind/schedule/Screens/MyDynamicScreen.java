@@ -116,7 +116,7 @@ public class MyDynamicScreen extends Screen implements IXListViewListener, OnIte
         loginBtn.setOnClickListener(new OnClickListener() {
             @Override
             public void onClick(View v) {
-                Toast.makeText(MyDynamicScreen.this, "login", Toast.LENGTH_SHORT).show();
+//                Toast.makeText(MyDynamicScreen.this, "login", Toast.LENGTH_SHORT).show();
                 Intent it = new Intent(MyDynamicScreen.this,LoginScreen.class);
 				startActivity(it);
             }

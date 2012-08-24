@@ -69,6 +69,7 @@ public class AccountSettingScreen extends Activity implements OnClickListener{
 	private String dictionry = Environment.getExternalStorageDirectory() + "/schedule";
 	private String fileName = "headImage.jpg";
 	private String headImagePath = dictionry + "/" + fileName;
+	private boolean logoutflag = false;
 	
     /** Called when the activity is first created. */
     @Override
@@ -129,6 +130,7 @@ public class AccountSettingScreen extends Activity implements OnClickListener{
         			onBackPressed();
         			break;
         		}
+        		logoutflag = false;
         	};
         };
     }
@@ -148,21 +150,25 @@ public class AccountSettingScreen extends Activity implements OnClickListener{
 			startActivity(it); 
 			break;
 		case R.id.logout:
-			new Thread()
+			if (!logoutflag)
 			{
-				public void run() 
+				logoutflag = true;
+				new Thread()
 				{
-					if (ServiceManager.getServerInterface().logout(String.valueOf(ServiceManager.getUserId())).equals("0"))
+					public void run() 
 					{
-						ServiceManager.setCookie("");
-						handler.sendEmptyMessage(LOGOUT_SUCCESS);
-					}
-					else
-					{
-						handler.sendEmptyMessage(LOGOUT_FAILED);
-					}
-				};
-			}.start();
+						if (ServiceManager.getServerInterface().logout(String.valueOf(ServiceManager.getUserId())).equals("0"))
+						{
+							ServiceManager.setCookie("");
+							handler.sendEmptyMessage(LOGOUT_SUCCESS);
+						}
+						else
+						{
+							handler.sendEmptyMessage(LOGOUT_FAILED);
+						}
+					};
+				}.start();
+			}
 			break;
 		}
 	}  

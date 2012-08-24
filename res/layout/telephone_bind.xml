@@ -86,7 +86,8 @@
 		        android:layout_height="fill_parent"
 		        android:textSize="15sp"
 		        android:textColorHint="#c2c2c2"
-		        android:background="@drawable/telephone_bind_input" />	    
+		        android:background="@drawable/telephone_bind_input"
+		        android:singleLine="true" />	    
 		    <Button
 		        android:id="@+id/telephone_bind_btn"
 		        android:layout_width="60dip"
@@ -137,7 +138,8 @@
 		        android:textSize="15sp"
 		        android:textColorHint="#c2c2c2"
 		        android:hint="输入验证码"
-		        android:background="@drawable/telephone_bind_input" />	    
+		        android:background="@drawable/telephone_bind_input"
+		        android:singleLine="true" />	    
 		    <Button
 		        android:id="@+id/telephone_bind_verification_btn"
 		        android:layout_width="60dip"

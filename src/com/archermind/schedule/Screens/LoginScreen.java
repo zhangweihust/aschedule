@@ -80,6 +80,8 @@ public class LoginScreen extends Screen implements OnClickListener {
     private static final int TAG_RENREN = 2;
 
     private static final int TAG_TENGXUN = 3;
+    
+    private boolean loginflag = false;
 
     /** Called when the activity is first created. */
     @Override
@@ -133,12 +135,18 @@ public class LoginScreen extends Screen implements OnClickListener {
                 } else if (msg.what == LOGIN_FAILED) {
                     ServiceManager.ToastShow("登录失败!");
                 }
+                loginflag = false;
             }
         };
     }
 
     public void onClick(View v) {
-        switch (v.getId()) {
+    	
+    	if (!loginflag)
+    	{
+    		loginflag = true;
+    		
+    		switch (v.getId()) {
             case R.id.login_goback:
                 onBackPressed();
                 break;
@@ -161,6 +169,7 @@ public class LoginScreen extends Screen implements OnClickListener {
             default:
                 break;
         }
+    	}
     }
 
     private void loginSina() {
@@ -362,36 +371,6 @@ public class LoginScreen extends Screen implements OnClickListener {
         }
     }
 
-//    private void insertUserId(String userData) {
-//
-//        String user_id = "";
-//        JSONArray jsonArray;
-//        try {
-//
-//            jsonArray = new JSONArray(userData);
-//            for (int i = 0; i < jsonArray.length(); i++) {
-//
-//                JSONObject jsonObject = (JSONObject)jsonArray.opt(i);
-//                user_id = jsonObject.getString("user_id");
-//            }
-//
-//            if (!user_id.equals("")) {
-//
-//                handler.sendEmptyMessage(LOGIN_SUCCESS);
-//                ServiceManager.setUserId(Integer.parseInt(user_id)); /* 设置服务器返回的Userid */
-//                ServiceManager.setSPUserInfo(UserInfoData.USER_ID, user_id);
-//                ServiceManager.setSPUserInfo(UserInfoData.COOKIE, HttpUtils.httphead);
-//
-//            } else {
-//
-//                handler.sendEmptyMessage(LOGIN_FAILED);
-//            }
-//        } catch (JSONException e) {
-//
-//            e.printStackTrace();
-//        }
-//    }
-
     @Override
     public void onBackPressed() {
 
@@ -420,7 +399,7 @@ public class LoginScreen extends Screen implements OnClickListener {
         new Thread() {
             public void run() {
                 String ret = ServiceManager.getServerInterface().login(username, password, imsi);
-
+                Log.e("------","ret = " + ret);
                 if (ret.contains("user_id")) {
                     RegisterScreen.writeUserinfo(ret,HttpUtils.GetCookie());
                     handler.sendEmptyMessage(LOGIN_SUCCESS);
@@ -430,31 +409,6 @@ public class LoginScreen extends Screen implements OnClickListener {
                 {
                 	handler.sendEmptyMessage(LOGIN_FAILED);
                 }
-
-                // try {
-                // JSONArray jsonArray = new JSONArray(ret);
-                // for (int i = 0; i < jsonArray.length(); i++) {
-                // JSONObject jsonObject = (JSONObject)jsonArray.opt(i);
-                // user_id = jsonObject.getString("user_id");
-                //
-                // }
-                // if (!user_id.equals("")) {
-                // handler.sendEmptyMessage(LOGIN_SUCCESS);
-                // ServiceManager.setUserId(Integer.parseInt(user_id)); /*
-                // 设置服务器返回的Userid */
-                // SharedPreferences.Editor editor = getSharedPreferences(
-                // RegisterScreen.USER_INFO,
-                // Context.MODE_WORLD_WRITEABLE).edit();
-                // editor.putInt(RegisterScreen.USER_ID,
-                // Integer.parseInt(user_id));
-                // editor.commit();
-                // } else {
-                // handler.sendEmptyMessage(LOGIN_FAILED);
-                // }
-                // } catch (JSONException e) {
-                //
-                // e.printStackTrace();
-                // }
             };
         }.start();
 

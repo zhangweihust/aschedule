@@ -82,7 +82,8 @@
                     android:layout_marginLeft="5dip"
                     android:background="#ffffffff"
                     android:textSize="14sp"
-                    android:hint="输入您的昵称" />
+                    android:hint="输入您的昵称"
+                    android:singleLine="true" />
             </LinearLayout>
             
             <TextView 
@@ -98,7 +99,8 @@
                     android:layout_marginRight="3dip"
                     android:background="#ffffffff"
                     android:textSize="14sp"
-                    android:hint="诚迈账号:(合法的邮箱地址)" />
+                    android:hint="诚迈账号:(合法的邮箱地址)"
+                    android:singleLine="true" />
             
             <TextView 
                 android:layout_width="fill_parent"
@@ -114,7 +116,8 @@
                 android:background="#ffffffff"
                 android:textSize="14sp"
                 android:password="true"
-                android:hint="密码:(6位以上字母和数字的组合)" />
+                android:hint="密码:(6位以上字母和数字的组合)"
+                android:singleLine="true" />
             
             <TextView 
                 android:layout_width="fill_parent"
@@ -129,7 +132,8 @@
                 android:background="#ffffffff"
                 android:textSize="14sp"
                 android:password="true"
-                android:hint="确认密码" />
+                android:hint="确认密码"
+                android:singleLine="true" />
             
             <TextView 
                 android:layout_width="fill_parent"

@@ -7,6 +7,7 @@ import java.util.Date;
 import java.util.List;
 
 import com.archermind.schedule.R;
+import com.archermind.schedule.Calendar.CalendarData;
 import com.archermind.schedule.Calendar.LunarCalendar;
 import com.archermind.schedule.Events.EventArgs;
 import com.archermind.schedule.Model.ScheduleData;
@@ -56,7 +57,8 @@ public class HistoryScheduleAdapter extends BaseAdapter{
 		// TODO Auto-generated method stub
 		
 		ScheduleItem item;
-		String str = "";
+//		String str = "";
+		String holiday = "";
 		String[] weeks = new String[] {
 				"周日","周一", "周二", "周三", "周四", "周五", "周六"
         };
@@ -100,19 +102,24 @@ public class HistoryScheduleAdapter extends BaseAdapter{
 			
 			item.title_date.setText(DateTimeUtils.time2String("dd", data.time));
 			item.title_week.setText(weeks[getWeek(data.time)]);
-			str = lc.getLunarDate(data.time, true);
-			if (str.matches("[\\s\\S]{1,2}月"))
-			{
-				str += "初一";
-			}
-			item.title_lunar.setText(str);
+//			str = lc.getLunarDate(data.time, true);
+//			if (str.matches("[\\s\\S]{1,2}月"))
+//			{
+//				str += "初一";
+//			}
+//			item.title_lunar.setText(str);
 			
-			if (position == 0)
+//			if (position == 0)
+//			{
+			item.title_lunar.setText(lc.getLunarMonth() + lc.getLunarDate(data.time, true));
+			holiday = lc.getHolidays(data.time);
+			if (!holiday.equals("false"))
 			{
 				item.title_year_month.setVisibility(View.VISIBLE);
-				item.title_year_month.setText(DateTimeUtils.time2String("yyyy-MM", data.time));
-				item.title_lunar.setText(lc.getLunarMonth() + lc.getLunarDate(data.time, true));
+				item.title_year_month.setText(holiday);
 			}
+				
+//			}
 		}
 		else
 		{

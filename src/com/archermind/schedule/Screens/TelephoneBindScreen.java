@@ -45,6 +45,7 @@ public class TelephoneBindScreen extends Activity implements OnClickListener{
 	private String tel = "";
 	private String smsID = "";
 	private boolean canRequestVerification = true;
+	private boolean canBingFlag = true;
 	private Handler handler;
 	
 	@Override
@@ -96,11 +97,11 @@ public class TelephoneBindScreen extends Activity implements OnClickListener{
         		{
         		case GET_VERIFICATION_CODE_FAILED:
         			ServiceManager.ToastShow("获取验证码失败!");
+        			canRequestVerification = true;
         			break;
         		case GET_VERIFICATION_CODE_SUCCESS:
         			telephone_bind_prompt.setVisibility(View.VISIBLE);
         			telephone_bind_verification.setVisibility(View.VISIBLE);
-        			canRequestVerification = false;
         			telephone_bind_btn.setEnabled(false);
         			handler.postDelayed(new Runnable()
         			{
@@ -151,6 +152,7 @@ public class TelephoneBindScreen extends Activity implements OnClickListener{
 					{
 						public void run() 
 						{
+							canRequestVerification = false;
 							if (0 == ServiceManager.getServerInterface().is_tel_bind((String.valueOf(ServiceManager.getUserId())), requestTel))
 							{
 								String ret = ServiceManager.getServerInterface().sendSMS(SCHEDULE_APP_ID,requestTel,"default");
@@ -199,31 +201,36 @@ public class TelephoneBindScreen extends Activity implements OnClickListener{
 			if (!inputstr.equals(""))
 			{
 				final String verficationcode = inputstr;
-				new Thread(){
-					public void run() 
-					{
-						int ret = ServiceManager.getServerInterface().checkSMS(
-								 SCHEDULE_APP_ID, 
-								 verficationcode, 
-								 smsID, 
-								 "bind", 
-								 String.valueOf(ServiceManager.getUserId()), 
-								 tel,
-								 DeviceInfo.getDeviceIMSI());
-						if (ret == 0)
+				if (canBingFlag)
+				{
+					canBingFlag = false;
+					new Thread(){
+						public void run() 
 						{
-							handler.sendEmptyMessage(TELEPHONE_BIND_SUCCESS);
-							ServiceManager.setSPUserInfo(UserInfoData.TEL, tel);
-							ServiceManager.setSPUserInfo(UserInfoData.IMSI, DeviceInfo.getDeviceIMSI());
-							ServiceManager.setBindFlag(true);
-						}
-						else
-						{
-							handler.sendEmptyMessage(TELEPHONE_BIND_FAILED);
-							ServiceManager.setBindFlag(false);
-						}
-					};
-				}.start();
+							int ret = ServiceManager.getServerInterface().checkSMS(
+									 SCHEDULE_APP_ID, 
+									 verficationcode, 
+									 smsID, 
+									 "bind", 
+									 String.valueOf(ServiceManager.getUserId()), 
+									 tel,
+									 DeviceInfo.getDeviceIMSI());
+							if (ret == 0)
+							{
+								handler.sendEmptyMessage(TELEPHONE_BIND_SUCCESS);
+								ServiceManager.setSPUserInfo(UserInfoData.TEL, tel);
+								ServiceManager.setSPUserInfo(UserInfoData.IMSI, DeviceInfo.getDeviceIMSI());
+								ServiceManager.setBindFlag(true);
+							}
+							else
+							{
+								handler.sendEmptyMessage(TELEPHONE_BIND_FAILED);
+								ServiceManager.setBindFlag(false);
+							}
+							canBingFlag = true;
+						};
+					}.start();
+				}
 				 
 			}
 			break;
