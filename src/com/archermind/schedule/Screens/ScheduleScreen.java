@@ -117,7 +117,6 @@ private ViewFlipper flipper = null;
 		private int year_c = 0;
 		private int month_c = 0;
 		private int day_c = 0;
-		private String currentDate = "";
 		
 		private Button previous_year, next_year;
 		private Button current_day;
@@ -128,7 +127,7 @@ private ViewFlipper flipper = null;
 		public ScheduleScreen() {
 			Date date = new Date();
 	    	SimpleDateFormat sdf = new SimpleDateFormat("yyyy-M-d");
-	    	currentDate = sdf.format(date);  //当前日期
+	    	String currentDate = sdf.format(date);  //当前日期
 	    	year = Constant.YEAR = year_c = Integer.parseInt(currentDate.split("-")[0]);
 	    	month = Constant.MONTH = month_c = Integer.parseInt(currentDate.split("-")[1]);
 	    	day = Constant.DAY = day_c = Integer.parseInt(currentDate.split("-")[2]);
@@ -154,6 +153,7 @@ private ViewFlipper flipper = null;
 				switch(msg.what)
 				{
 				case LOAD_DATA_OVER:
+					gridView.setAdapter(calV);
 					hsa.setData(listdata);
 					gototoday.setVisibility(View.INVISIBLE);
 					schedule_headview_prompt.setText(getHeadViewText(curSelectedDate));
@@ -787,6 +787,9 @@ private ViewFlipper flipper = null;
         	jumpMonth = 0;
         	jumpYear = 0;
         	addGridView();   //添加一个gridview
+			Date date = new Date();
+	    	SimpleDateFormat sdf = new SimpleDateFormat("yyyy-M-d");
+	    	String currentDate = sdf.format(date);  //当前日期
         	this.year = year_c = Integer.parseInt(currentDate.split("-")[0]);
         	this.month = month_c = Integer.parseInt(currentDate.split("-")[1]);
         	this.day = day_c = Integer.parseInt(currentDate.split("-")[2]);
@@ -844,13 +847,17 @@ private ViewFlipper flipper = null;
 			calendarData = new CalendarData(jumpMonth, jumpYear, year_c, month_c, day_c, Constant.flagType);
 			calV = new CalendarAdapter(this,flipper.getHeight(), calendarData);
 			ScheduleApplication.LogD(ScheduleScreen.class, "LOCAL_SCHEDULE_UPDATE");
-			ScheduleScreen.this.runOnUiThread(new Runnable(){
-				@Override
-				public void run() {
-					listdata = calendarData.getMonthSchedule(curScrollYear, curScrollMonth);
-	        		handler.sendEmptyMessage(LOAD_DATA_OVER);
-	        	    gridView.setAdapter(calV);
-				}});
+			
+			listdata = calendarData.getMonthSchedule(curScrollYear, curScrollMonth);
+    		handler.sendEmptyMessage(LOAD_DATA_OVER);
+			
+//			ScheduleScreen.this.runOnUiThread(new Runnable(){
+//				@Override
+//				public void run() {
+//					listdata = calendarData.getMonthSchedule(curScrollYear, curScrollMonth);
+//	        		handler.sendEmptyMessage(LOAD_DATA_OVER);
+//	        	    gridView.setAdapter(calV);
+//				}});
 			
 			break;
 		}

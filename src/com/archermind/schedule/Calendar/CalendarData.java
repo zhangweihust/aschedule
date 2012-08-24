@@ -37,7 +37,7 @@ public class CalendarData {
 
     private String[] dayNumber = new String[42]; // 一个gridview中的日期存入此数组中
 
-    private static String[] week = {
+    private String[] week = {
             "周日", "周一", "周二", "周三", "周四", "周五", "周六"
     };
 
@@ -336,6 +336,10 @@ public class CalendarData {
 
     public String[] getDayNumber() {
         return this.dayNumber;
+    }
+    
+    public String[] getWeek(){
+    	return this.week;
     }
 
     class SortByPastsecond implements Comparator

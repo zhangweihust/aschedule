@@ -132,7 +132,7 @@ public class SimpleTimeSelectorDialog implements OnClickListener {
 
 		public void onScrollingFinished(WheelView wheel) {
 			wheelScrolled = false;
-			updateStatus();
+//			updateStatus();
 		}
 	};
 

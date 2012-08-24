@@ -1,9 +1,5 @@
 package com.archermind.schedule.Views;
 
-import java.util.Calendar;
-
-import android.app.AlarmManager;
-import android.app.PendingIntent;
 import android.appwidget.AppWidgetManager;
 import android.appwidget.AppWidgetProvider;
 import android.content.Context;
@@ -46,7 +42,7 @@ public class MonthCalWidget extends AppWidgetProvider {
 					if (action.equals(WIDGET_CLICK_MYTV) || action.equals(WIDGET_NEWDAY_ALARM) ||	action.equals(WIDGET_DATE_CHANGED)) {
 						MCWUpdateService.initMonthDisplayHelper();
 					} else {
-						super.onReceive(context, intent);
+						initService(context);
 						return;
 					  }
 			MCWUpdateService.updateCalendar(context);

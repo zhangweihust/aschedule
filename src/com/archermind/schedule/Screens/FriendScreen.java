@@ -29,6 +29,7 @@ import android.view.View.OnClickListener;
 import android.widget.Button;
 import android.widget.ListView;
 import android.widget.RelativeLayout;
+import android.widget.Toast;
 
 import com.archermind.schedule.R;
 import com.archermind.schedule.ScheduleApplication;
@@ -63,7 +64,6 @@ public class FriendScreen extends Screen implements OnClickListener, IEventHandl
 	private RelativeLayout loading;
 	private SharedPreferences sp;
 	
-//	private ProgressDialog dialog;
 	public FriendScreen(){
 		database = ServiceManager.getDbManager();
 		serverInterface = new ServerInterface();
@@ -97,8 +97,6 @@ public class FriendScreen extends Screen implements OnClickListener, IEventHandl
 		friend_listView = (ListView) findViewById(R.id.friend_listView);
 		friend_contact_listView = (ListView) findViewById(R.id.friend_contact_listView);
 		loading = (RelativeLayout) findViewById(R.id.loading);
-//		dialog = new ProgressDialog(this, R.style.rotateProgress);
-//		dialog.show();
 		friend_button_state= (Button) findViewById(R.id.friend_button_state);
 		friend_contact_button_state= (Button) findViewById(R.id.friend_contact_button_state);
 		friend_button_state.setOnClickListener(this);
@@ -208,6 +206,7 @@ public class FriendScreen extends Screen implements OnClickListener, IEventHandl
 			editor.commit();
 			break;
 		case CONTACT_SYNC_FAILED:
+			handler.sendEmptyMessage(0);
 			break;
 		case CONTACT_SYNC_CANCEL:
 			getData();
@@ -220,8 +219,10 @@ public class FriendScreen extends Screen implements OnClickListener, IEventHandl
 	
 	private Handler handler = new Handler(){
 		public void handleMessage(Message msg) {
+			if(msg.what == 0){
+				Toast.makeText(FriendScreen.this, "同步失败！", Toast.LENGTH_SHORT).show();
+			}
 			loading.setVisibility(View.GONE);
-//			dialog.dismiss();
 			initAdapter();
 		};
 	};
@@ -460,7 +461,7 @@ public class FriendScreen extends Screen implements OnClickListener, IEventHandl
 		 hashMap.put(Constant.FriendType.FRIEND_CONTACT_USE_KEY, contact_use);
 		 hashMap.put(Constant.FriendType.FRIEND_CONTACT_KEY, contact);
 		 
-		 handler.sendEmptyMessage(0);
+		 handler.sendEmptyMessage(1);
 		return hashMap;
 	}
 	

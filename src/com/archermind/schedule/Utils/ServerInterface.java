@@ -1038,4 +1038,20 @@ public class ServerInterface {
 		}
 		return result;
 	}
+	// -1 传入值为空 ，-2 ：帐号不存在，-3 昵称已经存在， -4 其他错误
+	public int nickModify(String user_id,String nick) {
+		Map<String, String> map = new HashMap<String, String>();
+		map.put("user_id", user_id);
+		map.put("nick", nick);
+		String ret = HttpUtils
+				.doPost(map,
+						"http://player.archermind.com/ci/index.php/aschedule/nickModify");
+		int result =0;
+		try{
+			result =Integer.parseInt(ret);
+		}catch (Exception e){
+			result =-4;
+		}
+		return result;
+	}
 }

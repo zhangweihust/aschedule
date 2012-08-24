@@ -305,7 +305,7 @@ public class WeatherDialog implements OnClickListener {
 
 	public void show() {
 		window = weatherDialog.getWindow(); // 得到对话框
-		window.setWindowAnimations(R.style.dialogWindowAnim); // 设置窗口弹出动画
+//		window.setWindowAnimations(R.style.dialogWindowAnim); // 设置窗口弹出动画
 		WindowManager.LayoutParams wl = window.getAttributes();
 		// //根据x，y坐标设置窗口需要显示的位置
 		// wl.x = x; //x小于0左移，大于0右移

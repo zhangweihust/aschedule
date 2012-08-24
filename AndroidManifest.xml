@@ -67,7 +67,7 @@
                 <action android:name="android.intent.action.TIMEZONE_CHANGED" />  
             </intent-filter>
         </receiver>
-        <receiver android:name=".Services.AlarmServiceReceiver"></receiver>
+        <receiver android:name=".Services.AlarmServiceReceiver"></receiver>        
         <receiver android:name="com.archermind.schedule.Views.WidgetProvider">
 			<intent-filter>
 				<action android:name="android.appwidget.action.APPWIDGET_UPDATE" />
@@ -80,7 +80,6 @@
 			<meta-data android:name="android.appwidget.provider"
 				android:resource="@xml/appwidget_provider" />
 		</receiver>
-		
             
             <receiver android:name="com.archermind.schedule.Views.MonthCalWidget">
 			<intent-filter>

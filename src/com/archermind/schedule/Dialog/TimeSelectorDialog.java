@@ -153,7 +153,7 @@ public class TimeSelectorDialog implements OnClickListener {
 
 		public void onScrollingFinished(WheelView wheel) {
 			wheelScrolled = false;
-			updateStatus();
+//			updateStatus();
 		}
 	};
 

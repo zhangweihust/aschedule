@@ -1,7 +1,14 @@
 package com.archermind.schedule.Screens;
 
 
+import java.io.ByteArrayOutputStream;
 import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -52,14 +59,16 @@ public class AccountSettingScreen extends Activity implements OnClickListener{
 	private static final int LOGOUT_FAILED = 0;
 	private static final int LOGOUT_SUCCESS = 1;
 	
-	private SmartImageView headImage;
-	private String headImagePath;
+	private SmartImageView headImage ;
 	private LinearLayout bindTelephone;
 	private Button logout;
 	private Button goback;
 	private TextView loginNick;
 	private ModifyNickDialog modifyNickDialog;
 	private Handler handler;
+	private String dictionry = Environment.getExternalStorageDirectory() + "/schedule";
+	private String fileName = "headImage.jpg";
+	private String headImagePath = dictionry + "/" + fileName;
 	
     /** Called when the activity is first created. */
     @Override
@@ -95,8 +104,16 @@ public class AccountSettingScreen extends Activity implements OnClickListener{
         
         
         loginNick.setText(ServiceManager.getSPUserInfo(UserInfoData.NICK));
-		headImage.setImageUrl(getUriFormWeb(),
-                R.drawable.friend_item_img, R.drawable.friend_item_img);
+        
+        String uri = getUriFormWeb();
+        System.out.println("***********uri = "+uri);
+        
+        if(new File(headImagePath).exists()){
+        	headImage.setImageURI(Uri.parse(headImagePath));
+        }else{
+    		headImage.setImageUrl(uri,
+                    R.drawable.friend_item_img, R.drawable.friend_item_img);
+        }
         
         handler = new Handler()
         {
@@ -207,7 +224,7 @@ public class AccountSettingScreen extends Activity implements OnClickListener{
 			if(data != null){
 				uri = data.getData();
 				startPhotoZoom(uri);
-				headImagePath = getFilepathFromUri(uri);
+//				headImagePath = getFilepathFromUri(uri);
 			}
 			break;
 		case 2:
@@ -215,7 +232,7 @@ public class AccountSettingScreen extends Activity implements OnClickListener{
 					+ "/headImage.jpg");
 			uri = Uri.fromFile(temp);
 			startPhotoZoom(uri);
-			headImagePath = uri.getPath();
+//			headImagePath = uri.getPath();
 			break;
 		case 3:
 			if(data != null){
@@ -267,16 +284,56 @@ public class AccountSettingScreen extends Activity implements OnClickListener{
 		startActivityForResult(intent, 3);
 	}
 	
+	private void writePhoto(byte[] bytes){
+//		String dictionry = Environment.getExternalStorageDirectory()
+//		+ ScheduleApplication.getContext().getPackageName()+"/image";
+		File dir = new File(dictionry);
+		File file = null;
+        if(!dir.exists()){
+        	dir.mkdirs();
+        	file = new File(dir,fileName);
+        }else{
+        	file = new File(dir,fileName);
+        	if(file.exists()){
+        		file.delete();
+        		try {
+					file.createNewFile();
+				} catch (IOException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+        	}
+        }
+        
+		OutputStream os;
+		try {
+			os = new FileOutputStream(file);
+			try {
+				os.write(bytes);
+			} catch (IOException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+		} catch (FileNotFoundException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		
+	}	
+	
 	private void setPicToView(Intent picdata) {
 		Bundle extras = picdata.getExtras();
 		if (extras != null) {
-			ServerInterface serverInterface = ServiceManager.getServerInterface();
-			serverInterface.InitAmtCloud(this);
 			String filename = headImagePath.substring(headImagePath.lastIndexOf("/") + 1, headImagePath.lastIndexOf("."));
 			String expandname = headImagePath.substring(headImagePath.lastIndexOf(".") + 1, headImagePath.length());
-			if(0 == serverInterface.uploadPhoto(this, String.valueOf(ServiceManager.getUserId()), headImagePath, filename, expandname)){
+			ServiceManager.getServerInterface().InitAmtCloud(this);
+			if(0 == ServiceManager.getServerInterface().uploadPhoto(this, String.valueOf(ServiceManager.getUserId()), headImagePath, filename, expandname)){
 				Bitmap photo = extras.getParcelable("data");
 				Drawable drawable = new BitmapDrawable(photo);			
+				ByteArrayOutputStream stream = new ByteArrayOutputStream();
+				photo.compress(Bitmap.CompressFormat.JPEG, 60, stream);
+				byte[] b = stream.toByteArray();
+				writePhoto(b);
 				headImage.setImageDrawable(drawable);
 				Toast.makeText(this, "上传图片成功！", Toast.LENGTH_LONG).show();
 			}else{

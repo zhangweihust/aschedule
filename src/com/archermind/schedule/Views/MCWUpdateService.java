@@ -1,12 +1,10 @@
 package com.archermind.schedule.Views;
 
-import java.text.DateFormatSymbols;
-import java.text.SimpleDateFormat;
 import java.util.Calendar;
-import java.util.Date;
 
 import com.archermind.schedule.R;
 import com.archermind.schedule.Calendar.CalendarData;
+import com.archermind.schedule.Calendar.LunarCalendar;
 import com.archermind.schedule.Utils.Constant;
 
 import android.app.IntentService;
@@ -15,9 +13,11 @@ import android.appwidget.AppWidgetManager;
 import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
+import android.graphics.Color;
 import android.text.Spannable;
 import android.text.SpannableStringBuilder;
 import android.text.style.BackgroundColorSpan;
+import android.view.View;
 import android.widget.RemoteViews;
 
 public class MCWUpdateService extends IntentService {
@@ -25,7 +25,13 @@ public class MCWUpdateService extends IntentService {
 	private static int yearNow;
 	private static int monthNow;
 	private static int today;
-	private static MonthDisplayHelper mdh;
+	
+	private static int jumpYear;
+	private static int jumpMonth;
+	
+	private static String[] dayNumber = new String[42];
+	
+	private static CalendarData calendarData;
 
 	public MCWUpdateService() {
 		super("MCWUpdateService");
@@ -42,15 +48,14 @@ public class MCWUpdateService extends IntentService {
 		yearNow = cal.get(Calendar.YEAR);
 		monthNow = cal.get(Calendar.MONTH);
 		today = cal.get(Calendar.DATE);
-		mdh = new MonthDisplayHelper(yearNow, monthNow);
 	}
 
 	public static void nextMonth() {
-		mdh.nextMonth();
+		jumpMonth++;
 	}
 	
 	public static void previousMonth() {
-		mdh.previousMonth();
+		jumpMonth--;
 	}
 	
 	public static void updateCalendar(Context context) {
@@ -61,11 +66,11 @@ public class MCWUpdateService extends IntentService {
 	}
 
 	private static RemoteViews buildUpdate(Context context) {
-		RemoteViews views = new RemoteViews(context.getPackageName(), R.layout.main);
+		RemoteViews views = new RemoteViews(context.getPackageName(), R.layout.main_layout);
 		setViewAction(context, views, MonthCalWidget.WIDGET_CLICK_NEXT, R.id.nextmonth);
 		setViewAction(context, views, MonthCalWidget.WIDGET_CLICK_PREV, R.id.prevmonth);
 		setViewAction(context, views, MonthCalWidget.WIDGET_CLICK_MYTV, R.id.monthyear);
-		fillCalendar(context, views);
+		setCalendar(context, views);
 		return views;
 	}
 	
@@ -75,67 +80,63 @@ public class MCWUpdateService extends IntentService {
 		rv.setOnClickPendingIntent(idView, PendingIntent.getBroadcast(cont, 0, intent, 0));
 	}
 
-	private static void fillCalendar(Context cont, RemoteViews rv) {
-		// Month and year (title)
-		SimpleDateFormat sdfDate = new SimpleDateFormat("MMMM yyyy");
-		Calendar cal = Calendar.getInstance();
-		cal.set(mdh.getYear(), mdh.getMonth(), 1);
-		rv.setTextViewText( R.id.monthyear, sdfDate.format(cal.getTime()) ); 
-		// Dates (grid)
-		setWeekDays(cont, rv);
-		clearDatesGrid(cont, rv);
-		refillDatesGrid(cont, rv);
+	private static void setCalendar(Context context, RemoteViews rv){
+		System.out.println("*******************setCalendar********************8");
 		
-		
-		
-//		CalendarData calendarData = new CalendarData(jumpMonth, jumpYear, 1, Constant.flagType);
-	}
-	
-	private static void setWeekDays(Context cont, RemoteViews rv) {
-		int identifier;
-		DateFormatSymbols weekDays = new DateFormatSymbols();
-		for (int i = Calendar.SUNDAY; i <= Calendar.SATURDAY; i++) {
-			identifier = cont.getResources().getIdentifier("day" + i, "id", cont.getPackageName());
-			rv.setTextViewText(identifier, weekDays.getShortWeekdays()[i]);
+		calendarData = new CalendarData(jumpMonth, jumpYear, yearNow,monthNow, today,Constant.flagType);
+		dayNumber = calendarData.getDayNumber();
+		int identifier_week = 0;
+		int identifier_day = 0;
+		int identifier_mark = 0;
+		int identifier_holiday = 0;
+		for (int i = 0; i < 7; i++) {
+			System.out.println("day" + i);
+			identifier_week = context.getResources().getIdentifier("day" + i, "id", context.getPackageName());
+			rv.setTextViewText(identifier_week, calendarData.getWeek()[i]);
 		}
+        for (int i = 0; i < dayNumber.length; i++) {
+        	
+        	
+        	
+    		identifier_day = context.getResources().getIdentifier("date" + i, "id", context.getPackageName());
+    		identifier_mark = context.getResources().getIdentifier("mark" + i, "id", context.getPackageName());
+    		identifier_holiday = context.getResources().getIdentifier("holiday" + i, "id", context.getPackageName());
+    		
+    		
+    		String temp = dayNumber[i].split("\\.")[1];
+    		if(temp.contains(LunarCalendar.suffix)){
+    			rv.setImageViewResource(identifier_holiday, R.drawable.other_holiday);
+    		}
+    		
+//    		if(calendarData.getMarkcount()[i] > 0){
+//    			rv.setViewVisibility(identifier_mark, View.VISIBLE);
+//    			rv.set
+//    		}
+    		
+    		
+        	if (i < calendarData.getDaysOfWeek()) {
+            } else if (i < calendarData.getDayOfWeek() + calendarData.getDaysOfWeek()) { // 前一个月
+            	SpannableStringBuilder ssb = new SpannableStringBuilder();
+				ssb.append(dayNumber[i].split("\\.")[0]);
+            	rv.setTextColor(identifier_day, Color.GRAY);
+            	rv.setTextViewText(identifier_day, dayNumber[i].split("\\.")[0]);
+            	
+            } else if (i < calendarData.getDaysOfMonth() + calendarData.getDayOfWeek() + calendarData.getDaysOfWeek()) { // 本月
+            	SpannableStringBuilder ssb = new SpannableStringBuilder();
+				ssb.append(dayNumber[i].split("\\.")[0]);
+				ssb.setSpan(new BackgroundColorSpan(context.getResources().getColor(R.color.selector)), 0, 1, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
+				rv.setTextColor(identifier_day, Color.BLACK);
+				rv.setTextViewText(identifier_day, ssb);
+				
+				
+				System.out.println("dayNumber[i].split()[0] = "+dayNumber[i].split("\\.")[0]);
+				
+            } else { // 下一个月
+             	SpannableStringBuilder ssb = new SpannableStringBuilder();
+				ssb.append(dayNumber[i].split("\\.")[0]);
+            	rv.setTextColor(identifier_day, Color.GRAY);
+            	rv.setTextViewText(identifier_day, ssb);
+            }
+        }
 	}
-	
-	private static void clearDatesGrid(Context cont, RemoteViews rv) {
-		int identifier;
-		for (int j = 0; j < 7; j++) {
-			for (int i = 0; i < 6; i++) {
-				identifier = cont.getResources().getIdentifier("date" + i + j, "id", cont.getPackageName());
-				rv.setTextViewText(identifier, "");
-			}
-		}
-	}
-	
-	private static void refillDatesGrid(Context cont, RemoteViews rv) {
-		int dateNumber, nextDateNumber;
-		int i, identifier;
-		String dateNumberStr;
-		for (int j = 0; j < 7; j++) {
-			i = 0;
-			nextDateNumber = 0;
-			do {
-				dateNumber = mdh.isWithinCurrentMonth(i, j) ? mdh.getDayAt(i, j) : 0;
-				if (dateNumber > 0) {
-					identifier = cont.getResources().getIdentifier("date" + i + j, "id", cont.getPackageName());
-					dateNumberStr = dateNumber < 10 ? "   " : "  ";
-					dateNumberStr += dateNumber + "  ";
-					if (mdh.getYear() == yearNow && mdh.getMonth() == monthNow && dateNumber == today) {
-						SpannableStringBuilder ssb = new SpannableStringBuilder();
-						ssb.append(dateNumberStr);
-						ssb.setSpan(new BackgroundColorSpan(cont.getResources().getColor(R.color.today)), 1, 5, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
-						rv.setTextViewText(identifier, ssb);
-					} else {
-						rv.setTextViewText(identifier, dateNumberStr);
-					}
-					nextDateNumber = dateNumber + 7;
-				}
-				i++;
-			} while (nextDateNumber <= mdh.getNumberOfDaysInMonth()); 
-		}
-	}
-	
 }

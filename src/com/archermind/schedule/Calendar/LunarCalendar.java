@@ -63,29 +63,29 @@ public class LunarCalendar {
 										"0214 情人",
 										"0308 妇女",
 										"0312 ֲ植树",
-										"0315 消费者权益日",
+//										"0315 消费者权益日",
 										"0401 愚人",
 										"0501 劳动",
 										"0504 青年",
-										"0512 护士",
+//										"0512 护士",
 										"0601 儿童",
 										"0701 建党",
 										"0801 建军",
 										"0808 父亲",
-										"0909 毛泽东逝世纪念日",
+//										"0909 毛泽东逝世纪念日",
 										"0910 教师",
-										"0928 孔子诞辰",
+//										"0928 孔子诞辰",
 										"1001 国庆",
-										"1006 老人",
-										"1024 联合国日",
-										"1112 孙中山诞辰纪念",
-										"1220 澳门回归纪念",
-										"1225 圣诞",
-										"1226 毛泽东诞辰纪念�"
+//										"1006 老人",
+//										"1024 联合国日",
+//										"1112 孙中山诞辰纪念",
+//										"1220 澳门回归纪念",
+										"1225 圣诞"
+//										"1226 毛泽东诞辰纪念�"
 	};
 	
 	// ====== 传回农历Y年的总天数
-	final private static int yearDays(int y) {
+	final private int yearDays(int y) {
 		int i, sum = 348;
 		for (i = 0x8000; i > 0x8; i >>= 1) {
 			if ((lunarInfo[y - 1900] & i) != 0)
@@ -95,7 +95,7 @@ public class LunarCalendar {
 	}
 
 	// ====== 传回农历Y年闰月的天数
-	final private static int leapDays(int y) {
+	final private int leapDays(int y) {
 		if (leapMonth(y) != 0) {
 			if ((lunarInfo[y - 1900] & 0x10000) != 0)
 				return 30;
@@ -106,7 +106,7 @@ public class LunarCalendar {
 	}
 
 	// ====== 传回农历y年闰哪个月1-12，没闰传回0
-	final private static int leapMonth(int y) {
+	final private int leapMonth(int y) {
 		return (int) (lunarInfo[y - 1900] & 0xf);
 	}
 
@@ -125,7 +125,7 @@ public class LunarCalendar {
 	}
 
 	// ====== 传入月日的offset  传回干支，0=甲子
-	final private static String cyclicalm(int num) {
+	final private String cyclicalm(int num) {
 		final String[] Gan = new String[] { "甲","乙","丙","丁","戊","己","庚","辛","壬","癸" };
 		final String[] Zhi = new String[] { "子","丑","寅","卯","辰","巳","午","未","申","酉","戌","亥" };
 		return (Gan[num % 10] + Zhi[num % 12]);
@@ -137,7 +137,7 @@ public class LunarCalendar {
 		return (cyclicalm(num));
 	}
 
-	public static String getChinaDayString(int day) {
+	public String getChinaDayString(int day) {
 		String chineseTen[] = { "初", "十", "廿", "卅" };
 		int n = day % 10 == 0 ? 9 : day % 10 - 1;
 		if (day > 30)
@@ -155,7 +155,7 @@ public class LunarCalendar {
 	 * @param cal
 	 * @return
 	 */
-	public String getLunarDate(int year_log, int month_log, int day_log, boolean isday) {
+	public synchronized String getLunarDate(int year_log, int month_log, int day_log, boolean isday) {
 		// @SuppressWarnings("unused")
 		int yearCyl, monCyl, dayCyl;
 		//int leapMonth = 0;

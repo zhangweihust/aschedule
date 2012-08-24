@@ -11,6 +11,7 @@ import android.view.WindowManager;
 import android.view.animation.AnticipateOvershootInterpolator;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.Toast;
 
 import com.archermind.schedule.R;
 import com.archermind.schedule.ScheduleApplication;
@@ -70,9 +71,15 @@ public class ModifyNickDialog implements OnClickListener {
 		// TODO Auto-generated method stub
 		switch(v.getId()){
 		case R.id.modify_nick_cancel:
-			ServiceManager.setSPUserInfo(UserInfoData.NICK,nick.getText().toString());
 			break;
 		case R.id.modify_nick__ok:
+			int state = ServiceManager.getServerInterface().nickModify(String.valueOf(ServiceManager.getUserId()),nick.getText().toString());
+			if(0 == state){
+				ServiceManager.setSPUserInfo(UserInfoData.NICK,nick.getText().toString());
+				Toast.makeText(context, "昵称修改成功", Toast.LENGTH_LONG).show();
+			}else if(-3 == state){
+				Toast.makeText(context, "昵称已经存在，请重新输入", Toast.LENGTH_LONG).show();
+			}
 			break;
 		}
 		dismiss();

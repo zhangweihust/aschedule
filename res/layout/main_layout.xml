@@ -19,78 +19,957 @@
    </LinearLayout>	
    <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
    	android:id="@+id/datesll"
-		android:orientation="horizontal"
+		android:orientation="vertical"
       android:layout_width="wrap_content"
       android:layout_height="wrap_content">
       <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-      	android:orientation="vertical" style="@style/LL_DatesColumn">"
+      	android:orientation="horizontal" style="@style/LL_DatesColumn">"
+	      <TextView android:id="@+id/day0" style="@style/Text_DaysOfWeek"/>
 	      <TextView android:id="@+id/day1" style="@style/Text_DaysOfWeek"/>
-	      <TextView android:id="@+id/date00" style="@style/Text_DatesColumn"/>
-	      <TextView android:id="@+id/date10" style="@style/Text_DatesColumn"/>
-	      <TextView android:id="@+id/date20" style="@style/Text_DatesColumn"/>
-	      <TextView android:id="@+id/date30" style="@style/Text_DatesColumn"/>
-	      <TextView android:id="@+id/date40" style="@style/Text_DatesColumn"/>
-	      <TextView android:id="@+id/date50" style="@style/Text_DatesColumn"/>
-		</LinearLayout>
-      <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-      	android:orientation="vertical" style="@style/LL_DatesColumn">
-       	<TextView android:id="@+id/day2" style="@style/Text_DaysOfWeek"/>
-	      <TextView android:id="@+id/date01" style="@style/Text_DatesColumn"/>
-	      <TextView android:id="@+id/date11" style="@style/Text_DatesColumn"/>
-	      <TextView android:id="@+id/date21" style="@style/Text_DatesColumn"/>
-	      <TextView android:id="@+id/date31" style="@style/Text_DatesColumn"/>
-	      <TextView android:id="@+id/date41" style="@style/Text_DatesColumn"/>
-	      <TextView android:id="@+id/date51" style="@style/Text_DatesColumn"/>
-		</LinearLayout>
-      <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-      	android:orientation="vertical" style="@style/LL_DatesColumn">
-       	<TextView android:id="@+id/day3" style="@style/Text_DaysOfWeek"/>
-	      <TextView android:id="@+id/date02" style="@style/Text_DatesColumn"/>
-	      <TextView android:id="@+id/date12" style="@style/Text_DatesColumn"/>
-	      <TextView android:id="@+id/date22" style="@style/Text_DatesColumn"/>
-	      <TextView android:id="@+id/date32" style="@style/Text_DatesColumn"/>
-	      <TextView android:id="@+id/date42" style="@style/Text_DatesColumn"/>
-	      <TextView android:id="@+id/date52" style="@style/Text_DatesColumn"/>
-		</LinearLayout>
-      <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-      	android:orientation="vertical" style="@style/LL_DatesColumn">
-	     	<TextView android:id="@+id/day4" style="@style/Text_DaysOfWeek"/>
-	      <TextView android:id="@+id/date03" style="@style/Text_DatesColumn"/>
-	      <TextView android:id="@+id/date13" style="@style/Text_DatesColumn"/>
-	      <TextView android:id="@+id/date23" style="@style/Text_DatesColumn"/>
-	      <TextView android:id="@+id/date33" style="@style/Text_DatesColumn"/>
-	      <TextView android:id="@+id/date43" style="@style/Text_DatesColumn"/>
-	      <TextView android:id="@+id/date53" style="@style/Text_DatesColumn"/>
-		</LinearLayout>
-      <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-      	android:orientation="vertical" style="@style/LL_DatesColumn">
-      	<TextView android:id="@+id/day5" style="@style/Text_DaysOfWeek"/>
-	      <TextView android:id="@+id/date04" style="@style/Text_DatesColumn"/>
-	      <TextView android:id="@+id/date14" style="@style/Text_DatesColumn"/>
-	      <TextView android:id="@+id/date24" style="@style/Text_DatesColumn"/>
-	      <TextView android:id="@+id/date34" style="@style/Text_DatesColumn"/>
-	      <TextView android:id="@+id/date44" style="@style/Text_DatesColumn"/>
-	      <TextView android:id="@+id/date54" style="@style/Text_DatesColumn"/>
-		</LinearLayout>
-      <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-      	android:orientation="vertical" style="@style/LL_DatesColumn">
+	      <TextView android:id="@+id/day2" style="@style/Text_DaysOfWeek"/>
+	      <TextView android:id="@+id/day3" style="@style/Text_DaysOfWeek"/>
+	      <TextView android:id="@+id/day4" style="@style/Text_DaysOfWeek"/>
+	      <TextView android:id="@+id/day5" style="@style/Text_DaysOfWeek"/>
 	      <TextView android:id="@+id/day6" style="@style/Text_DaysOfWeek"/>
-	      <TextView android:id="@+id/date05" style="@style/Text_DatesColumn"/>
-	      <TextView android:id="@+id/date15" style="@style/Text_DatesColumn"/>
-	      <TextView android:id="@+id/date25" style="@style/Text_DatesColumn"/>
-	      <TextView android:id="@+id/date35" style="@style/Text_DatesColumn"/>
-	      <TextView android:id="@+id/date45" style="@style/Text_DatesColumn"/>
-	      <TextView android:id="@+id/date55" style="@style/Text_DatesColumn"/>
 		</LinearLayout>
       <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-      	android:orientation="vertical" style="@style/LL_DatesColumn">
-	     	<TextView android:id="@+id/day7" style="@style/Text_DaysOfWeek"/>
-	      <TextView android:id="@+id/date06" style="@style/Text_DatesColumn"/>
-	      <TextView android:id="@+id/date16" style="@style/Text_DatesColumn"/>
-	      <TextView android:id="@+id/date26" style="@style/Text_DatesColumn"/>
-	      <TextView android:id="@+id/date36" style="@style/Text_DatesColumn"/>
-	      <TextView android:id="@+id/date46" style="@style/Text_DatesColumn"/>
-	      <TextView android:id="@+id/date56" style="@style/Text_DatesColumn"/>
+      	android:orientation="horizontal" style="@style/LL_DatesColumn">
+	      
+  <RelativeLayout
+  android:id="@+id/layout0"
+  style="@style/Layout_DatesColumn"
+  android:background="@drawable/gridview_bk">
+  <TextView 
+	android:id="@+id/date0" style="@style/Text_DatesColumn"/>  
+  <TextView 
+      android:id="@+id/mark0"
+	  android:gravity="center"
+	  android:layout_width="wrap_content"
+	  android:layout_height="wrap_content"
+	  android:layout_alignParentRight="true"
+	  android:text="2"
+	  android:textColor="@android:color/black"
+	  android:visibility="visible"/>  
+  <ImageView 
+      android:id="@+id/holiday0"
+      android:layout_width="wrap_content"
+	  android:layout_height="wrap_content"
+	  android:layout_alignParentRight="true"/>
+</RelativeLayout>
+
+        <RelativeLayout
+  android:id="@+id/layout1"
+style="@style/Layout_DatesColumn"
+  android:background="@drawable/gridview_bk">
+  <TextView 
+	android:id="@+id/date1" style="@style/Text_DatesColumn"/>  
+  <TextView 
+      android:id="@+id/mark1"
+	  android:gravity="center"
+	  android:layout_width="wrap_content"
+	  android:layout_height="wrap_content"
+	  android:layout_alignParentRight="true"
+	  android:text="2"
+	  android:textColor="@android:color/black"
+	  android:visibility="visible"/>  
+  <ImageView 
+      android:id="@+id/holiday1"
+      android:layout_width="wrap_content"
+	  android:layout_height="wrap_content"
+	  android:layout_alignParentRight="true"/>
+</RelativeLayout>
+
+              <RelativeLayout
+  android:id="@+id/layout2"
+style="@style/Layout_DatesColumn"
+  android:background="@drawable/gridview_bk">
+  <TextView 
+	android:id="@+id/date2" style="@style/Text_DatesColumn"/>  
+  <TextView 
+      android:id="@+id/mark2"
+	  android:gravity="center"
+	  android:layout_width="wrap_content"
+	  android:layout_height="wrap_content"
+	  android:layout_alignParentRight="true"
+	  android:text="2"
+	  android:textColor="@android:color/black"
+	  android:visibility="visible"/>  
+  <ImageView 
+      android:id="@+id/holiday2"
+      android:layout_width="wrap_content"
+	  android:layout_height="wrap_content"
+	  android:layout_alignParentRight="true"/>
+</RelativeLayout>
+
+                    <RelativeLayout
+  android:id="@+id/layout3"
+style="@style/Layout_DatesColumn"
+  android:background="@drawable/gridview_bk">
+  <TextView 
+	android:id="@+id/date3" style="@style/Text_DatesColumn"/>  
+  <TextView 
+      android:id="@+id/mark3"
+	  android:gravity="center"
+	  android:layout_width="wrap_content"
+	  android:layout_height="wrap_content"
+	  android:layout_alignParentRight="true"
+	  android:text="2"
+	  android:textColor="@android:color/black"
+	  android:visibility="visible"/>  
+  <ImageView 
+      android:id="@+id/holiday3"
+      android:layout_width="wrap_content"
+	  android:layout_height="wrap_content"
+	  android:layout_alignParentRight="true"/>
+</RelativeLayout>
+
+                          <RelativeLayout
+  android:id="@+id/layout4"
+style="@style/Layout_DatesColumn"
+  android:background="@drawable/gridview_bk">
+  <TextView 
+	android:id="@+id/date4" style="@style/Text_DatesColumn"/>  
+  <TextView 
+      android:id="@+id/mark4"
+	  android:gravity="center"
+	  android:layout_width="wrap_content"
+	  android:layout_height="wrap_content"
+	  android:layout_alignParentRight="true"
+	  android:text="2"
+	  android:textColor="@android:color/black"
+	  android:visibility="visible"/>  
+  <ImageView 
+      android:id="@+id/holiday4"
+      android:layout_width="wrap_content"
+	  android:layout_height="wrap_content"
+	  android:layout_alignParentRight="true"/>
+</RelativeLayout>
+
+                                <RelativeLayout
+  android:id="@+id/layout5"
+style="@style/Layout_DatesColumn"
+  android:background="@drawable/gridview_bk">
+  <TextView 
+	android:id="@+id/date5" style="@style/Text_DatesColumn"/>  
+  <TextView 
+      android:id="@+id/mark5"
+	  android:gravity="center"
+	  android:layout_width="wrap_content"
+	  android:layout_height="wrap_content"
+	  android:layout_alignParentRight="true"
+	  android:text="2"
+	  android:textColor="@android:color/black"
+	  android:visibility="visible"/>  
+  <ImageView 
+      android:id="@+id/holiday5"
+      android:layout_width="wrap_content"
+	  android:layout_height="wrap_content"
+	  android:layout_alignParentRight="true"/>
+</RelativeLayout>
+
+                                      <RelativeLayout
+  android:id="@+id/layout6"
+style="@style/Layout_DatesColumn"
+  android:background="@drawable/gridview_bk">
+  <TextView 
+	android:id="@+id/date6" style="@style/Text_DatesColumn"/>  
+  <TextView 
+      android:id="@+id/mark6"
+	  android:gravity="center"
+	  android:layout_width="wrap_content"
+	  android:layout_height="wrap_content"
+	  android:layout_alignParentRight="true"
+	  android:text="2"
+	  android:textColor="@android:color/black"
+	  android:visibility="visible"/>  
+  <ImageView 
+      android:id="@+id/holiday6"
+      android:layout_width="wrap_content"
+	  android:layout_height="wrap_content"
+	  android:layout_alignParentRight="true"/>
+</RelativeLayout>
+
+		</LinearLayout>
+      <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+      	android:orientation="horizontal" style="@style/LL_DatesColumn">
+  <RelativeLayout
+  android:id="@+id/layout7"
+style="@style/Layout_DatesColumn"
+  android:background="@drawable/gridview_bk">
+  <TextView 
+	android:id="@+id/date7" style="@style/Text_DatesColumn"/>  
+  <TextView 
+      android:id="@+id/mark7"
+	  android:gravity="center"
+	  android:layout_width="wrap_content"
+	  android:layout_height="wrap_content"
+	  android:layout_alignParentRight="true"
+	  android:text="2"
+	  android:textColor="@android:color/black"
+	  android:visibility="visible"/>  
+  <ImageView 
+      android:id="@+id/holiday7"
+      android:layout_width="wrap_content"
+	  android:layout_height="wrap_content"
+	  android:layout_alignParentRight="true"/>
+</RelativeLayout>
+
+        <RelativeLayout
+  android:id="@+id/layout8"
+style="@style/Layout_DatesColumn"
+  android:background="@drawable/gridview_bk">
+  <TextView 
+	android:id="@+id/date8" style="@style/Text_DatesColumn"/>  
+  <TextView 
+      android:id="@+id/mark8"
+	  android:gravity="center"
+	  android:layout_width="wrap_content"
+	  android:layout_height="wrap_content"
+	  android:layout_alignParentRight="true"
+	  android:text="2"
+	  android:textColor="@android:color/black"
+	  android:visibility="visible"/>  
+  <ImageView 
+      android:id="@+id/holiday8"
+      android:layout_width="wrap_content"
+	  android:layout_height="wrap_content"
+	  android:layout_alignParentRight="true"/>
+</RelativeLayout>
+
+              <RelativeLayout
+  android:id="@+id/layout9"
+style="@style/Layout_DatesColumn"
+  android:background="@drawable/gridview_bk">
+  <TextView 
+	android:id="@+id/date9" style="@style/Text_DatesColumn"/>  
+  <TextView 
+      android:id="@+id/mark9"
+	  android:gravity="center"
+	  android:layout_width="wrap_content"
+	  android:layout_height="wrap_content"
+	  android:layout_alignParentRight="true"
+	  android:text="2"
+	  android:textColor="@android:color/black"
+	  android:visibility="visible"/>  
+  <ImageView 
+      android:id="@+id/holiday9"
+      android:layout_width="wrap_content"
+	  android:layout_height="wrap_content"
+	  android:layout_alignParentRight="true"/>
+</RelativeLayout>
+
+                    <RelativeLayout
+  android:id="@+id/layout10"
+style="@style/Layout_DatesColumn"
+  android:background="@drawable/gridview_bk">
+  <TextView 
+	android:id="@+id/date10" style="@style/Text_DatesColumn"/>  
+  <TextView 
+      android:id="@+id/mark10"
+	  android:gravity="center"
+	  android:layout_width="wrap_content"
+	  android:layout_height="wrap_content"
+	  android:layout_alignParentRight="true"
+	  android:text="2"
+	  android:textColor="@android:color/black"
+	  android:visibility="visible"/>  
+  <ImageView 
+      android:id="@+id/holiday10"
+      android:layout_width="wrap_content"
+	  android:layout_height="wrap_content"
+	  android:layout_alignParentRight="true"/>
+</RelativeLayout>
+
+                          <RelativeLayout
+  android:id="@+id/layout11"
+style="@style/Layout_DatesColumn"
+  android:background="@drawable/gridview_bk">
+  <TextView 
+	android:id="@+id/date11" style="@style/Text_DatesColumn"/>  
+  <TextView 
+      android:id="@+id/mark11"
+	  android:gravity="center"
+	  android:layout_width="wrap_content"
+	  android:layout_height="wrap_content"
+	  android:layout_alignParentRight="true"
+	  android:text="2"
+	  android:textColor="@android:color/black"
+	  android:visibility="visible"/>  
+  <ImageView 
+      android:id="@+id/holiday11"
+      android:layout_width="wrap_content"
+	  android:layout_height="wrap_content"
+	  android:layout_alignParentRight="true"/>
+</RelativeLayout>
+
+                                <RelativeLayout
+  android:id="@+id/layout12"
+style="@style/Layout_DatesColumn"
+  android:background="@drawable/gridview_bk">
+  <TextView 
+	android:id="@+id/date12" style="@style/Text_DatesColumn"/>  
+  <TextView 
+      android:id="@+id/mark12"
+	  android:gravity="center"
+	  android:layout_width="wrap_content"
+	  android:layout_height="wrap_content"
+	  android:layout_alignParentRight="true"
+	  android:text="2"
+	  android:textColor="@android:color/black"
+	  android:visibility="visible"/>  
+  <ImageView 
+      android:id="@+id/holiday12"
+      android:layout_width="wrap_content"
+	  android:layout_height="wrap_content"
+	  android:layout_alignParentRight="true"/>
+</RelativeLayout>
+
+                                      <RelativeLayout
+  android:id="@+id/layout13"
+style="@style/Layout_DatesColumn"
+  android:background="@drawable/gridview_bk">
+  <TextView 
+	android:id="@+id/date13" style="@style/Text_DatesColumn"/>  
+  <TextView 
+      android:id="@+id/mark13"
+	  android:gravity="center"
+	  android:layout_width="wrap_content"
+	  android:layout_height="wrap_content"
+	  android:layout_alignParentRight="true"
+	  android:text="2"
+	  android:textColor="@android:color/black"
+	  android:visibility="visible"/>  
+  <ImageView 
+      android:id="@+id/holiday13"
+      android:layout_width="wrap_content"
+	  android:layout_height="wrap_content"
+	  android:layout_alignParentRight="true"/>
+</RelativeLayout>
+		</LinearLayout>
+      <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+      	android:orientation="horizontal" style="@style/LL_DatesColumn">
+	        <RelativeLayout
+  android:id="@+id/layout14"
+style="@style/Layout_DatesColumn"
+  android:background="@drawable/gridview_bk">
+  <TextView 
+	android:id="@+id/date14" style="@style/Text_DatesColumn"/>  
+  <TextView 
+      android:id="@+id/mark14"
+	  android:gravity="center"
+	  android:layout_width="wrap_content"
+	  android:layout_height="wrap_content"
+	  android:layout_alignParentRight="true"
+	  android:text="2"
+	  android:textColor="@android:color/black"
+	  android:visibility="visible"/>  
+  <ImageView 
+      android:id="@+id/holiday14"
+      android:layout_width="wrap_content"
+	  android:layout_height="wrap_content"
+	  android:layout_alignParentRight="true"/>
+</RelativeLayout>
+
+        <RelativeLayout
+  android:id="@+id/layout15"
+style="@style/Layout_DatesColumn"
+  android:background="@drawable/gridview_bk">
+  <TextView 
+	android:id="@+id/date15" style="@style/Text_DatesColumn"/>  
+  <TextView 
+      android:id="@+id/mark15"
+	  android:gravity="center"
+	  android:layout_width="wrap_content"
+	  android:layout_height="wrap_content"
+	  android:layout_alignParentRight="true"
+	  android:text="2"
+	  android:textColor="@android:color/black"
+	  android:visibility="visible"/>  
+  <ImageView 
+      android:id="@+id/holiday15"
+      android:layout_width="wrap_content"
+	  android:layout_height="wrap_content"
+	  android:layout_alignParentRight="true"/>
+</RelativeLayout>
+
+              <RelativeLayout
+  android:id="@+id/layout16"
+style="@style/Layout_DatesColumn"
+  android:background="@drawable/gridview_bk">
+  <TextView 
+	android:id="@+id/date16" style="@style/Text_DatesColumn"/>  
+  <TextView 
+      android:id="@+id/mark16"
+	  android:gravity="center"
+	  android:layout_width="wrap_content"
+	  android:layout_height="wrap_content"
+	  android:layout_alignParentRight="true"
+	  android:text="2"
+	  android:textColor="@android:color/black"
+	  android:visibility="visible"/>  
+  <ImageView 
+      android:id="@+id/holiday16"
+      android:layout_width="wrap_content"
+	  android:layout_height="wrap_content"
+	  android:layout_alignParentRight="true"/>
+</RelativeLayout>
+
+                    <RelativeLayout
+  android:id="@+id/layout17"
+style="@style/Layout_DatesColumn"
+  android:background="@drawable/gridview_bk">
+  <TextView 
+	android:id="@+id/date17" style="@style/Text_DatesColumn"/>  
+  <TextView 
+      android:id="@+id/mark17"
+	  android:gravity="center"
+	  android:layout_width="wrap_content"
+	  android:layout_height="wrap_content"
+	  android:layout_alignParentRight="true"
+	  android:text="2"
+	  android:textColor="@android:color/black"
+	  android:visibility="visible"/>  
+  <ImageView 
+      android:id="@+id/holiday17"
+      android:layout_width="wrap_content"
+	  android:layout_height="wrap_content"
+	  android:layout_alignParentRight="true"/>
+</RelativeLayout>
+
+                          <RelativeLayout
+  android:id="@+id/layout18"
+style="@style/Layout_DatesColumn"
+  android:background="@drawable/gridview_bk">
+  <TextView 
+	android:id="@+id/date18" style="@style/Text_DatesColumn"/>  
+  <TextView 
+      android:id="@+id/mark18"
+	  android:gravity="center"
+	  android:layout_width="wrap_content"
+	  android:layout_height="wrap_content"
+	  android:layout_alignParentRight="true"
+	  android:text="2"
+	  android:textColor="@android:color/black"
+	  android:visibility="visible"/>  
+  <ImageView 
+      android:id="@+id/holiday18"
+      android:layout_width="wrap_content"
+	  android:layout_height="wrap_content"
+	  android:layout_alignParentRight="true"/>
+</RelativeLayout>
+
+                                <RelativeLayout
+  android:id="@+id/layout19"
+style="@style/Layout_DatesColumn"
+  android:background="@drawable/gridview_bk">
+  <TextView 
+	android:id="@+id/date19" style="@style/Text_DatesColumn"/>  
+  <TextView 
+      android:id="@+id/mark19"
+	  android:gravity="center"
+	  android:layout_width="wrap_content"
+	  android:layout_height="wrap_content"
+	  android:layout_alignParentRight="true"
+	  android:text="2"
+	  android:textColor="@android:color/black"
+	  android:visibility="visible"/>  
+  <ImageView 
+      android:id="@+id/holiday19"
+      android:layout_width="wrap_content"
+	  android:layout_height="wrap_content"
+	  android:layout_alignParentRight="true"/>
+</RelativeLayout>
+
+                                      <RelativeLayout
+  android:id="@+id/layout20"
+style="@style/Layout_DatesColumn"
+  android:background="@drawable/gridview_bk">
+  <TextView 
+	android:id="@+id/date20" style="@style/Text_DatesColumn"/>  
+  <TextView 
+      android:id="@+id/mark20"
+	  android:gravity="center"
+	  android:layout_width="wrap_content"
+	  android:layout_height="wrap_content"
+	  android:layout_alignParentRight="true"
+	  android:text="2"
+	  android:textColor="@android:color/black"
+	  android:visibility="visible"/>  
+  <ImageView 
+      android:id="@+id/holiday20"
+      android:layout_width="wrap_content"
+	  android:layout_height="wrap_content"
+	  android:layout_alignParentRight="true"/>
+</RelativeLayout>
+		</LinearLayout>
+      <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+      	android:orientation="horizontal" style="@style/LL_DatesColumn">
+      	  	        <RelativeLayout
+  android:id="@+id/layout21"
+style="@style/Layout_DatesColumn"
+  android:background="@drawable/gridview_bk">
+  <TextView 
+	android:id="@+id/date21" style="@style/Text_DatesColumn"/>  
+  <TextView 
+      android:id="@+id/mark21"
+	  android:gravity="center"
+	  android:layout_width="wrap_content"
+	  android:layout_height="wrap_content"
+	  android:layout_alignParentRight="true"
+	  android:text="2"
+	  android:textColor="@android:color/black"
+	  android:visibility="visible"/>  
+  <ImageView 
+      android:id="@+id/holiday21"
+      android:layout_width="wrap_content"
+	  android:layout_height="wrap_content"
+	  android:layout_alignParentRight="true"/>
+</RelativeLayout>
+
+        <RelativeLayout
+  android:id="@+id/layout22"
+style="@style/Layout_DatesColumn"
+  android:background="@drawable/gridview_bk">
+  <TextView 
+	android:id="@+id/date22" style="@style/Text_DatesColumn"/>  
+  <TextView 
+      android:id="@+id/mark22"
+	  android:gravity="center"
+	  android:layout_width="wrap_content"
+	  android:layout_height="wrap_content"
+	  android:layout_alignParentRight="true"
+	  android:text="2"
+	  android:textColor="@android:color/black"
+	  android:visibility="visible"/>  
+  <ImageView 
+      android:id="@+id/holiday22"
+      android:layout_width="wrap_content"
+	  android:layout_height="wrap_content"
+	  android:layout_alignParentRight="true"/>
+</RelativeLayout>
+
+              <RelativeLayout
+  android:id="@+id/layout23"
+style="@style/Layout_DatesColumn"
+  android:background="@drawable/gridview_bk">
+  <TextView 
+	android:id="@+id/date23" style="@style/Text_DatesColumn"/>  
+  <TextView 
+      android:id="@+id/mark23"
+	  android:gravity="center"
+	  android:layout_width="wrap_content"
+	  android:layout_height="wrap_content"
+	  android:layout_alignParentRight="true"
+	  android:text="2"
+	  android:textColor="@android:color/black"
+	  android:visibility="visible"/>  
+  <ImageView 
+      android:id="@+id/holiday23"
+      android:layout_width="wrap_content"
+	  android:layout_height="wrap_content"
+	  android:layout_alignParentRight="true"/>
+</RelativeLayout>
+
+                    <RelativeLayout
+  android:id="@+id/layout24"
+style="@style/Layout_DatesColumn"
+  android:background="@drawable/gridview_bk">
+  <TextView 
+	android:id="@+id/date24" style="@style/Text_DatesColumn"/>  
+  <TextView 
+      android:id="@+id/mark24"
+	  android:gravity="center"
+	  android:layout_width="wrap_content"
+	  android:layout_height="wrap_content"
+	  android:layout_alignParentRight="true"
+	  android:text="2"
+	  android:textColor="@android:color/black"
+	  android:visibility="visible"/>  
+  <ImageView 
+      android:id="@+id/holiday24"
+      android:layout_width="wrap_content"
+	  android:layout_height="wrap_content"
+	  android:layout_alignParentRight="true"/>
+</RelativeLayout>
+
+                          <RelativeLayout
+  android:id="@+id/layout25"
+style="@style/Layout_DatesColumn"
+  android:background="@drawable/gridview_bk">
+  <TextView 
+	android:id="@+id/date25" style="@style/Text_DatesColumn"/>  
+  <TextView 
+      android:id="@+id/mark25"
+	  android:gravity="center"
+	  android:layout_width="wrap_content"
+	  android:layout_height="wrap_content"
+	  android:layout_alignParentRight="true"
+	  android:text="2"
+	  android:textColor="@android:color/black"
+	  android:visibility="visible"/>  
+  <ImageView 
+      android:id="@+id/holiday25"
+      android:layout_width="wrap_content"
+	  android:layout_height="wrap_content"
+	  android:layout_alignParentRight="true"/>
+</RelativeLayout>
+
+                                <RelativeLayout
+  android:id="@+id/layout26"
+style="@style/Layout_DatesColumn"
+  android:background="@drawable/gridview_bk">
+  <TextView 
+	android:id="@+id/date26" style="@style/Text_DatesColumn"/>  
+  <TextView 
+      android:id="@+id/mark26"
+	  android:gravity="center"
+	  android:layout_width="wrap_content"
+	  android:layout_height="wrap_content"
+	  android:layout_alignParentRight="true"
+	  android:text="2"
+	  android:textColor="@android:color/black"
+	  android:visibility="visible"/>  
+  <ImageView 
+      android:id="@+id/holiday26"
+      android:layout_width="wrap_content"
+	  android:layout_height="wrap_content"
+	  android:layout_alignParentRight="true"/>
+</RelativeLayout>
+
+                                      <RelativeLayout
+  android:id="@+id/layout27"
+style="@style/Layout_DatesColumn"
+  android:background="@drawable/gridview_bk">
+  <TextView 
+	android:id="@+id/date27" style="@style/Text_DatesColumn"/>  
+  <TextView 
+      android:id="@+id/mark27"
+	  android:gravity="center"
+	  android:layout_width="wrap_content"
+	  android:layout_height="wrap_content"
+	  android:layout_alignParentRight="true"
+	  android:text="2"
+	  android:textColor="@android:color/black"
+	  android:visibility="visible"/>  
+  <ImageView 
+      android:id="@+id/holiday27"
+      android:layout_width="wrap_content"
+	  android:layout_height="wrap_content"
+	  android:layout_alignParentRight="true"/>
+</RelativeLayout>
+		</LinearLayout>
+      <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+      	android:orientation="horizontal" style="@style/LL_DatesColumn">
+	            	  	        <RelativeLayout
+  android:id="@+id/layout28"
+style="@style/Layout_DatesColumn"
+  android:background="@drawable/gridview_bk">
+  <TextView 
+	android:id="@+id/date28" style="@style/Text_DatesColumn"/>  
+  <TextView 
+      android:id="@+id/mark28"
+	  android:gravity="center"
+	  android:layout_width="wrap_content"
+	  android:layout_height="wrap_content"
+	  android:layout_alignParentRight="true"
+	  android:text="2"
+	  android:textColor="@android:color/black"
+	  android:visibility="visible"/>  
+  <ImageView 
+      android:id="@+id/holiday28"
+      android:layout_width="wrap_content"
+	  android:layout_height="wrap_content"
+	  android:layout_alignParentRight="true"/>
+</RelativeLayout>
+
+        <RelativeLayout
+  android:id="@+id/layout29"
+style="@style/Layout_DatesColumn"
+  android:background="@drawable/gridview_bk">
+  <TextView 
+	android:id="@+id/date29" style="@style/Text_DatesColumn"/>  
+  <TextView 
+      android:id="@+id/mark29"
+	  android:gravity="center"
+	  android:layout_width="wrap_content"
+	  android:layout_height="wrap_content"
+	  android:layout_alignParentRight="true"
+	  android:text="2"
+	  android:textColor="@android:color/black"
+	  android:visibility="visible"/>  
+  <ImageView 
+      android:id="@+id/holiday29"
+      android:layout_width="wrap_content"
+	  android:layout_height="wrap_content"
+	  android:layout_alignParentRight="true"/>
+</RelativeLayout>
+
+              <RelativeLayout
+  android:id="@+id/layout30"
+style="@style/Layout_DatesColumn"
+  android:background="@drawable/gridview_bk">
+  <TextView 
+	android:id="@+id/date30" style="@style/Text_DatesColumn"/>  
+  <TextView 
+      android:id="@+id/mark30"
+	  android:gravity="center"
+	  android:layout_width="wrap_content"
+	  android:layout_height="wrap_content"
+	  android:layout_alignParentRight="true"
+	  android:text="2"
+	  android:textColor="@android:color/black"
+	  android:visibility="visible"/>  
+  <ImageView 
+      android:id="@+id/holiday30"
+      android:layout_width="wrap_content"
+	  android:layout_height="wrap_content"
+	  android:layout_alignParentRight="true"/>
+</RelativeLayout>
+
+                    <RelativeLayout
+  android:id="@+id/layout31"
+style="@style/Layout_DatesColumn"
+  android:background="@drawable/gridview_bk">
+  <TextView 
+	android:id="@+id/date31" style="@style/Text_DatesColumn"/>  
+  <TextView 
+      android:id="@+id/mark31"
+	  android:gravity="center"
+	  android:layout_width="wrap_content"
+	  android:layout_height="wrap_content"
+	  android:layout_alignParentRight="true"
+	  android:text="2"
+	  android:textColor="@android:color/black"
+	  android:visibility="visible"/>  
+  <ImageView 
+      android:id="@+id/holiday31"
+      android:layout_width="wrap_content"
+	  android:layout_height="wrap_content"
+	  android:layout_alignParentRight="true"/>
+</RelativeLayout>
+
+                          <RelativeLayout
+  android:id="@+id/layout32"
+style="@style/Layout_DatesColumn"
+  android:background="@drawable/gridview_bk">
+  <TextView 
+	android:id="@+id/date32" style="@style/Text_DatesColumn"/>  
+  <TextView 
+      android:id="@+id/mark32"
+	  android:gravity="center"
+	  android:layout_width="wrap_content"
+	  android:layout_height="wrap_content"
+	  android:layout_alignParentRight="true"
+	  android:text="2"
+	  android:textColor="@android:color/black"
+	  android:visibility="visible"/>  
+  <ImageView 
+      android:id="@+id/holiday32"
+      android:layout_width="wrap_content"
+	  android:layout_height="wrap_content"
+	  android:layout_alignParentRight="true"/>
+</RelativeLayout>
+
+                                <RelativeLayout
+  android:id="@+id/layout33"
+style="@style/Layout_DatesColumn"
+  android:background="@drawable/gridview_bk">
+  <TextView 
+	android:id="@+id/date33" style="@style/Text_DatesColumn"/>  
+  <TextView 
+      android:id="@+id/mark33"
+	  android:gravity="center"
+	  android:layout_width="wrap_content"
+	  android:layout_height="wrap_content"
+	  android:layout_alignParentRight="true"
+	  android:text="2"
+	  android:textColor="@android:color/black"
+	  android:visibility="visible"/>  
+  <ImageView 
+      android:id="@+id/holiday33"
+      android:layout_width="wrap_content"
+	  android:layout_height="wrap_content"
+	  android:layout_alignParentRight="true"/>
+</RelativeLayout>
+
+                                      <RelativeLayout
+  android:id="@+id/layout34"
+style="@style/Layout_DatesColumn"
+  android:background="@drawable/gridview_bk">
+  <TextView 
+	android:id="@+id/date34" style="@style/Text_DatesColumn"/>  
+  <TextView 
+      android:id="@+id/mark34"
+	  android:gravity="center"
+	  android:layout_width="wrap_content"
+	  android:layout_height="wrap_content"
+	  android:layout_alignParentRight="true"
+	  android:text="2"
+	  android:textColor="@android:color/black"
+	  android:visibility="visible"/>  
+  <ImageView 
+      android:id="@+id/holiday34"
+      android:layout_width="wrap_content"
+	  android:layout_height="wrap_content"
+	  android:layout_alignParentRight="true"/>
+</RelativeLayout>
+		</LinearLayout>
+      <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+      	android:orientation="horizontal" style="@style/LL_DatesColumn">
+	      	            	  	        <RelativeLayout
+  android:id="@+id/layout35"
+style="@style/Layout_DatesColumn"
+  android:background="@drawable/gridview_bk">
+  <TextView 
+	android:id="@+id/date35" style="@style/Text_DatesColumn"/>  
+  <TextView 
+      android:id="@+id/mark35"
+	  android:gravity="center"
+	  android:layout_width="wrap_content"
+	  android:layout_height="wrap_content"
+	  android:layout_alignParentRight="true"
+	  android:text="2"
+	  android:textColor="@android:color/black"
+	  android:visibility="visible"/>  
+  <ImageView 
+      android:id="@+id/holiday35"
+      android:layout_width="wrap_content"
+	  android:layout_height="wrap_content"
+	  android:layout_alignParentRight="true"/>
+</RelativeLayout>
+
+        <RelativeLayout
+  android:id="@+id/layout36"
+style="@style/Layout_DatesColumn"
+  android:background="@drawable/gridview_bk">
+  <TextView 
+	android:id="@+id/date36" style="@style/Text_DatesColumn"/>  
+  <TextView 
+      android:id="@+id/mark36"
+	  android:gravity="center"
+	  android:layout_width="wrap_content"
+	  android:layout_height="wrap_content"
+	  android:layout_alignParentRight="true"
+	  android:text="2"
+	  android:textColor="@android:color/black"
+	  android:visibility="visible"/>  
+  <ImageView 
+      android:id="@+id/holiday36"
+      android:layout_width="wrap_content"
+	  android:layout_height="wrap_content"
+	  android:layout_alignParentRight="true"/>
+</RelativeLayout>
+
+              <RelativeLayout
+  android:id="@+id/layout37"
+  android:layout_width="30dip"
+style="@style/Layout_DatesColumn"
+  android:background="@drawable/gridview_bk">
+  <TextView 
+	android:id="@+id/date37" style="@style/Text_DatesColumn"/>  
+  <TextView 
+      android:id="@+id/mark37"
+	  android:gravity="center"
+	  android:layout_width="wrap_content"
+	  android:layout_height="wrap_content"
+	  android:layout_alignParentRight="true"
+	  android:text="2"
+	  android:textColor="@android:color/black"
+	  android:visibility="visible"/>  
+  <ImageView 
+      android:id="@+id/holiday37"
+      android:layout_width="wrap_content"
+	  android:layout_height="wrap_content"
+	  android:layout_alignParentRight="true"/>
+</RelativeLayout>
+
+                    <RelativeLayout
+  android:id="@+id/layout38"
+style="@style/Layout_DatesColumn"
+  android:background="@drawable/gridview_bk">
+  <TextView 
+	android:id="@+id/date38" style="@style/Text_DatesColumn"/>  
+  <TextView 
+      android:id="@+id/mark31"
+	  android:gravity="center"
+	  android:layout_width="wrap_content"
+	  android:layout_height="wrap_content"
+	  android:layout_alignParentRight="true"
+	  android:text="2"
+	  android:textColor="@android:color/black"
+	  android:visibility="visible"/>  
+  <ImageView 
+      android:id="@+id/holiday38"
+      android:layout_width="wrap_content"
+	  android:layout_height="wrap_content"
+	  android:layout_alignParentRight="true"/>
+</RelativeLayout>
+
+                          <RelativeLayout
+  android:id="@+id/layout39"
+style="@style/Layout_DatesColumn"
+  android:background="@drawable/gridview_bk">
+  <TextView 
+	android:id="@+id/date39" style="@style/Text_DatesColumn"/>  
+  <TextView 
+      android:id="@+id/mark39"
+	  android:gravity="center"
+	  android:layout_width="wrap_content"
+	  android:layout_height="wrap_content"
+	  android:layout_alignParentRight="true"
+	  android:text="2"
+	  android:textColor="@android:color/black"
+	  android:visibility="visible"/>  
+  <ImageView 
+      android:id="@+id/holiday39"
+      android:layout_width="wrap_content"
+	  android:layout_height="wrap_content"
+	  android:layout_alignParentRight="true"/>
+</RelativeLayout>
+
+                                <RelativeLayout
+  android:id="@+id/layout40"
+style="@style/Layout_DatesColumn"
+  android:background="@drawable/gridview_bk">
+  <TextView 
+	android:id="@+id/date40" style="@style/Text_DatesColumn"/>  
+  <TextView 
+      android:id="@+id/mark40"
+	  android:gravity="center"
+	  android:layout_width="wrap_content"
+	  android:layout_height="wrap_content"
+	  android:layout_alignParentRight="true"
+	  android:text="2"
+	  android:textColor="@android:color/black"
+	  android:visibility="visible"/>  
+  <ImageView 
+      android:id="@+id/holiday40"
+      android:layout_width="wrap_content"
+	  android:layout_height="wrap_content"
+	  android:layout_alignParentRight="true"/>
+</RelativeLayout>
+
+                                      <RelativeLayout
+  android:id="@+id/layout41"
+style="@style/Layout_DatesColumn"
+  android:background="@drawable/gridview_bk">
+  <TextView 
+	android:id="@+id/date41" style="@style/Text_DatesColumn"/>  
+  <TextView 
+      android:id="@+id/mark41"
+	  android:gravity="center"
+	  android:layout_width="wrap_content"
+	  android:layout_height="wrap_content"
+	  android:layout_alignParentRight="true"
+	  android:text="2"
+	  android:textColor="@android:color/black"
+	  android:visibility="visible"/>  
+  <ImageView 
+      android:id="@+id/holiday41"
+      android:layout_width="wrap_content"
+	  android:layout_height="wrap_content"
+	  android:layout_alignParentRight="true"/>
+</RelativeLayout>
 		</LinearLayout>
    </LinearLayout>
 </LinearLayout>

@@ -134,21 +134,22 @@ public class CalendarAdapter extends BaseAdapter {
 			}
 			// 当前月信息显示
 			calendar_number.setTextColor(Color.BLACK);// 当月字体设黑
+			
+			if(calendarData.getMarkcount()[Integer.parseInt(d)] > 0){
+				//设置日程标记背景
+				calendar_schedule_number.setVisibility(View.VISIBLE);
+				calendar_schedule_number.setText(calendarData.getMarkcount()[Integer.parseInt(d)]+"");
+				calendar_schedule_number.setBackgroundResource(R.drawable.calendar_schedule_number_bg);
+				holiday.setImageDrawable(null);
+			}
+			if(d.equals(currentDay)){
+				//设置当天的背景
+				calendar_number.setTextColor(Color.GREEN);
+				layout.setBackgroundColor(context.getResources().getColor(R.color.selector));
+				setOldPosition(position);
+			}
+		}
 
-		}
-		if(calendarData.getMarkcount()[Integer.parseInt(d)] > 0){
-			//设置日程标记背景
-			calendar_schedule_number.setVisibility(View.VISIBLE);
-			calendar_schedule_number.setText(calendarData.getMarkcount()[Integer.parseInt(d)]+"");
-			calendar_schedule_number.setBackgroundResource(R.drawable.calendar_schedule_number_bg);
-			holiday.setImageDrawable(null);
-		}
-		if(d.equals(currentDay)){
-			//设置当天的背景
-			calendar_number.setTextColor(Color.GREEN);
-			layout.setBackgroundColor(context.getResources().getColor(R.color.selector));
-			setOldPosition(position);
-		}
 		return convertView;
 	}
 	public long getMillisTimeByDate(String date)

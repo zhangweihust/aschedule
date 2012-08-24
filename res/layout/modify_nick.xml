@@ -36,7 +36,8 @@
                 android:layout_marginRight="40dip"
                 android:layout_weight="0"
                 android:focusable="true"
-                android:hint="ZHANG"
+                android:singleLine="true"
+                android:hint="NICK"
                 android:textColor="#636363" />
         
     </LinearLayout>
