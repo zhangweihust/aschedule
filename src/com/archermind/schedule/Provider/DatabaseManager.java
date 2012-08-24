@@ -6,7 +6,9 @@ import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
+import android.net.Uri;
 import android.provider.ContactsContract;
+import android.util.Log;
 
 import com.archermind.schedule.Events.EventArgs;
 import com.archermind.schedule.Events.EventTypes;
@@ -307,12 +309,14 @@ public class DatabaseManager {
 		return database.query(DatabaseHelper.ASCHEDULE_CONTACT, null, null,
 				null, null, null, null);
 	}
-
+	
+	/* 获取手机联系人 */
 	public Cursor getLocalContacts() {
 		return context.getContentResolver().query(
 				ContactsContract.CommonDataKinds.Phone.CONTENT_URI, null, null,
 				null, null);
 	}
+	
 	public Cursor queryContactIdByTel(String tel){
 		return database.query(DatabaseHelper.ASCHEDULE_CONTACT, null, DatabaseHelper.ASCHEDULE_CONTACT_NUM + " =? ", new String[]{tel}, null, null, null);
 	}
@@ -333,8 +337,8 @@ public class DatabaseManager {
 	public boolean hasData(int contactid, String number) {
 		Cursor cursor = database.query(DatabaseHelper.ASCHEDULE_CONTACT, null,
 				DatabaseHelper.COLUMN_CONTACT_ID + " = ? and "
-						+ DatabaseHelper.ASCHEDULE_CONTACT_NUM + " = ?",
-				new String[] { String.valueOf(contactid), number }, null, null,
+						+ DatabaseHelper.ASCHEDULE_CONTACT_NUM + " = ? ",
+				new String[] { String.valueOf(contactid), number}, null, null,
 				null);
 
 		int count = cursor.getCount();

@@ -10,7 +10,6 @@ import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
-import android.util.Log;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -318,6 +317,12 @@ public class HomeScreen extends TabActivity implements OnTabChangeListener, IEve
             }
                 break;
 
+            case IMSI_CHANGED:
+            	ServiceManager.ToastShow("检测到您的手机号发生变化,请重新绑定!");
+            	startActivity(new Intent(HomeScreen.this, TelephoneBindScreen.class));
+            	ServiceManager.getContact().checkSync(context);
+            	
+            	break;
             default:
                 break;
         }

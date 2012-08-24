@@ -56,7 +56,7 @@ public class FriendScreen extends Screen implements OnClickListener, IEventHandl
 	private Button friend_contact_button_state;
 	private AScheduleBroadcast ContactCheckReceiver;
 	private AlarmManager AScheduleAM;
-	private static final int CONTACT_SYNC_INTERVAL = 60 * 60 * 100010;			/* 1个小时检测一次联系人是否有变化 */
+	private static final int CONTACT_SYNC_INTERVAL = 60 * 60 * 1000;			/* 1个小时检测一次联系人是否有变化 */
 	private DatabaseManager database;
 	private ServerInterface serverInterface;
 	private HashMap<String, List<Friend>> hashMap = new HashMap<String, List<Friend>>();

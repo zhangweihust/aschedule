@@ -7,6 +7,7 @@ import java.util.Collections;
 import java.util.Date;
 import java.util.List;
 
+import android.content.Context;
 import android.content.Intent;
 import android.database.Cursor;
 import android.graphics.Color;
@@ -58,6 +59,7 @@ import com.archermind.schedule.Views.VerticalScrollView;
 import com.archermind.schedule.Views.XListView;
 import com.archermind.schedule.Views.XListView.IXListViewListener;
 import com.archermind.schedule.Views.XListView.OnXScrollListener;
+import com.archermind.schedule.Views.XListViewFooter;
 
 public class ScheduleScreen extends Screen implements IXListViewListener,OnXScrollListener,
 		OnItemClickListener ,OnGestureListener, OnClickListener, IEventHandler{
@@ -138,6 +140,7 @@ private ViewFlipper flipper = null;
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
+		ServiceManager.setListViewKind(XListViewFooter.SCHEDULE_PROMPT);
 		setContentView(R.layout.schedule_screen);
 		
 		schedulelistHeadView = LayoutInflater.from(ScheduleScreen.this).inflate(R.layout.schedule_list_headview,null);

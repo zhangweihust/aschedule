@@ -73,7 +73,7 @@ public class RegisterScreen extends Activity implements OnClickListener {
 
                 if (msg.what == REGISTER_SUCCESS) {
                     ServiceManager.ToastShow("注册成功!");
-//                    startActivity(new Intent(RegisterScreen.this,MenuScreen.class));
+                    startActivity(new Intent(RegisterScreen.this,TelephoneBindScreen.class));
                     finish();
                 } else if (msg.what == REGISTER_FAILED) {
                     ServiceManager.ToastShow("注册失败!");
@@ -171,25 +171,16 @@ public class RegisterScreen extends Activity implements OnClickListener {
         new Thread() {
             public void run() {
                 
-                int ret = ServiceManager.getServerInterface().register(email, pswd, username, imsi,
-                        null, null, null);
+                String ret = ServiceManager.getServerInterface().register(email, pswd, username, imsi,
+                        null, null, null,Integer.toString(binType), binId);
                 
-                if (ret <= 0) {
-                    handler.sendEmptyMessage(REGISTER_FAILED);
+                if (ret.contains("user_id")) {
+                    handler.sendEmptyMessage(REGISTER_SUCCESS);
+                    writeUserinfo(ret,HttpUtils.GetCookie());
+                    ScheduleApplication.LogD(RegisterScreen.class,"服务器返回信息写入SharedPrefences成功! ret = " + ret);
                 } else {
-                    String userBin = ServiceManager.getServerInterface().get_Bin_Info(
-                            Integer.toString(ret), Integer.toString(binType), binId);
-
-                    
-                    if (userBin.contains("user_id")) {
-                        handler.sendEmptyMessage(REGISTER_SUCCESS);
-                        writeUserinfo(userBin,HttpUtils.GetCookie());
-                        ScheduleApplication.LogD(RegisterScreen.class,"服务器返回信息写入SharedPrefences成功! ret = " + ret);
-                    } else {
-                        handler.sendEmptyMessage(REGISTER_FAILED);
-                    }
+                    handler.sendEmptyMessage(REGISTER_FAILED);
                 }
-                
             };
         }.start();
     }
@@ -218,6 +209,15 @@ public class RegisterScreen extends Activity implements OnClickListener {
 				/* 保存userid和cookie */
 				ServiceManager.setUserId(jsonObject.getInt(UserInfoData.USER_ID));
 				ServiceManager.setCookie(cookie);
+				
+				if (jsonObject.getString(UserInfoData.TEL).equals("") || jsonObject.getString(UserInfoData.TEL) == "null")
+				{
+					ServiceManager.setBindFlag(false);
+				}
+				else
+				{
+					ServiceManager.setBindFlag(true);
+				}
 				
 			}
 		} catch (JSONException e) {

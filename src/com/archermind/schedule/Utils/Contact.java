@@ -71,10 +71,13 @@ public class Contact {
 				if (NetworkUtils.getNetworkState(context) != NetworkUtils.NETWORN_NONE)
 				{
 					/* 还要判断用户是否已登录 */
-					if (checkIfNeedSync())
+					if (ServiceManager.isUserLogining(ServiceManager.getUserId()))
 					{
-						Intent it = new Intent(context,ContactSyncAlertScreen.class);
-						context.startActivity(it);
+						if (checkIfNeedSync())
+						{
+							Intent it = new Intent(context,ContactSyncAlertScreen.class);
+							context.startActivity(it);
+						}
 					}
 				}
 			};

@@ -171,28 +171,30 @@ public class ServerInterface {
 	 * //ERROR_ACCOUNT_EXIST —— account already exist //ERROR_WEB_ERROR ——
 	 * 网络异常或其他原因注册失败
 	 */
-	public int register(String username, String password,String nickname, String imsi,
-			String tel, String photo_id, String info) {
+	public String register(String username, String password,String nickname, String imsi,
+			String tel, String photo_id, String info,String type,String user_acc) {
 		username = username.replace(" ", "");
 		password = password.replace(" ", "");
 		nickname = nickname.replace(" ", "");
 
 		if (username.length() == 0 || password.length() == 0) {
-			return ERROR_ACCOUNT_OR_PASSWORD_EMPTY;// 帐号或密码为空
+			return String.valueOf(ERROR_ACCOUNT_OR_PASSWORD_EMPTY);// 帐号或密码为空
 		}
 		if (!isEmail(username)) {
-			return ERROR_EMAIL_INVALID;
+			return String.valueOf(ERROR_EMAIL_INVALID);
 		}
 		if (!isPswdValid(password)) {
-			return ERROR_PASSWORD_INVALID;
+			return String.valueOf(ERROR_PASSWORD_INVALID);
 		}
 		if (!isNickName(nickname)){
-			return ERROR_NICKNAME_INVALID;
+			return String.valueOf(ERROR_NICKNAME_INVALID);
 		}
 		Map<String, String> map = new HashMap<String, String>();
 		map.put("user", username);
 		map.put("password", password);
 		map.put("nick", nickname);
+		map.put("type", type);
+		map.put("user_acc", user_acc);
 		// HttpUtils mhttp =new HttpUtils();
 		// mhttp.SetMap(map);
 		// mhttp.Seturl("http://player.archermind.com/ci/index.php/aschedule/register");
@@ -213,13 +215,13 @@ public class ServerInterface {
 //			System.out.println("login-----" + ret);
 //			return -1;
 //		}
-		int result =0;
-		try{
-			result =Integer.parseInt(ret);
-		}catch (Exception e){
-			result =0;
-		}
-		return result;
+//		int result =0;
+//		try{
+//			result =Integer.parseInt(ret);
+//		}catch (Exception e){
+//			result =0;
+//		}
+		return ret;
 	}
 
 	/*

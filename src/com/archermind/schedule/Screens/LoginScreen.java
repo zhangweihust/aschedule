@@ -116,7 +116,12 @@ public class LoginScreen extends Screen implements OnClickListener {
                 if (msg.what == LOGIN_SUCCESS) {
 
                     ServiceManager.ToastShow("登录成功!");
-                    if (!DeviceInfo.getDeviceIMSI().
+                    if (ServiceManager.getSPUserInfo(UserInfoData.IMSI).equals(""))
+                    {
+                    	ServiceManager.ToastShow("您的帐号尚未绑定手机号,请进行绑定!");
+                    	startActivity(new Intent(LoginScreen.this, TelephoneBindScreen.class));
+                    }
+                    else if (!DeviceInfo.getDeviceIMSI().
                     		equals(ServiceManager.getSPUserInfo(UserInfoData.IMSI)))	/*IMSI发生变化*/
                     {
                     	ServiceManager.ToastShow("检测到您的手机号发生变化,请重新绑定!");
@@ -417,9 +422,8 @@ public class LoginScreen extends Screen implements OnClickListener {
                 String ret = ServiceManager.getServerInterface().login(username, password, imsi);
 
                 if (ret.contains("user_id")) {
-
-                	handler.sendEmptyMessage(LOGIN_SUCCESS);
                     RegisterScreen.writeUserinfo(ret,HttpUtils.GetCookie());
+                    handler.sendEmptyMessage(LOGIN_SUCCESS);
                     ScheduleApplication.LogD(LoginScreen.class,"ret = " + ret);
                 }
                 else

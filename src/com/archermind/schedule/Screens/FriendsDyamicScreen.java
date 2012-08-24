@@ -43,6 +43,7 @@ import com.archermind.schedule.Utils.DateTimeUtils;
 import com.archermind.schedule.Utils.SyncDataUtil;
 import com.archermind.schedule.Views.XListView;
 import com.archermind.schedule.Views.XListView.IXListViewListener;
+import com.archermind.schedule.Views.XListViewFooter;
 
 public class FriendsDyamicScreen extends Screen implements IXListViewListener, OnItemClickListener,
         IEventHandler {
@@ -104,6 +105,7 @@ public class FriendsDyamicScreen extends Screen implements IXListViewListener, O
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        ServiceManager.setListViewKind(XListViewFooter.DYNAMIC_PROMPT);
         setContentView(R.layout.friends_dynamic_screen);
         list = (XListView)findViewById(R.id.list);
         list.setOnItemClickListener(this);

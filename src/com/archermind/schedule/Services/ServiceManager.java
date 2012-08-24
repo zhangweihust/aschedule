@@ -43,9 +43,11 @@ import com.archermind.schedule.Screens.HomeScreen;
 import com.archermind.schedule.Screens.RegisterScreen;
 import com.archermind.schedule.Utils.Constant;
 import com.archermind.schedule.Utils.Contact;
+import com.archermind.schedule.Utils.DeviceInfo;
 import com.archermind.schedule.Utils.NetworkUtils;
 import com.archermind.schedule.Utils.ServerInterface;
 import com.archermind.schedule.Utils.SyncDataUtil;
+import com.archermind.schedule.Views.XListViewFooter;
 
 public class ServiceManager extends Service implements OnClickListener{
 
@@ -64,10 +66,13 @@ public class ServiceManager extends Service implements OnClickListener{
     private static Contact contact = new Contact();
 
     private static int user_id = 0;
+    private static boolean bIsBindFlag= false; 
     private static String cookie = "";
     private static String avator_url = "";
     private static SharedPreferences sharedPreferences;
     private static SharedPreferences.Editor spEditor;
+    
+    private static int listkind = XListViewFooter.SCHEDULE_PROMPT;
     
     private static long timeDifference = 0;
 
@@ -168,6 +173,31 @@ public class ServiceManager extends Service implements OnClickListener{
         myTask = new MyTimerTask();
         mTimer.schedule(myTask, mTaskTime, mTaskTime);
 
+
+        Handler handler = new Handler();
+        handler.postDelayed(new Runnable()
+		{
+			@Override
+			public void run() {
+				// TODO Auto-generated method stub
+		        if (getSPUserInfo(UserInfoData.IMSI).equals("") && getSPUserInfo(UserInfoData.TEL).equals(""))
+		        {
+		        	bIsBindFlag = false;
+		        }
+		        else
+		        {
+		        	if (getSPUserInfo(UserInfoData.IMSI).equals(DeviceInfo.getDeviceIMSI()))
+		        	{
+		        		bIsBindFlag = true;
+		        	}
+		        	else
+		        	{
+		        		eventService.onUpdateEvent(new EventArgs(EventTypes.IMSI_CHANGED));
+		        	}
+		        }
+			}
+		}, 5000);
+        
         Log.i(TAG, "oncreate set time is " + mTaskTime);
     }
 
@@ -199,7 +229,7 @@ public class ServiceManager extends Service implements OnClickListener{
         }
 
         ServiceManager.started = true;
-
+        
         return true;
     }
 
@@ -255,6 +285,14 @@ public class ServiceManager extends Service implements OnClickListener{
 
     public static int getUserId() {
         return user_id;
+    }
+    
+    public static void setBindFlag(boolean bindflag) {
+    	bIsBindFlag = bindflag;
+    }
+
+    public static boolean getBindFlag() {
+        return bIsBindFlag;
     }
     
     public static void setCookie(String cookiestr)
@@ -473,5 +511,15 @@ public class ServiceManager extends Service implements OnClickListener{
 	   public static long getTimeDifference()
 	   {
 		   return timeDifference;
+	   }
+	   
+	   public static void setListViewKind(int kind)
+	   {
+		   listkind = kind;
+	   }
+	   
+	   public static int getListViewKind()
+	   {
+		   return listkind;
 	   }
 }

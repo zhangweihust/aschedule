@@ -5,6 +5,7 @@ import org.json.JSONObject;
 
 import com.archermind.schedule.R;
 import com.archermind.schedule.ScheduleApplication;
+import com.archermind.schedule.Model.UserInfoData;
 import com.archermind.schedule.Services.ServiceManager;
 import com.archermind.schedule.Utils.DeviceInfo;
 
@@ -33,8 +34,13 @@ public class TelephoneBindScreen extends Activity implements OnClickListener{
 	private EditText telephone_bind_verification_et;
 	private Button telephone_bind_btn;
 	private Button telephone_bind_verification_btn;
+	private Button telephone_bind_goback;
 	private TextView telephone_bind_prompt;
 	private LinearLayout telephone_bind_verification;
+	private LinearLayout telephone_bind_get_verification;
+	private LinearLayout telephone_bind_is_bind;
+	private Button bind_again;
+	private TextView is_bind_prompt;
 	
 	private String tel = "";
 	private String smsID = "";
@@ -51,12 +57,33 @@ public class TelephoneBindScreen extends Activity implements OnClickListener{
         telephone_bind_tel_et = (EditText)findViewById(R.id.telephone_bind_tel_et);
         telephone_bind_verification_et = (EditText)findViewById(R.id.telephone_bind_verification_et);
         telephone_bind_btn = (Button)findViewById(R.id.telephone_bind_btn);
+        telephone_bind_goback = (Button)findViewById(R.id.telephone_bind_goback);
         telephone_bind_verification_btn = (Button)findViewById(R.id.telephone_bind_verification_btn);
         telephone_bind_prompt = (TextView)findViewById(R.id.telephone_bind_prompt);
         telephone_bind_verification = (LinearLayout)findViewById(R.id.telephone_bind_verification);
+        telephone_bind_get_verification = (LinearLayout)findViewById(R.id.telephone_bind_get_verification);
+        bind_again = (Button)findViewById(R.id.bind_again);
+        is_bind_prompt = (TextView)findViewById(R.id.is_bind_prompt);
+        telephone_bind_is_bind = (LinearLayout)findViewById(R.id.telephone_bind_is_bind);
         
         telephone_bind_btn.setOnClickListener(this);
         telephone_bind_verification_btn.setOnClickListener(this);
+        telephone_bind_goback.setOnClickListener(this);
+        bind_again.setOnClickListener(this);
+        
+        if (ServiceManager.getBindFlag())
+        {
+        	telephone_bind_is_bind.setVisibility(View.VISIBLE);
+        	String promptstr = "您的帐号 " + ServiceManager.getSPUserInfo(UserInfoData.EMAIL) + " 已经与手机号 "
+        	 					+ ServiceManager.getSPUserInfo(UserInfoData.TEL) + " 绑定!";
+        	is_bind_prompt.setText(promptstr);
+        	telephone_bind_get_verification.setVisibility(View.INVISIBLE);
+        }
+        else
+        {
+        	telephone_bind_is_bind.setVisibility(View.GONE);
+        	telephone_bind_get_verification.setVisibility(View.VISIBLE);
+        }
         
         handler = new Handler()
         {
@@ -186,15 +213,26 @@ public class TelephoneBindScreen extends Activity implements OnClickListener{
 						if (ret == 0)
 						{
 							handler.sendEmptyMessage(TELEPHONE_BIND_SUCCESS);
+							ServiceManager.setSPUserInfo(UserInfoData.TEL, tel);
+							ServiceManager.setSPUserInfo(UserInfoData.IMSI, DeviceInfo.getDeviceIMSI());
+							ServiceManager.setBindFlag(true);
 						}
 						else
 						{
 							handler.sendEmptyMessage(TELEPHONE_BIND_FAILED);
+							ServiceManager.setBindFlag(false);
 						}
 					};
 				}.start();
 				 
 			}
+			break;
+		case R.id.bind_again:
+			telephone_bind_is_bind.setVisibility(View.GONE);
+			telephone_bind_get_verification.setVisibility(View.VISIBLE);
+			break;
+		case R.id.telephone_bind_goback:
+			finish();
 			break;
 		default:
 			break;

@@ -4,17 +4,18 @@
     android:layout_height="fill_parent"
     android:background="@drawable/repeat_register_bg"
     android:orientation="vertical" >
-    <LinearLayout
+    <RelativeLayout
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
         android:background="@drawable/top_bg"
         android:orientation="horizontal" >
         
         <Button 
-            android:id="@+id/register_goback"
+            android:id="@+id/telephone_bind_goback"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginLeft="5dip"
+            android:layout_centerVertical="true"
             android:layout_gravity="center_vertical"
             style="@style/bar_allbtn_style"
             android:textSize="13sp"
@@ -24,16 +25,42 @@
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginLeft="90dip"
-            android:layout_gravity="center"
+			android:layout_centerInParent="true"
             style="@style/bar_allbtn_style"
             android:textColor="#ffffff"
             android:textSize="18sp"
-            android:text="手机绑定"
+            android:text="绑定账号"
              />
-	</LinearLayout>
+	</RelativeLayout>
 	
     <LinearLayout
+        android:id="@+id/telephone_bind_is_bind"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="20dip"
+	    android:layout_marginLeft="10dip"
+	    android:layout_marginRight="10dip"   
+	    android:visibility="gone"
+	    android:orientation="vertical" >
+        
+        <TextView 
+            android:id="@+id/is_bind_prompt"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:textColor="@android:color/black"
+            android:textSize="14sp" />
+        
+        <Button
+            android:id="@+id/bind_again"
+            android:layout_width="wrap_content"
+            android:layout_height="35dip"
+            android:layout_marginTop="3dip"
+            android:background="@drawable/register_btn_selector"
+            android:text="重新绑定" />
+        </LinearLayout>    
+        
+    <LinearLayout
+        android:id="@+id/telephone_bind_get_verification"
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
         android:layout_marginTop="20dip"

@@ -19,16 +19,21 @@ public class XListViewFooter extends LinearLayout {
 	public final static int STATE_NORMAL = 0;
 	public final static int STATE_READY = 1;
 	public final static int STATE_LOADING = 2;
+	
+	public final static int SCHEDULE_PROMPT = 1;
+	public final static int DYNAMIC_PROMPT = 2;
 
 	private Context mContext;
 
 	private View mContentView;
 	private View mProgressBar;
 	private TextView mHintView;
+	private int listkind;
 	
-	public XListViewFooter(Context context) {
+	public XListViewFooter(Context context,int kind) {
 		super(context);
 		initView(context);
+		listkind = kind;
 	}
 	
 	public XListViewFooter(Context context, AttributeSet attrs) {
@@ -43,12 +48,26 @@ public class XListViewFooter extends LinearLayout {
 		mHintView.setVisibility(View.INVISIBLE);
 		if (state == STATE_READY) {
 			mHintView.setVisibility(View.VISIBLE);
-			mHintView.setText(R.string.xlistview_footer_hint_ready);
+			if (listkind == SCHEDULE_PROMPT)
+			{
+				mHintView.setText("松开载入下月日程");
+			}
+			else if (listkind == DYNAMIC_PROMPT)
+			{
+				mHintView.setText(R.string.xlistview_footer_hint_ready);
+			}
 		} else if (state == STATE_LOADING) {
 			mProgressBar.setVisibility(View.VISIBLE);
 		} else {
 			mHintView.setVisibility(View.VISIBLE);
-			mHintView.setText(R.string.xlistview_footer_hint_normal);
+			if (listkind == SCHEDULE_PROMPT)
+			{
+				mHintView.setText("查看下月");
+			}
+			else if (listkind == DYNAMIC_PROMPT)
+			{
+				mHintView.setText(R.string.xlistview_footer_hint_normal);
+			}
 		}
 	}
 	

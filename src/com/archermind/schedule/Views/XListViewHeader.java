@@ -30,15 +30,18 @@ public class XListViewHeader extends LinearLayout {
 	private Animation mRotateUpAnim;
 	private Animation mRotateDownAnim;
 	
+	private int listkind;
+	
 	private final int ROTATE_ANIM_DURATION = 180;
 	
 	public final static int STATE_NORMAL = 0;
 	public final static int STATE_READY = 1;
 	public final static int STATE_REFRESHING = 2;
 
-	public XListViewHeader(Context context) {
+	public XListViewHeader(Context context,int kind) {
 		super(context);
 		initView(context);
+		listkind = kind;
 	}
 
 	/**
@@ -95,7 +98,14 @@ public class XListViewHeader extends LinearLayout {
 			if (mState == STATE_REFRESHING) {
 				mArrowImageView.clearAnimation();
 			}
-			mHintTextView.setText(R.string.xlistview_header_hint_normal);
+			if (listkind == XListViewFooter.SCHEDULE_PROMPT)
+			{
+				mHintTextView.setText("下拉加载上月日程");
+			}
+			else if (listkind == XListViewFooter.DYNAMIC_PROMPT)
+			{
+				mHintTextView.setText(R.string.xlistview_header_hint_normal);
+			}
 			break;
 		case STATE_READY:
 			if (mState != STATE_READY) {

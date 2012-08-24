@@ -24,6 +24,7 @@ import android.widget.Scroller;
 import android.widget.TextView;
 
 import com.archermind.schedule.R;
+import com.archermind.schedule.Services.ServiceManager;
 
 public class XListView extends ListView implements OnScrollListener {
 
@@ -98,9 +99,9 @@ public class XListView extends ListView implements OnScrollListener {
 		// XListView need the scroll event, and it will dispatch the event to
 		// user's listener (as a proxy).
 		super.setOnScrollListener(this);
-
+		
 		// init header view
-		mHeaderView = new XListViewHeader(context);
+		mHeaderView = new XListViewHeader(context,ServiceManager.getListViewKind());
 		mHeaderViewContent = (RelativeLayout) mHeaderView
 				.findViewById(R.id.xlistview_header_content);
 		mHeaderTimeView = (TextView) mHeaderView
@@ -108,7 +109,7 @@ public class XListView extends ListView implements OnScrollListener {
 		addHeaderView(mHeaderView);
 
 		// init footer view
-		mFooterView = new XListViewFooter(context);
+		mFooterView = new XListViewFooter(context,ServiceManager.getListViewKind());
 
 		// init header height
 		mHeaderView.getViewTreeObserver().addOnGlobalLayoutListener(
@@ -392,4 +393,5 @@ public class XListView extends ListView implements OnScrollListener {
 
 		public void onLoadMore();
 	}
+
 }

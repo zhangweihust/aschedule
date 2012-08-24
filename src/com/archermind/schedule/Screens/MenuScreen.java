@@ -2,7 +2,9 @@ package com.archermind.schedule.Screens;
 
 
 import com.archermind.schedule.R;
+import com.archermind.schedule.Model.UserInfoData;
 import com.archermind.schedule.Services.ServiceManager;
+import com.archermind.schedule.Utils.DeviceInfo;
 
 import android.app.Activity;
 import android.content.Intent;
@@ -18,6 +20,7 @@ public class MenuScreen extends Activity implements OnClickListener{
 	
 	private static final int LOGIN_STATUS_FAILED = 0;
 	private static final int LOGIN_STATUS_SUCCESS = 1;
+	private static final int LOGIN_STATUS_UNBIND = 2;
 	
 	private Button gotonext;
 	private Button menu_account;
@@ -65,6 +68,10 @@ public class MenuScreen extends Activity implements OnClickListener{
         		case LOGIN_STATUS_SUCCESS:
         			it = new Intent(MenuScreen.this,AccountSettingScreen.class);
         			break;
+        		case LOGIN_STATUS_UNBIND:
+        			ServiceManager.ToastShow("您的帐号尚未绑定手机号,请进行绑定!");
+        			it = new Intent(MenuScreen.this,TelephoneBindScreen.class);
+        			break;
     			default:
     				it = new Intent(MenuScreen.this,LoginScreen.class);
     				break;
@@ -92,7 +99,14 @@ public class MenuScreen extends Activity implements OnClickListener{
 				{
 					if (ServiceManager.isUserLogining(ServiceManager.getUserId()))
 					{
-						handler.sendEmptyMessage(LOGIN_STATUS_SUCCESS);
+						if (ServiceManager.getBindFlag())
+						{
+							handler.sendEmptyMessage(LOGIN_STATUS_SUCCESS);
+						}
+						else
+						{
+							handler.sendEmptyMessage(LOGIN_STATUS_UNBIND);
+						}
 					}
 					else
 					{
