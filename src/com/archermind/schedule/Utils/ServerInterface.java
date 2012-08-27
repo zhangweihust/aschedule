@@ -927,6 +927,7 @@ public class ServerInterface {
 		map.put("user_id", user_id);
 		map.put("tel", tel);
 		map.put("imsi", imsi);
+		System.out.println("smsID = " + smsID + ",tel = " + tel);
 		String ret = HttpUtils
 				.doPost(map,
 						"http://player.archermind.com/ci/index.php/SMSUtils/checkSMS");

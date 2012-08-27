@@ -69,7 +69,7 @@ public class HttpUtils implements Runnable{
 			HttpResponse response = client.execute(httpPost);
 			
 			if(response.getStatusLine().getStatusCode() == 200){
-				if(url.indexOf("login") >0 ||url.indexOf("BinInfo") >0){
+				if(url.indexOf("login") >0 ||url.indexOf("register") >0){
 					Header[] head = null;
 					head = response.getHeaders("Set-Cookie");
 					for (int i=0; i<head.length; i++) {						

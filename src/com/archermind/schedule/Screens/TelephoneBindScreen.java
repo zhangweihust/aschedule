@@ -13,6 +13,7 @@ import android.app.Activity;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
+import android.util.Log;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.Button;
@@ -29,6 +30,7 @@ public class TelephoneBindScreen extends Activity implements OnClickListener{
 	private final static int TELEPHONE_BIND_FAILED = 2;
 	private final static int TELEPHONE_BIND_SUCCESS = 3;
 	private final static int TELEPHONE_BIND_ALREADY = 4;
+	private final static int TELEPHONE_SIM_NONE = 5;
 	
 	private EditText telephone_bind_tel_et;
 	private EditText telephone_bind_verification_et;
@@ -125,7 +127,9 @@ public class TelephoneBindScreen extends Activity implements OnClickListener{
         			Toast.makeText(TelephoneBindScreen.this, "这个手机号已经绑定!", Toast.LENGTH_SHORT).show();
         			finish();
         			break;
-        			
+        		case TELEPHONE_SIM_NONE:
+        			ServiceManager.ToastShow("请插入SIM卡");
+        			break;
     			default:
     				break;
         		}
@@ -137,6 +141,12 @@ public class TelephoneBindScreen extends Activity implements OnClickListener{
 	public void onClick(View v) {
 		// TODO Auto-generated method stub
 		String inputstr = "";
+		
+		if (DeviceInfo.getDeviceIMSI() == null)
+		{
+			handler.sendEmptyMessage(TELEPHONE_SIM_NONE);
+			return;
+		}
 		switch(v.getId())
 		{
 		case R.id.telephone_bind_btn:
@@ -153,7 +163,9 @@ public class TelephoneBindScreen extends Activity implements OnClickListener{
 						public void run() 
 						{
 							canRequestVerification = false;
-							if (0 == ServiceManager.getServerInterface().is_tel_bind((String.valueOf(ServiceManager.getUserId())), requestTel))
+							int is_tel_bindret = ServiceManager.getServerInterface().is_tel_bind((String.valueOf(ServiceManager.getUserId())), requestTel);
+							ScheduleApplication.LogD(TelephoneBindScreen.class, "is_tel_bindret = " + is_tel_bindret);
+							if (0 == is_tel_bindret)
 							{
 								String ret = ServiceManager.getServerInterface().sendSMS(SCHEDULE_APP_ID,requestTel,"default");
 								ScheduleApplication.LogD(TelephoneBindScreen.class,"ret = " + ret);

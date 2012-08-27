@@ -111,7 +111,8 @@ public class HistoryScheduleAdapter extends BaseAdapter{
 			
 //			if (position == 0)
 //			{
-			item.title_lunar.setText(lc.getLunarMonth() + lc.getLunarDate(data.time, true));
+			String lunardate = lc.getLunarDate(data.time, true);
+			item.title_lunar.setText(lc.getLunarMonth() + lunardate);
 			holiday = lc.getHolidays(data.time);
 			if (!holiday.equals("false"))
 			{
