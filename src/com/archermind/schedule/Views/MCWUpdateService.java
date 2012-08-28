@@ -81,38 +81,33 @@ public class MCWUpdateService extends IntentService {
 	}
 
 	private static void setCalendar(Context context, RemoteViews rv){
-		System.out.println("*******************setCalendar********************8");
 		
 		calendarData = new CalendarData(jumpMonth, jumpYear, yearNow,monthNow, today,Constant.flagType);
 		dayNumber = calendarData.getDayNumber();
+		rv.setTextViewText(R.id.monthyear, calendarData.getShowYear() + "." + calendarData.getShowMonth());
+		
 		int identifier_week = 0;
 		int identifier_day = 0;
 		int identifier_mark = 0;
 		int identifier_holiday = 0;
 		for (int i = 0; i < 7; i++) {
-			System.out.println("day" + i);
 			identifier_week = context.getResources().getIdentifier("day" + i, "id", context.getPackageName());
 			rv.setTextViewText(identifier_week, calendarData.getWeek()[i]);
-		}
+		}		
         for (int i = 0; i < dayNumber.length; i++) {
-        	
-        	
         	
     		identifier_day = context.getResources().getIdentifier("date" + i, "id", context.getPackageName());
     		identifier_mark = context.getResources().getIdentifier("mark" + i, "id", context.getPackageName());
     		identifier_holiday = context.getResources().getIdentifier("holiday" + i, "id", context.getPackageName());
     		
+//    		rv.setViewVisibility(identifier_mark, View.GONE);
+//    		rv.setViewVisibility(identifier_holiday, View.GONE);
     		
     		String temp = dayNumber[i].split("\\.")[1];
     		if(temp.contains(LunarCalendar.suffix)){
+    			rv.setViewVisibility(identifier_holiday, View.VISIBLE);
     			rv.setImageViewResource(identifier_holiday, R.drawable.other_holiday);
     		}
-    		
-//    		if(calendarData.getMarkcount()[i] > 0){
-//    			rv.setViewVisibility(identifier_mark, View.VISIBLE);
-//    			rv.set
-//    		}
-    		
     		
         	if (i < calendarData.getDaysOfWeek()) {
             } else if (i < calendarData.getDayOfWeek() + calendarData.getDaysOfWeek()) { // 前一个月
@@ -124,12 +119,18 @@ public class MCWUpdateService extends IntentService {
             } else if (i < calendarData.getDaysOfMonth() + calendarData.getDayOfWeek() + calendarData.getDaysOfWeek()) { // 本月
             	SpannableStringBuilder ssb = new SpannableStringBuilder();
 				ssb.append(dayNumber[i].split("\\.")[0]);
-				ssb.setSpan(new BackgroundColorSpan(context.getResources().getColor(R.color.selector)), 0, 1, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
 				rv.setTextColor(identifier_day, Color.BLACK);
+				if(i == today){
+					ssb.setSpan(new BackgroundColorSpan(context.getResources().getColor(R.color.selector)), 0, 2, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
+
+				}
 				rv.setTextViewText(identifier_day, ssb);
 				
-				
-				System.out.println("dayNumber[i].split()[0] = "+dayNumber[i].split("\\.")[0]);
+	    		if(calendarData.getMarkcount()[i] > 0){
+	    			rv.setViewVisibility(identifier_holiday, View.GONE);
+	    			rv.setViewVisibility(identifier_mark, View.VISIBLE);
+	    			rv.setTextViewText(identifier_mark, calendarData.getMarkcount()[i]+"");
+	    		}
 				
             } else { // 下一个月
              	SpannableStringBuilder ssb = new SpannableStringBuilder();

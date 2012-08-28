@@ -284,7 +284,7 @@ public class LunarCalendar {
 
 	}
 
-	public String getLunarDate(long millistime, boolean isday)
+	public synchronized String getLunarDate(long millistime, boolean isday)
 	{
 		int year;
 		int month;
@@ -342,7 +342,7 @@ public class LunarCalendar {
 		this.year = year;
 	}
 	
-	public String getHolidays(long times)
+	public synchronized String getHolidays(long times)
     {
     	String holiday = "";
     	String strdate = "";

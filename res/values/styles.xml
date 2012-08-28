@@ -132,8 +132,8 @@
 <!-- 	 	<item name="android:focusableInTouchMode">true</item> -->
 	</style>
    <style name="Text_MonthYear">
-      <item name="android:textSize">14sp</item>
-      <item name="android:textColor">@color/white</item>
+      <item name="android:textSize">18sp</item>
+      <item name="android:textColor">@color/black</item>
       <item name="android:paddingTop">4dip</item>
 	   <item name="android:layout_width">wrap_content</item>
       <item name="android:layout_height">wrap_content</item> 
@@ -146,23 +146,43 @@
    	<item name="android:layout_height">wrap_content</item>
    </style>
       <style name="Layout_DatesColumn">
-   	<item name="android:layout_width">30dip</item>
-   	<item name="android:layout_height">30dip</item>
+   	<item name="android:layout_width">38dip</item>
+   	<item name="android:layout_height">38dip</item>
+   	<item name="android:background">@drawable/gridview_bk</item>
    </style>
    <style name="Text_DaysOfWeek">
-      <item name="android:textSize">10sp</item>
+      <item name="android:textSize">15sp</item>
       <item name="android:textColor">@color/black</item>
-	   <item name="android:layout_width">30dip</item>
-      <item name="android:layout_height">30dip</item> 
+	   <item name="android:layout_width">38dip</item>
+      <item name="android:layout_height">38dip</item> 
 	   <item name="android:gravity">center</item>
    </style>
    <style name="Text_DatesColumn">
-      <item name="android:textSize">12sp</item>
+      <item name="android:textSize">15sp</item>
       <item name="android:textColor">@color/black</item>
       <item name="android:text">23</item>
       <item name="android:paddingTop">4dip</item>
-	   <item name="android:layout_width">30dip</item>
-      <item name="android:layout_height">30dip</item> 
+	   <item name="android:layout_width">38dip</item>
+      <item name="android:layout_height">38dip</item> 
 	   <item name="android:gravity">center</item>
    </style>
+   
+     <style name="Text_MarksColumn">
+      <item name="android:textSize">10sp</item>
+      <item name="android:textColor">@color/black</item>
+      <item name="android:text">23</item>  
+      <item name="android:layout_width">wrap_content</item>
+      <item name="android:layout_height">wrap_content</item>
+      <item name="android:layout_alignParentRight">true</item>  
+      <item name="android:background">@drawable/calendar_schedule_number_bg</item>
+      <item name="android:gravity">center</item>
+      <item name="android:visibility">gone</item>
+   </style>
+   
+     <style name="Text_HolidaysColumn"> 
+      <item name="android:layout_width">wrap_content</item>
+      <item name="android:layout_height">wrap_content</item>
+      <item name="android:layout_alignParentRight">true</item>  
+
+   </style>      
 </resources>

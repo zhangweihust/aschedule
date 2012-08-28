@@ -159,7 +159,7 @@ public class CalendarData {
         }
         int j = 1;
         String lunarDay = "";
-        mark_count = new int[32];
+        mark_count = new int[42];
         for (int i = 0; i < dayNumber.length; i++) {
             int k = 1;
             // 周一

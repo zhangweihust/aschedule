@@ -103,6 +103,9 @@ public class ServiceManager extends Service implements OnClickListener{
     			makeFriendFromInet(msg_accepets.get(i),Constant.FriendType.friend_yes);
     			serverInerface.acceptConfirm(String.valueOf(getUserId()), msg_accepets.get(i));
     		}
+    		for(int i = 0; i < msg_refuses.size(); i++){
+    			serverInerface.refuseConfirm(String.valueOf(getUserId()), msg_accepets.get(i));
+    		}
     	};
     };
     

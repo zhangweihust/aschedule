@@ -1,5 +1,9 @@
 package com.archermind.schedule.Utils;
 
+import java.io.BufferedReader;
+import java.io.FileReader;
+import java.io.IOException;
+
 import android.content.Context;
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
@@ -94,5 +98,50 @@ public class DeviceInfo {
 						Context.TELEPHONY_SERVICE);
 		return telephonyManager.getSubscriberId();
 	}
+	
+	/**
+	 * 获取系统版本号
+	 * 
+	 * @return
+	 */
+	public static String getDeviceSystemVersion() {
+		return android.os.Build.VERSION.RELEASE;
+	}
+	
+	/**
+	 * 获取CPU型号
+	 * 
+	 * @return
+	 */
+	public static String getDeviceCpuModel() {
+		String value = null;
+		FileReader fr = null;
+		BufferedReader localBufferedReader = null;
+		String str1 = "/proc/cpuinfo";
+		try {
+			fr = new FileReader(str1);
+			localBufferedReader = new BufferedReader(fr, 8192);
+			String str2 = localBufferedReader.readLine();
+			String[] arrayOfString = str2.split("\\s+");
+			for (int i = 2; i < arrayOfString.length; i++) {
+				value += arrayOfString[i] + " ";
+			}
+		} catch (IOException e) {
+		} finally {
+			try {
+				if (localBufferedReader != null) {
+					localBufferedReader.close();
+				}
+				if (fr != null) {
+					fr.close();
+				}
+			} catch (Exception e) {
+
+			}
+		}
+		return value;
+	}
+	
+	
 	
 }

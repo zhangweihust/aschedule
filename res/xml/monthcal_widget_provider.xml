@@ -3,5 +3,5 @@
    xmlns:android="http://schemas.android.com/apk/res/android"
 	android:initialLayout="@layout/main_layout"
 	android:minWidth="240dip"
-	android:minHeight="260dip"
+	android:minHeight="280dip"
 	android:updatePeriodMillis="0"/>
