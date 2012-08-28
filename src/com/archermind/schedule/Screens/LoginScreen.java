@@ -82,6 +82,9 @@ public class LoginScreen extends Screen implements OnClickListener {
     private static final int TAG_TENGXUN = 3;
     
     private boolean loginflag = false;
+    
+    private static final int LOGIN_FAILED_EMAILORPSWD_NULL = -1;			//邮箱或密码为空
+    private static final int LOGIN_FAILED_EMAILORPSWD_ERROR = -2;		//邮箱或密码错误
 
     /** Called when the activity is first created. */
     @Override
@@ -115,26 +118,51 @@ public class LoginScreen extends Screen implements OnClickListener {
 
                 super.handleMessage(msg);
 
-                if (msg.what == LOGIN_SUCCESS) {
-
-                    ServiceManager.ToastShow("登录成功!");
-                    if (ServiceManager.getSPUserInfo(UserInfoData.IMSI).equals(""))
-                    {
-                    	ServiceManager.ToastShow("您的帐号尚未绑定手机号,请进行绑定!");
-                    	startActivity(new Intent(LoginScreen.this, TelephoneBindScreen.class));
+                if(msg != null && msg.obj != null)
+                {
+                	String retValue = (String) msg.obj;
+                	String prompt = "";
+                	ScheduleApplication.LogD(LoginScreen.class,"retValue = " + retValue);
+                	if (retValue.contains("user_id")) 
+                	{
+                		ServiceManager.ToastShow("登录成功");
+                        RegisterScreen.writeUserinfo(retValue,HttpUtils.GetCookie());
+                        
+                        if (ServiceManager.getSPUserInfo(UserInfoData.IMSI).equals(""))
+                        {
+                        	ServiceManager.ToastShow("您的帐号尚未绑定手机号,请进行绑定!");
+                        	startActivity(new Intent(LoginScreen.this, TelephoneBindScreen.class));
+                        }
+                        else if (!DeviceInfo.getDeviceIMSI().
+                        		equals(ServiceManager.getSPUserInfo(UserInfoData.IMSI)))	/*IMSI发生变化*/
+                        {
+                        	ServiceManager.ToastShow("检测到您的手机号发生变化,请重新绑定!");
+                        	startActivity(new Intent(LoginScreen.this, TelephoneBindScreen.class));
+                        }
+                        eventService.onUpdateEvent(new EventArgs(EventTypes.LOGIN_SUCCESS));
+                        finish();
                     }
-                    else if (!DeviceInfo.getDeviceIMSI().
-                    		equals(ServiceManager.getSPUserInfo(UserInfoData.IMSI)))	/*IMSI发生变化*/
+                    else
                     {
-                    	ServiceManager.ToastShow("检测到您的手机号发生变化,请重新绑定!");
-                    	startActivity(new Intent(LoginScreen.this, TelephoneBindScreen.class));
-                    }
-//                    startActivity(new Intent(LoginScreen.this, MenuScreen.class));
-                    eventService.onUpdateEvent(new EventArgs(EventTypes.LOGIN_SUCCESS));
-                    finish();
-                } else if (msg.what == LOGIN_FAILED) {
-                    ServiceManager.ToastShow("登录失败!");
+                  	    int ret = Integer.parseInt(retValue);
+                  	    switch(ret)
+                  	    {
+                  	    case LOGIN_FAILED_EMAILORPSWD_NULL:
+                  	    	prompt = "邮箱或密码为空";
+                  	    	break;
+                  	    case LOGIN_FAILED_EMAILORPSWD_ERROR:
+                  	    	prompt = "邮箱或密码错误";
+                	    	break;
+            	    	default:
+            	    		prompt = retValue;
+            	    		break;
+                  	    }
+                  	    prompt = "登录失败 : " + prompt;
+                  	    
+                  	    ServiceManager.ToastShow(prompt);
+                    } 
                 }
+                		
                 loginflag = false;
             }
         };
@@ -185,6 +213,7 @@ public class LoginScreen extends Screen implements OnClickListener {
         // 进入我的应用--应用详情--应用信息--高级信息--授权设置--应用回调页进行设置和查看，
         // 应用回调页不可为空
         weibo.authorize(LoginScreen.this, new AuthDialogListener());
+        loginflag = false;
     }
 
     private void loginRenren() {
@@ -234,6 +263,7 @@ public class LoginScreen extends Screen implements OnClickListener {
 
         renren.logout(getApplicationContext());
         renren.authorize(LoginScreen.this, listener);
+        loginflag = false;
     }
 
     private void loginTencent() {
@@ -268,6 +298,7 @@ public class LoginScreen extends Screen implements OnClickListener {
         } else {
             Toast.makeText(getApplicationContext(), "登录腾讯出错", 1).show();
         }
+        loginflag = false;
     }
 
     class AuthDialogListener implements WeiboDialogListener {
@@ -356,8 +387,10 @@ public class LoginScreen extends Screen implements OnClickListener {
 
         String isBin = ServiceManager.getServerInterface().Bin_login(Integer.toString(tag), uid);
         if (isBin.contains("user_id")) {
-        	
-            handler.sendEmptyMessage(LOGIN_SUCCESS);
+        	Message msg = new Message();
+        	msg.obj = isBin;
+        	handler.sendMessage(msg);
+//            handler.sendEmptyMessage(LOGIN_SUCCESS);
             RegisterScreen.writeUserinfo(isBin,HttpUtils.GetCookie());
             
         } else {
@@ -399,16 +432,11 @@ public class LoginScreen extends Screen implements OnClickListener {
         new Thread() {
             public void run() {
                 String ret = ServiceManager.getServerInterface().login(username, password, imsi);
-                Log.e("------","ret = " + ret);
-                if (ret.contains("user_id")) {
-                    RegisterScreen.writeUserinfo(ret,HttpUtils.GetCookie());
-                    handler.sendEmptyMessage(LOGIN_SUCCESS);
-                    ScheduleApplication.LogD(LoginScreen.class,"ret = " + ret);
-                }
-                else
-                {
-                	handler.sendEmptyMessage(LOGIN_FAILED);
-                }
+                ScheduleApplication.LogD(LoginScreen.class, "run() ret = " + ret);
+                
+                Message msg = new Message();
+                msg.obj = ret;
+                handler.sendMessage(msg);
             };
         }.start();
 

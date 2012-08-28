@@ -32,6 +32,11 @@ public class TelephoneBindScreen extends Activity implements OnClickListener{
 	private final static int TELEPHONE_BIND_ALREADY = 4;
 	private final static int TELEPHONE_SIM_NONE = 5;
 	
+	private final static int TELEPHONE_BIND_FAILED_USERORTEL_NULL = -3; 			//用户名或手机号为空
+	private final static int TELEPHONE_BIND_FAILED_USER_NOTEXISTS = -4; 			//用户不存在
+	private final static int TELEPHONE_BIND_FAILED_TEL_BINDED = -5; 				//该电话已经绑定
+	private final static int TELEPHONE_BIND_FAILED_VERIFICATION_ERROR = -6; 		//验证码不正确
+	
 	private EditText telephone_bind_tel_et;
 	private EditText telephone_bind_verification_et;
 	private Button telephone_bind_btn;
@@ -116,7 +121,27 @@ public class TelephoneBindScreen extends Activity implements OnClickListener{
         			}, 60000);
         			break;
         		case TELEPHONE_BIND_FAILED:
-        			ServiceManager.ToastShow("绑定失败!");
+        			int reason = (Integer) msg.obj;
+        			String failedReason = "";
+        			switch(reason)
+        			{
+        			case TELEPHONE_BIND_FAILED_USERORTEL_NULL:
+        				failedReason = "用户名或手机号为空";
+        				break;
+        			case TELEPHONE_BIND_FAILED_USER_NOTEXISTS:
+        				failedReason = "用户不存在";
+        				break;
+        			case TELEPHONE_BIND_FAILED_TEL_BINDED:
+        				failedReason = "该电话已经绑定";
+        				break;
+        			case TELEPHONE_BIND_FAILED_VERIFICATION_ERROR:
+        				failedReason = "验证码不正确";
+        				break;
+    				default:
+    					failedReason = String.valueOf(reason);
+    					break;
+        			}
+        			ServiceManager.ToastShow("绑定失败 : " + failedReason);
         			break;
         		case TELEPHONE_BIND_SUCCESS:
         			telephone_bind_prompt.setVisibility(View.INVISIBLE);
@@ -236,7 +261,10 @@ public class TelephoneBindScreen extends Activity implements OnClickListener{
 							}
 							else
 							{
-								handler.sendEmptyMessage(TELEPHONE_BIND_FAILED);
+								Message msg = new Message();
+								msg.what = TELEPHONE_BIND_FAILED;
+								msg.obj = ret;
+								handler.sendMessage(msg);
 								ServiceManager.setBindFlag(false);
 							}
 							canBingFlag = true;

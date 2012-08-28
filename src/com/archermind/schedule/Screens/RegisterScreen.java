@@ -50,6 +50,13 @@ public class RegisterScreen extends Activity implements OnClickListener {
     private static final int REGISTER_FAILED = 2;
     
     private boolean registerflag = false;
+    
+    private static final int REGISTER_FAILED_USERORPSWD_NULL = -1;	//用户名或密码为空
+    private static final int REGISTER_FAILED_ACCOUNT_EXISTS = -2;	//账号或昵称已存在
+    private static final int REGISTER_FAILED_BLOG_BINDED = -3;		//微博等账号已绑定 
+    private static final int REGISTER_FAILED_EMIAL_ERROR = -6;		//注册的邮箱不合法 
+    private static final int REGISTER_FAILED_PSWD_ERROR = -7;		//密码不合法
+    private static final int REGISTER_FAILED_NICK_ERROR = -9;		//昵称含特殊字符，不合法
 
 //    private static final int BIN_SUCCESS = 3;
 
@@ -73,17 +80,51 @@ public class RegisterScreen extends Activity implements OnClickListener {
                 // TODO Auto-generated method stub
                 super.handleMessage(msg);
 
-                if (msg.what == REGISTER_SUCCESS) {
-                    ServiceManager.ToastShow("注册成功!");
-                    startActivity(new Intent(RegisterScreen.this,TelephoneBindScreen.class));
-                    finish();
-                } else if (msg.what == REGISTER_FAILED) {
-                    ServiceManager.ToastShow("注册失败!");
-                } /*else if (msg.what == BIN_SUCCESS) {
-                    ServiceManager.ToastShow("绑定成功!");
+                if (msg != null)
+                {
+                	String retValue = (String) msg.obj;
+                	String prompt = "";
+                	
+                	ScheduleApplication.LogD(RegisterScreen.class, "retValue = " + retValue);
+                	
+                	if (retValue.contains("user_id")) {
+                		prompt = "注册成功";
+                        writeUserinfo(retValue,HttpUtils.GetCookie());
+                        ScheduleApplication.LogD(RegisterScreen.class,"服务器返回信息写入SharedPrefences成功! ret = " + retValue);
+                        startActivity(new Intent(RegisterScreen.this,TelephoneBindScreen.class));
+                        finish();
+                	} else {
+                    	int ret = Integer.parseInt(retValue);
+	                   	 switch(ret)
+	                   	 {
+	                   	 case REGISTER_FAILED_USERORPSWD_NULL:
+	                   		 prompt = "用户名或密码为空";
+	                   		 break;
+	                   	 case REGISTER_FAILED_ACCOUNT_EXISTS:
+	                   		 prompt = "账号或昵称已存在";
+	                   		 break;
+	                   	 case REGISTER_FAILED_BLOG_BINDED:
+	                   		 prompt = "微博等账号已绑定";
+	                   		 break;
+	                   	 case REGISTER_FAILED_EMIAL_ERROR:
+	                   		 prompt = "注册的邮箱不合法";
+	                   		 break;
+	                   	 case REGISTER_FAILED_PSWD_ERROR:
+	                   		 prompt = "密码不合法";
+	                   		 break;
+	                   	 case REGISTER_FAILED_NICK_ERROR:
+	                   		 prompt = "昵称含特殊字符，不合法";
+	                   		 break;
+	                   	 default:
+	                   		 prompt = retValue;
+	                   		 break;
+	                   	 }
+	                   	prompt = "注册失败 : " + prompt;
+                    }
+                	
+                	ServiceManager.ToastShow(prompt);
+                }
 
-                    startActivity(new Intent(RegisterScreen.this,MenuScreen.class));
-                }*/
                 registerflag = false;
             }
         };
@@ -112,7 +153,6 @@ public class RegisterScreen extends Activity implements OnClickListener {
     	
     	if (!registerflag)
     	{
-    		registerflag = true;
     		switch (v.getId()) {
             case R.id.register_goback:
                 onBackPressed();
@@ -178,17 +218,12 @@ public class RegisterScreen extends Activity implements OnClickListener {
 
         new Thread() {
             public void run() {
-                
+            	registerflag = true;
                 String ret = ServiceManager.getServerInterface().register(email, pswd, username, imsi,
                         null, null, null,Integer.toString(binType), binId);
-                
-                if (ret.contains("user_id")) {
-                    handler.sendEmptyMessage(REGISTER_SUCCESS);
-                    writeUserinfo(ret,HttpUtils.GetCookie());
-                    ScheduleApplication.LogD(RegisterScreen.class,"服务器返回信息写入SharedPrefences成功! ret = " + ret);
-                } else {
-                    handler.sendEmptyMessage(REGISTER_FAILED);
-                }
+                Message msg = new Message();
+                msg.obj = ret;
+                handler.sendMessage(msg);
             };
         }.start();
     }
