@@ -112,6 +112,7 @@
             android:background="@drawable/schedule_new_line" />
 
         <LinearLayout
+            android:id="@+id/setting_remind"
             android:layout_width="fill_parent"
             android:layout_height="40dp"
             android:clickable="true"

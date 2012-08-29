@@ -3,6 +3,8 @@ package com.archermind.schedule.Model;
 public class UserInfoData {
 	
 	public static final String USER_INFO = "userinfo";
+	public static final String USER_SETTING = "usersetting";
+	
 	
 	public static final String USER_ID = "user_id";
 	public static final String EMAIL = "email";
@@ -14,6 +16,8 @@ public class UserInfoData {
 	public static final String TEL = "tel";
 	public static final String PHOTO_URL = "photo_url";
 	public static final String COOKIE = "cookie";
+	
+	public static final String SETTING_SOUND_REMIND = "setting_sound_remind";
 	
 //	private String user_id;		/*用户user_id*/
 //	private String email;			/*用户注册使用的email*/

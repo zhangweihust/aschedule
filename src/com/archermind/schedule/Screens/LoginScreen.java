@@ -103,7 +103,7 @@ public class LoginScreen extends Screen implements OnClickListener {
         login_password = (EditText)findViewById(R.id.login_password);
         
         login_username.setText(ServiceManager.getSPUserInfo(UserInfoData.EMAIL));
-        login_password.setText(ServiceManager.getSPUserInfo(UserInfoData.PSWD));
+        login_password.setText(ServiceManager.deCrypt(ServiceManager.getSPUserInfo(UserInfoData.PSWD)));
 
         login_goback.setOnClickListener(this);
         login_sina.setOnClickListener(this);
@@ -311,26 +311,22 @@ public class LoginScreen extends Screen implements OnClickListener {
         public void onComplete(Bundle values) {
 
             String uid = values.getString("uid");
-
             binAccount(uid, TAG_SINA);
-
         }
 
         @Override
         public void onError(DialogError e) {
-            Toast.makeText(getApplicationContext(), "Auth error : " + e.getMessage(),
-                    Toast.LENGTH_LONG).show();
+            
         }
 
         @Override
         public void onCancel() {
-            Toast.makeText(getApplicationContext(), "Auth cancel", Toast.LENGTH_LONG).show();
+
         }
 
         @Override
         public void onWeiboException(WeiboException e) {
-            Toast.makeText(getApplicationContext(), "Auth exception : " + e.getMessage(),
-                    Toast.LENGTH_LONG).show();
+            
         }
     }
 
@@ -435,7 +431,8 @@ public class LoginScreen extends Screen implements OnClickListener {
 
         new Thread() {
             public void run() {
-                String ret = ServiceManager.getServerInterface().login(username, password, imsi);
+            String passwordCrypt = ServiceManager.enCrypt(password);
+            String ret = ServiceManager.getServerInterface().login(username, passwordCrypt, imsi);         
                 ScheduleApplication.LogD(LoginScreen.class, "run() ret = " + ret);
                 
                 Message msg = new Message();
@@ -443,6 +440,5 @@ public class LoginScreen extends Screen implements OnClickListener {
                 handler.sendMessage(msg);
             };
         }.start();
-
     }
 }

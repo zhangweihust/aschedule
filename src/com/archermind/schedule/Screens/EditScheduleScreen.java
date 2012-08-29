@@ -315,6 +315,11 @@ public class EditScheduleScreen extends Screen implements OnClickListener {
 
     // 更新数据库
     public void updateScheduleToDb() {
+        
+        Intent intent = new Intent();
+        intent.setAction("android.appwidget.action.LOCAL_SCHEDULE_UPDATE");
+        sendBroadcast(intent);
+        
         new Thread(new Runnable() {
 
             @Override

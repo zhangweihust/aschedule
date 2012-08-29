@@ -27,14 +27,13 @@ public class BootRecevier extends BroadcastReceiver {
 
     private Context mContext;
 
-    private DatabaseManager dbManager;
-
     public void onReceive(Context context, Intent intent) {
     	ScheduleApplication.LogD(BootRecevier.class, "action:" + intent.getAction());
         mContext = context;
+        
         new Thread() {
             public void run() {
-                dbManager = new DatabaseManager(mContext);
+                DatabaseManager dbManager = new DatabaseManager(mContext);
                 dbManager.open();
                 Cursor c = dbManager.queryNotOutdateschedule(System.currentTimeMillis());
                 ScheduleApplication.LogD(BootRecevier.class, "not outdate count ::" + c.getCount());

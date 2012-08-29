@@ -7,24 +7,23 @@
     <uses-sdk android:minSdkVersion="7" />
 
     <application
+        android:name=".ScheduleApplication"
         android:icon="@drawable/schedule_icon"
         android:label="@string/app_name"
-        android:theme="@style/ActivityNoTitle"
-        android:name=".ScheduleApplication" >
+        android:theme="@style/ActivityNoTitle" >
         <activity
-            android:launchMode="singleTask"
             android:name=".Screens.HomeScreen"
+            android:label="@string/app_name"
+            android:launchMode="singleTask"
             android:screenOrientation="portrait"
-            android:windowSoftInputMode="adjustPan"
-            android:label="@string/app_name" >
-
+            android:windowSoftInputMode="adjustPan" >
         </activity>
-        <activity android:name=".Screens.AccountSettingScreen"/>
-        <activity android:name=".Screens.DynamicScreen"/>
-        <activity android:name=".Screens.MyDynamicScreen"/>
-        <activity android:name=".Screens.FriendsDyamicScreen"/>
-         <activity android:name=".Screens.FriendScreen"/>
-        <activity android:name=".Screens.ScheduleScreen"/>
+        <activity android:name=".Screens.AccountSettingScreen" />
+        <activity android:name=".Screens.DynamicScreen" />
+        <activity android:name=".Screens.MyDynamicScreen" />
+        <activity android:name=".Screens.FriendsDyamicScreen" />
+        <activity android:name=".Screens.FriendScreen" />
+        <activity android:name=".Screens.ScheduleScreen" />
         <activity android:name=".Screens.CalendarConvertScreen" />
         <activity android:name=".Screens.PasswActivity" />
         <activity android:name=".Screens.ScheduleAllScreen" />
@@ -32,76 +31,123 @@
         <activity android:name=".Screens.ScheduleScreen" />
         <activity android:name=".Screens.ScheduleTypeScreen" />
         <activity android:name=".Screens.ScheduleAddScreen" />
-        <activity android:name=".Screens.MenuScreen" android:launchMode="singleTask"/>
-		<activity android:name=".Screens.RegisterScreen" android:launchMode="singleTask"/>
-		<activity android:name=".Screens.LoginScreen" android:launchMode="singleTask"/>
-		<activity android:name=".Screens.ContactSyncAlertScreen" 
-		    	  android:launchMode="singleTask"
-		    	  android:label="HI~ 通讯录有更新"
-		    	  android:theme="@style/AScheduleDialog" />
-		<service android:name=".Services.ServiceManager"/>
-		<service android:name=".Services.AppUpgradeService"/>
-		<activity android:name=".Screens.NewScheduleScreen"/>
-        <activity android:name=".Screens.EditScheduleScreen"></activity>
-         <activity android:name=".Screens.WeatherScreen"/>
-         <activity android:name=".Screens.AboutScreen"></activity>
-         <activity android:name=".Screens.FeedbackScreen"></activity>
-         <activity android:name=".Screens.SettingScreen"></activity>
-         <activity android:name=".Screens.TelephoneBindScreen"></activity>
-        <activity android:name=".Screens.LoadingScreen"> <intent-filter>
+        <activity
+            android:name=".Screens.MenuScreen"
+            android:launchMode="singleTask" />
+        <activity
+            android:name=".Screens.RegisterScreen"
+            android:launchMode="singleTask" />
+        <activity
+            android:name=".Screens.LoginScreen"
+            android:launchMode="singleTask" />
+        <activity
+            android:name=".Screens.ContactSyncAlertScreen"
+            android:label="HI~ 通讯录有更新"
+            android:launchMode="singleTask"
+            android:theme="@style/AScheduleDialog" />
+
+        <service android:name=".Services.ServiceManager" />
+        <service android:name=".Services.AppUpgradeService" />
+        <service
+            android:name=".Services.TimeTickService"
+            android:exported="false" >
+            <intent-filter>
+                <action android:name="com.archermind.widgetweather.timetick" />
+            </intent-filter>
+        </service>
+
+        <activity android:name=".Screens.NewScheduleScreen" />
+        <activity android:name=".Screens.EditScheduleScreen" >
+        </activity>
+        <activity android:name=".Screens.WeatherScreen" />
+        <activity android:name=".Screens.AboutScreen" >
+        </activity>
+        <activity android:name=".Screens.FeedbackScreen" >
+        </activity>
+        <activity android:name=".Screens.SettingScreen" >
+        </activity>
+        <activity android:name=".Screens.TelephoneBindScreen" >
+        </activity>
+        <activity android:name=".Screens.LoadingScreen" >
+            <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
                 <category android:name="android.intent.category.LAUNCHER" />
-            </intent-filter></activity>
+            </intent-filter>
+        </activity>
         <activity
             android:name="com.tencent.weibo.webview.OAuthV1AuthorizeWebView"
             android:label="@string/app_name" >
         </activity>
-        
+
         <receiver android:name=".Services.AlarmRecevier" >
         </receiver>
         <receiver android:name=".Services.BootRecevier" >
-            <intent-filter >
+            <intent-filter>
                 <action android:name="android.intent.action.BOOT_COMPLETED" />
                 <action android:name="android.intent.action.TIME_SET" />
-                <action android:name="android.intent.action.TIMEZONE_CHANGED" />  
+                <action android:name="android.intent.action.TIMEZONE_CHANGED" />
             </intent-filter>
         </receiver>
-        <receiver android:name=".Services.AlarmServiceReceiver"></receiver>        
-        <receiver android:name="com.archermind.schedule.Views.WidgetProvider">
-			<intent-filter>
-				<action android:name="android.appwidget.action.APPWIDGET_UPDATE" />
-				<action android:name="android.appwidget.action.LOCAL_SCHEDULE_UPDATE" />
+        <receiver android:name=".Services.AlarmServiceReceiver" >
+        </receiver>
+        <receiver android:name="com.archermind.schedule.Views.WidgetProvider" >
+            <intent-filter>
+                <action android:name="android.appwidget.action.APPWIDGET_UPDATE" />
+                <action android:name="android.appwidget.action.LOCAL_SCHEDULE_UPDATE" />
                 <action android:name="android.intent.action.TIMEZONE_CHANGED" />
                 <action android:name="android.intent.action.DATE_CHANGED" />
                 <action android:name="android.intent.action.TIME_SET" />
                 <action android:name="android.intent.action.LOCALE_CHANGED" />
-			</intent-filter>
-			<meta-data android:name="android.appwidget.provider"
-				android:resource="@xml/appwidget_provider" />
-		</receiver>
-            
-            <receiver android:name="com.archermind.schedule.Views.MonthCalWidget">
-			<intent-filter>
-				<action android:name="android.appwidget.action.APPWIDGET_UPDATE" />
-			</intent-filter>
-			<intent-filter>	
-				<action android:name="android.intent.action.DATE_CHANGED"/>
-			</intent-filter>
-			<meta-data android:name="android.appwidget.provider" android:resource="@xml/monthcal_widget_provider" />
-		</receiver>
-		<service android:name="com.archermind.schedule.Views.MCWUpdateService" />
-		
-		
-            
-		</application>
-		<uses-permission android:name="android.permission.INTERNET"/>
-		<uses-permission android:name="android.permission.READ_PHONE_STATE"/>
-		<uses-permission android:name="android.permission.READ_CONTACTS"/>
-		 <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
-		 <uses-permission android:name="android.permission.ACCESS_WIFI_STATE"/>
-		   <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
-	    <uses-permission android:name="android.permission.READ_PHONE_STATE"/>
-	     <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED" />
-	     <uses-permission android:name="android.permission.READ_CALENDAR" />
+            </intent-filter>
+
+            <meta-data
+                android:name="android.appwidget.provider"
+                android:resource="@xml/appwidget_provider" />
+        </receiver>
+
+        <!-- 微日程天气的配置文件 -->
+        <receiver
+            android:name=".Views.WidgetWeather"
+            android:label="微日程天气" >
+            <intent-filter>
+                <action android:name="android.appwidget.action.APPWIDGET_UPDATE" />
+                <action android:name="android.appwidget.action.LOCAL_SCHEDULE_UPDATE" />
+                <action android:name="android.intent.action.TIMEZONE_CHANGED" />
+                <action android:name="android.intent.action.DATE_CHANGED" />
+                <action android:name="android.intent.action.TIME_SET" />
+                <!-- 下面这个消息是模拟 android.intent.action.TIME_TICK -->
+                <action android:name="com.archermind.TimeTickService.tick" />
+            </intent-filter>
+
+            <meta-data
+                android:name="android.appwidget.provider"
+                android:resource="@xml/widget_weather" />
+        </receiver>
+        <receiver android:name="com.archermind.schedule.Views.MonthCalWidget" >
+            <intent-filter>
+                <action android:name="android.appwidget.action.APPWIDGET_UPDATE" />
+            </intent-filter>
+            <intent-filter>
+                <action android:name="android.intent.action.DATE_CHANGED" />
+            </intent-filter>
+
+            <meta-data
+                android:name="android.appwidget.provider"
+                android:resource="@xml/monthcal_widget_provider" />
+        </receiver>
+
+        <service android:name="com.archermind.schedule.Views.MCWUpdateService" />
+    </application>
+
+    <uses-permission android:name="android.permission.INTERNET" />
+    <uses-permission android:name="android.permission.READ_PHONE_STATE" />
+    <uses-permission android:name="android.permission.READ_CONTACTS" />
+    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
+    <uses-permission android:name="android.permission.ACCESS_WIFI_STATE" />
+    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
+    <uses-permission android:name="android.permission.READ_PHONE_STATE" />
+    <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED" />
+    <uses-permission android:name="android.permission.READ_CALENDAR" />
+
 </manifest>

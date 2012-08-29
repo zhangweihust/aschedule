@@ -4,11 +4,14 @@ package com.archermind.schedule.Screens;
 import java.util.Calendar;
 import java.util.Locale;
 
+import android.app.AlertDialog;
 import android.content.ContentValues;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.Display;
+import android.view.KeyEvent;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.Button;
@@ -33,6 +36,7 @@ import com.archermind.schedule.Utils.ServerInterface;
 import com.archermind.schedule.Views.ScheduleEditText;
 
 public class NewScheduleScreen extends Screen implements OnClickListener {
+
     /** Called when the activity is first created. */
     private static String TAG = "NewScheduleScreen";
 
@@ -179,7 +183,6 @@ public class NewScheduleScreen extends Screen implements OnClickListener {
         eventTypeDialog = new EventTypeDialog(this, R.style.EventTypedialog, mType,
                 screenHeight / 8);
         eventTypeDialog.setOnEventTypeSelectListener(mEventTypeSelectListner);
-
     }
 
     public void setDisplayTime(long calendarTime, long displaytime) {
@@ -220,8 +223,8 @@ public class NewScheduleScreen extends Screen implements OnClickListener {
     public void onClick(View v) {
         // TODO Auto-generated method stub
         if (v.getId() == backBtn.getId()) {
-            oper_flag = DatabaseHelper.SCHEDULE_OPER_NOTHING;
-            this.finish();
+
+            checkQuit();
 
         } else if (v.getId() == saveBtn.getId()) {
 
@@ -263,24 +266,55 @@ public class NewScheduleScreen extends Screen implements OnClickListener {
 
         } else if (v.getId() == event.getId()) {
             if (eventTypeDialog.isShowing()) {
+
                 Log.d("eventTypeDialog", "---------showing");
                 eventTypeDialog.cancel();
+
             } else {
+
                 int y = schedule_top.getHeight() + event_addtion_linear.getHeight() + screenHeight
                         / 8 / 2 - screenHeight / 2;
                 eventTypeDialog.setPosition(0, y);
                 eventTypeDialog.setCanceledOnTouchOutside(true);
                 eventTypeDialog.show();
-
             }
 
         } else if (v.getId() == dateView.getId()) {
+
             // 启动时间选择器
             timeselectordialog.setCurrentItem(startTime);
             timeselectordialog.show();
-
         }
+    }
 
+    private void checkQuit() {
+        
+        if (!"".equals(schedule_text.getText().toString().trim())) {
+
+            new AlertDialog.Builder(NewScheduleScreen.this).setMessage("是否放弃当前编辑？")
+                    .setNegativeButton("取消", new DialogInterface.OnClickListener() {
+
+                        public void onClick(DialogInterface dialog, int whichButton) {
+
+                            dialog.dismiss();
+                        }
+                    }).setPositiveButton("确认", new DialogInterface.OnClickListener() {
+
+                        public void onClick(DialogInterface dialog, int whichButton) {
+
+                            finish();
+                        }
+                    }).show();            
+        } else {
+            
+            finish();
+        }
+    }
+
+    public boolean onKeyDown(int keyCode, KeyEvent event) {
+
+        checkQuit();
+        return super.onKeyDown(keyCode, event);
     }
 
     public void saveScheduleToDb() {
@@ -391,9 +425,7 @@ public class NewScheduleScreen extends Screen implements OnClickListener {
 
             alarmPopwindow.setStartTime(mSelectTime);
             // 此时重复提醒默认为无，设置阶段提醒开始时间,结束时间显默认显示新建日程时间
-
         }
-
     }
 
     class RemindSelectListner implements OnRemindSelectListener {

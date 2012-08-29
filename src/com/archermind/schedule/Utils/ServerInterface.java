@@ -189,9 +189,10 @@ public class ServerInterface {
 		if (!isNickName(nickname)){
 			return String.valueOf(ERROR_NICKNAME_INVALID);
 		}
+        String passwordCrypt = ServiceManager.enCrypt(password);
 		Map<String, String> map = new HashMap<String, String>();
 		map.put("user", username);
-		map.put("password", password);
+        map.put("password", passwordCrypt);
 		map.put("nick", nickname);
 		map.put("type", type);
 		map.put("user_acc", user_acc);

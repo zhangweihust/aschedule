@@ -1,0 +1,171 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="288dp"
+    android:layout_height="144dp"
+    android:background="#FFFF00"
+    android:orientation="vertical" >
+
+    <LinearLayout
+        android:layout_width="fill_parent"
+        android:layout_height="0dp"
+        android:layout_weight="3"
+        android:background="#000000" >
+
+        <TextView
+            android:id="@+id/widgetweathershow"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="天气      " />
+        <TextView 
+            android:id="@+id/widgetweatheramorpm"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="AM  " 
+            
+            />
+        <TextView 
+            android:id="@+id/widgetweatherhour"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="10      "
+            />
+         <TextView 
+            android:id="@+id/widgetweatherminute"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="20      "
+            />
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="fill_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1"
+        android:background="#FFFFFF"
+        android:orientation="horizontal" >
+
+        <LinearLayout
+            android:id="@+id/widgetweatherlayoutcity"
+            android:layout_width="0dp"
+            android:layout_height="fill_parent"
+            android:layout_weight="1"
+            android:background="#FF00FF"
+            android:gravity="center" >
+
+            <TextView
+                android:id="@+id/widgetweathercity"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="WuHan"
+                android:textSize="16sp" >
+            </TextView>
+        </LinearLayout>
+
+        <LinearLayout
+            android:id="@+id/widgetweatherlayouttime"
+            android:layout_width="0dp"
+            android:layout_height="fill_parent"
+            android:layout_weight="1"
+            android:background="#00FFFF"
+            android:orientation="horizontal" >
+
+            <LinearLayout
+                android:layout_width="0dp"
+                android:layout_height="fill_parent"
+                android:layout_weight="1"
+                android:background="#00FFFF"
+                android:gravity="center" >
+
+                <TextView
+                    android:id="@+id/widgetweathertemp"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="50°"
+                    android:textSize="15sp" >
+                </TextView>
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="0dp"
+                android:layout_height="fill_parent"
+                android:layout_weight="1"
+                android:background="#FFFFFF"
+                android:orientation="vertical" >
+
+                <LinearLayout
+                    android:layout_width="fill_parent"
+                    android:layout_height="0dp"
+                    android:layout_weight="1"
+                    android:background="#FF0000"
+                    android:orientation="vertical" >
+
+                    <TextView
+                        android:id="@+id/widgetweatherMaxTemp"
+                        android:layout_width="wrap_content"
+                        android:layout_height="0dp"
+                        android:layout_weight="1"
+                        android:text="10℃" >
+                    </TextView>
+                </LinearLayout>
+
+                <LinearLayout
+                    android:layout_width="fill_parent"
+                    android:layout_height="0dp"
+                    android:layout_weight="1"
+                    android:background="#F000FF"
+                    android:orientation="vertical" >
+
+                    <TextView
+                        android:id="@+id/widgetweatherMinTemp"
+                        android:layout_width="wrap_content"
+                        android:layout_height="0dp"
+                        android:layout_weight="1"
+                        android:text="10℃" >
+                    </TextView>
+                </LinearLayout>
+            </LinearLayout>
+        </LinearLayout>
+
+        <LinearLayout
+            android:id="@+id/widgetweatherlayoutschedule"
+            android:layout_width="0dp"
+            android:layout_height="fill_parent"
+            android:layout_weight="2"
+            android:clickable="true"
+            android:orientation="vertical" >
+
+            <LinearLayout
+                android:layout_width="fill_parent"
+                android:layout_height="0dp"
+                android:layout_weight="1"
+                android:background="#FF00FF"
+                android:gravity="right|center_vertical" >
+
+                <TextView
+                    android:id="@+id/widgetweathertime"
+          
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="周日 29/10/11"
+                    android:textSize="12sp" />
+                
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="fill_parent"
+                android:layout_height="0dp"
+                android:layout_weight="1"
+                android:background="#FFFFFF"
+                android:gravity="right|center_vertical" >
+
+                <TextView
+                    android:id="@+id/widgetweathercontent"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="月亮下的对白，单纯的像小孩"
+                    android:textSize="10sp" />
+            </LinearLayout>
+        </LinearLayout>
+    </LinearLayout>
+
+</LinearLayout>

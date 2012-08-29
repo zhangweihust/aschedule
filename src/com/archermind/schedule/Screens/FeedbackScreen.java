@@ -61,8 +61,6 @@ public class FeedbackScreen extends Screen implements IEventHandler, OnClickList
                 
                 ServerInterface sfInterface = new ServerInterface();
                 
-                
-                
                 if (suggestion.length()>160) {
                     
                     Toast.makeText(getApplicationContext(), "字数超过160，请减少字数", 1).show();                    
@@ -72,22 +70,20 @@ public class FeedbackScreen extends Screen implements IEventHandler, OnClickList
                     Toast.makeText(getApplicationContext(), "请输入反馈内容", 1).show();                                        
                     
                 } else {
-                                        
+                   
                     int result = sfInterface.suggestionfeedback(userid, telephone, suggestion);
-                    
                     
                     if (0 == result) {
                         
-                        Toast.makeText(getApplicationContext(), "反馈成功"+suggestion.length(), 1).show();                    
+                        Toast.makeText(getApplicationContext(), "反馈成功", 1).show();                    
                         finish();
                         
                     } else {
                         
-                        
+                        Toast.makeText(getApplicationContext(), "反馈失败，请稍后重试", 1).show();                                                                    
                     }
                 }
-              
-                
+          
                 break;
 
             default:

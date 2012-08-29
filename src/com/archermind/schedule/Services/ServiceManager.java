@@ -17,6 +17,7 @@ import android.content.ContentValues;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.content.SharedPreferences.Editor;
 import android.os.Handler;
 import android.os.IBinder;
 import android.os.Message;
@@ -43,6 +44,7 @@ import com.archermind.schedule.Screens.HomeScreen;
 import com.archermind.schedule.Screens.RegisterScreen;
 import com.archermind.schedule.Utils.Constant;
 import com.archermind.schedule.Utils.Contact;
+import com.archermind.schedule.Utils.CookieCrypt;
 import com.archermind.schedule.Utils.DeviceInfo;
 import com.archermind.schedule.Utils.NetworkUtils;
 import com.archermind.schedule.Utils.ServerInterface;
@@ -71,8 +73,11 @@ public class ServiceManager extends Service implements OnClickListener{
     private static String avator_url = "";
     private static SharedPreferences sharedPreferences;
     private static SharedPreferences.Editor spEditor;
-    
-    private static int listkind = XListViewFooter.SCHEDULE_PROMPT;
+
+    private static SharedPreferences sharedPreferencesSetting;
+
+    private static Editor mSPEditorSetting;
+	private static int listkind = XListViewFooter.SCHEDULE_PROMPT;
     
     private static long timeDifference = 0;
 
@@ -169,6 +174,11 @@ public class ServiceManager extends Service implements OnClickListener{
         sharedPreferences = getSharedPreferences(UserInfoData.USER_INFO,
                 Context.MODE_WORLD_READABLE);
         spEditor = sharedPreferences.edit();
+
+        sharedPreferencesSetting = getSharedPreferences(UserInfoData.USER_SETTING,
+                Context.MODE_WORLD_READABLE);
+        mSPEditorSetting = sharedPreferencesSetting.edit();
+
         user_id = Integer.parseInt(sharedPreferences.getString(UserInfoData.USER_ID, "0"));
         cookie = sharedPreferences.getString(UserInfoData.COOKIE, "");
         avator_url = sharedPreferences.getString(UserInfoData.PHOTO_URL, "");
@@ -318,6 +328,37 @@ public class ServiceManager extends Service implements OnClickListener{
         }
         toast.setText(message);
         toast.show();
+    }
+
+    // 对字符串进行加密
+    public static String enCrypt(String input) {
+
+        String output = "";
+
+        try {
+
+            output = CookieCrypt.encrypt("archdswh", input);
+
+        } catch (Exception e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+        }
+
+        return output;
+    }
+
+    // 对支付串进行解密
+    public static String deCrypt(String input) {
+
+        String output = "";
+        try {
+            
+            output = CookieCrypt.decrypt("archdswh", input);
+        } catch (Exception e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+        }
+        return output;
     }
 
     public static void exit() {
@@ -483,6 +524,14 @@ public class ServiceManager extends Service implements OnClickListener{
 	       return sharedPreferences.getString(feild,"");
 	   }
 	   
+    public static void setSPUserSetting(String feild, String data) {
+        mSPEditorSetting.putString(feild, data);
+        mSPEditorSetting.commit();
+    }
+
+    public static String getSPUserSetting(String feild) {
+        return sharedPreferencesSetting.getString(feild, "");
+    }
 	   public static boolean isUserLogining(int userid)
 	   {
 		   boolean ret = false;
