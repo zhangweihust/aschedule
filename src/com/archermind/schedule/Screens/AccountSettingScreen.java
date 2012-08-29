@@ -170,6 +170,10 @@ public class AccountSettingScreen extends Activity implements OnClickListener{
 				}.start();
 			}
 			break;
+		case R.id.title_bar_setting_btn:
+			finish();
+			overridePendingTransition(R.anim.left_in,R.anim.left_out);
+			break;
 		}
 	}  
 	

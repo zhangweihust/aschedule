@@ -80,7 +80,7 @@ public class RegisterScreen extends Activity implements OnClickListener {
                 // TODO Auto-generated method stub
                 super.handleMessage(msg);
 
-                if (msg != null)
+                if (msg != null && msg.obj != null)
                 {
                 	String retValue = (String) msg.obj;
                 	String prompt = "";

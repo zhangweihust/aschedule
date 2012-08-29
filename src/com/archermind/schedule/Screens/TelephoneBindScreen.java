@@ -166,11 +166,13 @@ public class TelephoneBindScreen extends Activity implements OnClickListener{
 	public void onClick(View v) {
 		// TODO Auto-generated method stub
 		String inputstr = "";
+		String imsi = DeviceInfo.getDeviceIMSI();
 		
-		if (DeviceInfo.getDeviceIMSI() == null)
+		if (imsi == null)
 		{
-			handler.sendEmptyMessage(TELEPHONE_SIM_NONE);
-			return;
+			imsi = "";
+//			handler.sendEmptyMessage(TELEPHONE_SIM_NONE);
+//			return;
 		}
 		switch(v.getId())
 		{
@@ -241,6 +243,7 @@ public class TelephoneBindScreen extends Activity implements OnClickListener{
 				if (canBingFlag)
 				{
 					canBingFlag = false;
+					final String finalimsi = imsi;
 					new Thread(){
 						public void run() 
 						{
@@ -251,12 +254,12 @@ public class TelephoneBindScreen extends Activity implements OnClickListener{
 									 "bind", 
 									 String.valueOf(ServiceManager.getUserId()), 
 									 tel,
-									 DeviceInfo.getDeviceIMSI());
+									 finalimsi);
 							if (ret == 0)
 							{
 								handler.sendEmptyMessage(TELEPHONE_BIND_SUCCESS);
 								ServiceManager.setSPUserInfo(UserInfoData.TEL, tel);
-								ServiceManager.setSPUserInfo(UserInfoData.IMSI, DeviceInfo.getDeviceIMSI());
+								ServiceManager.setSPUserInfo(UserInfoData.IMSI, finalimsi);
 								ServiceManager.setBindFlag(true);
 							}
 							else
