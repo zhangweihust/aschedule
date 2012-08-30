@@ -370,7 +370,7 @@ public void deleteFriend(String id){
 		database.update(DatabaseHelper.ASCHEDULE_CONTACT, values, DatabaseHelper.COLUMN_CONTACT_ID + " =? ", new String[] { String.valueOf(id)});
 	}
 
-	public Cursor queryFriendTel(int id){
+	public Cursor queryFriend(int id){
 		return database.query(DatabaseHelper.ASCHEDULE_FRIEND, null, DatabaseHelper.ASCHEDULE_FRIEND_ID + " =? ", new String[] { String.valueOf(id)}, null, null, null);
 	}
 
@@ -435,4 +435,133 @@ public Cursor queryScheduleWeather(String date){
 				new String[] { String.valueOf(date) }, null, null, null);
 		
 	}
+private boolean insertCountUserInfoTask(int date, int result) {
+	ContentValues values = new ContentValues();
+	values.put(DatabaseHelper.COLUMN_COUNT_USER_INFO_TASK_TIMES, result == 1 ? 1 : 0);
+	values.put(DatabaseHelper.COLUMN_COUNT_USER_INFO_TASK_DAY_TIMES, 1);
+	values.put(DatabaseHelper.COLUMN_COUNT_USER_INFO_TASK_DATE, date);
+	values.put(DatabaseHelper.COLUMN_COUNT_USER_INFO_TASK_RESULT, result);
+	return database.insert(DatabaseHelper.TAB_COUNT_USER_INFO_TASK, null, values) > 0;
+}
+public boolean updateCountUserInfoTask(int date, int result) {
+	Cursor cursor = queryCountUserInfoTask();
+	Integer oldDate = null;
+	int dayTimes = 0;
+	int times = 0;
+	if (cursor.moveToNext()) {
+		oldDate = cursor.getInt(cursor.getColumnIndex(DatabaseHelper.COLUMN_COUNT_USER_INFO_TASK_DATE));
+		dayTimes = cursor.getInt(cursor.getColumnIndex(DatabaseHelper.COLUMN_COUNT_USER_INFO_TASK_DAY_TIMES));
+		times = cursor.getInt(cursor.getColumnIndex(DatabaseHelper.COLUMN_COUNT_USER_INFO_TASK_TIMES));
+	}
+	cursor.close();
+	ContentValues values;
+	if (oldDate != null) {
+		if (date > oldDate) {
+			dayTimes = 0;
+		}
+		values = new ContentValues();
+		values.put(DatabaseHelper.COLUMN_COUNT_USER_INFO_TASK_DATE, date);
+		values.put(DatabaseHelper.COLUMN_COUNT_USER_INFO_TASK_DAY_TIMES, dayTimes + 1);
+		values.put(DatabaseHelper.COLUMN_COUNT_USER_INFO_TASK_TIMES, result == 1 ? times + 1 : times);
+		values.put(DatabaseHelper.COLUMN_COUNT_USER_INFO_TASK_RESULT, result);
+		return database.update(DatabaseHelper.TAB_COUNT_USER_INFO_TASK, values, null, null) > 0;
+	} else {
+		return insertCountUserInfoTask(date, result);
+	}
+}
+
+public Cursor queryCountUserInfoTask() {
+	return database.query(DatabaseHelper.TAB_COUNT_USER_INFO_TASK, new String[] {
+			DatabaseHelper.COLUMN_COUNT_USER_INFO_TASK_RESULT, DatabaseHelper.COLUMN_COUNT_USER_INFO_TASK_TIMES,
+			DatabaseHelper.COLUMN_COUNT_USER_INFO_TASK_DAY_TIMES, DatabaseHelper.COLUMN_COUNT_USER_INFO_TASK_DATE, }, null, null, null,
+			null, null);
+}
+
+
+
+
+
+
+
+public Cursor queryUserActivityInfo(){
+	return database.query(DatabaseHelper.TAB_COUNT_USER_ACTIVITY_INFO_TASK, null, null, null, null,null,null);
+}
+
+public int deleteUserActivityInfo(){
+	return database.delete(DatabaseHelper.TAB_COUNT_USER_ACTIVITY_INFO_TASK,null,null);
+}
+
+private boolean insertUserActivityInfoTask(int date, int result) {
+	ContentValues values = new ContentValues();
+	values.put(DatabaseHelper.COLUMN_COUNT_USER_INFO_ACTIVITY_DATE, date);
+	values.put(DatabaseHelper.COLUMN_COUNT_USER_INFO_ACTIVITY_DAY_TIMES, 1);
+	values.put(DatabaseHelper.COLUMN_COUNT_USER_INFO_ACTIVITY_RESULT, result);
+	return database.insert(DatabaseHelper.TAB_COUNT_USER_ACTIVITY_INFO_TASK, null, values) > 0;
+}
+
+public boolean updateUserActivityInfo(int mDayDate, Integer mTimesTamp){
+	Integer times = null;
+	Integer timesTamp = null;
+	Integer dayDate = null;
+	Cursor cursor = queryUserActivityInfo();
+	if(cursor.moveToNext()){
+		times = cursor.getInt(cursor.getColumnIndex(DatabaseHelper.COLUMN_COUNT_USER_INFO_ACTIVITY_TIMES));
+		timesTamp = cursor.getInt(cursor.getColumnIndex(DatabaseHelper.COLUMN_COUNT_USER_INFO_ACTIVITY_CUMULATIVE_TIME));
+		dayDate = cursor.getInt(cursor.getColumnIndex(DatabaseHelper.COLUMN_COUNT_USER_INFO_ACTIVITY_DAY_DATE));
+	}
+	cursor.close();
+	ContentValues values;
+	if(times != null && timesTamp != null){
+		values = new ContentValues();
+		if(mDayDate - dayDate >= 1){
+			values.put(DatabaseHelper.COLUMN_COUNT_USER_INFO_ACTIVITY_TIMES, times + 1);
+			dayDate = mDayDate;
+			values.put(DatabaseHelper.COLUMN_COUNT_USER_INFO_ACTIVITY_DAY_DATE, dayDate);
+		}else{
+			values.put(DatabaseHelper.COLUMN_COUNT_USER_INFO_ACTIVITY_TIMES, times);
+		}
+		values.put(DatabaseHelper.COLUMN_COUNT_USER_INFO_ACTIVITY_CUMULATIVE_TIME, timesTamp+mTimesTamp);
+		return database.update(DatabaseHelper.TAB_COUNT_USER_ACTIVITY_INFO_TASK, values, null, null) > 0;
+	}else{
+		return insertCountAudioInfo(mDayDate, 1, mTimesTamp);
+	}
+	
+}
+
+public Cursor queryUserActivityInfoTask() {
+	return database.query(DatabaseHelper.TAB_COUNT_USER_ACTIVITY_INFO_TASK, null, null, null, null, null, null);
+}
+
+public boolean insertCountAudioInfo(int dayDate, int times, Integer timesTamp){
+	ContentValues values = new ContentValues();
+	values.put(DatabaseHelper.COLUMN_COUNT_USER_INFO_ACTIVITY_DAY_DATE, dayDate);
+	values.put(DatabaseHelper.COLUMN_COUNT_USER_INFO_ACTIVITY_TIMES, times);
+	values.put(DatabaseHelper.COLUMN_COUNT_USER_INFO_ACTIVITY_CUMULATIVE_TIME, timesTamp);
+	return database.insert(DatabaseHelper.TAB_COUNT_USER_ACTIVITY_INFO_TASK, null, values) > 0;
+}
+
+public boolean updateUserActivityInfoTask(int date, int result) {
+    Cursor cursor = queryUserActivityInfoTask();
+	Integer oldDate = null;
+	int times = 0;
+	if (cursor.moveToNext()) {
+		oldDate = cursor.getInt(cursor.getColumnIndex(DatabaseHelper.COLUMN_COUNT_USER_INFO_ACTIVITY_DATE));
+		times = cursor.getInt(cursor.getColumnIndex(DatabaseHelper.COLUMN_COUNT_USER_INFO_ACTIVITY_DAY_TIMES));
+	}
+	cursor.close();
+	ContentValues values;
+	if (oldDate != null) {
+		if (date > oldDate) {
+			times = 0;
+		}
+		values = new ContentValues();
+		values.put(DatabaseHelper.COLUMN_COUNT_USER_INFO_ACTIVITY_DATE, date);
+		values.put(DatabaseHelper.COLUMN_COUNT_USER_INFO_ACTIVITY_DAY_TIMES, times + 1);
+		values.put(DatabaseHelper.COLUMN_COUNT_USER_INFO_ACTIVITY_RESULT, result);
+		return database.update(DatabaseHelper.TAB_COUNT_USER_ACTIVITY_INFO_TASK, values, null, null) > 0;
+	} else {
+		return insertUserActivityInfoTask(date, result);
+	}
+}
+
 }

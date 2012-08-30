@@ -135,7 +135,7 @@ public class DynamicScheduleAdapter extends BaseAdapter {
 
             item.commentsLayout.setVisibility(View.GONE);
             item.avatarLayout.setVisibility(View.VISIBLE);
-            Cursor friendCursor = ServiceManager.getDbManager().queryFriendTel(data.getUser_id());
+            Cursor friendCursor = ServiceManager.getDbManager().queryFriend(data.getUser_id());
             if(friendCursor != null && friendCursor.getCount() > 0){
             	friendCursor.moveToFirst();
             	String nick = friendCursor.getString(friendCursor

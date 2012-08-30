@@ -8,22 +8,14 @@ import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.Window;
 import android.view.WindowManager;
-import android.view.animation.AnticipateOvershootInterpolator;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Toast;
 
 import com.archermind.schedule.R;
 import com.archermind.schedule.ScheduleApplication;
-import com.archermind.schedule.Adapters.NumericWheelAdapter;
-import com.archermind.schedule.Calendar.SpecialCalendar;
-import com.archermind.schedule.Dialog.TimeSelectorDialog.OnOkButtonClickListener;
 import com.archermind.schedule.Model.UserInfoData;
 import com.archermind.schedule.Services.ServiceManager;
-import com.archermind.schedule.Utils.Constant;
-import com.archermind.schedule.Utils.DateTimeUtils;
-import com.archermind.schedule.Views.WheelView;
-import com.archermind.schedule.Views.WheelView.OnWheelScrollListener;
 
 public class ModifyNickDialog implements OnClickListener {
 	private Dialog modifyNickDialog;
@@ -33,6 +25,7 @@ public class ModifyNickDialog implements OnClickListener {
 	private Window window = null;
 
 	public ModifyNickDialog(Context context) {
+		this.context = context;
 		modifyNickDialog = new Dialog(context, R.style.CustomDialog);
 		modifyNickDialog.setContentView(R.layout.modify_nick);
 		modifyNickDialog.setCanceledOnTouchOutside(true);

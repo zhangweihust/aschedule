@@ -61,7 +61,7 @@ public class AsyncScheduleLoader {
                                 .findViewById(R.id.comment_profile_photo);
                         user_id =  slaveCursors.getInt(slaveCursors
                                 .getColumnIndex(DatabaseHelper.COLUMN_SCHEDULE_USER_ID));
-                        final Cursor friendCursor = ServiceManager.getDbManager().queryFriendTel(user_id);
+                        final Cursor friendCursor = ServiceManager.getDbManager().queryFriend(user_id);
                         if(friendCursor != null && friendCursor.getCount() > 0){
                         	friendCursor.moveToFirst();
                         	nick = friendCursor.getString(friendCursor

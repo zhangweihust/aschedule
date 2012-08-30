@@ -63,6 +63,7 @@ public class FriendScreen extends Screen implements OnClickListener, IEventHandl
 	private HashMap<String, List<Friend>> hashMap = new HashMap<String, List<Friend>>();
 	private RelativeLayout loading;
 	private SharedPreferences sp;
+	private String friendId = null;
 	
 	public FriendScreen(){
 		database = ServiceManager.getDbManager();
@@ -109,6 +110,26 @@ public class FriendScreen extends Screen implements OnClickListener, IEventHandl
 		List<Friend> ignores = hashMap.get(Constant.FriendType.FRIEND_IGNORE_KEY);
 		List<Friend> contact_use = hashMap.get(Constant.FriendType.FRIEND_CONTACT_USE_KEY);
 		List<Friend> contact = hashMap.get(Constant.FriendType.FRIEND_CONTACT_KEY);
+		
+		Friend addFriend = null;
+		if(friendId != null && !"".equals(friendId)){
+			Cursor cursor  = database.queryFriend(Integer.parseInt(friendId));
+			 if(cursor.moveToNext()){
+				 String telephone = cursor.getString(cursor.getColumnIndex(DatabaseHelper.ASCHEDULE_FRIEND_NUM));
+				 String name = cursor.getString(cursor.getColumnIndex(DatabaseHelper.ASCHEDULE_FRIEND_NAME));
+				 String nick = cursor.getString(cursor.getColumnIndex(DatabaseHelper.ASCHEDULE_FRIEND_NICK));
+				 String headImagePath = cursor.getString(cursor.getColumnIndex(DatabaseHelper.ASCHEDULE_FRIEND_PHOTO_URL));
+				 addFriend = new Friend();
+				 addFriend.setId(friendId);
+				 addFriend.setTelephone(telephone);
+				 addFriend.setName(name);
+				 addFriend.setNick(nick);
+				 addFriend.setHeadImagePath(headImagePath);
+				 addFriend.setType(Constant.FriendType.friend_yes);
+				 friends.add(addFriend);
+			 }
+			 cursor.close();
+		}
 		 
 	    friends.addAll(ignores);
 		FriendAdapter friendAdapter = new FriendAdapter(this, friends, friend_listView);
@@ -197,6 +218,7 @@ public class FriendScreen extends Screen implements OnClickListener, IEventHandl
 	}
 	@Override
 	public boolean onEvent(Object sender, EventArgs e) {
+		friendId = (String) e.getExtra("friend_id");
 		switch(e.getType()){
 		case CONTACT_SYNC_SUCCESS:
 			getData();
@@ -210,6 +232,9 @@ public class FriendScreen extends Screen implements OnClickListener, IEventHandl
 			break;
 		case CONTACT_SYNC_CANCEL:
 			getData();
+			break;
+		case ADD_FRIEND:
+			initAdapter();
 			break;
 		}
 		return true;
@@ -375,7 +400,7 @@ public class FriendScreen extends Screen implements OnClickListener, IEventHandl
 		 Cursor cursor = null;
 		 for(String id : friendList){
 			 if(id.matches("[0-9]+")){
-				 cursor = database.queryFriendTel(Integer.parseInt(id));
+				 cursor = database.queryFriend(Integer.parseInt(id));
 				 if(cursor.moveToNext()){
 					 String telephone = cursor.getString(cursor.getColumnIndex(DatabaseHelper.ASCHEDULE_FRIEND_NUM));
 					 String name = cursor.getString(cursor.getColumnIndex(DatabaseHelper.ASCHEDULE_FRIEND_NAME));
@@ -401,7 +426,7 @@ public class FriendScreen extends Screen implements OnClickListener, IEventHandl
 		 List<Friend> ignores = new ArrayList<Friend>();
 		 for(String id : ignoreList){
 			 if(id.matches("[0-9]+")){
-				 cursor = database.queryFriendTel(Integer.parseInt(id));
+				 cursor = database.queryFriend(Integer.parseInt(id));
 				 if(cursor.moveToNext()){
 					 String telephone = cursor.getString(cursor.getColumnIndex(DatabaseHelper.ASCHEDULE_FRIEND_NUM));
 					 String name = cursor.getString(cursor.getColumnIndex(DatabaseHelper.ASCHEDULE_FRIEND_NAME));

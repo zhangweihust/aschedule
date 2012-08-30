@@ -17,6 +17,7 @@ import android.content.ContentValues;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.database.Cursor;
 import android.content.SharedPreferences.Editor;
 import android.os.Handler;
 import android.os.IBinder;
@@ -36,6 +37,7 @@ import com.archermind.schedule.R;
 import com.archermind.schedule.ScheduleApplication;
 import com.archermind.schedule.Events.EventArgs;
 import com.archermind.schedule.Events.EventTypes;
+import com.archermind.schedule.Model.Friend;
 import com.archermind.schedule.Model.UserInfoData;
 import com.archermind.schedule.Provider.DatabaseHelper;
 import com.archermind.schedule.Provider.DatabaseManager;
@@ -54,6 +56,10 @@ import com.archermind.schedule.Views.XListViewFooter;
 public class ServiceManager extends Service implements OnClickListener{
 
     private static final EventService eventService = new EventService();
+    
+    private static final UserInfoService userInfoService = new UserInfoService();
+    
+    private static final ExceptionService exceptionService = new ExceptionService();
 
     private static boolean started;
 
@@ -159,7 +165,7 @@ public class ServiceManager extends Service implements OnClickListener{
             }
             SyncDataUtil.getSchedulesFromWeb(String.valueOf(ServiceManager.getUserId()), true);        
             makeFriendFromInet();
-            eventService.onUpdateEvent(new EventArgs(EventTypes.CONTACT_SYNC_SUCCESS));
+//            eventService.onUpdateEvent(new EventArgs(EventTypes.CONTACT_SYNC_SUCCESS));
             Log.i(TAG, "get data in service!the time is " + mTaskTime);
         }
     }
@@ -236,9 +242,11 @@ public class ServiceManager extends Service implements OnClickListener{
                 new Intent(ScheduleApplication.getContext(), ServiceManager.class));
 
         boolean success = true;
-
-        success &= eventService.start();
+        
         dbManager.open();
+        success &= eventService.start();
+//        success &= userInfoService.start();
+        success &= exceptionService.start();
         if (!success) {
             ScheduleApplication.LogD(ServiceManager.class, "Failed to start services");
             return false;
@@ -259,6 +267,8 @@ public class ServiceManager extends Service implements OnClickListener{
                 new Intent(ScheduleApplication.getContext(), ServiceManager.class));
         boolean success = true;
         success &= eventService.stop();
+//        success &= userInfoService.stop();
+        success &= exceptionService.stop();
         dbManager.close();
         if (!success) {
             ScheduleApplication.LogD(ServiceManager.class, "Failed to stop services");
@@ -371,6 +381,9 @@ public class ServiceManager extends Service implements OnClickListener{
     	homeScreen = mHomeScreen;
     }
 
+    public static HomeScreen getHomeScreen(){
+    	return homeScreen;
+    }
     
     private void makeFriendFromInet(){
     	msg_adds.clear();
@@ -383,7 +396,6 @@ public class ServiceManager extends Service implements OnClickListener{
 		
 			if(jsonString != null && !"".equals(jsonString)){
 				if(jsonString.indexOf("user_id") >= 0){//防止返回错误码
-					
 					try {
 						JSONArray jsonArray = new JSONArray(jsonString);
 						ScheduleApplication.LogD(FriendsDyamicScreen.class, jsonString
@@ -395,27 +407,35 @@ public class ServiceManager extends Service implements OnClickListener{
 							String msg_accepet = jsonObject.getString("msg_accept");
 							String msg_sy = jsonObject.getString("msg_sys");
 							
-							if(msg_add.length() == 0 && msg_refuse.length() == 0 && msg_sy.length() == 0)
+							if(msg_add.length() == 0 && msg_refuse.length() == 0 && msg_accepet.length() == 0 && msg_sy.length() == 0)
 								return ;
 								
 							String[] msg_add_array = msg_add.split(",");
 							for(int i = 0; i < msg_add_array.length; i++){
-								msg_adds.add(msg_add_array[i]);
+								if(msg_add_array[i] != null && !"".equals(msg_add_array[i].trim())){
+									msg_adds.add(msg_add_array[i]);
+								}
 							}
 							
 							String[] msg_refuse_array = msg_refuse.split(",");
 							for(int i = 0; i < msg_refuse_array.length; i++){
-								msg_refuses.add(msg_refuse_array[i]);
+								if(msg_refuse_array[i] != null && !"".equals(msg_refuse_array[i].trim())){
+									msg_refuses.add(msg_refuse_array[i]);
+								}
 							}
 							
 							String[] msg_accepet_array = msg_accepet.split(",");
 							for(int i = 0; i < msg_accepet_array.length; i++){
-								msg_accepets.add(msg_accepet_array[i]);
+								if(msg_accepet_array[i] != null && !"".equals(msg_accepet_array[i].trim())){
+									msg_accepets.add(msg_accepet_array[i]);
+								}
 							}
 							
 							String[] msg_sys_array = msg_sy.split(",");
 							for(int i = 0; i < msg_sys_array.length; i++){
-								msg_sys.add(msg_sys_array[i]);
+								if(msg_sys_array[i] != null && !"".equals(msg_sys_array[i].trim())){
+									msg_sys.add(msg_sys_array[i]);
+								}
 							}
 							handler.sendEmptyMessage(0);
 							
@@ -436,8 +456,9 @@ public class ServiceManager extends Service implements OnClickListener{
 		case R.id.accept_friend:
 			if(0 == serverInerface.acceptFriend(String.valueOf(ServiceManager.getUserId()), id)){
 				//成功添加好r友
-				makeFriendFromInet(id,Constant.FriendType.friend_yes);
-				eventService.onUpdateEvent(new EventArgs(EventTypes.CONTACT_SYNC_SUCCESS));
+				if(makeFriendFromInet(id,Constant.FriendType.friend_yes)){
+					eventService.onUpdateEvent(new EventArgs(EventTypes.ADD_FRIEND).putExtra("friend_id", id));
+				}
 			}
 			
 			break;
@@ -451,9 +472,8 @@ public class ServiceManager extends Service implements OnClickListener{
 	}
 	
 	
-	   private void makeFriendFromInet(String id, int type){
+	   private boolean makeFriendFromInet(String id, int type){
 			if (NetworkUtils.getNetworkState(this) != NetworkUtils.NETWORN_NONE) {
-				
 				String jsonString = ServiceManager.getServerInterface().findUserInfobyUserId(id);
 				ContentValues values = null;
 				if(jsonString != null && !"".equals(jsonString)){
@@ -467,7 +487,6 @@ public class ServiceManager extends Service implements OnClickListener{
 								String tel = jsonObject.getString("tel");
 								String nick = jsonObject.getString("nick");
 								String photo_url = jsonObject.getString("photo_url");
-								
 									 
 								 values = new ContentValues();
 								 values.put(DatabaseHelper.ASCHEDULE_FRIEND_ID, id);
@@ -475,24 +494,25 @@ public class ServiceManager extends Service implements OnClickListener{
 								 values.put(DatabaseHelper.ASCHEDULE_FRIEND_NUM, tel);
 								 values.put(DatabaseHelper.ASCHEDULE_FRIEND_NICK, nick);
 								 values.put(DatabaseHelper.ASCHEDULE_FRIEND_PHOTO_URL, photo_url);
-								 values.put(DatabaseHelper.ASCHEDULE_FRIEND_PHOTO_URL, dbManager.queryNameByTel(tel));
-								 dbManager.addFriend(values);								
+								 values.put(DatabaseHelper.ASCHEDULE_FRIEND_NAME, dbManager.queryNameByTel(tel));
+								 dbManager.addFriend(values);	
+								 return true;
 							}
 						} catch (JSONException e) {
 							// TODO Auto-generated catch block
-							e.printStackTrace();
+							return false;
 						}
 					}
 				}
 
 			}
+			return false;
 		}
 	   
 	   private String getFriendInfoFromInet(String id){
 			if (NetworkUtils.getNetworkState(this) != NetworkUtils.NETWORN_NONE) {
 				
 				String jsonString = ServiceManager.getServerInterface().findUserInfobyUserId(id);
-				ContentValues values = null;
 				if(jsonString != null && !"".equals(jsonString)){
 					if(jsonString.indexOf("tel") >= 0){//防止返回错误码
 						try {
@@ -500,7 +520,15 @@ public class ServiceManager extends Service implements OnClickListener{
 							ScheduleApplication.LogD(FriendsDyamicScreen.class, jsonString
 									+ jsonArray.length());
 							JSONObject jsonObject = (JSONObject) jsonArray.opt(0);
-							return jsonObject.getString("nick");
+							String tel = jsonObject.getString("tel");
+							String nick = jsonObject.getString("nick");
+							String name = dbManager.queryNameByTel(tel);
+							if(name != null && !"".equals(name)){
+								return name+"("+nick+")";
+							}else{
+								return nick;
+							}
+							
 						} catch (JSONException e) {
 							// TODO Auto-generated catch block
 							e.printStackTrace();

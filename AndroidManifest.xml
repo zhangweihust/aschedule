@@ -48,6 +48,7 @@
 
         <service android:name=".Services.ServiceManager" />
         <service android:name=".Services.AppUpgradeService" />
+        <service android:name=".services.CrashReportService" />
         <service
             android:name=".Services.TimeTickService"
             android:exported="false" >

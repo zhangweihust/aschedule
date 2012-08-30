@@ -111,7 +111,7 @@ public class LunarCalendar {
 	}
 
 	// ====== 传回农历y年m月的总天数
-	final private static int monthDays(int y, int m) {
+	final private int monthDays(int y, int m) {
 		if ((lunarInfo[y - 1900] & (0x10000 >> m)) == 0)
 			return 29;
 		else
@@ -145,7 +145,14 @@ public class LunarCalendar {
 		if (day == 10)
 			return "初十";
 		else
-			return chineseTen[day / 10] + chineseNumber[n];
+			try {
+				return chineseTen[day / 10] + chineseNumber[n];
+			} catch (Exception e) {
+				// TODO: handle exception
+				System.out.println("day = " + day + "  n = " + n);
+				return chineseTen[1] + chineseNumber[5];
+			}
+			
 	}
 
 	/** */
@@ -199,7 +206,12 @@ public class LunarCalendar {
         setYear(year);  //设置公历对应的农历年份
 		
 		yearCyl = iYear - 1864;
-		leapMonth = leapMonth(iYear);
+			try {
+				leapMonth = leapMonth(iYear);
+			} catch (ArrayIndexOutOfBoundsException e) {
+				leapMonth = 0;
+				System.out.println("**************** iYear = " + iYear);
+			}
 		leap = false;
 
 		int iMonth, daysOfMonth = 0;
@@ -233,7 +245,12 @@ public class LunarCalendar {
 			--monCyl;
 		}
 		month = iMonth;
-		setLunarMonth(chineseNumber[month - 1] + "月");  
+			try {
+				setLunarMonth(chineseNumber[month - 1] + "月"); 
+			} catch (ArrayIndexOutOfBoundsException e) {
+				System.out.println("**************** month = " + month);
+				setLunarMonth(chineseNumber[0] + "月"); 
+			} 
 		day = offset + 1;
 
 		if(!isday){
@@ -278,7 +295,12 @@ public class LunarCalendar {
 			}
 		}
 	    if (day == 1)
-			return chineseNumber[month - 1] + "月";
+			try {
+		    		return chineseNumber[month - 1] + "月";
+				} catch (Exception e) {
+					// TODO: handle exception
+					return chineseNumber[0] + "月";
+				}
 		else
 			return getChinaDayString(day);
 

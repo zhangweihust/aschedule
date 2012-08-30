@@ -230,11 +230,10 @@ public class CalendarData {
         String lunar = "";
         List<ScheduleData> todayscheduleList = new ArrayList<ScheduleData>();
         long starTimeInMillis = 0;
-    	
+    	  LunarCalendar lunarcalendar = new LunarCalendar();
         scheduleList.clear();
     	for (i = 1; i <= days; i++)
-    	{
-    		LunarCalendar lunarcalendar = new LunarCalendar();
+    	{		
     		lunar = lunarcalendar.getLunarDate(year, month, i, false);
     		
     		 startData = year + "." + month + "." + i;

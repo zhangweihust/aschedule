@@ -144,7 +144,7 @@ public class CalendarAdapter extends BaseAdapter {
 			}
 			if(d.equals(currentDay)){
 				//设置当天的背景
-				calendar_number.setTextColor(Color.GREEN);
+				calendar_number.setTextColor(context.getResources().getColor(R.color.current_day));
 				layout.setBackgroundColor(context.getResources().getColor(R.color.selector));
 				setOldPosition(position);
 			}
