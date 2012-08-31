@@ -2,21 +2,15 @@ package com.archermind.schedule.Services;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
-import android.database.Cursor;
-
-import com.archermind.schedule.Events.IEventDispatcher;
-import com.archermind.schedule.Provider.DatabaseHelper;
-import com.archermind.schedule.Provider.DatabaseManager;
 import com.archermind.schedule.Task.DeviceInfoThread;
 import com.archermind.schedule.Task.UserActivityInfoThread;
+import com.archermind.schedule.Utils.Constant;
+import com.archermind.schedule.Utils.SharedPreferenceUtil;
 
 public class UserInfoService implements IService{
-	private DatabaseManager db;
-	private int userFrequency = 7;
-	private int audioFrequency = 7;
+	private int USER_FREQUENCY = 7;
 	private static final long COUNT_DURATION = 10 * 60 * 1000;
 	private static final int COUNT_TIMES = 3;
-	private static final int USER_COUNT_OK_TIMES = 3;
 	private DeviceInfoThread deviceInfoThread;
 	private UserActivityInfoThread userActivityInfoThread;
 	private String startTime;
@@ -25,7 +19,6 @@ public class UserInfoService implements IService{
 	@Override
 	public boolean start() {
 		
-		db = ServiceManager.getDbManager();
 		Date nowDate = new Date();
 		SimpleDateFormat formatTime = new SimpleDateFormat("dd:HH:mm");
 		startTime = formatTime.format(nowDate);
@@ -33,50 +26,21 @@ public class UserInfoService implements IService{
 		SimpleDateFormat format = new SimpleDateFormat("yyyyMMdd");
 		int date = Integer.parseInt(format.format(nowDate));
 		
-		Cursor cursor = db.queryCountUserInfoTask();
-		if (cursor.moveToNext()) {
-			int okTimes = cursor.getInt(cursor.getColumnIndex(DatabaseHelper.COLUMN_COUNT_USER_INFO_TASK_TIMES));
-			if (USER_COUNT_OK_TIMES > okTimes) {
-				int oldDate = cursor.getInt(cursor.getColumnIndex(DatabaseHelper.COLUMN_COUNT_USER_INFO_TASK_DATE));
-				if (date > oldDate) {
-					deviceInfoThread = new DeviceInfoThread(0, this);
-					deviceInfoThread.start();
-				} else {
-					if (cursor.getInt(cursor.getColumnIndex(DatabaseHelper.COLUMN_COUNT_USER_INFO_TASK_RESULT)) == 0) {
-						int dayTimes = cursor.getInt(cursor.getColumnIndex(DatabaseHelper.COLUMN_COUNT_USER_INFO_TASK_DAY_TIMES));
-						deviceInfoThread = new DeviceInfoThread(dayTimes, this);
-						deviceInfoThread.start();
-					}
-				}
-			}
-		} else {
+		SharedPreferenceUtil.setValue(Constant.SendUserInfo.SEND_USER_ACTIVITY_INFO_DAYDATE,String.valueOf(date));
+		
+		if("false".equals(SharedPreferenceUtil.getValue(Constant.SendUserInfo.SEND_USER_DEVICE_INFO, "false"))){
+			//发送请求
 			deviceInfoThread = new DeviceInfoThread(0, this);
 			deviceInfoThread.start();
+			SharedPreferenceUtil.setValue(Constant.SendUserInfo.SEND_USER_DEVICE_INFO, "true");
 		}
-		cursor.close();
 		
-		
-		
-		cursor = db.queryUserActivityInfo();
-		
-		if(cursor.moveToNext()){
-			int oldDate = cursor.getInt(cursor.getColumnIndex((DatabaseHelper.COLUMN_COUNT_USER_INFO_ACTIVITY_DATE)));
-			if(date - userFrequency > oldDate){
-				userActivityInfoThread = new UserActivityInfoThread(0, this);
-				userActivityInfoThread.start();
-			}else{
-				if(cursor.getInt(cursor.getColumnIndex(DatabaseHelper.COLUMN_COUNT_USER_INFO_ACTIVITY_RESULT)) == 0){
-					int times = cursor.getInt(cursor.getColumnIndex(DatabaseHelper.COLUMN_COUNT_USER_INFO_ACTIVITY_DAY_TIMES));
-					userActivityInfoThread = new UserActivityInfoThread(times, this);
-					userActivityInfoThread.start();
-				}
-			}
-		}else{
+		int oldDate = Integer.parseInt(SharedPreferenceUtil.getValue(Constant.SendUserInfo.SEND_USER_ACTIVITY_INFO_DATE,"0"));
+		if(date - oldDate > USER_FREQUENCY){
+			//发送请求
 			userActivityInfoThread = new UserActivityInfoThread(0, this);
 			userActivityInfoThread.start();
-		}
-		cursor.close();
-		
+		}	
 		return true;
 	}
 
@@ -86,9 +50,17 @@ public class UserInfoService implements IService{
 		SimpleDateFormat formatTime = new SimpleDateFormat("dd:HH:mm");
 		exitTime = formatTime.format(nowDate);
 		
-		SimpleDateFormat format = new SimpleDateFormat("yyyyMMdd");
-		int dayDate = Integer.parseInt(format.format(nowDate));
-		db.updateUserActivityInfo(dayDate, getTimestamp(startTime, exitTime));
+		SimpleDateFormat formatDayDate = new SimpleDateFormat("yyyyMMdd");
+		int dayDate = Integer.parseInt(formatDayDate.format(nowDate));
+		
+		int oldDayDate = Integer.parseInt(SharedPreferenceUtil.getValue(Constant.SendUserInfo.SEND_USER_ACTIVITY_INFO_DAYDATE,"0"));
+		if(dayDate - oldDayDate > 0){
+			int times = Integer.parseInt(SharedPreferenceUtil.getValue(Constant.SendUserInfo.SEND_USER_ACTIVITY_INFO_TIMES,"1"));
+			times++;
+			SharedPreferenceUtil.setValue(Constant.SendUserInfo.SEND_USER_ACTIVITY_INFO_DAYDATE,String.valueOf(dayDate));
+			SharedPreferenceUtil.setValue(Constant.SendUserInfo.SEND_USER_ACTIVITY_INFO_TIMES,String.valueOf(times));
+		}
+		SharedPreferenceUtil.setValue(Constant.SendUserInfo.SEND_USER_ACTIVITY_INFO_TIMESTAMP,String.valueOf(getTimestamp(startTime, exitTime)));
 		
 		if (deviceInfoThread != null) {
 			deviceInfoThread.stopThread();
@@ -112,10 +84,6 @@ public class UserInfoService implements IService{
 
 	public int getCountTimes() {
 		return COUNT_TIMES;
-	}
-
-	public void setCountFrequency(int audioFrequency) {
-		this.audioFrequency = audioFrequency;
 	}
 
 }

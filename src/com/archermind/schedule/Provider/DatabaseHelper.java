@@ -184,45 +184,6 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 			+ COLUMN_WEATHER_TEMP_RANGE
 			+ " TEXT, " + COLUMN_WEATHER_WEATHER + " TEXT " + " ); ";
 	
-	
-	
-	public static final String TAB_COUNT_USER_INFO_TASK = "schdule_count_user_info_task";
-	public static final String COLUMN_COUNT_USER_INFO_TASK_ID = "_id";
-	public static final String COLUMN_COUNT_USER_INFO_TASK_TIMES = "times";
-	public static final String COLUMN_COUNT_USER_INFO_TASK_DATE = "date";
-	public static final String COLUMN_COUNT_USER_INFO_TASK_RESULT = "result";
-	public static final String COLUMN_COUNT_USER_INFO_TASK_DAY_TIMES = "day_times";
-
-	private static final String CREATE_TABLE_COUNT_USER_INFO_TASK = " CREATE TABLE IF NOT EXISTS "
-		+ TAB_COUNT_USER_INFO_TASK 
-		+ " ( " 
-		+ COLUMN_COUNT_USER_INFO_TASK_ID + " INTEGER PRIMARY KEY, "
-			+ COLUMN_COUNT_USER_INFO_TASK_TIMES + " INTEGER, " 
-			+ COLUMN_COUNT_USER_INFO_TASK_DATE + " INTEGER, " 
-			+ COLUMN_COUNT_USER_INFO_TASK_DAY_TIMES + " INTEGER, "
-			+ COLUMN_COUNT_USER_INFO_TASK_RESULT + " INTEGER " + " ) ";
-	
-	
-	public static final String TAB_COUNT_USER_ACTIVITY_INFO_TASK = "schdule_count_user_info_activity";
-	public static final String COLUMN_COUNT_USER_INFO_TACTIVITY_ID = "_id";
-	public static final String COLUMN_COUNT_USER_INFO_ACTIVITY_DATE = "date";
-	public static final String COLUMN_COUNT_USER_INFO_ACTIVITY_DAY_DATE = "day_date";
-	public static final String COLUMN_COUNT_USER_INFO_ACTIVITY_RESULT = "result";
-	public static final String COLUMN_COUNT_USER_INFO_ACTIVITY_TIMES = "times";
-	public static final String COLUMN_COUNT_USER_INFO_ACTIVITY_CUMULATIVE_TIME = "cumulative_time";
-	public static final String COLUMN_COUNT_USER_INFO_ACTIVITY_DAY_TIMES = "day_times";
-	
-
-	private static final String CREATE_TABLE_COUNT_USER_INFO_ACTIVITY = " CREATE TABLE IF NOT EXISTS " + TAB_COUNT_USER_ACTIVITY_INFO_TASK + " ( " + COLUMN_COUNT_USER_INFO_TACTIVITY_ID + " INTEGER PRIMARY KEY, "
-			+ COLUMN_COUNT_USER_INFO_ACTIVITY_DATE + " INTEGER, "+ COLUMN_COUNT_USER_INFO_ACTIVITY_DAY_DATE + " INTEGER, " + COLUMN_COUNT_USER_INFO_ACTIVITY_RESULT + " INTEGER, " + COLUMN_COUNT_USER_INFO_ACTIVITY_TIMES + " INTEGER, "
-			+ COLUMN_COUNT_USER_INFO_ACTIVITY_CUMULATIVE_TIME + " INTEGER, "+ COLUMN_COUNT_USER_INFO_ACTIVITY_DAY_TIMES + " INTEGER "+ " ) ";
-	
-	
-	
-	
-	
-	
-	
 	public DatabaseHelper(Context context) {
 		super(context, NAME, null, version);
 	}
@@ -244,8 +205,6 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 		db.execSQL(CREATE_CONTACT_TABLE);	
        db.execSQL(CREATE_FRIEND_TABLE);	
        db.execSQL(CREATE_TABLE_WEATHER);
-       db.execSQL(CREATE_TABLE_COUNT_USER_INFO_TASK);
-       db.execSQL(CREATE_TABLE_COUNT_USER_INFO_ACTIVITY);
 	}
 
 }

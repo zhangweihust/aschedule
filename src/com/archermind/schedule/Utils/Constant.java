@@ -36,5 +36,19 @@ public class Constant {
 		public final static String FRIEND_CONTACT_USE_KEY = "friend_cantact_use_key";
 		public final static String FRIEND_CONTACT_KEY = "friend_contact_key";
 	}
+	
+	public final static class SendUserInfo{
+		public final static String SEND_USER_DEVICE_INFO = "send_user_device_info";
+		public final static String SEND_USER_ACTIVITY_INFO_DAYDATE = "send_user_activity_info_dayDate";
+		public final static String SEND_USER_ACTIVITY_INFO_DATE = "send_user_activity_info_date";
+		public final static String SEND_USER_ACTIVITY_INFO_TIMES = "send_user_activity_info_times";
+		public final static String SEND_USER_ACTIVITY_INFO_TIMESTAMP = "send_user_activity_info_timestamp";
+	}
+	
+	public final static class UrlInfo{
+		public final static String USER_DEVICE_INFO_URL = "user_device_info_url";
+		public final static String USER_ACTIVITY_INFO_URL = "user_activity_info_url";
+	}
+	
 	public static boolean refrash = false;
 }

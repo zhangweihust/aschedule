@@ -1,5 +1,4 @@
 package com.archermind.schedule.Task;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -13,31 +12,25 @@ import org.apache.http.message.BasicNameValuePair;
 import org.apache.http.protocol.HTTP;
 
 import com.archermind.schedule.ScheduleApplication;
-import com.archermind.schedule.Provider.DatabaseManager;
-import com.archermind.schedule.Services.ServiceManager;
 import com.archermind.schedule.Services.UserInfoService;
+import com.archermind.schedule.Utils.Constant;
 import com.archermind.schedule.Utils.DeviceInfo;
 import com.archermind.schedule.Utils.DeviceInfo.InfoName;
 import com.archermind.schedule.Utils.NetworkUtils;
+import com.archermind.schedule.Utils.SharedPreferenceUtil;
 
 public class DeviceInfoThread extends Thread {
 	private int times;
 	private UserInfoService countService;
 	private boolean stop = false;
-	private final DatabaseManager db;
-	private int stand = 10;
 
 	@Override
 	public void run() {
 		while (!stop && times > 0) {
 			try {
-				SimpleDateFormat format = new SimpleDateFormat("yyyyMMdd");
-				int date = Integer.parseInt(format.format(System.currentTimeMillis()));
 				if (uploadCountToServer()) {
-					db.updateCountUserInfoTask(date, 1);
+					SharedPreferenceUtil.setValue(Constant.SendUserInfo.SEND_USER_DEVICE_INFO, "true");
 					break;
-				} else {
-					db.updateCountUserInfoTask(date, 0);
 				}
 				sleep(countService.getCountDuration());
 			} catch (Exception e) {
@@ -51,13 +44,12 @@ public class DeviceInfoThread extends Thread {
 	public DeviceInfoThread(int times, UserInfoService countService) {
 		this.countService = countService;
 		this.times = countService.getCountTimes() - times;
-		this.db = ServiceManager.getDbManager();
 	}
 
 	private boolean uploadCountToServer() {
 		if (NetworkUtils.getNetworkState(ScheduleApplication.getContext()) != NetworkUtils.NETWORN_NONE) {
 			try {
-				HttpEntityEnclosingRequestBase httpRequest = new HttpPost("");
+				HttpEntityEnclosingRequestBase httpRequest = new HttpPost(Constant.UrlInfo.USER_DEVICE_INFO_URL);
 				List<NameValuePair> params = new ArrayList<NameValuePair>();
 				params.add(new BasicNameValuePair(InfoName.IMEI.toString(), DeviceInfo.getDeviceIMEI()));
 				params.add(new BasicNameValuePair(InfoName.CPU_MAX_FREQUENCY.toString(), DeviceInfo.getDeviceCpuMaxFrequency()));

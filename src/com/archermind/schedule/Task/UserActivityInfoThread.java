@@ -12,26 +12,19 @@ import org.apache.http.client.entity.UrlEncodedFormEntity;
 import org.apache.http.client.methods.HttpEntityEnclosingRequestBase;
 import org.apache.http.client.methods.HttpPost;
 import org.apache.http.impl.client.DefaultHttpClient;
-import org.apache.http.message.BasicNameValuePair;
 import org.apache.http.protocol.HTTP;
 
-import android.database.Cursor;
-
 import com.archermind.schedule.ScheduleApplication;
-import com.archermind.schedule.Provider.DatabaseHelper;
-import com.archermind.schedule.Provider.DatabaseManager;
-import com.archermind.schedule.Services.ServiceManager;
 import com.archermind.schedule.Services.UserInfoService;
 import com.archermind.schedule.Utils.Constant;
 import com.archermind.schedule.Utils.DeviceInfo;
-import com.archermind.schedule.Utils.DeviceInfo.InfoName;
 import com.archermind.schedule.Utils.NetworkUtils;
+import com.archermind.schedule.Utils.SharedPreferenceUtil;
 
 public class UserActivityInfoThread extends Thread {
 	private int times;
 	private UserInfoService countService;
 	private boolean stop = false;
-	private final DatabaseManager db;
 
 	@Override
 	public void run() {
@@ -40,10 +33,8 @@ public class UserActivityInfoThread extends Thread {
 				SimpleDateFormat format = new SimpleDateFormat("yyyyMMdd");
 				int date = Integer.parseInt(format.format(System.currentTimeMillis()));
 				if (uploadCountToServer()) {
-					db.updateUserActivityInfoTask(date, 1);
+					SharedPreferenceUtil.setValue(Constant.SendUserInfo.SEND_USER_ACTIVITY_INFO_DATE,String.valueOf(date));
 					break;
-				} else {
-					db.updateUserActivityInfoTask(date, 0);
 				}
 				times--;
 				sleep(countService.getCountDuration());
@@ -56,26 +47,15 @@ public class UserActivityInfoThread extends Thread {
 	public UserActivityInfoThread(int times, UserInfoService countService) {
 		this.countService = countService;
 		this.times = countService.getCountTimes() - times;
-		db = ServiceManager.getDbManager();
 	}
 
 	private boolean uploadCountToServer() {
 		if (NetworkUtils.getNetworkState(ScheduleApplication.getContext()) != NetworkUtils.NETWORN_NONE) {
-			Cursor c = db.queryUserActivityInfo();
-			int times = -1;
-			int timesTamp = -1;
-			if(c.moveToNext()){
-				times = c.getInt(c.getColumnIndex(DatabaseHelper.COLUMN_COUNT_USER_INFO_ACTIVITY_TIMES));
-				timesTamp = c.getInt(c.getColumnIndex(DatabaseHelper.COLUMN_COUNT_USER_INFO_ACTIVITY_CUMULATIVE_TIME));
-			}
-//			System.out.println("times="+times+" timesTamp="+timesTamp);
-			c.close();
-			if(times == -1 && timesTamp == -1){
-				return true;
-			}
 			try {
-				HttpEntityEnclosingRequestBase httpRequest = new HttpPost("");
+				HttpEntityEnclosingRequestBase httpRequest = new HttpPost(Constant.UrlInfo.USER_ACTIVITY_INFO_URL);
 				List<NameValuePair> params = new ArrayList<NameValuePair>();
+				int times = Integer.parseInt(SharedPreferenceUtil.getValue(Constant.SendUserInfo.SEND_USER_ACTIVITY_INFO_TIMES,"1"));
+				int timesTamp = Integer.parseInt(SharedPreferenceUtil.getValue(Constant.SendUserInfo.SEND_USER_ACTIVITY_INFO_TIMESTAMP,"0"));
 				String value = "{"+DeviceInfo.getDeviceIMEI()+","+times+","+timesTamp+"}";
 //				params.add(new BasicNameValuePair(Constant.MediaWithServerConstant.request_parameter, value));
 				httpRequest.setEntity(new UrlEncodedFormEntity(params, HTTP.UTF_8));
