@@ -8,6 +8,7 @@ package com.archermind.schedule.Views;
 
 import android.content.Context;
 import android.util.AttributeSet;
+import android.util.Log;
 import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -40,8 +41,8 @@ public class XListViewHeader extends LinearLayout {
 
 	public XListViewHeader(Context context,int kind) {
 		super(context);
-		initView(context);
 		listkind = kind;
+		initView(context);
 	}
 
 	/**
@@ -64,6 +65,14 @@ public class XListViewHeader extends LinearLayout {
 
 		mArrowImageView = (ImageView)findViewById(R.id.xlistview_header_arrow);
 		mHintTextView = (TextView)findViewById(R.id.xlistview_header_hint_textview);
+		if (listkind == XListViewFooter.SCHEDULE_PROMPT)
+		{
+			mHintTextView.setText("下拉加载上月日程");
+		}
+		else if (listkind == XListViewFooter.DYNAMIC_PROMPT)
+		{
+			mHintTextView.setText(R.string.xlistview_header_hint_normal);
+		}
 		mProgressBar = (ProgressBar)findViewById(R.id.xlistview_header_progressbar);
 		
 		mRotateUpAnim = new RotateAnimation(0.0f, -180.0f,
