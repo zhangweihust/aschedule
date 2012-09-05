@@ -183,7 +183,6 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 			+ " TEXT, "
 			+ COLUMN_WEATHER_TEMP_RANGE
 			+ " TEXT, " + COLUMN_WEATHER_WEATHER + " TEXT " + " ); ";
-	
 	public DatabaseHelper(Context context) {
 		super(context, NAME, null, version);
 	}

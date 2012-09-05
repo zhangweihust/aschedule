@@ -280,11 +280,11 @@ public class AccountSettingScreen extends Activity implements OnClickListener{
 		}
 
 	public void startPhotoZoom(Uri uri) {
+	    
 		Intent intent = new Intent("com.android.camera.action.CROP");
 		intent.setDataAndType(uri, "image/*");
 
 		intent.putExtra("crop", "true");
-
 		intent.putExtra("aspectX", 1);
 		intent.putExtra("aspectY", 1);
 

@@ -24,16 +24,19 @@ public class DatabaseManager {
 	EventService eventService;
 	
 	public DatabaseManager(Context context) {
-		this.context = context;
+		
+	    this.context = context;
 	}
 
 	public void open() {
+	    
 		databaseHelper = new DatabaseHelper(context);
-		database = databaseHelper.getWritableDatabase();
+		database = databaseHelper.getWritableDatabase();		
 		eventService = ServiceManager.getEventservice();
 	}
 
 	public void close() {
+	    
 		databaseHelper.close();
 		database.close();
 	}
@@ -64,6 +67,8 @@ public class DatabaseManager {
 	}
 	
 	public void updateShareSchedules(ContentValues values, String t_id) {
+	    
+	    eventService.onUpdateEvent(new EventArgs(EventTypes.LOCAL_SCHEDULE_UPDATE));
 		database.update(DatabaseHelper.TAB_SHARE_SCHEDULE, values,
 				DatabaseHelper.COLUMN_SCHEDULE_T_ID + " =? ",
 				new String[] { t_id });
@@ -73,8 +78,6 @@ public class DatabaseManager {
 		return database.query(DatabaseHelper.TAB_LOCAL_SCHEDULE, null, null, null,
 				null, null, null);
 	}
-
-
 
 	public Cursor queryWeekLocalSchedules(long timeInMillis) {
 		return database
@@ -122,7 +125,6 @@ public class DatabaseManager {
 						null, DatabaseHelper.COLUMN_SCHEDULE_START_TIME
 								+ " ASC");
 	}
-
 
 	public Cursor queryTomorrowLocalSchedules(long timeInMillis) {
 		return database
@@ -189,9 +191,6 @@ public class DatabaseManager {
 		+DatabaseHelper.COLUMN_SCHEDULE_OPER_FLAG+" !="+" '"+DatabaseHelper.SCHEDULE_OPER_DELETE+"')";
 		return database.rawQuery(sql, null);
 	}
-	
-	
-	
 	
 	public Cursor querySpecifiedNumPreSchedules(long timeInMillis,int limitnum)
 	{
@@ -386,6 +385,7 @@ public void deleteFriend(String id){
 	}	
 
 	public void updateScheduleById(long id, ContentValues cv) {
+	    eventService.onUpdateEvent(new EventArgs(EventTypes.LOCAL_SCHEDULE_UPDATE));
 		 database.update(DatabaseHelper.TAB_LOCAL_SCHEDULE, cv,
 				DatabaseHelper.COLUMN_SCHEDULE_ID + " =? ",
 				new String[] { String.valueOf(id) });
@@ -435,5 +435,4 @@ public void deleteFriend(String id){
 				new String[] { String.valueOf(date) }, null, null, null);
 		
 	}
-
 }

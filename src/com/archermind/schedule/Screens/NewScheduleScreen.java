@@ -245,12 +245,8 @@ public class NewScheduleScreen extends Screen implements OnClickListener {
                 Toast.makeText(NewScheduleScreen.this, "请登录以后再分享日程", Toast.LENGTH_SHORT).show();
                 return;
             }
+
             // 判断时间是否可以分享，如果大于当前时间则可以分享
-            // if (mSelectTime < System.currentTimeMillis()) {
-            // // 提示不能分享；
-            // Toast.makeText(NewScheduleScreen.this, "不能分享过去事件",
-            // Toast.LENGTH_SHORT).show();
-            // } else {
             if (mShare == false) {
                 mShare = true;
                 shareImg.setImageResource(R.drawable.schedule_new_share_select);
@@ -259,7 +255,7 @@ public class NewScheduleScreen extends Screen implements OnClickListener {
                 mShare = false;
                 shareImg.setImageResource(R.drawable.schedule_new_share);
             }
-            // }
+
         } else if (v.getId() == remind.getId()) {
 
             alarmPopwindow.show(v);
@@ -288,7 +284,7 @@ public class NewScheduleScreen extends Screen implements OnClickListener {
     }
 
     private void checkQuit() {
-        
+
         if (!"".equals(schedule_text.getText().toString().trim())) {
 
             new AlertDialog.Builder(NewScheduleScreen.this).setMessage("是否放弃当前编辑？")
@@ -304,23 +300,24 @@ public class NewScheduleScreen extends Screen implements OnClickListener {
 
                             finish();
                         }
-                    }).show();            
+                    }).show();
         } else {
-            
+
             finish();
         }
     }
 
     public boolean onKeyDown(int keyCode, KeyEvent event) {
 
-        checkQuit();
+        if (keyCode == KeyEvent.KEYCODE_BACK) {
+
+            checkQuit();
+        }
         return super.onKeyDown(keyCode, event);
     }
 
     public void saveScheduleToDb() {
-        Intent intent = new Intent();
-        intent.setAction("android.appwidget.action.LOCAL_SCHEDULE_UPDATE");
-        sendBroadcast(intent);
+
         new Thread(new Runnable() {
             @Override
             public void run() {
@@ -397,6 +394,10 @@ public class NewScheduleScreen extends Screen implements OnClickListener {
                 }
                 // 同步新建日程到服务器
                 si.uploadSchedule("0", "1");
+
+                Intent intent = new Intent();
+                intent.setAction("android.appwidget.action.LOCAL_SCHEDULE_UPDATE");
+                sendBroadcast(intent);
             }
         }).start();
     }
@@ -455,7 +456,6 @@ public class NewScheduleScreen extends Screen implements OnClickListener {
 
             remind_selector.setVisibility(View.VISIBLE);
         }
-
     }
 
     class EventTypeSelectListner implements OnEventTypeSelectListener {
@@ -486,7 +486,6 @@ public class NewScheduleScreen extends Screen implements OnClickListener {
                     eventImg.setImageResource(R.drawable.schedule_new_work);
                     break;
             }
-
         }
 
         @Override

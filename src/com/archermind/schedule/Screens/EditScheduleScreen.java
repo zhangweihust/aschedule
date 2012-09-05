@@ -315,17 +315,13 @@ public class EditScheduleScreen extends Screen implements OnClickListener {
 
     // 更新数据库
     public void updateScheduleToDb() {
-        
-        Intent intent = new Intent();
-        intent.setAction("android.appwidget.action.LOCAL_SCHEDULE_UPDATE");
-        sendBroadcast(intent);
-        
+
         new Thread(new Runnable() {
 
             @Override
             public void run() {
                 ContentValues cv = new ContentValues();
-                
+
                 mStageRemind = alarmPopwindow.getStageRemind();
                 mStageRemind = alarmPopwindow.getStageRemind();
                 if (mStageRemind) {
@@ -337,17 +333,16 @@ public class EditScheduleScreen extends Screen implements OnClickListener {
                     endTime = alarmPopwindow.getEndTime();
 
                 } else {
-                	if(mSelectTime != 0)
-					{
-					      startTime = mSelectTime;
-					}
-				       
+                    if (mSelectTime != 0) {
+                        startTime = mSelectTime;
+                    }
+
                     Calendar mCalendar = Calendar.getInstance();
                     mCalendar.set(Calendar.YEAR, 2049);
                     endTime = mCalendar.getTimeInMillis();
                 }
                 mRemind = alarmPopwindow.getRemind();
-                
+
                 weekType = alarmPopwindow.getWeekValue();
                 remindCycle = alarmPopwindow.getRepeatType();
                 mType = eventTypeDialog.getEventType();
@@ -356,15 +351,14 @@ public class EditScheduleScreen extends Screen implements OnClickListener {
                 cv.put(DatabaseHelper.COLUMN_SCHEDULE_SHARE, mShare);
                 cv.put(DatabaseHelper.COLUMN_SCHEDULE_OPER_FLAG, oper_flag);
                 cv.put(DatabaseHelper.COLUMN_SCHEDULE_START_TIME, startTime);
-                
-            	
-				Calendar beginTime = Calendar.getInstance(Locale.CHINA);
-				beginTime.setTimeInMillis(startTime);
-				beginTime.set(Calendar.HOUR_OF_DAY, 0);
-				beginTime.set(Calendar.MINUTE, 0);
-				beginTime.set(Calendar.SECOND, 0);
-				beginTime.set(Calendar.MILLISECOND, 0);
-				cv.put(DatabaseHelper.COLUMN_SCHEDULE_NOTICE_BEGIN, beginTime.getTimeInMillis());
+
+                Calendar beginTime = Calendar.getInstance(Locale.CHINA);
+                beginTime.setTimeInMillis(startTime);
+                beginTime.set(Calendar.HOUR_OF_DAY, 0);
+                beginTime.set(Calendar.MINUTE, 0);
+                beginTime.set(Calendar.SECOND, 0);
+                beginTime.set(Calendar.MILLISECOND, 0);
+                cv.put(DatabaseHelper.COLUMN_SCHEDULE_NOTICE_BEGIN, beginTime.getTimeInMillis());
 
                 cv.put(DatabaseHelper.COLUMN_SCHEDULE_NOTICE_FLAG, mRemind);
                 cv.put(DatabaseHelper.COLUMN_SCHEDULE_NOTICE_PERIOD, remindCycle);
@@ -383,6 +377,10 @@ public class EditScheduleScreen extends Screen implements OnClickListener {
                 }
                 cv.put(DatabaseHelper.COLUMN_SCHEDULE_NOTICE_YEARDAY, yearday);
                 cv.put(DatabaseHelper.COLUMN_SCHEDULE_CONTENT, scheduleText);
+
+                //将修改的数据插入到数据库中
+                ServiceManager.getDbManager().updateScheduleById(schedule_id, cv);
+                
                 if (mRemind) {
                     long time = DateTimeUtils.getNextAlarmTime(mStageRemind, startTime, endTime,
                             startTime, remindCycle, weekType);
@@ -391,16 +389,21 @@ public class EditScheduleScreen extends Screen implements OnClickListener {
                     if (time != 0) {
                         DateTimeUtils.sendAlarm(time, flagAlarm, schedule_id);
                         ScheduleApplication.LogD(EditScheduleScreen.class, " set alarm = "
-    			                + DateTimeUtils.time2String("yyyy-MM-dd-HH-mm", time));
+                                + DateTimeUtils.time2String("yyyy-MM-dd-HH-mm", time));
                     } else {
                         DateTimeUtils.cancelAlarm(schedule_id);
                     }
                 } else {
                     DateTimeUtils.cancelAlarm(schedule_id);
                 }
-                si.uploadSchedule("0", "1");
-            }
 
+                si.uploadSchedule("0", "1");
+
+                Intent intent = new Intent();
+                intent.setAction("android.appwidget.action.LOCAL_SCHEDULE_UPDATE");
+                EditScheduleScreen.this.sendBroadcast(intent);
+
+            }
         }).start();
     }
 
@@ -432,11 +435,11 @@ public class EditScheduleScreen extends Screen implements OnClickListener {
             Log.i(TAG, "---------HOUR=" + c.get(Calendar.HOUR_OF_DAY));
             c.set(Calendar.MINUTE, Constant.VARY_MIN);
             c.set(Calendar.SECOND, 0);
-            c.set(Calendar.MILLISECOND, 0);            
+            c.set(Calendar.MILLISECOND, 0);
             mSelectTime = c.getTimeInMillis();
             setDisplayTime(mSelectTime);
             alarmPopwindow.setStartTime(mSelectTime);
-            
+
             eventService.onUpdateEvent(new EventArgs(EventTypes.LOCAL_SCHEDULE_UPDATE));
 
         }

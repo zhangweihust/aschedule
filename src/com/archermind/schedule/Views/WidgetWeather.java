@@ -12,13 +12,12 @@ import org.json.JSONObject;
 import android.app.PendingIntent;
 import android.appwidget.AppWidgetManager;
 import android.appwidget.AppWidgetProvider;
-import android.content.BroadcastReceiver;
 import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
-import android.content.IntentFilter;
 import android.content.SharedPreferences;
 import android.database.Cursor;
+import android.database.sqlite.SQLiteDatabase;
 import android.text.TextUtils;
 import android.util.Log;
 import android.widget.RemoteViews;
@@ -74,6 +73,10 @@ public class WidgetWeather extends AppWidgetProvider {
 
     private Context mContext = null;
 
+    private DatabaseHelper databaseHelper = null;
+
+    private  SQLiteDatabase database = null;
+
     @Override
     public void onDeleted(Context context, int[] appWidgetIds) {
 
@@ -87,15 +90,29 @@ public class WidgetWeather extends AppWidgetProvider {
         Log.i(WidgetWeather.class.getCanonicalName(), "onUpdate");
         Intent it = new Intent(ACTION_TIME_TICK);
         context.startService(it);
-        
+
         mContext = context;
         final int N = appWidgetIds.length;
+
+        databaseHelper = new DatabaseHelper(mContext);
+        database = databaseHelper.getWritableDatabase();
+
         for (int i = 0; i < N; i++) {
             int appWidgetId = appWidgetIds[i];
             updateAppWidget(context, appWidgetManager, appWidgetId);
         }
+
+        if (database != null) {
+            database.close();
+        }
+
+        if (databaseHelper != null) {
+
+            databaseHelper.close();
+        }
+
         super.onUpdate(context, appWidgetManager, appWidgetIds);
-       
+        
     }
 
     /**
@@ -209,6 +226,7 @@ public class WidgetWeather extends AppWidgetProvider {
                         String[] weatherarray = itemsmap.get("weather1").split("转");
                         itemsmap.put("weather1", weatherarray[0]);
                     }
+
                     mCurrentTemp = itemsmap.get("st1");
                     String temp_rage = itemsmap.get("temp1");
                     String[] mTemp2 = temp_rage.split("~");
@@ -226,15 +244,18 @@ public class WidgetWeather extends AppWidgetProvider {
         ScheduleApplication.LogD(WidgetProvider.class, "readlocalschedule");
         Calendar mCalendar = Calendar.getInstance();
 
-        dbManager = new DatabaseManager(mContext);
-        dbManager.open();
-        Cursor cursor = dbManager.queryTodayLocalSchedules(mCalendar.getTimeInMillis());
+        Cursor cursor = null;
+
+        if ((database != null)&&(database.isOpen())) {
+            
+            cursor = queryTodayLocalSchedules(mCalendar.getTimeInMillis());
+        }
 
         if (cursor != null) {
 
             try {
                 if (cursor.getCount() != 0) {
-                    if (cursor.moveToFirst()) {
+                    if (cursor.moveToLast()) {
 
                         mContent = cursor.getString(cursor
                                 .getColumnIndex(DatabaseHelper.COLUMN_SCHEDULE_CONTENT));
@@ -249,8 +270,6 @@ public class WidgetWeather extends AppWidgetProvider {
                 cursor.close();
             }
         }
-
-        dbManager.close();
     }
 
     private void showData(int appWidgetId) {
@@ -289,7 +308,6 @@ public class WidgetWeather extends AppWidgetProvider {
         if ((mContent != null) && (!"".equals(mContent))) {
 
             views.setTextViewText(R.id.widgetweathercontent, mContent);
-
         } else {
 
             views.setTextViewText(R.id.widgetweathercontent, "您今天没有日程！");
@@ -305,7 +323,19 @@ public class WidgetWeather extends AppWidgetProvider {
 
             rv.setTextViewText(id, content);
         }
+    }
 
+    public  Cursor queryTodayLocalSchedules(long timeInMillis) {
+        return database.query(
+                DatabaseHelper.TAB_LOCAL_SCHEDULE,
+                null,
+                DatabaseHelper.COLUMN_SCHEDULE_START_TIME + " BETWEEN ? AND ?  AND "
+                        + DatabaseHelper.COLUMN_SCHEDULE_OPER_FLAG + " != 'D' AND "
+                        + DatabaseHelper.COLUMN_SCHEDULE_ORDER + " = ? ",
+                new String[] {
+                        String.valueOf(DateTimeUtils.getToday(Calendar.AM, timeInMillis)),
+                        String.valueOf(DateTimeUtils.getToday(Calendar.PM, timeInMillis)), "0"
+                }, null, null, DatabaseHelper.COLUMN_SCHEDULE_START_TIME + " ASC");
     }
 
     public void onReceive(Context context, Intent intent) {
@@ -314,8 +344,7 @@ public class WidgetWeather extends AppWidgetProvider {
         AppWidgetManager gm = AppWidgetManager.getInstance(context);
         int[] appWidgetIds = gm.getAppWidgetIds(new ComponentName(context, WidgetWeather.class));
 
-        if (action.equals(Intent.ACTION_TIME_CHANGED) 
-                || action.equals(Intent.ACTION_DATE_CHANGED)
+        if (action.equals(Intent.ACTION_TIME_CHANGED) || action.equals(Intent.ACTION_DATE_CHANGED)
                 || action.equals(Intent.ACTION_TIMEZONE_CHANGED)
                 || action.equals("com.archermind.TimeTickService.tick")) {
 
@@ -324,15 +353,30 @@ public class WidgetWeather extends AppWidgetProvider {
                 updateAppWidget(context, gm, appWidgetIds[i], TIMECHANGE);
             }
         }
-        
+
         if (action.equals(Intent.ACTION_LOCALE_CHANGED)
-        || action.equals("android.appwidget.action.LOCAL_SCHEDULE_UPDATE")) {
+                || action.equals("android.appwidget.action.LOCAL_SCHEDULE_UPDATE")) {
+
+            databaseHelper = new DatabaseHelper(context);
+
+            if (databaseHelper!=null) {
+                
+                database = databaseHelper.getWritableDatabase();              
+            }
 
             for (int i = 0; i < appWidgetIds.length; i++) {
 
                 updateAppWidget(context, gm, appWidgetIds[i], SCHEDULE);
             }
+            
+            if (database != null) {
+                
+                database.close();
+            }
+            if (databaseHelper != null) {
 
+                databaseHelper.close();
+            }
         } else {
 
             super.onReceive(context, intent);
@@ -342,40 +386,31 @@ public class WidgetWeather extends AppWidgetProvider {
     private void updateAppWidget(Context context, AppWidgetManager gm, int appWidgetId, int flag) {
 
         switch (flag) {
-
             case TIMECHANGE:
-
                 getDateTime();
                 showDateTime(context, appWidgetId);
                 break;
-
             case SCHEDULE:
-
                 getLocalSchedule();
-                showLocalSchedule(appWidgetId);
-
+                showLocalSchedule(context,appWidgetId);
                 break;
-
             default:
                 break;
         }
-
     }
 
-    private void showLocalSchedule(int appWidgetId) {
+    private void showLocalSchedule(Context context, int appWidgetId) {
 
-        RemoteViews views = new RemoteViews(mContext.getPackageName(), R.layout.widget_weather_home);
-
-        if ((mContent != null) && (!"".equals(mContent))) {
+        RemoteViews views = new RemoteViews(context.getPackageName(), R.layout.widget_weather_home);
+        if (!TextUtils.isEmpty(mContent)) {
 
             views.setTextViewText(R.id.widgetweathercontent, mContent);
-
         } else {
 
             views.setTextViewText(R.id.widgetweathercontent, "您今天没有日程！");
         }
 
-        AppWidgetManager appWidgetManager = AppWidgetManager.getInstance(mContext);
+        AppWidgetManager appWidgetManager = AppWidgetManager.getInstance(context);
         appWidgetManager.updateAppWidget(appWidgetId, views);
     }
 

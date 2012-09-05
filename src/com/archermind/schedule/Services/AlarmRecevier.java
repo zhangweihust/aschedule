@@ -9,6 +9,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.database.Cursor;
+import android.media.RingtoneManager;
 import android.net.Uri;
 import android.text.TextUtils;
 
@@ -67,16 +68,22 @@ public class AlarmRecevier extends BroadcastReceiver {
             mIntent.putExtra("notify_id", (int)schedule_id);
             mPendingIntent = PendingIntent.getActivity(context, 0, mIntent, 0);
             mNotification = new Notification();
-
             mNotification.icon = R.drawable.schedule_icon;
             mNotification.tickerText = "你有一个新日程";
             mNotification.flags = Notification.FLAG_AUTO_CANCEL;
-
             SharedPreferences spSetting = context.getSharedPreferences(UserInfoData.USER_SETTING,
                     Context.MODE_WORLD_READABLE);
+
             String notificationStr = spSetting.getString(UserInfoData.SETTING_SOUND_REMIND, "");
-            mNotification.sound = TextUtils.isEmpty(notificationStr) ? null : Uri
-                    .parse(notificationStr);
+            if (notificationStr.equals("slient")) {// 说明用户选择了静音
+
+                mNotification.sound = null;
+            } else { // 没有选择，使用默认的铃声。有选择，使用选择了的铃声
+
+                mNotification.sound = TextUtils.isEmpty(notificationStr) ? RingtoneManager
+                        .getDefaultUri(RingtoneManager.TYPE_NOTIFICATION) : Uri
+                        .parse(notificationStr);
+            }
 
             mNotification.setLatestEventInfo(context, "你有一个新日程", schedule_content, mPendingIntent);
             mNotificationManager.notify((int)schedule_id, mNotification);
@@ -88,16 +95,16 @@ public class AlarmRecevier extends BroadcastReceiver {
 
         new Thread() {
             public void run() {
-                
+
                 DatabaseManager dbManager = new DatabaseManager(mContext);
                 dbManager.open();
                 long nextTime = 0;
                 // 读取数据库
                 Cursor c = dbManager.queryScheduleById((int)schedule_id);
-                if (c != null) {                    
-                    
+                if (c != null) {
+
                     if (c.getCount() > 0) {
-                        
+
                         c.moveToFirst();
                         remindCycle = c.getString(c
                                 .getColumnIndex(DatabaseHelper.COLUMN_SCHEDULE_NOTICE_PERIOD));
@@ -116,18 +123,21 @@ public class AlarmRecevier extends BroadcastReceiver {
 
                         nextTime = DateTimeUtils.getNextAlarmTime(mStageRemind, startTime, endTime,
                                 startTime, remindCycle, weekValue);
-                        ScheduleApplication.LogD(AlarmRecevier.class,
-                                "nextTime: " + DateTimeUtils.time2String("yyyy-MM-dd-HH-mm", nextTime));
-                    }                    
+                        ScheduleApplication.LogD(
+                                AlarmRecevier.class,
+                                "nextTime: "
+                                        + DateTimeUtils.time2String("yyyy-MM-dd-HH-mm", nextTime));
+                    }
                     c.close();
-                }    
-                
+                }
+
                 if (nextTime != 0) {
                     // 设置闹钟
                     DateTimeUtils.sendAlarm(nextTime, flagAlarm, schedule_id);
-                }                
+                }
                 dbManager.close();
-            }                
-        }.start();        
+
+            }
+        }.start();
     }
 }

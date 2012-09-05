@@ -1,15 +1,12 @@
 
 package com.archermind.schedule.Screens;
 
-import android.content.Context;
-import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.Button;
 
 import com.archermind.schedule.R;
-import com.archermind.schedule.Model.UserInfoData;
 
 public class AboutScreen extends Screen implements OnClickListener {
 

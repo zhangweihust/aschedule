@@ -120,6 +120,5 @@ public class LocalScheduleAdapter  extends CursorAdapter {
 		private int type;
 //		private View dateLayout;
 	}
-
-
+	
 }

@@ -46,8 +46,6 @@ public class SettingScreen extends Screen implements OnClickListener {
                 R.drawable.settingcover);
         mSlipSwitch.setSwitchState(true);
         
-        
-       
     }
 
     @Override
@@ -115,7 +113,7 @@ public class SettingScreen extends Screen implements OnClickListener {
                 Uri pickedUri = data.getParcelableExtra(RingtoneManager.EXTRA_RINGTONE_PICKED_URI);
                 if (null == pickedUri) {
 
-                    ServiceManager.setSPUserSetting(UserInfoData.SETTING_SOUND_REMIND, null);
+                    ServiceManager.setSPUserSetting(UserInfoData.SETTING_SOUND_REMIND, "slient");
                 } else {
 
                     ServiceManager.setSPUserSetting(UserInfoData.SETTING_SOUND_REMIND,
