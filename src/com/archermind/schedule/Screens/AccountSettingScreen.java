@@ -348,6 +348,7 @@ public class AccountSettingScreen extends Activity implements OnClickListener{
 				writePhoto(b);
 				headImage.setImageDrawable(drawable);
 				Toast.makeText(this, "上传图片成功！", Toast.LENGTH_LONG).show();
+                ServiceManager.setAvator_url(getUriFormWeb());
 			}else{
 				Toast.makeText(this, "上传图片失败！", Toast.LENGTH_LONG).show();
 			}
