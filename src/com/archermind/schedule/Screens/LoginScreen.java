@@ -143,6 +143,9 @@ public class LoginScreen extends Screen implements OnClickListener {
                         	ServiceManager.ToastShow("检测到您的手机号发生变化,请重新绑定!");
                         	startActivity(new Intent(LoginScreen.this, TelephoneBindScreen.class));
                         }
+                        else {
+                        	startActivity(new Intent(LoginScreen.this,AccountSettingScreen.class));
+                        }
                         eventService.onUpdateEvent(new EventArgs(EventTypes.LOGIN_SUCCESS));
                         finish();
                     }

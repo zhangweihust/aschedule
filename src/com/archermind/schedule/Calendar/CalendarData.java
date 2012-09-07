@@ -64,7 +64,6 @@ public class CalendarData {
     private String leapMonth = ""; // 闰哪一个月
 
     private String cyclical = ""; // 天干地支
-
     // 系统当前时间
     private String sysDate = "";
 
@@ -118,7 +117,6 @@ public class CalendarData {
 		currentMonth = String.valueOf(stepMonth);  //得到本月（jumpMonth为滑动的次数，每滑动一次就增加一月或减一月）
 		currentDay = String.valueOf(day_c);  //得到当前日期是哪天
 		getCalendar(Integer.parseInt(currentYear),Integer.parseInt(currentMonth), flagType);
-		
 	}
 
     public long getMillisTimeByDate(String date) {
@@ -157,6 +155,7 @@ public class CalendarData {
                 dayOfWeek = 6;
             }
         }
+        
         int j = 1;
         String lunarDay = "";
         mark_count = new int[42];
@@ -216,7 +215,6 @@ public class CalendarData {
                 j++;
             }
         }
-
     }
 
     public synchronized List<ScheduleData> getMonthSchedule(int year,int month)

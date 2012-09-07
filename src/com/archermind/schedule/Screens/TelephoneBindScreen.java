@@ -180,7 +180,7 @@ public class TelephoneBindScreen extends Activity implements OnClickListener{
 			if (canRequestVerification)
 			{
 				inputstr = telephone_bind_tel_et.getText().toString();
-				if (inputstr.matches("^(\\+86)?1(3[0-9]|47|5[0-37-9]|8[278])\\d{8}$"))
+				if (inputstr.matches("^(\\+86)?1[3|4|5|8][0-9]\\d{8}$"))
 				{
 					inputstr = inputstr.replace("+86", "");
 					final String requestTel = inputstr;

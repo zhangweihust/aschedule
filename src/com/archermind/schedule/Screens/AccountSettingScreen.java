@@ -127,6 +127,8 @@ public class AccountSettingScreen extends Activity implements OnClickListener{
         			break;
         		case LOGOUT_SUCCESS:
         			ServiceManager.ToastShow("注销成功");
+        			Intent it = new Intent(AccountSettingScreen.this,LoginScreen.class);
+        			startActivity(it); 
         			onBackPressed();
         			break;
         		}

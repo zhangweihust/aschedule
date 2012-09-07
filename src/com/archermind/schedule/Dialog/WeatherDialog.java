@@ -1,14 +1,17 @@
 package com.archermind.schedule.Dialog;
 
 import java.util.Calendar;
+import java.util.Iterator;
 import java.util.Map;
+import java.util.Map.Entry;
 
 import android.app.Activity;
 import android.app.Dialog;
 import android.content.Context;
 import android.content.DialogInterface;
-import android.content.SharedPreferences;
 import android.content.DialogInterface.OnDismissListener;
+import android.content.Intent;
+import android.content.SharedPreferences;
 import android.util.Log;
 import android.view.Gravity;
 import android.view.View;
@@ -85,8 +88,8 @@ public class WeatherDialog implements OnClickListener {
 				// TODO Auto-generated method stub
 				WeatherScreen WeatherScreen = (WeatherScreen)context;
 				SharedPreferences sp = context.getSharedPreferences("com.archermind.schedule_preferences",Context.MODE_WORLD_WRITEABLE);
-				String mProvince = sp.getString("province", province);
-				String mCity = sp.getString("city", city);
+				String mProvince = sp.getString("province", "北京");
+				String mCity = sp.getString("city", "北京");
 				if(mProvince.equals(province) && mCity.equals(city)){
 					return;
 				}
@@ -101,7 +104,15 @@ public class WeatherDialog implements OnClickListener {
 			@Override
 			public void onDismiss(DialogInterface dialog) {
 				// TODO Auto-generated method stub
-				((Activity)context).finish();
+				
+		        if (WeatherScreen.isChangeCity) {
+		            
+		            Intent it = new Intent("com.archermind.action.PLACECHANGED");
+		            context.sendBroadcast(it);
+		        }
+		        
+			    ((Activity)context).finish();
+
 			}
 		});
 		this.screenWidth = screenWidth;
@@ -210,6 +221,7 @@ public class WeatherDialog implements OnClickListener {
 		todayWeek.setText(week[0]);
 		
 		mWeather1 = itemsmap.get("weather1");
+		mWeather1 = getweatherMap(mWeather1, weathermap);
 		if (mWeather1 == null) {
 			mWeather1 = "  ";
 		}
@@ -231,10 +243,11 @@ public class WeatherDialog implements OnClickListener {
 			mintemp2=" ";
 		}
 	
-		oneDAfterMinTemp.setText(maxtemp3);
-		oneDAfterMaxTemp.setText(mintemp3);
+		oneDAfterMinTemp.setText(maxtemp2);
+		oneDAfterMaxTemp.setText(mintemp2);
 
 		mWeather2 = itemsmap.get("weather2");
+		mWeather2 = getweatherMap(mWeather2, weathermap);
 		if (mWeather2 == null) {
 			mWeather2 = "  ";
 		}
@@ -258,6 +271,7 @@ public class WeatherDialog implements OnClickListener {
 		twoDAfterMinTemp.setText(maxtemp3);
 		twoDAfterMaxTemp.setText(mintemp3);
 		mWeather3 = itemsmap.get("weather3");
+		mWeather3 = getweatherMap(mWeather3, weathermap);
 		if (mWeather3 == null) {
 			mWeather3 = " ";
 		   }
@@ -280,6 +294,7 @@ public class WeatherDialog implements OnClickListener {
 		threeDAfterMinTemp.setText(maxtemp4 );
 		threeDAfterMaxTemp.setText(mintemp4);
 		mWeather4 = itemsmap.get("weather4");
+		mWeather4 = getweatherMap(mWeather4, weathermap);
 		threeDAfterWeather.setText(mWeather4);
 		Log.i(TAG, "----weather4---" + mWeather4);
 		Log.i(TAG, "-------weather4-" + weathermap.get(mWeather4));
@@ -304,6 +319,7 @@ public class WeatherDialog implements OnClickListener {
 	}
 
 	public void show() {
+		Log.i("free", "show");
 		window = weatherDialog.getWindow(); // 得到对话框
 //		window.setWindowAnimations(R.style.dialogWindowAnim); // 设置窗口弹出动画
 		WindowManager.LayoutParams wl = window.getAttributes();
@@ -331,4 +347,23 @@ public class WeatherDialog implements OnClickListener {
 		}
 	}
 
+	public String getweatherMap(String key, Map<String, Integer> weathermap) {
+		String retkey;
+		Iterator<Entry<String, Integer>> iterator = weathermap.entrySet()
+				.iterator();
+		Entry<String, Integer> entry = null;
+		int i = 0;
+		while (iterator.hasNext()) {
+			entry = iterator.next();
+			Log.i("free", "entry.getKey()"+entry.getKey());
+			Log.i("free", "key"+key);
+			if (key.contains(entry.getKey())) {
+				retkey = entry.getKey();
+				return retkey;
+			}
+			i++;
+
+		}
+		return null;
+	}
 }

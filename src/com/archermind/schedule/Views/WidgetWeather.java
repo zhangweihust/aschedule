@@ -18,8 +18,11 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
+import android.os.Handler;
+import android.os.Message;
 import android.text.TextUtils;
 import android.util.Log;
+import android.view.View;
 import android.widget.RemoteViews;
 
 import com.archermind.schedule.R;
@@ -51,6 +54,8 @@ public class WidgetWeather extends AppWidgetProvider {
 
     private static final int SCHEDULE = 2;
 
+    private static final int PLACECHANGE = 3;
+
     private String mMax = null;
 
     private String mMin = null;
@@ -67,15 +72,13 @@ public class WidgetWeather extends AppWidgetProvider {
 
     private DatabaseManager dbManager;
 
-    private String mAmOrPm = null;
+    private boolean isAm = true;
 
     private String mContent = null;
 
-    private Context mContext = null;
-
     private DatabaseHelper databaseHelper = null;
 
-    private  SQLiteDatabase database = null;
+    private SQLiteDatabase database = null;
 
     @Override
     public void onDeleted(Context context, int[] appWidgetIds) {
@@ -91,10 +94,9 @@ public class WidgetWeather extends AppWidgetProvider {
         Intent it = new Intent(ACTION_TIME_TICK);
         context.startService(it);
 
-        mContext = context;
         final int N = appWidgetIds.length;
 
-        databaseHelper = new DatabaseHelper(mContext);
+        databaseHelper = new DatabaseHelper(context);
         database = databaseHelper.getWritableDatabase();
 
         for (int i = 0; i < N; i++) {
@@ -112,7 +114,6 @@ public class WidgetWeather extends AppWidgetProvider {
         }
 
         super.onUpdate(context, appWidgetManager, appWidgetIds);
-        
     }
 
     /**
@@ -124,10 +125,10 @@ public class WidgetWeather extends AppWidgetProvider {
      */
     void updateAppWidget(Context context, AppWidgetManager appWidgetManager, int appWidgetId) {
 
-        // getWeatherFromWeb();
+        getWeatherFromWeb(context);
         getDateTime();
         getLocalSchedule();
-        showData(appWidgetId);
+        showData(context, appWidgetId);
 
     }
 
@@ -135,45 +136,58 @@ public class WidgetWeather extends AppWidgetProvider {
 
         RemoteViews views = new RemoteViews(context.getPackageName(), R.layout.widget_weather_home);
 
-        setRemoteView(views, R.id.widgetweatheramorpm, mAmOrPm);
-
-        setRemoteView(views, R.id.widgetweatherhour, mTimeHour);
-
-        setRemoteView(views, R.id.widgetweatherminute, mTimeMinute);
-
-        setRemoteView(views, R.id.widgetweathertime, mDateTime);
-
+        setViewDateTime(views);
         AppWidgetManager appWidgetManager = AppWidgetManager.getInstance(context);
         appWidgetManager.updateAppWidget(appWidgetId, views);
+    }
+
+    private void setViewDateTime(RemoteViews views) {
+
+        if (isAm) {
+
+            views.setViewVisibility(R.id.widgetweatheram, View.VISIBLE);
+            views.setViewVisibility(R.id.widgetweatherpm, View.INVISIBLE);
+        } else {
+
+            views.setViewVisibility(R.id.widgetweatheram, View.INVISIBLE);
+            views.setViewVisibility(R.id.widgetweatherpm, View.VISIBLE);
+        }
+
+        setRemoteView(views, R.id.widgetweatherhour, mTimeHour);
+        setRemoteView(views, R.id.widgetweatherminute, mTimeMinute);
+        setRemoteView(views, R.id.widgetweathertime, mDateTime);
     }
 
     private void getDateTime() {
 
         long currentTime = System.currentTimeMillis();
         mDateTime = DateTimeUtils.time2String("E", currentTime) + " ";
-        mDateTime = mDateTime + DateTimeUtils.time2String("d/M/yy", currentTime);
-        mTimeHour = DateTimeUtils.time2String("h", currentTime);
-        mTimeMinute = DateTimeUtils.time2String("m", currentTime);
+        mDateTime = mDateTime + DateTimeUtils.time2String("dd/MM/yy", currentTime);
+        mTimeHour = " " + DateTimeUtils.time2String("hh", currentTime);
+        mTimeMinute = DateTimeUtils.time2String("mm", currentTime) + " ";
 
-        mAmOrPm = DateTimeUtils.time2String("a", currentTime);
-        if (mAmOrPm.equals("上午")) {
+        String AmOrPm = DateTimeUtils.time2String("a", currentTime);
+        if (AmOrPm.equals("上午")) {
 
-            mAmOrPm = "AM";
-        } else if (mAmOrPm.equals("下午")) {
+            isAm = true;
+        } else {
 
-            mAmOrPm = "PM";
+            isAm = false;
         }
     }
 
-    private void getWeatherFromWeb() {
+    private void getWeatherFromWeb(Context context) {
+        Log.i(TAG, "getDataFromWeb1");
         // 如果联网了，则从服务器获取数据
-        if (NetworkUtils.getNetworkState(mContext) != NetworkUtils.NETWORN_NONE) {
+        if (NetworkUtils.getNetworkState(context) != NetworkUtils.NETWORN_NONE) {
+
+            Log.i(TAG, "getDataFromWeb2");
 
             ServerInterface serverInerface = new ServerInterface();
-            SharedPreferences sp = mContext.getSharedPreferences(
+            SharedPreferences sp = context.getSharedPreferences(
                     "com.archermind.schedule_preferences", Context.MODE_WORLD_WRITEABLE);
             mCity = sp.getString("city", "北京");
-            Log.i(TAG, "getDataFromWeb");
+            Log.i(TAG, "getDataFromWeb3");
 
             String strResult = serverInerface.getWeather(sp.getString("province", "北京"), mCity);
             Log.i(TAG, strResult);
@@ -218,7 +232,6 @@ public class WidgetWeather extends AppWidgetProvider {
                                     itemsmap.put(tag[i], datas[1]);
                                 }
                             }
-
                         }
                     }
 
@@ -240,19 +253,14 @@ public class WidgetWeather extends AppWidgetProvider {
     }
 
     private void getLocalSchedule() {
-
         ScheduleApplication.LogD(WidgetProvider.class, "readlocalschedule");
         Calendar mCalendar = Calendar.getInstance();
-
         Cursor cursor = null;
+        if ((database != null) && (database.isOpen())) {
 
-        if ((database != null)&&(database.isOpen())) {
-            
             cursor = queryTodayLocalSchedules(mCalendar.getTimeInMillis());
         }
-
         if (cursor != null) {
-
             try {
                 if (cursor.getCount() != 0) {
                     if (cursor.moveToLast()) {
@@ -272,48 +280,26 @@ public class WidgetWeather extends AppWidgetProvider {
         }
     }
 
-    private void showData(int appWidgetId) {
+    private void showData(Context context, int appWidgetId) {
 
-        RemoteViews views = new RemoteViews(mContext.getPackageName(), R.layout.widget_weather_home);
-        Intent intent = new Intent(mContext, HomeScreen.class);
-        PendingIntent pIntentHomeScreen = PendingIntent.getActivity(mContext, 0, intent, 0);
+        RemoteViews views = new RemoteViews(context.getPackageName(), R.layout.widget_weather_home);
+        Intent intent = new Intent(context, HomeScreen.class);
+        PendingIntent pIntentHomeScreen = PendingIntent.getActivity(context, 0, intent, 0);
         views.setOnClickPendingIntent(R.id.widgetweatherlayoutschedule, pIntentHomeScreen);
 
-        Intent intentweather = new Intent(mContext, WeatherScreen.class);
-        PendingIntent pIntentweatherScreen = PendingIntent.getActivity(mContext, 0, intentweather,
-                0);
-        views.setOnClickPendingIntent(R.id.widgetweatherlayouttime, pIntentweatherScreen);
-        views.setOnClickPendingIntent(R.id.widgetweatherlayoutcity, pIntentweatherScreen);
+        // Intent intentweather = new Intent(context, WeatherScreen.class);
+        // PendingIntent pIntentweatherScreen = PendingIntent
+        // .getActivity(context, 0, intentweather, 0);
+        // views.setOnClickPendingIntent(R.id.widgetweatherlayouttime,
+        // pIntentweatherScreen);
+        // views.setOnClickPendingIntent(R.id.widgetweatherlayoutcity,
+        // pIntentweatherScreen);
 
-        Log.i(TAG, "mTemp = " + mCurrentTemp);
+        setViewDateTime(views);
+        setViewCityandWeather(views);
+        setViewLocalSchedule(views);
 
-        setRemoteView(views, R.id.widgetweathertemp, mCurrentTemp + "°");
-
-        setRemoteView(views, R.id.widgetweatherMaxTemp, mMax + "℃");
-
-        setRemoteView(views, R.id.widgetweatherMinTemp, mMin + "℃");
-
-        setRemoteView(views, R.id.widgetweathershow, mWeather);
-
-        setRemoteView(views, R.id.widgetweatheramorpm, mAmOrPm);
-
-        setRemoteView(views, R.id.widgetweatherhour, mTimeHour);
-
-        setRemoteView(views, R.id.widgetweatherminute, mTimeMinute);
-
-        setRemoteView(views, R.id.widgetweathertime, mDateTime);
-
-        setRemoteView(views, R.id.widgetweathercity, mCity);
-
-        if ((mContent != null) && (!"".equals(mContent))) {
-
-            views.setTextViewText(R.id.widgetweathercontent, mContent);
-        } else {
-
-            views.setTextViewText(R.id.widgetweathercontent, "您今天没有日程！");
-        }
-
-        AppWidgetManager appWidgetManager = AppWidgetManager.getInstance(mContext);
+        AppWidgetManager appWidgetManager = AppWidgetManager.getInstance(context);
         appWidgetManager.updateAppWidget(appWidgetId, views);
     }
 
@@ -325,7 +311,7 @@ public class WidgetWeather extends AppWidgetProvider {
         }
     }
 
-    public  Cursor queryTodayLocalSchedules(long timeInMillis) {
+    public Cursor queryTodayLocalSchedules(long timeInMillis) {
         return database.query(
                 DatabaseHelper.TAB_LOCAL_SCHEDULE,
                 null,
@@ -354,23 +340,29 @@ public class WidgetWeather extends AppWidgetProvider {
             }
         }
 
+        if (action.equals("com.archermind.action.PLACECHANGED")) {
+
+            getWeatherFromWeb(context);
+
+            for (int i = 0; i < appWidgetIds.length; i++) {
+
+                updateAppWidget(context, gm, appWidgetIds[i], PLACECHANGE);
+            }
+        }
+
         if (action.equals(Intent.ACTION_LOCALE_CHANGED)
                 || action.equals("android.appwidget.action.LOCAL_SCHEDULE_UPDATE")) {
-
             databaseHelper = new DatabaseHelper(context);
+            if (databaseHelper != null) {
 
-            if (databaseHelper!=null) {
-                
-                database = databaseHelper.getWritableDatabase();              
+                database = databaseHelper.getWritableDatabase();
             }
-
             for (int i = 0; i < appWidgetIds.length; i++) {
 
                 updateAppWidget(context, gm, appWidgetIds[i], SCHEDULE);
             }
-            
             if (database != null) {
-                
+
                 database.close();
             }
             if (databaseHelper != null) {
@@ -386,22 +378,58 @@ public class WidgetWeather extends AppWidgetProvider {
     private void updateAppWidget(Context context, AppWidgetManager gm, int appWidgetId, int flag) {
 
         switch (flag) {
+            
             case TIMECHANGE:
                 getDateTime();
                 showDateTime(context, appWidgetId);
                 break;
+                
             case SCHEDULE:
                 getLocalSchedule();
-                showLocalSchedule(context,appWidgetId);
+                showLocalSchedule(context, appWidgetId);
                 break;
+                
+            case PLACECHANGE:
+                showCityandWeather(context, appWidgetId);
+                break;
+
             default:
                 break;
+        }
+    }
+
+    private void showCityandWeather(Context context, int appWidgetId) {
+
+        RemoteViews views = new RemoteViews(context.getPackageName(), R.layout.widget_weather_home);
+        setViewCityandWeather(views);
+        AppWidgetManager appWidgetManager = AppWidgetManager.getInstance(context);
+        appWidgetManager.updateAppWidget(appWidgetId, views);
+    }
+
+    private void setViewCityandWeather(RemoteViews views) {
+
+        setRemoteView(views, R.id.widgetweathertemp, mCurrentTemp + "°");
+        setRemoteView(views, R.id.widgetweatherMaxTemp, mMax);
+        setRemoteView(views, R.id.widgetweatherMinTemp, mMin);
+        setRemoteView(views, R.id.widgetweathercity, mCity);
+
+        Map<String, Integer> weathermap = getWeathermap();
+        if (!TextUtils.isEmpty(mWeather)) {
+
+            views.setImageViewResource(R.id.widgetweathershow, weathermap.get(mWeather));
         }
     }
 
     private void showLocalSchedule(Context context, int appWidgetId) {
 
         RemoteViews views = new RemoteViews(context.getPackageName(), R.layout.widget_weather_home);
+        setViewLocalSchedule(views);
+        AppWidgetManager appWidgetManager = AppWidgetManager.getInstance(context);
+        appWidgetManager.updateAppWidget(appWidgetId, views);
+    }
+
+    private void setViewLocalSchedule(RemoteViews views) {
+
         if (!TextUtils.isEmpty(mContent)) {
 
             views.setTextViewText(R.id.widgetweathercontent, mContent);
@@ -409,9 +437,47 @@ public class WidgetWeather extends AppWidgetProvider {
 
             views.setTextViewText(R.id.widgetweathercontent, "您今天没有日程！");
         }
+    }
 
-        AppWidgetManager appWidgetManager = AppWidgetManager.getInstance(context);
-        appWidgetManager.updateAppWidget(appWidgetId, views);
+    public Map<String, Integer> getWeathermap() {
+        Map<String, Integer> weathermap = new HashMap<String, Integer>();
+        weathermap.put("晴", R.drawable.clear_100);
+        weathermap.put("多云", R.drawable.cloudy_100);
+        weathermap.put("阴", R.drawable.shade_100);
+        weathermap.put("阵雨", R.drawable.shower_100);
+        weathermap.put("雷阵雨", R.drawable.thundershowers_100);
+        weathermap.put("雷阵雨伴有冰雹", R.drawable.thundershowers_hail_100);
+        weathermap.put("雨夹雪", R.drawable.sleet_100);
+        weathermap.put("小雨", R.drawable.light_rain_100);
+        weathermap.put("中雨", R.drawable.moderate_rain_100);
+        weathermap.put("大雨", R.drawable.heavy_rain_100);
+
+        weathermap.put("暴雨", R.drawable.rainstorm_100);
+        weathermap.put("大暴雨", R.drawable.downpour_100);
+        weathermap.put("特大暴雨", R.drawable.heavy_rainfall_100);
+        weathermap.put("阵雪", R.drawable.shower_snow_100);
+        weathermap.put("小雪", R.drawable.slight_snow_100);
+        weathermap.put("中雪", R.drawable.moderate_snow_100);
+        weathermap.put("大雪", R.drawable.heavy_snow_100);
+        weathermap.put("暴雪", R.drawable.blizzard_100);
+        weathermap.put("雾", R.drawable.fog_100);
+        weathermap.put("冻雨", R.drawable.freezing_rain_100);
+
+        weathermap.put("小雨-中雨", R.drawable.moderate_rain_100);
+        weathermap.put("中雨-大雨", R.drawable.heavy_rain_100);
+        weathermap.put("大雨-暴雨", R.drawable.rainstorm_100);
+        weathermap.put("暴雨-大暴雨", R.drawable.downpour_100);
+        weathermap.put("大暴雨-特大暴雨", R.drawable.heavy_rainfall_100);
+        weathermap.put("小雪-中雪", R.drawable.moderate_snow_100);
+        weathermap.put("中雪-大雪", R.drawable.heavy_snow_100);
+        weathermap.put("大雪-暴雪", R.drawable.blizzard_100);
+        weathermap.put("沙城暴", R.drawable.sand_storm_100);
+        weathermap.put("强沙尘暴", R.drawable.sand_storm_100);
+
+        weathermap.put("浮尘", R.drawable.sand_100);
+        weathermap.put("扬沙", R.drawable.sand_100);
+
+        return weathermap;
     }
 
 }

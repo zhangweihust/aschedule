@@ -21,11 +21,12 @@ import com.archermind.schedule.Utils.HttpUtils;
 import com.archermind.schedule.Utils.NetworkUtils;
 import com.archermind.schedule.Utils.ServerInterface;
 
-
+import android.app.ProgressDialog;
 import android.content.ContentValues;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.database.Cursor;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.Display;
@@ -38,10 +39,20 @@ public class WeatherScreen extends Screen implements
 	private Map<String, String> itemsmap = new HashMap<String, String>();
 	Map<String, Integer> weatherMap = new HashMap<String, Integer>();
 
-	private ServerInterface si;
-	private String weatherDate;
+    public static boolean isChangeCity = false;
+
+    private ServerInterface si;
+
+    private String weatherDate;
+
+    private int screenWidth;
+
+    private int screenHeight;
 
 	WeatherDialog mwWeatherDialog;
+	SharedPreferences sp;
+
+	ProgressDialog mProgress;
 
 	// private String
 	@Override
@@ -52,32 +63,73 @@ public class WeatherScreen extends Screen implements
 		// setContentView(R.layout.weather);
 		// init();
 		// 获取屏幕宽度
+        isChangeCity = false;
 		Display display = getWindowManager().getDefaultDisplay();
-		int screenWidth = display.getWidth();
-		int screenHeight = display.getHeight();
-		SharedPreferences sp = getSharedPreferences("com.archermind.schedule_preferences",Context.MODE_WORLD_WRITEABLE);
-		getWeatherData(sp.getString("province", "北京"),sp.getString("city", "北京"));
-		
-		mwWeatherDialog = new WeatherDialog(this, screenWidth,
-				screenHeight, cityInfoMap, weatherMap, itemsmap);
-		mwWeatherDialog.show();
-		
+		screenWidth = display.getWidth();
+		screenHeight = display.getHeight();
+		sp = getSharedPreferences("com.archermind.schedule_preferences",
+				Context.MODE_WORLD_WRITEABLE);
+
+		new Getweathertrd().execute();
 	}
-	
-	public Map<String, Integer> getWeatherMap(){
+
+	class Getweathertrd extends AsyncTask<Void, Void, Void> {
+
+		@Override
+		protected Void doInBackground(Void... params) {
+
+			getWeatherData(sp.getString("province", "北京"),
+					sp.getString("city", "北京"));
+			return null;
+		}
+
+		@Override
+		protected void onPostExecute(Void result) {
+
+			super.onPostExecute(result);
+			if (mProgress != null && mProgress.isShowing()) {
+				mProgress.dismiss();
+			}
+			Log.i("free", "in" + screenWidth + screenHeight + cityInfoMap
+					+ weatherMap + itemsmap);
+			mwWeatherDialog = new WeatherDialog(WeatherScreen.this,
+					screenWidth, screenHeight, cityInfoMap, weatherMap,
+					itemsmap);
+			Log.i("free", "in");
+			mwWeatherDialog.show();
+
+		}
+
+		@Override
+		protected void onPreExecute() {
+			super.onPreExecute();
+			if (mProgress == null) {
+				mProgress = ProgressDialog.show(WeatherScreen.this, null,
+						"正在加载天气，请稍候...");
+			}
+		}
+
+		@Override
+		protected void onCancelled() {
+			super.onCancelled();
+			Log.i("free", "onCancelled");
+		}
+
+	}
+
+	public Map<String, Integer> getWeatherMap() {
 		return weatherMap;
 	}
-	
-	public Map<String, String> getCityInfoMap(){
+
+	public Map<String, String> getCityInfoMap() {
 		return cityInfoMap;
 	}
-	
-	public Map<String, String> getItemsmap(){
+
+	public Map<String, String> getItemsmap() {
 		return itemsmap;
 	}
-	
-	
-	public void getWeatherData(String province,String city){
+
+	public void getWeatherData(String province, String city) {
 		// 获取天气图片地址
 		weatherMap = getWeathermap();
 		si = ServiceManager.getServerInterface();
@@ -86,10 +138,11 @@ public class WeatherScreen extends Screen implements
 		String[] date = new String[4];
 		for (int i = 0; i < date.length; i++) {
 			date[i] = DateTimeUtils.time2String("yyyy年M月d日",
-					mCalendar.getTimeInMillis());;
+					mCalendar.getTimeInMillis());
+
 			mCalendar.add(Calendar.DAY_OF_MONTH, 1);
 		}
-		
+
 		cityInfoMap.put("province", province);
 		cityInfoMap.put("city", city);
 
@@ -101,48 +154,44 @@ public class WeatherScreen extends Screen implements
 
 			// [{"city":"武汉","province":"湖北","cid":"101200101","weather":"\"st1 \":\"33\",\"temp1\":\"33℃~27℃\",\"weather1\":\"多云\",\"temp2\": \"34℃~28℃\",\"weather2\":\"多云\",\"temp3\":\"35℃~28℃\",\"weather3 \":\"多云\",\"temp4\":\"34℃~24℃\",\"weather4\":\"多云\""}]
 			if (strResult != null && !strResult.equals("")) {
-				if(strResult.indexOf("city") >= 0){
+				if (strResult.indexOf("city") >= 0) {
 					itemsmap = parseJson(strResult);
 					saveToDb(itemsmap);
 				}
 			}
 
-		} 
-			
-			// 没有联网，则读取本地数据库
-			readLocalWeather();
-		
+		}
+
+		// 没有联网，则读取本地数据库
+		readLocalWeather();
+		Log.i("free", "2222222222222");
 
 	}
-    private void readLocalWeather(){
-    	
 
-    	Calendar mCalendar = Calendar.getInstance();
+	private void readLocalWeather() {
+
+		Calendar mCalendar = Calendar.getInstance();
 		String[] date = new String[4];
 		for (int i = 0; i < date.length; i++) {
 			date[i] = DateTimeUtils.time2String("yyyy年M月d日",
-					mCalendar.getTimeInMillis());;
+					mCalendar.getTimeInMillis());
+
 			mCalendar.add(Calendar.DAY_OF_MONTH, 1);
 		}
-		Cursor c = ServiceManager.getDbManager().queryScheduleWeather(
-				date[0]);
+		Cursor c = ServiceManager.getDbManager().queryScheduleWeather(date[0]);
 		// 如果不存在当天天气，则什么都不显示
 		if (c.getCount() != 0) {
 
 			if (c.moveToFirst()) {
 
-				itemsmap.put(
-						"st1",
-						c.getString(c
-								.getColumnIndex(DatabaseHelper.COLUMN_WEATHER_TEMP)));
+				itemsmap.put("st1", c.getString(c
+						.getColumnIndex(DatabaseHelper.COLUMN_WEATHER_TEMP)));
 				itemsmap.put(
 						"temp1",
 						c.getString(c
 								.getColumnIndex(DatabaseHelper.COLUMN_WEATHER_TEMP_RANGE)));
-				itemsmap.put(
-						"weather1",
-						c.getString(c
-								.getColumnIndex(DatabaseHelper.COLUMN_WEATHER_WEATHER)));
+				itemsmap.put("weather1", c.getString(c
+						.getColumnIndex(DatabaseHelper.COLUMN_WEATHER_WEATHER)));
 				c.getString(c
 						.getColumnIndex(DatabaseHelper.COLUMN_WEATHER_TEMP));
 				c.close();
@@ -150,6 +199,10 @@ public class WeatherScreen extends Screen implements
 				Cursor cursor1 = ServiceManager.getDbManager()
 						.queryScheduleWeather(date[1]);
 				if (cursor1.moveToFirst()) {
+					// Log.i("free",
+					// "temp2===="
+					// + cursor1.getString(cursor1
+					// .getColumnIndex(DatabaseHelper.COLUMN_WEATHER_TEMP_RANGE)));
 					itemsmap.put(
 							"temp2",
 							cursor1.getString(cursor1
@@ -159,17 +212,21 @@ public class WeatherScreen extends Screen implements
 							cursor1.getString(cursor1
 									.getColumnIndex(DatabaseHelper.COLUMN_WEATHER_WEATHER)));
 
-			} else {
-				itemsmap.put("temp2", "");
-				itemsmap.put("weather2", "");
+				} else {
+					itemsmap.put("temp2", "");
+					itemsmap.put("weather2", "");
 
-			}
+				}
 
-			cursor1.close();
+				cursor1.close();
 
 				Cursor cursor2 = ServiceManager.getDbManager()
 						.queryScheduleWeather(date[2]);
 				if (cursor2.moveToFirst()) {
+					// Log.i("free",
+					// "temp3===="
+					// + cursor1.getString(cursor2
+					// .getColumnIndex(DatabaseHelper.COLUMN_WEATHER_TEMP_RANGE)));
 
 					itemsmap.put(
 							"temp3",
@@ -185,7 +242,7 @@ public class WeatherScreen extends Screen implements
 					itemsmap.put("temp3", "");
 					itemsmap.put("weather3", "");
 
-			}
+				}
 
 				Cursor cursor3 = ServiceManager.getDbManager()
 						.queryScheduleWeather(date[3]);
@@ -216,44 +273,42 @@ public class WeatherScreen extends Screen implements
 				Log.d(TAG, "-------" + itemsmap.get("temp4"));
 				Log.d(TAG, "-------" + itemsmap.get("weather4"));
 
+			} else {
+				c.close();
 			}
+
 		}
 
-	 
-    	
-    	
-    	
-    	
-    }
-    
-    private    Date 	string2Date(String time){
-    	Date date = new Date();;
-    	SimpleDateFormat sdf = new SimpleDateFormat("yyyy年M月d日");
-    	try {
-			date=sdf.parse(time);
+	}
+
+	private Date string2Date(String time) {
+		Date date = new Date();
+
+		SimpleDateFormat sdf = new SimpleDateFormat("yyyy年M月d日");
+		try {
+			date = sdf.parse(time);
 		} catch (ParseException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-       return date ; 
-    }
-    
-    
+		return date;
+	}
+
 	public Map<String, Integer> getWeathermap() {
 		Map<String, Integer> weathermap = new HashMap<String, Integer>();
 		weathermap.put("晴", R.drawable.clear);
 		weathermap.put("多云", R.drawable.cloudy);
 		weathermap.put("阴", R.drawable.shade);
 		weathermap.put("阵雨", R.drawable.shower);
-		weathermap.put("雷阵雨", R.drawable.thundershowers);
-		weathermap.put("雷阵雨伴有冰雹", R.drawable.thundershowers_hail);
+//		weathermap.put("雷阵雨", R.drawable.thundershowers);
+//		weathermap.put("雷阵雨伴有冰雹", R.drawable.thundershowers_hail);
 		weathermap.put("雨夹雪", R.drawable.sleet);
 		weathermap.put("小雨", R.drawable.light_rain);
 		weathermap.put("中雨", R.drawable.moderate_rain);
 		weathermap.put("大雨", R.drawable.heavy_rain);
 		weathermap.put("暴雨", R.drawable.rainstorm);
-		weathermap.put("大暴雨", R.drawable.downpour);
-		weathermap.put("特大暴雨", R.drawable.heavy_rainfall);
+//		weathermap.put("大暴雨", R.drawable.downpour);
+//		weathermap.put("特大暴雨", R.drawable.heavy_rainfall);
 		weathermap.put("阵雪", R.drawable.shower_snow);
 		weathermap.put("小雪", R.drawable.slight_snow);
 		weathermap.put("中雪", R.drawable.moderate_snow);
@@ -262,17 +317,17 @@ public class WeatherScreen extends Screen implements
 		weathermap.put("雾", R.drawable.fog);
 		weathermap.put("冻雨", R.drawable.freezing_rain);
 
-		weathermap.put("小雨-中雨", R.drawable.moderate_rain);
-		weathermap.put("中雨-大雨", R.drawable.heavy_rain);
-		weathermap.put("大雨-暴雨", R.drawable.rainstorm);
-		weathermap.put("暴雨-大暴雨", R.drawable.downpour);
-		weathermap.put("大暴雨-特大暴雨", R.drawable.heavy_rainfall);
-		weathermap.put("小雪-中雪", R.drawable.moderate_snow);
-		weathermap.put("中雪-大雪", R.drawable.heavy_snow);
-		weathermap.put("大雪-暴雪", R.drawable.blizzard);
+//		weathermap.put("小雨-中雨", R.drawable.moderate_rain);
+//		weathermap.put("中雨-大雨", R.drawable.heavy_rain);
+//		weathermap.put("大到暴雨", R.drawable.rainstorm);
+//		weathermap.put("暴雨-大暴雨", R.drawable.downpour);
+//		weathermap.put("大暴雨-特大暴雨", R.drawable.heavy_rainfall);
+//		weathermap.put("小雪-中雪", R.drawable.moderate_snow);
+//		weathermap.put("中雪-大雪", R.drawable.heavy_snow);
+//		weathermap.put("大雪-暴雪", R.drawable.blizzard);
 
 		weathermap.put("沙城暴", R.drawable.sand_storm);
-		weathermap.put("强沙尘暴", R.drawable.sand_storm);
+//		weathermap.put("强沙尘暴", R.drawable.sand_storm);
 		weathermap.put("浮尘", R.drawable.sand);
 		weathermap.put("扬沙", R.drawable.sand);
 
@@ -287,7 +342,7 @@ public class WeatherScreen extends Screen implements
 			for (int i = 0; i < jsonArray.length(); i++) {
 
 				JSONObject jsonObject = (JSONObject) jsonArray.opt(i);
-				weatherDate =jsonObject.getString("date");
+				weatherDate = jsonObject.getString("date");
 				Log.d(TAG, "----weatherDate=" + weatherDate);
 				city = jsonObject.getString("city");
 				Log.d(TAG, "----province=" + city);
@@ -368,10 +423,11 @@ public class WeatherScreen extends Screen implements
 		String[] date = new String[4];
 		for (int i = 0; i < date.length; i++) {
 			date[i] = DateTimeUtils.time2String("yyyy年M月d日",
-					mCalendar.getTimeInMillis());;
+					mCalendar.getTimeInMillis());
+			;
 			mCalendar.add(Calendar.DAY_OF_MONTH, 1);
 		}
-		
+
 		// 保存到数据库
 		ContentValues cv1 = new ContentValues();
 		cv1.put(DatabaseHelper.COLUMN_WEATHER_DATE, date[0]);
@@ -402,6 +458,6 @@ public class WeatherScreen extends Screen implements
 	@Override
 	public void onCancelButtonClick(WeatherDialog mweatherDialog) {
 		// TODO Auto-generated method stub
-           this.finish();
+		this.finish();
 	}
 }
