@@ -77,6 +77,7 @@ public class ContactSyncAlertScreen extends Activity implements OnClickListener{
 			}.start();
 			break;
 		case R.id.contactsyncalert_cancel:
+			ServiceManager.getEventservice().onUpdateEvent(new EventArgs(EventTypes.CONTACT_SYNC_CANCEL));
 			break;
 		default:
 			break;

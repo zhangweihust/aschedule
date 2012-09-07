@@ -349,7 +349,10 @@ public class DatabaseManager {
 	public void addFriend(ContentValues values){
 		database.insert(DatabaseHelper.ASCHEDULE_FRIEND, null,values);
 	}
-public void deleteFriend(String id){
+	public void updateFriend(String id,ContentValues values){
+		database.update(DatabaseHelper.ASCHEDULE_FRIEND, values, DatabaseHelper.COLUMN_FRIEND_ID+ " =? ", new String[] { String.valueOf(id)});
+	}
+    public void deleteFriend(String id){
 		database.delete(DatabaseHelper.ASCHEDULE_FRIEND, DatabaseHelper.COLUMN_FRIEND_ID+ " =? ", new String[] { String.valueOf(id)});
 	}
 	public void ignoreFriend(String id){
@@ -371,6 +374,14 @@ public void deleteFriend(String id){
 
 	public Cursor queryFriend(int id){
 		return database.query(DatabaseHelper.ASCHEDULE_FRIEND, null, DatabaseHelper.ASCHEDULE_FRIEND_ID + " =? ", new String[] { String.valueOf(id)}, null, null, null);
+	}
+	
+	public Cursor queryFriendYes(){
+		return database.query(DatabaseHelper.ASCHEDULE_FRIEND, null, DatabaseHelper.ASCHEDULE_FRIEND_TYPE + " =? ", new String[] { String.valueOf(Constant.FriendType.friend_yes)}, null, null, null);
+	}
+	
+	public Cursor queryFriendIgnore(){
+		return database.query(DatabaseHelper.ASCHEDULE_FRIEND, null, DatabaseHelper.ASCHEDULE_FRIEND_TYPE + " =? ", new String[] { String.valueOf(Constant.FriendType.friend_Ignore)}, null, null, null);
 	}
 
 	

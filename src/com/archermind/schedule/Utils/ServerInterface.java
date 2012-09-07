@@ -480,6 +480,19 @@ public class ServerInterface {
 		String ret = HttpUtils
 				.doPost(map,
 						"http://player.archermind.com/ci/index.php/aschedule/friendSchedule");
+		return ret;
+	}
+    //判断是否使用微日程
+	public String checkUserSchedule(String user_id) {
+		System.out.println("tel====" + user_id);
+//		if (tel.length() != 11) {
+//			return "-1";
+//		}
+		Map<String, String> map = new HashMap<String, String>();
+		map.put("user_id", user_id);
+		String ret = HttpUtils
+				.doPost(map,
+						"http://player.archermind.com/ci/index.php/aschedule/checkUserSchedule");
 
 		return ret;
 	}
@@ -971,13 +984,14 @@ public class ServerInterface {
 	public static int uploadPhoto(Context context,String user_id,String filepath,String filename,String expandname) {
 		AmtFileObject fileObj = new AmtFileObject(context);
 		fileObj.uploadFile(app_id, user_id, filepath);
-		String url = "http://yun.archermind.com/mobile/service/showMedia?appId="
-			+ app_id
-			+ "&userName="
-			+ user_id
-			+ "&mediaName="
-			+ filename
-			+ "&mediaType=" + expandname;
+//		String url = "http://yun.archermind.com/mobile/service/showMedia?appId="
+//			+ app_id
+//			+ "&userName="
+//			+ user_id
+//			+ "&mediaName="
+//			+ filename
+//			+ "&mediaType=" + expandname;
+		String url =filename+ "." +expandname;
 		Map<String, String> map = new HashMap<String, String>();
 		map.put("user_id", user_id);
 		map.put("photo_url", url);

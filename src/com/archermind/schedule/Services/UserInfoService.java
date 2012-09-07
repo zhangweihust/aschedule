@@ -60,7 +60,9 @@ public class UserInfoService implements IService{
 			SharedPreferenceUtil.setValue(Constant.SendUserInfo.SEND_USER_ACTIVITY_INFO_DAYDATE,String.valueOf(dayDate));
 			SharedPreferenceUtil.setValue(Constant.SendUserInfo.SEND_USER_ACTIVITY_INFO_TIMES,String.valueOf(times));
 		}
-		SharedPreferenceUtil.setValue(Constant.SendUserInfo.SEND_USER_ACTIVITY_INFO_TIMESTAMP,String.valueOf(getTimestamp(startTime, exitTime)));
+		int timesTamp = Integer.parseInt(SharedPreferenceUtil.getValue(Constant.SendUserInfo.SEND_USER_ACTIVITY_INFO_TIMESTAMP,"0"));
+		timesTamp += getTimestamp(startTime, exitTime);
+		SharedPreferenceUtil.setValue(Constant.SendUserInfo.SEND_USER_ACTIVITY_INFO_TIMESTAMP,String.valueOf(timesTamp));
 		
 		if (deviceInfoThread != null) {
 			deviceInfoThread.stopThread();
