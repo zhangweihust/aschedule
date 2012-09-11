@@ -45,7 +45,7 @@ public class ExceptionService implements IService {
 	
 	@Override
 	public boolean start() {
-		AMTException.getInstance().init();
+		//AMTException.getInstance().init();
 		return true;
 	}
 

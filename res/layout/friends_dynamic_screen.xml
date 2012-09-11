@@ -27,8 +27,8 @@
         android:divider="@drawable/listview_divider"
         android:listSelector="@drawable/listview_selector" />
     
-     <LinearLayout
-        android:id="@+id/bindTel"
+    <LinearLayout
+        android:id="@+id/nullDynamic"
         android:orientation="vertical"
         android:layout_width="fill_parent"
         android:layout_height="fill_parent"
@@ -36,20 +36,26 @@
         android:gravity="center"
         android:visibility="gone"
         >
+        <ImageView 
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:background="@drawable/not_dynamic"/>
         <TextView 
+            android:id="@+id/note"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="center"
             android:gravity="center"
             android:textColor="#FF000000"
-            android:text="您的账户尚未绑定手机号码，赶紧绑定吧"/>
+            />
         <Button
-            android:id="@+id/bind"
-            android:layout_width="wrap_content"
+            android:id="@+id/refresh"
+            android:layout_width="90dip"
             android:layout_height="wrap_content"
             android:layout_centerHorizontal="true" 
             android:layout_marginTop="15dip"
-            android:text="绑定"/>
+            android:background="@drawable/button_bg"
+            android:text="刷新"/>
     </LinearLayout>
     
     <RelativeLayout
@@ -65,5 +71,65 @@
             android:layout_height="wrap_content"
             android:layout_gravity="center" />
     </RelativeLayout>
+    
+     <LinearLayout
+        android:id="@+id/bindTel"
+        android:orientation="vertical"
+        android:layout_width="fill_parent"
+        android:layout_height="fill_parent"
+        android:background="#f6f6f6"
+        android:gravity="center"
+        android:visibility="gone"
+        >
+        <ImageView 
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:background="@drawable/not_bind"/>
+        <TextView 
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:gravity="center"
+            android:textColor="#FF000000"
+            android:text="您的账户尚未绑定手机号码，赶紧绑定吧"/>
+        <Button
+            android:id="@+id/bind"
+            android:layout_width="90dip"
+            android:layout_height="wrap_content"
+            android:layout_centerHorizontal="true" 
+            android:layout_marginTop="15dip"
+            android:background="@drawable/button_bg"
+            android:text="绑定"/>
+    </LinearLayout>
+    
+      <LinearLayout
+        android:id="@+id/loginUp"
+        android:orientation="vertical"
+        android:layout_width="fill_parent"
+        android:layout_height="fill_parent"
+        android:background="#f6f6f6"
+        android:gravity="center"
+        android:visibility="gone"
+        >
+        <ImageView 
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:background="@drawable/not_bind"/>
+        <TextView 
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:gravity="center"
+            android:textColor="#FF000000"
+            android:text="快登录，和朋友一起玩转日程吧 ~"/>
+        <Button
+            android:id="@+id/login"
+            android:layout_width="90dip"
+            android:layout_height="wrap_content"
+            android:layout_centerHorizontal="true" 
+            android:layout_marginTop="15dip"
+            android:background="@drawable/button_bg"
+            android:text="登录"/>
+    </LinearLayout>
 
 </FrameLayout>
