@@ -55,11 +55,11 @@ public class AlarmRecevier extends BroadcastReceiver {
         long alarmTime = intent.getLongExtra("alarmtime", 1);
         ScheduleApplication.LogD(AlarmRecevier.class, " schedule alarm time is  alarmTime = "
                 + DateTimeUtils.time2String("yyyy-MM-dd-HH-mm", alarmTime));
-        long currentTime = System.currentTimeMillis() + 10 * 1000;// 加10秒是为了区分是正常的到时触发，还是用户设
+        long currentTime = System.currentTimeMillis();
         ScheduleApplication.LogD(AlarmRecevier.class, " current time is  currentTime = "
                 + DateTimeUtils.time2String("yyyy-MM-dd-HH-mm", currentTime));
 
-        if (currentTime - alarmTime < 50 * 1000) {// 说明是准时触发，通知栏提示
+        if (currentTime - alarmTime < 55 * 1000) {// 说明是准时触发，通知栏提示
 
             mNotificationManager = (NotificationManager)context
                     .getSystemService(Context.NOTIFICATION_SERVICE);
@@ -97,7 +97,7 @@ public class AlarmRecevier extends BroadcastReceiver {
             public void run() {
 
                 DatabaseManager dbManager = new DatabaseManager(mContext);
-                dbManager.open();
+                dbManager.openwithnoservice();
                 long nextTime = 0;
                 // 读取数据库
                 Cursor c = dbManager.queryScheduleById((int)schedule_id);

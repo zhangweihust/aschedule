@@ -3,7 +3,9 @@ package com.archermind.schedule.Views;
 
 import java.util.Calendar;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.Map;
+import java.util.Map.Entry;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -18,8 +20,6 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
-import android.os.Handler;
-import android.os.Message;
 import android.text.TextUtils;
 import android.util.Log;
 import android.view.View;
@@ -30,19 +30,11 @@ import com.archermind.schedule.ScheduleApplication;
 import com.archermind.schedule.Provider.DatabaseHelper;
 import com.archermind.schedule.Provider.DatabaseManager;
 import com.archermind.schedule.Screens.HomeScreen;
-import com.archermind.schedule.Screens.WeatherScreen;
 import com.archermind.schedule.Utils.DateTimeUtils;
 import com.archermind.schedule.Utils.NetworkUtils;
 import com.archermind.schedule.Utils.ServerInterface;
 
 public class WidgetWeather extends AppWidgetProvider {
-
-    @Override
-    public void onEnabled(Context context) {
-        super.onEnabled(context);
-
-        ScheduleApplication.LogD(getClass(), "onEnabled");
-    }
 
     private static final String ACTION_TIME_TICK = "com.archermind.widgetweather.timetick";
 
@@ -85,6 +77,13 @@ public class WidgetWeather extends AppWidgetProvider {
 
         super.onDeleted(context, appWidgetIds);
         Log.i(TAG, "OnDeleted");
+    }
+
+    @Override
+    public void onEnabled(Context context) {
+        super.onEnabled(context);
+
+        ScheduleApplication.LogD(getClass(), "onEnabled");
     }
 
     @Override
@@ -378,17 +377,17 @@ public class WidgetWeather extends AppWidgetProvider {
     private void updateAppWidget(Context context, AppWidgetManager gm, int appWidgetId, int flag) {
 
         switch (flag) {
-            
+
             case TIMECHANGE:
                 getDateTime();
                 showDateTime(context, appWidgetId);
                 break;
-                
+
             case SCHEDULE:
                 getLocalSchedule();
                 showLocalSchedule(context, appWidgetId);
                 break;
-                
+
             case PLACECHANGE:
                 showCityandWeather(context, appWidgetId);
                 break;
@@ -415,8 +414,14 @@ public class WidgetWeather extends AppWidgetProvider {
 
         Map<String, Integer> weathermap = getWeathermap();
         if (!TextUtils.isEmpty(mWeather)) {
+            int icon = getweatherMap(mWeather, weathermap);
 
-            views.setImageViewResource(R.id.widgetweathershow, weathermap.get(mWeather));
+            if (icon == 0) {
+
+                icon = R.drawable.noweather_100;
+            }
+
+            views.setImageViewResource(R.id.widgetweathershow, icon);
         }
     }
 
@@ -445,16 +450,16 @@ public class WidgetWeather extends AppWidgetProvider {
         weathermap.put("多云", R.drawable.cloudy_100);
         weathermap.put("阴", R.drawable.shade_100);
         weathermap.put("阵雨", R.drawable.shower_100);
-        weathermap.put("雷阵雨", R.drawable.thundershowers_100);
-        weathermap.put("雷阵雨伴有冰雹", R.drawable.thundershowers_hail_100);
+        // weathermap.put("雷阵雨", R.drawable.thundershowers_100);
+        // weathermap.put("雷阵雨伴有冰雹", R.drawable.thundershowers_hail_100);
         weathermap.put("雨夹雪", R.drawable.sleet_100);
         weathermap.put("小雨", R.drawable.light_rain_100);
         weathermap.put("中雨", R.drawable.moderate_rain_100);
         weathermap.put("大雨", R.drawable.heavy_rain_100);
 
         weathermap.put("暴雨", R.drawable.rainstorm_100);
-        weathermap.put("大暴雨", R.drawable.downpour_100);
-        weathermap.put("特大暴雨", R.drawable.heavy_rainfall_100);
+        // weathermap.put("大暴雨", R.drawable.downpour_100);
+        // weathermap.put("特大暴雨", R.drawable.heavy_rainfall_100);
         weathermap.put("阵雪", R.drawable.shower_snow_100);
         weathermap.put("小雪", R.drawable.slight_snow_100);
         weathermap.put("中雪", R.drawable.moderate_snow_100);
@@ -463,21 +468,37 @@ public class WidgetWeather extends AppWidgetProvider {
         weathermap.put("雾", R.drawable.fog_100);
         weathermap.put("冻雨", R.drawable.freezing_rain_100);
 
-        weathermap.put("小雨-中雨", R.drawable.moderate_rain_100);
-        weathermap.put("中雨-大雨", R.drawable.heavy_rain_100);
-        weathermap.put("大雨-暴雨", R.drawable.rainstorm_100);
-        weathermap.put("暴雨-大暴雨", R.drawable.downpour_100);
-        weathermap.put("大暴雨-特大暴雨", R.drawable.heavy_rainfall_100);
-        weathermap.put("小雪-中雪", R.drawable.moderate_snow_100);
-        weathermap.put("中雪-大雪", R.drawable.heavy_snow_100);
-        weathermap.put("大雪-暴雪", R.drawable.blizzard_100);
+        // weathermap.put("小雨-中雨", R.drawable.moderate_rain_100);
+        // weathermap.put("中雨-大雨", R.drawable.heavy_rain_100);
+        // weathermap.put("大雨-暴雨", R.drawable.rainstorm_100);
+        // weathermap.put("暴雨-大暴雨", R.drawable.downpour_100);
+        // weathermap.put("大暴雨-特大暴雨", R.drawable.heavy_rainfall_100);
+        // weathermap.put("小雪-中雪", R.drawable.moderate_snow_100);
+        // weathermap.put("中雪-大雪", R.drawable.heavy_snow_100);
+        // weathermap.put("大雪-暴雪", R.drawable.blizzard_100);
         weathermap.put("沙城暴", R.drawable.sand_storm_100);
-        weathermap.put("强沙尘暴", R.drawable.sand_storm_100);
+        // weathermap.put("强沙尘暴", R.drawable.sand_storm_100);
 
         weathermap.put("浮尘", R.drawable.sand_100);
         weathermap.put("扬沙", R.drawable.sand_100);
 
         return weathermap;
+    }
+
+    public Integer getweatherMap(String key, Map<String, Integer> weathermap) {
+
+        Iterator<Entry<String, Integer>> iterator = weathermap.entrySet().iterator();
+        Entry<String, Integer> entry = null;
+
+        while (iterator.hasNext()) {
+
+            entry = iterator.next();
+            if (key.contains(entry.getKey())) {
+                return entry.getValue();
+            }
+        }
+
+        return 0;
     }
 
 }

@@ -147,7 +147,6 @@ public class WeatherScreen extends Screen implements
 		cityInfoMap.put("city", city);
 
 		// 如果联网了，则从服务器获取数据
-		//
 		if (NetworkUtils.getNetworkState(this) != NetworkUtils.NETWORN_NONE) {
 
 			String strResult = si.getWeather(province, city);

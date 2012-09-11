@@ -35,11 +35,16 @@ public class DatabaseManager {
 		eventService = ServiceManager.getEventservice();
 	}
 
-	public void close() {
-	    
-		databaseHelper.close();
-		database.close();
-	}
+    public void openwithnoservice() {
+        databaseHelper = new DatabaseHelper(context);
+        database = databaseHelper.getWritableDatabase();
+    }
+
+    public void close() {
+
+        databaseHelper.close();
+        database.close();
+    }
 
 	public long insertLocalSchedules(ContentValues values) {
 		long schedule_id= database.insert(DatabaseHelper.TAB_LOCAL_SCHEDULE, null, values);

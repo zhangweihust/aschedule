@@ -34,7 +34,8 @@ public class BootRecevier extends BroadcastReceiver {
         new Thread() {
             public void run() {
                 DatabaseManager dbManager = new DatabaseManager(mContext);
-                dbManager.open();
+                dbManager.openwithnoservice();
+                
                 Cursor c = dbManager.queryNotOutdateschedule(System.currentTimeMillis());
                 ScheduleApplication.LogD(BootRecevier.class, "not outdate count ::" + c.getCount());
                 if (c != null) {
@@ -60,6 +61,7 @@ public class BootRecevier extends BroadcastReceiver {
                     }
                     c.close();
                 }
+                
                 dbManager.close();
             }
         }.start();

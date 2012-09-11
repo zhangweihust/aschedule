@@ -291,6 +291,7 @@ public class WeatherDialog implements OnClickListener {
 			maxtemp4="  ";
 			mintemp4="  ";
 		}
+		
 		threeDAfterMinTemp.setText(maxtemp4 );
 		threeDAfterMaxTemp.setText(mintemp4);
 		mWeather4 = itemsmap.get("weather4");
@@ -311,7 +312,6 @@ public class WeatherDialog implements OnClickListener {
 		oneDAfterWeek.setText(week[1]);
 		twoDAfterWeek.setText(week[2]);
 		threeDAfterWeek.setText(week[3]);
-
 	}
 
 	public void dismiss() {
@@ -352,7 +352,7 @@ public class WeatherDialog implements OnClickListener {
 		Iterator<Entry<String, Integer>> iterator = weathermap.entrySet()
 				.iterator();
 		Entry<String, Integer> entry = null;
-		int i = 0;
+		
 		while (iterator.hasNext()) {
 			entry = iterator.next();
 			Log.i("free", "entry.getKey()"+entry.getKey());
@@ -360,10 +360,10 @@ public class WeatherDialog implements OnClickListener {
 			if (key.contains(entry.getKey())) {
 				retkey = entry.getKey();
 				return retkey;
-			}
-			i++;
-
+			}		
 		}
+		
 		return null;
 	}
+	
 }

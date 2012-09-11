@@ -35,7 +35,7 @@
 
     <LinearLayout
         android:layout_width="fill_parent"
-        android:layout_height="175dp"
+        android:layout_height="wrap_content"
         android:layout_below="@+id/title_setting_top"
         android:layout_marginLeft="10dp"
         android:layout_marginRight="10dp"
@@ -43,73 +43,6 @@
         android:background="@drawable/settingbg"
         android:clickable="true"
         android:orientation="vertical" >
-
-        <LinearLayout
-            android:id="@+id/datatime"
-            android:layout_width="fill_parent"
-            android:layout_height="40dp"
-            android:clickable="true"
-            android:gravity="center_vertical"
-            android:orientation="horizontal" >
-
-            <ImageView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginLeft="5dp"
-                android:src="@drawable/outdateofschedule" />
-
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginLeft="20dp"
-                android:text="@string/settingoutofdata"
-                android:textColor="#000000" />
-
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginLeft="80dp"
-                android:text="365天"
-                android:textColor="#000000" />
-        </LinearLayout>
-
-        <TextView
-            android:layout_width="fill_parent"
-            android:layout_height="1dp"
-            android:background="@drawable/schedule_new_line" />
-
-        <LinearLayout
-            android:layout_width="fill_parent"
-            android:layout_height="40dp"
-            android:clickable="true"
-            android:gravity="center_vertical"
-            android:orientation="horizontal" >
-
-            <ImageView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginLeft="5dp"
-                android:src="@drawable/settingweather" />
-
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginLeft="20dp"
-                android:text="@string/settingweather"
-                android:textColor="#000000" />
-
-            <com.archermind.schedule.Views.SettingSlipSwitch
-                android:id="@+id/settingslipswitch"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginLeft="120dp" />
-            
-        </LinearLayout>
-
-        <TextView
-            android:layout_width="fill_parent"
-            android:layout_height="1dp"
-            android:background="@drawable/schedule_new_line" />
 
         <LinearLayout
             android:id="@+id/setting_remind"
@@ -131,32 +64,6 @@
                 android:layout_height="wrap_content"
                 android:layout_marginLeft="20dp"
                 android:text="@string/settingalarm"
-                android:textColor="#000000" />
-        </LinearLayout>
-
-        <TextView
-            android:layout_width="fill_parent"
-            android:layout_height="1dp"
-            android:background="@drawable/schedule_new_line" />
-
-        <LinearLayout
-            android:layout_width="fill_parent"
-            android:layout_height="40dp"
-            android:clickable="true"
-            android:gravity="center_vertical"
-            android:orientation="horizontal" >
-
-            <ImageView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginLeft="5dp"
-                android:src="@drawable/settinghelp" />
-
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginLeft="20dp"
-                android:text="@string/settinghelp"
                 android:textColor="#000000" />
         </LinearLayout>
     </LinearLayout>

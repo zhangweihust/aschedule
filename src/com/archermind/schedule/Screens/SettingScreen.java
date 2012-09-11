@@ -35,17 +35,17 @@ public class SettingScreen extends Screen implements OnClickListener {
         mBtnOut = (Button)findViewById(R.id.title_bar_setting_btn);
         mBtnOut.setOnClickListener(this);
 
-        LinearLayout llayout = (LinearLayout)findViewById(R.id.datatime);
-        llayout.setOnClickListener(this);
+//        LinearLayout llayout = (LinearLayout)findViewById(R.id.datatime);
+//        llayout.setOnClickListener(this);
 
         LinearLayout llayoutremind = (LinearLayout)findViewById(R.id.setting_remind);
         llayoutremind.setOnClickListener(this);
+//
+//        mSlipSwitch = (SettingSlipSwitch)findViewById(R.id.settingslipswitch);
+//        mSlipSwitch.setImageResource(R.drawable.settingonandoff, R.drawable.settingonandoff,
+//                R.drawable.settingcover);
+//        mSlipSwitch.setSwitchState(true);
 
-        mSlipSwitch = (SettingSlipSwitch)findViewById(R.id.settingslipswitch);
-        mSlipSwitch.setImageResource(R.drawable.settingonandoff, R.drawable.settingonandoff,
-                R.drawable.settingcover);
-        mSlipSwitch.setSwitchState(true);
-        
     }
 
     @Override
@@ -53,14 +53,9 @@ public class SettingScreen extends Screen implements OnClickListener {
 
         switch (v.getId()) {
 
-            case R.id.datatime:
-
-                break;
-
             case R.id.setting_remind:
 
                 doPickSmsRingtone();
-
                 break;
 
             case R.id.title_bar_setting_btn:
@@ -71,29 +66,31 @@ public class SettingScreen extends Screen implements OnClickListener {
             default:
 
                 break;
+                
         }
     }
 
     private void doPickSmsRingtone() {
-
+        
         String tempRing = ServiceManager.getSPUserSetting(UserInfoData.SETTING_SOUND_REMIND);
         String notificationStr = TextUtils.isEmpty(tempRing) ? null : tempRing;
-
+        
         Intent intent = new Intent(RingtoneManager.ACTION_RINGTONE_PICKER);
         intent.putExtra(RingtoneManager.EXTRA_RINGTONE_SHOW_DEFAULT, true);
         intent.putExtra(RingtoneManager.EXTRA_RINGTONE_TYPE, RingtoneManager.TYPE_NOTIFICATION);
         intent.putExtra(RingtoneManager.EXTRA_RINGTONE_DEFAULT_URI,
                 RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION));
-        
+
         intent.putExtra(RingtoneManager.EXTRA_RINGTONE_SHOW_SILENT, true);
-        
+
         Uri notificationUri;
         if (notificationStr != null) {
 
             notificationUri = Uri.parse(notificationStr);
             intent.putExtra(RingtoneManager.EXTRA_RINGTONE_EXISTING_URI, notificationUri);
-        } else {
-            intent.putExtra(RingtoneManager.EXTRA_RINGTONE_EXISTING_URI, (Uri)null);
+        } else { //如果没有值，则显示默认的铃声
+            
+            intent.putExtra(RingtoneManager.EXTRA_RINGTONE_EXISTING_URI,  RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION));
         }
 
         startActivityForResult(intent, SMS_RINGTONE_PICKED);
@@ -121,7 +118,7 @@ public class SettingScreen extends Screen implements OnClickListener {
                 }
             }
                 break;
-                
+
             default:
                 break;
         }

@@ -82,7 +82,7 @@ public class MCWUpdateService extends IntentService {
 
 	private static void setCalendar(Context context, RemoteViews rv){
 		
-		calendarData = new CalendarData(jumpMonth, jumpYear, yearNow,monthNow, today,Constant.flagType);
+		calendarData = new CalendarData(context,jumpMonth, jumpYear, yearNow,monthNow, today,Constant.flagType);
 		dayNumber = calendarData.getDayNumber();
 		rv.setTextViewText(R.id.monthyear, calendarData.getShowYear() + "." + calendarData.getShowMonth());
 		
