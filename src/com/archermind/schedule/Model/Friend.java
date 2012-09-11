@@ -10,31 +10,31 @@ public class Friend {
 	private String nick;
 	private int type = Constant.FriendType.friend_contact;
 
-	public Friend(){
-		
+	public Friend() {
+
 	}
-	public Friend(String telephone, String name, String headImagePath, int type){
+	public Friend(String telephone, String name, String headImagePath, int type) {
 		this.telephone = telephone;
 		this.name = name;
 		this.telephone = telephone;
 		this.headImagePath = headImagePath;
 		this.type = type;
 	}
-	public Friend(String id, String telephone, int type){
+	public Friend(String id, String telephone, int type) {
 		this.id = id;
 		this.telephone = telephone;
 		this.type = type;
 	}
-	public String getId(){
+	public String getId() {
 		return this.id;
 	}
-	public void setId(String id){
+	public void setId(String id) {
 		this.id = id;
 	}
-	public String getTelephone(){
+	public String getTelephone() {
 		return this.telephone;
 	}
-	public void setTelephone(String telephone){
+	public void setTelephone(String telephone) {
 		this.telephone = telephone;
 	}
 	public String getName() {
@@ -60,7 +60,7 @@ public class Friend {
 	public void setType(int type) {
 		this.type = type;
 	}
-	
+
 	public String getNick() {
 		return this.nick;
 	}
@@ -68,8 +68,9 @@ public class Friend {
 	public void setNick(String nick) {
 		this.nick = nick;
 	}
-	
-	public String toString(){
-		return "id ="+id+" telephone = "+telephone + " name = "+name + " nike = "+nick;
+
+	public String toString() {
+		return "id =" + id + " telephone = " + telephone + " name = " + name
+				+ " nike = " + nick;
 	}
 }

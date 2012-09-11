@@ -25,9 +25,9 @@ public class DateTimeUtils {
 		// ScheduleApplication.LogD(DateTimeUtils.class, "time=" + dateTime);
 		return dateTime;
 	}
-	
+
 	public static long time2Long(String formatter, String date) {
-		Date d = null; 
+		Date d = null;
 		SimpleDateFormat sdf = new SimpleDateFormat(formatter);
 		try {
 			d = sdf.parse(date);
@@ -37,7 +37,6 @@ public class DateTimeUtils {
 		}
 		return d.getTime();
 	}
-
 
 	public static long getDayOfWeek(int week, long timeInMillis) {
 		SimpleDateFormat sdf = new SimpleDateFormat(
@@ -254,7 +253,7 @@ public class DateTimeUtils {
 					time.set(Calendar.DAY_OF_MONTH, Integer
 							.parseInt(DateTimeUtils.time2String("dd",
 									startStage)));
-					if (time.getTimeInMillis() > currentTime){
+					if (time.getTimeInMillis() > currentTime) {
 						return time.getTimeInMillis();
 					} else {
 						time.add(Calendar.YEAR, 1);
@@ -269,7 +268,7 @@ public class DateTimeUtils {
 					time.set(Calendar.DAY_OF_MONTH, Integer
 							.parseInt(DateTimeUtils.time2String("dd",
 									startStage)));
-					if (time.getTimeInMillis() > currentTime){
+					if (time.getTimeInMillis() > currentTime) {
 						return time.getTimeInMillis();
 					} else {
 						time.add(Calendar.MONTH, 1);
@@ -411,20 +410,24 @@ public class DateTimeUtils {
 		}
 		return 0;
 	}
-    
-    public static void cancelAlarm(long schedule_id) {
+
+	public static void cancelAlarm(long schedule_id) {
 		Cursor c = ServiceManager.getDbManager().queryScheduleById(schedule_id);
 		if (c != null && c.getCount() > 0) {
 			c.moveToFirst();
-			long flagAlarm = c.getLong(c.getColumnIndex(DatabaseHelper.COLUMN_SCHEDULE_ALARM_FLAG));
+			long flagAlarm = c.getLong(c
+					.getColumnIndex(DatabaseHelper.COLUMN_SCHEDULE_ALARM_FLAG));
 			Intent alarmIntent = new Intent(ScheduleApplication.getContext(),
 					AlarmRecevier.class);
 			alarmIntent.setAction("" + flagAlarm);
 			alarmIntent.putExtra("schedule_id", schedule_id);
-			ScheduleApplication.LogD(DateTimeUtils.class, "cancel schedule_id:" + schedule_id + " flagAlarm:" + flagAlarm);
-			AlarmManager am = (AlarmManager) ScheduleApplication.getContext().getSystemService(Context.ALARM_SERVICE);
+			ScheduleApplication.LogD(DateTimeUtils.class, "cancel schedule_id:"
+					+ schedule_id + " flagAlarm:" + flagAlarm);
+			AlarmManager am = (AlarmManager) ScheduleApplication.getContext()
+					.getSystemService(Context.ALARM_SERVICE);
 			PendingIntent pi = PendingIntent.getBroadcast(
-					ScheduleApplication.getContext(), 1, alarmIntent, PendingIntent.FLAG_NO_CREATE);
+					ScheduleApplication.getContext(), 1, alarmIntent,
+					PendingIntent.FLAG_NO_CREATE);
 			am.cancel(pi);
 		}
 		c.close();
@@ -433,22 +436,25 @@ public class DateTimeUtils {
 	public static void sendAlarm(long time, long flagAlarm, long schedule_id) {
 		Intent alarmIntent = new Intent(ScheduleApplication.getContext(),
 				AlarmRecevier.class);
-		
+
 		alarmIntent.setAction("" + flagAlarm);
 		alarmIntent.putExtra("schedule_id", schedule_id);
-		alarmIntent.putExtra("alarmtime", time);		
-	    
-		ScheduleApplication.LogD(DateTimeUtils.class, "set schedule_id:" + schedule_id + " flagAlarm:" + flagAlarm);
-		PendingIntent pi = PendingIntent.getBroadcast(ScheduleApplication.getContext(),
-				1, alarmIntent, PendingIntent.FLAG_CANCEL_CURRENT);
-		AlarmManager am = (AlarmManager) ScheduleApplication.getContext().getSystemService(Context.ALARM_SERVICE);
+		alarmIntent.putExtra("alarmtime", time);
+
+		ScheduleApplication.LogD(DateTimeUtils.class, "set schedule_id:"
+				+ schedule_id + " flagAlarm:" + flagAlarm);
+		PendingIntent pi = PendingIntent.getBroadcast(
+				ScheduleApplication.getContext(), 1, alarmIntent,
+				PendingIntent.FLAG_CANCEL_CURRENT);
+		AlarmManager am = (AlarmManager) ScheduleApplication.getContext()
+				.getSystemService(Context.ALARM_SERVICE);
 		am.set(AlarmManager.RTC_WAKEUP, time, pi);
 	}
-	
-	public static int getWeekDay(Calendar time){//因为API里面获得的星期天是1，星期六是7，所以这里要做个转换
+
+	public static int getWeekDay(Calendar time) {// 因为API里面获得的星期天是1，星期六是7，所以这里要做个转换
 		int weekDay = time.get(Calendar.DAY_OF_WEEK);
 		weekDay = weekDay - 1;
-		if (weekDay == 0){
+		if (weekDay == 0) {
 			weekDay = 7;
 		}
 		return weekDay;

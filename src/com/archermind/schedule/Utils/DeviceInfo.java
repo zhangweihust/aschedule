@@ -24,7 +24,8 @@ public class DeviceInfo {
 			pinfo = ScheduleApplication
 					.getContext()
 					.getPackageManager()
-					.getPackageInfo(ScheduleApplication.getContext().getPackageName(),
+					.getPackageInfo(
+							ScheduleApplication.getContext().getPackageName(),
 							PackageManager.GET_CONFIGURATIONS);
 			return String.valueOf(pinfo.versionCode);
 		} catch (NameNotFoundException e) {
@@ -32,8 +33,6 @@ public class DeviceInfo {
 		}
 		return null;
 	}
-
-
 
 	/**
 	 * 获得手机品牌
@@ -60,8 +59,7 @@ public class DeviceInfo {
 	 */
 	public static String getDeviceIMEI() {
 		TelephonyManager telephonyManager = (TelephonyManager) ScheduleApplication
-				.getContext().getSystemService(
-						Context.TELEPHONY_SERVICE);
+				.getContext().getSystemService(Context.TELEPHONY_SERVICE);
 		return telephonyManager.getDeviceId();
 	}
 
@@ -72,8 +70,7 @@ public class DeviceInfo {
 	 */
 	public static String getDevicePhoneNumber() {
 		TelephonyManager telephonyManager = (TelephonyManager) ScheduleApplication
-				.getContext().getSystemService(
-						Context.TELEPHONY_SERVICE);
+				.getContext().getSystemService(Context.TELEPHONY_SERVICE);
 		return telephonyManager.getLine1Number();
 	}
 
@@ -84,11 +81,10 @@ public class DeviceInfo {
 	 */
 	public static String getDeviceOperatorName() {
 		TelephonyManager telephonyManager = (TelephonyManager) ScheduleApplication
-				.getContext().getSystemService(
-						Context.TELEPHONY_SERVICE);
+				.getContext().getSystemService(Context.TELEPHONY_SERVICE);
 		return telephonyManager.getNetworkOperatorName();
 	}
-	
+
 	/**
 	 * 获取IMSI
 	 * 
@@ -96,11 +92,10 @@ public class DeviceInfo {
 	 */
 	public static String getDeviceIMSI() {
 		TelephonyManager telephonyManager = (TelephonyManager) ScheduleApplication
-				.getContext().getSystemService(
-						Context.TELEPHONY_SERVICE);
+				.getContext().getSystemService(Context.TELEPHONY_SERVICE);
 		return telephonyManager.getSubscriberId();
 	}
-	
+
 	/**
 	 * 获取系统版本号
 	 * 
@@ -109,7 +104,7 @@ public class DeviceInfo {
 	public static String getDeviceSystemVersion() {
 		return android.os.Build.VERSION.RELEASE;
 	}
-	
+
 	/**
 	 * 获取CPU型号
 	 * 
@@ -143,7 +138,7 @@ public class DeviceInfo {
 		}
 		return value;
 	}
-	
+
 	/**
 	 * 获取CPU最大频率
 	 * 
@@ -153,25 +148,24 @@ public class DeviceInfo {
 		String value = null;
 		ProcessBuilder cmd;
 		try {
-		String[] args = { "/system/bin/cat",
-		"/sys/devices/system/cpu/cpu0/cpufreq/cpuinfo_max_freq" };
-		cmd = new ProcessBuilder(args);
-		Process process = cmd.start();
-		InputStream in = process.getInputStream();
-		byte[] re = new byte[24];
-		while (in.read(re) != -1) {
-			value = value + new String(re);
-		}
-		in.close();
+			String[] args = {"/system/bin/cat",
+					"/sys/devices/system/cpu/cpu0/cpufreq/cpuinfo_max_freq"};
+			cmd = new ProcessBuilder(args);
+			Process process = cmd.start();
+			InputStream in = process.getInputStream();
+			byte[] re = new byte[24];
+			while (in.read(re) != -1) {
+				value = value + new String(re);
+			}
+			in.close();
 		} catch (IOException ex) {
-		ex.printStackTrace();
-		value = "N/A";
+			ex.printStackTrace();
+			value = "N/A";
 		}
 		value.trim();
 		return value;
 	}
-	
-	
+
 	/**
 	 * 获取内存大小
 	 * 
@@ -204,30 +198,36 @@ public class DeviceInfo {
 		}
 		return value;
 	}
-	
+
 	/**
 	 * 获取屏幕尺寸
 	 * 
 	 * @return
 	 */
 	public static String getDeviceScreenResolution() {
-		DisplayMetrics dm = ScheduleApplication.getContext().getResources().getDisplayMetrics();
-		return String.valueOf(dm.widthPixels) + "*" + String.valueOf(dm.heightPixels);
+		DisplayMetrics dm = ScheduleApplication.getContext().getResources()
+				.getDisplayMetrics();
+		return String.valueOf(dm.widthPixels) + "*"
+				+ String.valueOf(dm.heightPixels);
 	}
-	
+
 	/**
 	 * 获取屏幕密度值
 	 * 
 	 * @return
 	 */
 	public static String getDeviceScreenDensitydpi() {
-		DisplayMetrics dm = ScheduleApplication.getContext().getResources().getDisplayMetrics();
-		return String.valueOf(dm.widthPixels) + "*" + String.valueOf(dm.heightPixels);
+		DisplayMetrics dm = ScheduleApplication.getContext().getResources()
+				.getDisplayMetrics();
+		return String.valueOf(dm.widthPixels) + "*"
+				+ String.valueOf(dm.heightPixels);
 	}
-	
+
 	public enum InfoName {
-		IMEI("imei"), SYSTEM_VERSION("osVersion"), PHONE_KTV_VERSION("softVersion"), CPU_MODEL("cpuModel"), CPU_MAX_FREQUENCY("cpuClk"), 
-		MEMORY_TOTAL("memSize"), SCREEN_DENSITYDPI("windowDensityDpi"), SCREEN_RESOLUTION("windowSize"), PHONE_MODEL(
+		IMEI("imei"), SYSTEM_VERSION("osVersion"), PHONE_KTV_VERSION(
+				"softVersion"), CPU_MODEL("cpuModel"), CPU_MAX_FREQUENCY(
+				"cpuClk"), MEMORY_TOTAL("memSize"), SCREEN_DENSITYDPI(
+				"windowDensityDpi"), SCREEN_RESOLUTION("windowSize"), PHONE_MODEL(
 				"machModel");
 		private String name;
 
@@ -240,5 +240,5 @@ public class DeviceInfo {
 			return name;
 		}
 	}
-	
+
 }

@@ -10,12 +10,13 @@ import android.widget.EditText;
 
 /**
  * ��߿��EditText
+ * 
  * @author jack_peng
- *
+ * 
  */
-public class BorderEditText extends EditText{
+public class BorderEditText extends EditText {
 
-	public BorderEditText(Context context,AttributeSet attrs) {
+	public BorderEditText(Context context, AttributeSet attrs) {
 		super(context, attrs);
 		// TODO Auto-generated constructor stub
 	}
@@ -30,7 +31,7 @@ public class BorderEditText extends EditText{
 		paint.setStyle(Style.STROKE);
 		paint.setColor(android.graphics.Color.GRAY);
 		paint.setAntiAlias(true);
-		RectF rectF = new RectF(2,0,this.getWidth()-2,this.getHeight()-2);
+		RectF rectF = new RectF(2, 0, this.getWidth() - 2, this.getHeight() - 2);
 		canvas.drawRoundRect(rectF, 8, 8, paint);
 	}
 }

@@ -8,11 +8,11 @@ import com.archermind.schedule.Events.EventArgs;
 import com.archermind.schedule.Events.IEventDispatcher;
 import com.archermind.schedule.Events.IEventHandler;
 
-public class EventService implements IEventDispatcher, IService{
+public class EventService implements IEventDispatcher, IService {
 
 	private final CopyOnWriteArrayList<IEventHandler> eventHandlers;
-	
-	public EventService(){
+
+	public EventService() {
 		super();
 		this.eventHandlers = new CopyOnWriteArrayList<IEventHandler>();
 	}
@@ -27,10 +27,9 @@ public class EventService implements IEventDispatcher, IService{
 		return eventHandlers.remove(handler);
 	}
 
-	
 	/* ===================== Dispatch events ======================== */
 	public synchronized void onUpdateEvent(final EventArgs eargs) {
-		for(final IEventHandler handler : this.eventHandlers){
+		for (final IEventHandler handler : this.eventHandlers) {
 			new Thread(new Runnable() {
 				public void run() {
 					if (!handler.onEvent(this, eargs)) {

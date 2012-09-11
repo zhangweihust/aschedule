@@ -30,16 +30,16 @@ public class XListViewHeader extends LinearLayout {
 
 	private Animation mRotateUpAnim;
 	private Animation mRotateDownAnim;
-	
+
 	private int listkind;
-	
+
 	private final int ROTATE_ANIM_DURATION = 180;
-	
+
 	public final static int STATE_NORMAL = 0;
 	public final static int STATE_READY = 1;
 	public final static int STATE_REFRESHING = 2;
 
-	public XListViewHeader(Context context,int kind) {
+	public XListViewHeader(Context context, int kind) {
 		super(context);
 		listkind = kind;
 		initView(context);
@@ -63,18 +63,15 @@ public class XListViewHeader extends LinearLayout {
 		addView(mContainer, lp);
 		setGravity(Gravity.BOTTOM);
 
-		mArrowImageView = (ImageView)findViewById(R.id.xlistview_header_arrow);
-		mHintTextView = (TextView)findViewById(R.id.xlistview_header_hint_textview);
-		if (listkind == XListViewFooter.SCHEDULE_PROMPT)
-		{
+		mArrowImageView = (ImageView) findViewById(R.id.xlistview_header_arrow);
+		mHintTextView = (TextView) findViewById(R.id.xlistview_header_hint_textview);
+		if (listkind == XListViewFooter.SCHEDULE_PROMPT) {
 			mHintTextView.setText("下拉加载上月日程");
-		}
-		else if (listkind == XListViewFooter.DYNAMIC_PROMPT)
-		{
+		} else if (listkind == XListViewFooter.DYNAMIC_PROMPT) {
 			mHintTextView.setText(R.string.xlistview_header_hint_normal);
 		}
-		mProgressBar = (ProgressBar)findViewById(R.id.xlistview_header_progressbar);
-		
+		mProgressBar = (ProgressBar) findViewById(R.id.xlistview_header_progressbar);
+
 		mRotateUpAnim = new RotateAnimation(0.0f, -180.0f,
 				Animation.RELATIVE_TO_SELF, 0.5f, Animation.RELATIVE_TO_SELF,
 				0.5f);
@@ -88,50 +85,49 @@ public class XListViewHeader extends LinearLayout {
 	}
 
 	public void setState(int state) {
-		if (state == mState) return ;
-		
-		if (state == STATE_REFRESHING) {	// 显示进度
+		if (state == mState)
+			return;
+
+		if (state == STATE_REFRESHING) { // 显示进度
 			mArrowImageView.clearAnimation();
 			mArrowImageView.setVisibility(View.INVISIBLE);
 			mProgressBar.setVisibility(View.VISIBLE);
-		} else {	// 显示箭头图片
+		} else { // 显示箭头图片
 			mArrowImageView.setVisibility(View.VISIBLE);
 			mProgressBar.setVisibility(View.INVISIBLE);
 		}
-		
-		switch(state){
-		case STATE_NORMAL:
-			if (mState == STATE_READY) {
-				mArrowImageView.startAnimation(mRotateDownAnim);
-			}
-			if (mState == STATE_REFRESHING) {
-				mArrowImageView.clearAnimation();
-			}
-			if (listkind == XListViewFooter.SCHEDULE_PROMPT)
-			{
-				mHintTextView.setText("下拉加载上月日程");
-			}
-			else if (listkind == XListViewFooter.DYNAMIC_PROMPT)
-			{
-				mHintTextView.setText(R.string.xlistview_header_hint_normal);
-			}
-			break;
-		case STATE_READY:
-			if (mState != STATE_READY) {
-				mArrowImageView.clearAnimation();
-				mArrowImageView.startAnimation(mRotateUpAnim);
-				mHintTextView.setText(R.string.xlistview_header_hint_ready);
-			}
-			break;
-		case STATE_REFRESHING:
-			mHintTextView.setText(R.string.xlistview_header_hint_loading);
-			break;
-			default:
+
+		switch (state) {
+			case STATE_NORMAL :
+				if (mState == STATE_READY) {
+					mArrowImageView.startAnimation(mRotateDownAnim);
+				}
+				if (mState == STATE_REFRESHING) {
+					mArrowImageView.clearAnimation();
+				}
+				if (listkind == XListViewFooter.SCHEDULE_PROMPT) {
+					mHintTextView.setText("下拉加载上月日程");
+				} else if (listkind == XListViewFooter.DYNAMIC_PROMPT) {
+					mHintTextView
+							.setText(R.string.xlistview_header_hint_normal);
+				}
+				break;
+			case STATE_READY :
+				if (mState != STATE_READY) {
+					mArrowImageView.clearAnimation();
+					mArrowImageView.startAnimation(mRotateUpAnim);
+					mHintTextView.setText(R.string.xlistview_header_hint_ready);
+				}
+				break;
+			case STATE_REFRESHING :
+				mHintTextView.setText(R.string.xlistview_header_hint_loading);
+				break;
+			default :
 		}
-		
+
 		mState = state;
 	}
-	
+
 	public void setVisiableHeight(int height) {
 		if (height < 0)
 			height = 0;

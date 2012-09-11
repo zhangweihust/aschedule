@@ -62,56 +62,61 @@ public class WeatherDialog implements OnClickListener {
 	private String maxtemp4, mintemp4;
 
 	private Context context;
-	
+
 	private CitySettingDialog citySettingDialog;
-	
+
 	private String province;
-	
+
 	private String city;
-	
+
 	public interface OnCancelButtonClickListener {
 		void onCancelButtonClick(WeatherDialog mweatherDialog);
 	}
 
-	public WeatherDialog(final Context context, int screenWidth, int screenHeight,
-			Map<String, String> cityInfoMap, Map<String, Integer> weathermap,
-			Map<String, String> itemsmap) {
+	public WeatherDialog(final Context context, int screenWidth,
+			int screenHeight, Map<String, String> cityInfoMap,
+			Map<String, Integer> weathermap, Map<String, String> itemsmap) {
 
-        this.context = context;
+		this.context = context;
 		weatherDialog = new Dialog(context, R.style.WeatherDialog);
 		weatherDialog.setContentView(R.layout.weather);
 		citySettingDialog = new CitySettingDialog(context);
-		citySettingDialog.getDialog().setOnDismissListener(new OnDismissListener() {
-			
-			@Override
-			public void onDismiss(DialogInterface dialog) {
-				// TODO Auto-generated method stub
-				WeatherScreen WeatherScreen = (WeatherScreen)context;
-				SharedPreferences sp = context.getSharedPreferences("com.archermind.schedule_preferences",Context.MODE_WORLD_WRITEABLE);
-				String mProvince = sp.getString("province", "北京");
-				String mCity = sp.getString("city", "北京");
-				if(mProvince.equals(province) && mCity.equals(city)){
-					return;
-				}
-				WeatherScreen.getWeatherData(mProvince,mCity);
-				displayWeather(WeatherScreen.getCityInfoMap(), WeatherScreen.getWeatherMap(), WeatherScreen.getItemsmap());
-				province = mProvince;
-				city = mCity;
-			}
-		});
+		citySettingDialog.getDialog().setOnDismissListener(
+				new OnDismissListener() {
+
+					@Override
+					public void onDismiss(DialogInterface dialog) {
+						// TODO Auto-generated method stub
+						WeatherScreen WeatherScreen = (WeatherScreen) context;
+						SharedPreferences sp = context.getSharedPreferences(
+								"com.archermind.schedule_preferences",
+								Context.MODE_WORLD_WRITEABLE);
+						String mProvince = sp.getString("province", "北京");
+						String mCity = sp.getString("city", "北京");
+						if (mProvince.equals(province) && mCity.equals(city)) {
+							return;
+						}
+						WeatherScreen.getWeatherData(mProvince, mCity);
+						displayWeather(WeatherScreen.getCityInfoMap(),
+								WeatherScreen.getWeatherMap(),
+								WeatherScreen.getItemsmap());
+						province = mProvince;
+						city = mCity;
+					}
+				});
 		weatherDialog.setOnDismissListener(new OnDismissListener() {
-			
+
 			@Override
 			public void onDismiss(DialogInterface dialog) {
 				// TODO Auto-generated method stub
-				
-		        if (WeatherScreen.isChangeCity) {
-		            
-		            Intent it = new Intent("com.archermind.action.PLACECHANGED");
-		            context.sendBroadcast(it);
-		        }
-		        
-			    ((Activity)context).finish();
+
+				if (WeatherScreen.isChangeCity) {
+
+					Intent it = new Intent("com.archermind.action.PLACECHANGED");
+					context.sendBroadcast(it);
+				}
+
+				((Activity) context).finish();
 
 			}
 		});
@@ -127,7 +132,7 @@ public class WeatherDialog implements OnClickListener {
 	// 初始化
 	public void init() {
 
-		cityInfoTv = (TextView) weatherDialog.findViewById(R.id.city_info);	
+		cityInfoTv = (TextView) weatherDialog.findViewById(R.id.city_info);
 		todayImg = (ImageView) weatherDialog.findViewById(R.id.today_image);
 		todayCurTemp = (TextView) weatherDialog
 				.findViewById(R.id.today_temperature);
@@ -137,8 +142,9 @@ public class WeatherDialog implements OnClickListener {
 				.findViewById(R.id.today_weather_condition);
 		todayDate = (TextView) weatherDialog.findViewById(R.id.today_date);
 		todayWeek = (TextView) weatherDialog.findViewById(R.id.today_week);
-		
-		weatherInfo = (LinearLayout) weatherDialog.findViewById(R.id.today_weather_info);
+
+		weatherInfo = (LinearLayout) weatherDialog
+				.findViewById(R.id.today_weather_info);
 
 		oneDAfterDate = (TextView) weatherDialog
 				.findViewById(R.id.one_day_after_date);
@@ -200,49 +206,53 @@ public class WeatherDialog implements OnClickListener {
 		}
 
 		// 设置城市信息
-		if("北京".equals(cityInfoMap.get("city"))||"上海".equals(cityInfoMap.get("city"))||"重庆".equals(cityInfoMap.get("city"))||"天津".equals(cityInfoMap.get("city"))){
+		if ("北京".equals(cityInfoMap.get("city"))
+				|| "上海".equals(cityInfoMap.get("city"))
+				|| "重庆".equals(cityInfoMap.get("city"))
+				|| "天津".equals(cityInfoMap.get("city"))) {
 			cityInfoTv.setText(cityInfoMap.get("city") + "市");
-			
-		}else{
+
+		} else {
 			cityInfoTv.setText(cityInfoMap.get("province") + "省"
 					+ cityInfoMap.get("city") + "市");
 		}
-		
+
 		// 设置今天当前温度
 		Log.i(TAG, "-------st1-" + itemsmap.get("st1"));
-		if(itemsmap.get("st1")!=null){
+		if (itemsmap.get("st1") != null) {
 			todayCurTemp.setText(itemsmap.get("st1") + "℃");
-		}else{
-			todayCurTemp.setText(itemsmap.get("st1"));			
+		} else {
+			todayCurTemp.setText(itemsmap.get("st1"));
 		}
-		
+
 		todayTemp.setText(itemsmap.get("temp1"));
 		todayDate.setText(date[0]);
 		todayWeek.setText(week[0]);
-		
+
 		mWeather1 = itemsmap.get("weather1");
 		mWeather1 = getweatherMap(mWeather1, weathermap);
 		if (mWeather1 == null) {
 			mWeather1 = "  ";
 		}
-		
+
 		todayWeather.setText(mWeather1);
 		Log.i(TAG, "-------weather1-" + mWeather1);
 		Log.i(TAG, "-------weather1-" + weathermap.get(mWeather1));
-		if (itemsmap.get("weather1") !=null &&!itemsmap.get("weather1").equals("")) {
+		if (itemsmap.get("weather1") != null
+				&& !itemsmap.get("weather1").equals("")) {
 			todayImg.setImageResource(weathermap.get(mWeather1));
 		}
 
 		// 设置一天后
-		if (itemsmap.get("temp2") !=null &&!itemsmap.get("temp2").equals("")) {
+		if (itemsmap.get("temp2") != null && !itemsmap.get("temp2").equals("")) {
 			mTemp2 = itemsmap.get("temp2").split("~");
-			maxtemp2=mTemp2[0]+"~";
-			mintemp2=mTemp2[1];
-		}else{
-			maxtemp2=" ";
-			mintemp2=" ";
+			maxtemp2 = mTemp2[0] + "~";
+			mintemp2 = mTemp2[1];
+		} else {
+			maxtemp2 = " ";
+			mintemp2 = " ";
 		}
-	
+
 		oneDAfterMinTemp.setText(maxtemp2);
 		oneDAfterMaxTemp.setText(mintemp2);
 
@@ -254,52 +264,55 @@ public class WeatherDialog implements OnClickListener {
 		oneDAfterWeather.setText(mWeather2);
 		Log.i(TAG, "------weather2-" + mWeather2);
 		Log.i(TAG, "-------weather2-" + weathermap.get(mWeather2));
-		if (itemsmap.get("weather2") !=null &&!itemsmap.get("weather2").equals("")) {
+		if (itemsmap.get("weather2") != null
+				&& !itemsmap.get("weather2").equals("")) {
 			oneDAfterImg.setImageResource(weathermap.get(mWeather2));
 		}
 
 		// 设置两天后
-		
-		if (itemsmap.get("temp3") !=null &&!itemsmap.get("temp3").equals("")) {
+
+		if (itemsmap.get("temp3") != null && !itemsmap.get("temp3").equals("")) {
 			mTemp3 = itemsmap.get("temp3").split("~");
-			maxtemp3=mTemp3[0]+"~";
-			mintemp3=mTemp3[1];
-		}else{
-			maxtemp3=" ";
-			mintemp3=" ";
-		}		
+			maxtemp3 = mTemp3[0] + "~";
+			mintemp3 = mTemp3[1];
+		} else {
+			maxtemp3 = " ";
+			mintemp3 = " ";
+		}
 		twoDAfterMinTemp.setText(maxtemp3);
 		twoDAfterMaxTemp.setText(mintemp3);
 		mWeather3 = itemsmap.get("weather3");
 		mWeather3 = getweatherMap(mWeather3, weathermap);
 		if (mWeather3 == null) {
 			mWeather3 = " ";
-		   }
+		}
 		twoDAfterWeather.setText(mWeather3);
 		Log.i(TAG, "-------weather3---" + mWeather3);
 		Log.i(TAG, "-------weather3-" + weathermap.get(mWeather3));
-		if (itemsmap.get("weather3") !=null &&!itemsmap.get("weather3").equals("")) {
+		if (itemsmap.get("weather3") != null
+				&& !itemsmap.get("weather3").equals("")) {
 			twoDAfterImg.setImageResource(weathermap.get(mWeather3));
 		}
 
 		// 设置三天后
-		if (itemsmap.get("temp4") !=null &&!itemsmap.get("temp4").equals("")) {
+		if (itemsmap.get("temp4") != null && !itemsmap.get("temp4").equals("")) {
 			mTemp4 = itemsmap.get("temp4").split("~");
-			maxtemp4=mTemp4[0]+"~";
-			mintemp4=mTemp4[1];
-		}else{
-			maxtemp4="  ";
-			mintemp4="  ";
+			maxtemp4 = mTemp4[0] + "~";
+			mintemp4 = mTemp4[1];
+		} else {
+			maxtemp4 = "  ";
+			mintemp4 = "  ";
 		}
-		
-		threeDAfterMinTemp.setText(maxtemp4 );
+
+		threeDAfterMinTemp.setText(maxtemp4);
 		threeDAfterMaxTemp.setText(mintemp4);
 		mWeather4 = itemsmap.get("weather4");
 		mWeather4 = getweatherMap(mWeather4, weathermap);
 		threeDAfterWeather.setText(mWeather4);
 		Log.i(TAG, "----weather4---" + mWeather4);
 		Log.i(TAG, "-------weather4-" + weathermap.get(mWeather4));
-		if (itemsmap.get("weather4") !=null &&!itemsmap.get("weather4").equals("")) {
+		if (itemsmap.get("weather4") != null
+				&& !itemsmap.get("weather4").equals("")) {
 			threeDAfterImg.setImageResource(weathermap.get(mWeather4));
 		}
 
@@ -321,7 +334,7 @@ public class WeatherDialog implements OnClickListener {
 	public void show() {
 		Log.i("free", "show");
 		window = weatherDialog.getWindow(); // 得到对话框
-//		window.setWindowAnimations(R.style.dialogWindowAnim); // 设置窗口弹出动画
+		// window.setWindowAnimations(R.style.dialogWindowAnim); // 设置窗口弹出动画
 		WindowManager.LayoutParams wl = window.getAttributes();
 		// //根据x，y坐标设置窗口需要显示的位置
 		// wl.x = x; //x小于0左移，大于0右移
@@ -337,13 +350,13 @@ public class WeatherDialog implements OnClickListener {
 	@Override
 	public void onClick(View v) {
 		// TODO Auto-generated method stub
-		switch(v.getId()){
-		case R.id.today_weather_info:
-			citySettingDialog.show();
-			break;
-		case R.id.weather_dialog_cancel:
-			weatherDialog.dismiss();
-			break;
+		switch (v.getId()) {
+			case R.id.today_weather_info :
+				citySettingDialog.show();
+				break;
+			case R.id.weather_dialog_cancel :
+				weatherDialog.dismiss();
+				break;
 		}
 	}
 
@@ -352,18 +365,18 @@ public class WeatherDialog implements OnClickListener {
 		Iterator<Entry<String, Integer>> iterator = weathermap.entrySet()
 				.iterator();
 		Entry<String, Integer> entry = null;
-		
+
 		while (iterator.hasNext()) {
 			entry = iterator.next();
-			Log.i("free", "entry.getKey()"+entry.getKey());
-			Log.i("free", "key"+key);
+			Log.i("free", "entry.getKey()" + entry.getKey());
+			Log.i("free", "key" + key);
 			if (key.contains(entry.getKey())) {
 				retkey = entry.getKey();
 				return retkey;
-			}		
+			}
 		}
-		
+
 		return null;
 	}
-	
+
 }

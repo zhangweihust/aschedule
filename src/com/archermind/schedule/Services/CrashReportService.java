@@ -17,7 +17,8 @@ public class CrashReportService extends Service {
 	@Override
 	public void onCreate() {
 		super.onCreate();
-		ScheduleApplication.LogD(CrashReportService.class, "CrashReportService onCreate");
+		ScheduleApplication.LogD(CrashReportService.class,
+				"CrashReportService onCreate");
 		SendCrashReportsTask task = new SendCrashReportsTask(this);
 		task.execute();
 	}
@@ -25,9 +26,8 @@ public class CrashReportService extends Service {
 	@Override
 	public void onDestroy() {
 		super.onDestroy();
-		ScheduleApplication.LogD(CrashReportService.class, "CrashReportService onDestroy");
+		ScheduleApplication.LogD(CrashReportService.class,
+				"CrashReportService onDestroy");
 	}
-	
-	
 
 }

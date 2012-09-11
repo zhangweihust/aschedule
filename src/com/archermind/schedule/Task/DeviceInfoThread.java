@@ -29,13 +29,16 @@ public class DeviceInfoThread extends Thread {
 		while (!stop && times > 0) {
 			try {
 				if (uploadCountToServer()) {
-					SharedPreferenceUtil.setValue(Constant.SendUserInfo.SEND_USER_DEVICE_INFO, "true");
+					SharedPreferenceUtil
+							.setValue(
+									Constant.SendUserInfo.SEND_USER_DEVICE_INFO,
+									"true");
 					break;
 				}
 				sleep(countService.getCountDuration());
 			} catch (Exception e) {
 				e.printStackTrace();
-			}finally{
+			} finally {
 				times--;
 			}
 		}
@@ -49,19 +52,32 @@ public class DeviceInfoThread extends Thread {
 	private boolean uploadCountToServer() {
 		if (NetworkUtils.getNetworkState(ScheduleApplication.getContext()) != NetworkUtils.NETWORN_NONE) {
 			try {
-				HttpEntityEnclosingRequestBase httpRequest = new HttpPost(Constant.UrlInfo.USER_DEVICE_INFO_URL);
+				HttpEntityEnclosingRequestBase httpRequest = new HttpPost(
+						Constant.UrlInfo.USER_DEVICE_INFO_URL);
 				List<NameValuePair> params = new ArrayList<NameValuePair>();
-				params.add(new BasicNameValuePair(InfoName.IMEI.toString(), DeviceInfo.getDeviceIMEI()));
-				params.add(new BasicNameValuePair(InfoName.CPU_MAX_FREQUENCY.toString(), DeviceInfo.getDeviceCpuMaxFrequency()));
-				params.add(new BasicNameValuePair(InfoName.CPU_MODEL.toString(), DeviceInfo.getDeviceCpuModel()));
-				params.add(new BasicNameValuePair(InfoName.MEMORY_TOTAL.toString(), DeviceInfo.getDeviceMemoryTotal()));
-				params.add(new BasicNameValuePair(InfoName.PHONE_KTV_VERSION.toString(), DeviceInfo.getMyVersionCode()));
-				params.add(new BasicNameValuePair(InfoName.PHONE_MODEL.toString(), DeviceInfo.getDeviceModel()));
-				params.add(new BasicNameValuePair(InfoName.SCREEN_RESOLUTION.toString(), DeviceInfo.getDeviceScreenResolution()));
-				params.add(new BasicNameValuePair(InfoName.SCREEN_DENSITYDPI.toString(), DeviceInfo.getDeviceScreenDensitydpi()));
-				params.add(new BasicNameValuePair(InfoName.SYSTEM_VERSION.toString(), DeviceInfo.getDeviceSystemVersion()));
-				httpRequest.setEntity(new UrlEncodedFormEntity(params, HTTP.UTF_8));
-				HttpResponse httpResponse = new DefaultHttpClient().execute(httpRequest);
+				params.add(new BasicNameValuePair(InfoName.IMEI.toString(),
+						DeviceInfo.getDeviceIMEI()));
+				params.add(new BasicNameValuePair(InfoName.CPU_MAX_FREQUENCY
+						.toString(), DeviceInfo.getDeviceCpuMaxFrequency()));
+				params.add(new BasicNameValuePair(
+						InfoName.CPU_MODEL.toString(), DeviceInfo
+								.getDeviceCpuModel()));
+				params.add(new BasicNameValuePair(InfoName.MEMORY_TOTAL
+						.toString(), DeviceInfo.getDeviceMemoryTotal()));
+				params.add(new BasicNameValuePair(InfoName.PHONE_KTV_VERSION
+						.toString(), DeviceInfo.getMyVersionCode()));
+				params.add(new BasicNameValuePair(InfoName.PHONE_MODEL
+						.toString(), DeviceInfo.getDeviceModel()));
+				params.add(new BasicNameValuePair(InfoName.SCREEN_RESOLUTION
+						.toString(), DeviceInfo.getDeviceScreenResolution()));
+				params.add(new BasicNameValuePair(InfoName.SCREEN_DENSITYDPI
+						.toString(), DeviceInfo.getDeviceScreenDensitydpi()));
+				params.add(new BasicNameValuePair(InfoName.SYSTEM_VERSION
+						.toString(), DeviceInfo.getDeviceSystemVersion()));
+				httpRequest.setEntity(new UrlEncodedFormEntity(params,
+						HTTP.UTF_8));
+				HttpResponse httpResponse = new DefaultHttpClient()
+						.execute(httpRequest);
 				if (httpResponse.getStatusLine().getStatusCode() == 200) {
 					return true;
 				}
@@ -71,7 +87,7 @@ public class DeviceInfoThread extends Thread {
 		}
 		return false;
 	}
-	
+
 	public void stopThread() {
 		stop = true;
 	}

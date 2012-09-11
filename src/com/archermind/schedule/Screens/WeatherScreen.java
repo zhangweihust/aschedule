@@ -31,23 +31,24 @@ import android.os.Bundle;
 import android.util.Log;
 import android.view.Display;
 
-public class WeatherScreen extends Screen implements
-		OnCancelButtonClickListener {
+public class WeatherScreen extends Screen
+		implements
+			OnCancelButtonClickListener {
 	private static final String TAG = "WeatherScreen";
 	private String city, province, cid, weather;
 	private Map<String, String> cityInfoMap = new HashMap<String, String>();
 	private Map<String, String> itemsmap = new HashMap<String, String>();
 	Map<String, Integer> weatherMap = new HashMap<String, Integer>();
 
-    public static boolean isChangeCity = false;
+	public static boolean isChangeCity = false;
 
-    private ServerInterface si;
+	private ServerInterface si;
 
-    private String weatherDate;
+	private String weatherDate;
 
-    private int screenWidth;
+	private int screenWidth;
 
-    private int screenHeight;
+	private int screenHeight;
 
 	WeatherDialog mwWeatherDialog;
 	SharedPreferences sp;
@@ -63,7 +64,7 @@ public class WeatherScreen extends Screen implements
 		// setContentView(R.layout.weather);
 		// init();
 		// 获取屏幕宽度
-        isChangeCity = false;
+		isChangeCity = false;
 		Display display = getWindowManager().getDefaultDisplay();
 		screenWidth = display.getWidth();
 		screenHeight = display.getHeight();
@@ -299,15 +300,15 @@ public class WeatherScreen extends Screen implements
 		weathermap.put("多云", R.drawable.cloudy);
 		weathermap.put("阴", R.drawable.shade);
 		weathermap.put("阵雨", R.drawable.shower);
-//		weathermap.put("雷阵雨", R.drawable.thundershowers);
-//		weathermap.put("雷阵雨伴有冰雹", R.drawable.thundershowers_hail);
+		// weathermap.put("雷阵雨", R.drawable.thundershowers);
+		// weathermap.put("雷阵雨伴有冰雹", R.drawable.thundershowers_hail);
 		weathermap.put("雨夹雪", R.drawable.sleet);
 		weathermap.put("小雨", R.drawable.light_rain);
 		weathermap.put("中雨", R.drawable.moderate_rain);
 		weathermap.put("大雨", R.drawable.heavy_rain);
 		weathermap.put("暴雨", R.drawable.rainstorm);
-//		weathermap.put("大暴雨", R.drawable.downpour);
-//		weathermap.put("特大暴雨", R.drawable.heavy_rainfall);
+		// weathermap.put("大暴雨", R.drawable.downpour);
+		// weathermap.put("特大暴雨", R.drawable.heavy_rainfall);
 		weathermap.put("阵雪", R.drawable.shower_snow);
 		weathermap.put("小雪", R.drawable.slight_snow);
 		weathermap.put("中雪", R.drawable.moderate_snow);
@@ -316,17 +317,17 @@ public class WeatherScreen extends Screen implements
 		weathermap.put("雾", R.drawable.fog);
 		weathermap.put("冻雨", R.drawable.freezing_rain);
 
-//		weathermap.put("小雨-中雨", R.drawable.moderate_rain);
-//		weathermap.put("中雨-大雨", R.drawable.heavy_rain);
-//		weathermap.put("大到暴雨", R.drawable.rainstorm);
-//		weathermap.put("暴雨-大暴雨", R.drawable.downpour);
-//		weathermap.put("大暴雨-特大暴雨", R.drawable.heavy_rainfall);
-//		weathermap.put("小雪-中雪", R.drawable.moderate_snow);
-//		weathermap.put("中雪-大雪", R.drawable.heavy_snow);
-//		weathermap.put("大雪-暴雪", R.drawable.blizzard);
+		// weathermap.put("小雨-中雨", R.drawable.moderate_rain);
+		// weathermap.put("中雨-大雨", R.drawable.heavy_rain);
+		// weathermap.put("大到暴雨", R.drawable.rainstorm);
+		// weathermap.put("暴雨-大暴雨", R.drawable.downpour);
+		// weathermap.put("大暴雨-特大暴雨", R.drawable.heavy_rainfall);
+		// weathermap.put("小雪-中雪", R.drawable.moderate_snow);
+		// weathermap.put("中雪-大雪", R.drawable.heavy_snow);
+		// weathermap.put("大雪-暴雪", R.drawable.blizzard);
 
 		weathermap.put("沙城暴", R.drawable.sand_storm);
-//		weathermap.put("强沙尘暴", R.drawable.sand_storm);
+		// weathermap.put("强沙尘暴", R.drawable.sand_storm);
 		weathermap.put("浮尘", R.drawable.sand);
 		weathermap.put("扬沙", R.drawable.sand);
 
@@ -366,8 +367,8 @@ public class WeatherScreen extends Screen implements
 		weather = weather.replace("\"", "");
 		String[] parts = weather.split(",");
 		String[] datas = null;
-		String[] tag = { "st1", "temp1", "weather1", "temp2", "weather2",
-				"temp3", "weather3", "temp4", "weather4" };
+		String[] tag = {"st1", "temp1", "weather1", "temp2", "weather2",
+				"temp3", "weather3", "temp4", "weather4"};
 		Map<String, String> itemsmap = new HashMap<String, String>();
 		for (String part : parts) {
 			datas = part.split(":");
@@ -422,8 +423,7 @@ public class WeatherScreen extends Screen implements
 		String[] date = new String[4];
 		for (int i = 0; i < date.length; i++) {
 			date[i] = DateTimeUtils.time2String("yyyy年M月d日",
-					mCalendar.getTimeInMillis());
-			;
+					mCalendar.getTimeInMillis());;
 			mCalendar.add(Calendar.DAY_OF_MONTH, 1);
 		}
 

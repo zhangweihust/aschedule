@@ -36,7 +36,7 @@ public class EventTypeDialog extends Dialog implements OnItemClickListener {
 	private int y;
 	private int height;
 
-	private int[] images = new int[] { R.drawable.schedule_new_active,
+	private int[] images = new int[]{R.drawable.schedule_new_active,
 			R.drawable.schedule_new_appointment,
 			R.drawable.schedule_new_travel, R.drawable.type_entertainment,
 			R.drawable.schedule_new_eat, R.drawable.schedule_new_work
@@ -64,7 +64,7 @@ public class EventTypeDialog extends Dialog implements OnItemClickListener {
 
 	}
 
-	public EventTypeDialog(Context context, int theme, int mType,int height) {
+	public EventTypeDialog(Context context, int theme, int mType, int height) {
 		super(context, theme);
 		// TODO Auto-generated constructor stub
 		mContext = context;
@@ -91,13 +91,12 @@ public class EventTypeDialog extends Dialog implements OnItemClickListener {
 		}
 		adapter = new EventTypeItemAdapter(eventItems, mContext);
 		gridview.setAdapter(adapter);
-		
+
 		Window window = getWindow(); // 得到对话框
-//		 window.setWindowAnimations(R.style.EventdialogWindowAnim); //设置窗口弹出动画
+		// window.setWindowAnimations(R.style.EventdialogWindowAnim); //设置窗口弹出动画
 		WindowManager.LayoutParams wl = window.getAttributes();
 		wl.height = height;
 		window.setAttributes(wl);
-		
 
 	}
 
@@ -110,8 +109,8 @@ public class EventTypeDialog extends Dialog implements OnItemClickListener {
 		WindowManager.LayoutParams wl = window.getAttributes();
 
 		wl.x = x; // x小于0左移，大于0右移
-		wl.y = y-2; // y小于0上移，大于0下移
-//		wl.height = height;
+		wl.y = y - 2; // y小于0上移，大于0下移
+		// wl.height = height;
 		window.setAttributes(wl);
 	}
 
@@ -200,30 +199,30 @@ public class EventTypeDialog extends Dialog implements OnItemClickListener {
 			moveTopSelect(arg);
 			switch (arg) {
 
-			case 0:
-				mType = DatabaseHelper.SCHEDULE_EVENT_TYPE_ACTIVE;
+				case 0 :
+					mType = DatabaseHelper.SCHEDULE_EVENT_TYPE_ACTIVE;
 
-				break;
-			case 1:
-				mType = DatabaseHelper.SCHEDULE_EVENT_TYPE_APPOINTMENT;
+					break;
+				case 1 :
+					mType = DatabaseHelper.SCHEDULE_EVENT_TYPE_APPOINTMENT;
 
-				break;
-			case 2:
-				mType = DatabaseHelper.SCHEDULE_EVENT_TYPE_TRAVEL;
+					break;
+				case 2 :
+					mType = DatabaseHelper.SCHEDULE_EVENT_TYPE_TRAVEL;
 
-				break;
-			case 3:
-				mType = DatabaseHelper.SCHEDULE_EVENT_TYPE_ENTERTAINMENT;
+					break;
+				case 3 :
+					mType = DatabaseHelper.SCHEDULE_EVENT_TYPE_ENTERTAINMENT;
 
-				break;
-			case 4:
-				mType = DatabaseHelper.SCHEDULE_EVENT_TYPE_EAT;
+					break;
+				case 4 :
+					mType = DatabaseHelper.SCHEDULE_EVENT_TYPE_EAT;
 
-				break;
-			case 5:
-				mType = DatabaseHelper.SCHEDULE_EVENT_TYPE_WORK;
+					break;
+				case 5 :
+					mType = DatabaseHelper.SCHEDULE_EVENT_TYPE_WORK;
 
-				break;
+					break;
 			}
 
 		}

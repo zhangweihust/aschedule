@@ -20,7 +20,7 @@ import com.archermind.schedule.Services.ServiceManager;
 public class ModifyNickDialog implements OnClickListener {
 	private Dialog modifyNickDialog;
 	private Context context;
-	private Button modify_nick_cancel,modify_nick__ok;
+	private Button modify_nick_cancel, modify_nick__ok;
 	private EditText nick;
 	private Window window = null;
 
@@ -34,25 +34,28 @@ public class ModifyNickDialog implements OnClickListener {
 
 	private void initView() {
 		nick = (EditText) modifyNickDialog.findViewById(R.id.nick);
-		modify_nick_cancel = (Button) modifyNickDialog.findViewById(R.id.modify_nick_cancel);
-		modify_nick__ok = (Button) modifyNickDialog.findViewById(R.id.modify_nick__ok);
+		modify_nick_cancel = (Button) modifyNickDialog
+				.findViewById(R.id.modify_nick_cancel);
+		modify_nick__ok = (Button) modifyNickDialog
+				.findViewById(R.id.modify_nick__ok);
 		modify_nick_cancel.setOnClickListener(this);
 		modify_nick__ok.setOnClickListener(this);
 	}
-	
-	public Dialog getDialog(){
+
+	public Dialog getDialog() {
 		return modifyNickDialog;
 	}
 
 	public void show() {
-		   DisplayMetrics dm = ScheduleApplication.getContext().getResources().getDisplayMetrics();
-			int screenWidth = dm.widthPixels;
-			Window window = modifyNickDialog.getWindow(); // 得到对话框
-			WindowManager.LayoutParams wl = window.getAttributes();
-			wl.width = screenWidth * 7 / 8;
-			wl.gravity = Gravity.CENTER; // 设置重力
-			window.setAttributes(wl);
-			modifyNickDialog.show();
+		DisplayMetrics dm = ScheduleApplication.getContext().getResources()
+				.getDisplayMetrics();
+		int screenWidth = dm.widthPixels;
+		Window window = modifyNickDialog.getWindow(); // 得到对话框
+		WindowManager.LayoutParams wl = window.getAttributes();
+		wl.width = screenWidth * 7 / 8;
+		wl.gravity = Gravity.CENTER; // 设置重力
+		window.setAttributes(wl);
+		modifyNickDialog.show();
 	}
 
 	public void dismiss() {
@@ -62,18 +65,22 @@ public class ModifyNickDialog implements OnClickListener {
 	@Override
 	public void onClick(View v) {
 		// TODO Auto-generated method stub
-		switch(v.getId()){
-		case R.id.modify_nick_cancel:
-			break;
-		case R.id.modify_nick__ok:
-			int state = ServiceManager.getServerInterface().nickModify(String.valueOf(ServiceManager.getUserId()),nick.getText().toString());
-			if(0 == state){
-				ServiceManager.setSPUserInfo(UserInfoData.NICK,nick.getText().toString());
-				Toast.makeText(context, "昵称修改成功", Toast.LENGTH_LONG).show();
-			}else if(-3 == state){
-				Toast.makeText(context, "昵称已经存在，请重新输入", Toast.LENGTH_LONG).show();
-			}
-			break;
+		switch (v.getId()) {
+			case R.id.modify_nick_cancel :
+				break;
+			case R.id.modify_nick__ok :
+				int state = ServiceManager.getServerInterface().nickModify(
+						String.valueOf(ServiceManager.getUserId()),
+						nick.getText().toString());
+				if (0 == state) {
+					ServiceManager.setSPUserInfo(UserInfoData.NICK, nick
+							.getText().toString());
+					Toast.makeText(context, "昵称修改成功", Toast.LENGTH_LONG).show();
+				} else if (-3 == state) {
+					Toast.makeText(context, "昵称已经存在，请重新输入", Toast.LENGTH_LONG)
+							.show();
+				}
+				break;
 		}
 		dismiss();
 	}

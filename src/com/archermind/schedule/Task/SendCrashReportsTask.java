@@ -32,25 +32,26 @@ import com.archermind.schedule.ScheduleApplication;
 import com.archermind.schedule.Services.ExceptionService;
 
 public class SendCrashReportsTask extends AsyncTask<Void, Void, Integer> {
-	/** 错误报告文件的扩展名 */  
+	/** 错误报告文件的扩展名 */
 	private static final String CRASH_REPORTER_EXTENSION = ".log";
-	TelephonyManager tm = (TelephonyManager) ScheduleApplication.getContext().getSystemService(Context.TELEPHONY_SERVICE);
+	TelephonyManager tm = (TelephonyManager) ScheduleApplication.getContext()
+			.getSystemService(Context.TELEPHONY_SERVICE);
 	private Service mService;
-	
-	public SendCrashReportsTask(){
-		
+
+	public SendCrashReportsTask() {
+
 	}
-	
-    public SendCrashReportsTask(Service service){
-    	mService = service;
+
+	public SendCrashReportsTask(Service service) {
+		mService = service;
 	}
-	
+
 	@Override
 	protected Integer doInBackground(Void... params) {
 		sendCrashReportsToServer();
 		return null;
 	}
-	
+
 	/**
 	 * 把错误报告发送给服务器,包含新产生的和以前没发送的.
 	 * 
@@ -64,18 +65,20 @@ public class SendCrashReportsTask extends AsyncTask<Void, Void, Integer> {
 
 			for (String fileName : sortedFiles) {
 				File cr = new File(ExceptionService.crashPath, fileName);
-				if(postReport(cr)){
+				if (postReport(cr)) {
 					cr.delete();// 删除已发送的报告
-					ScheduleApplication.LogD(SendCrashReportsTask.class, "Send OK :" + fileName);
+					ScheduleApplication.LogD(SendCrashReportsTask.class,
+							"Send OK :" + fileName);
 				} else {
-					ScheduleApplication.LogD(SendCrashReportsTask.class, "Send FAILURE :" + fileName);
+					ScheduleApplication.LogD(SendCrashReportsTask.class,
+							"Send FAILURE :" + fileName);
 				}
-				
+
 			}
 		} else {
 			ScheduleApplication.LogD(SendCrashReportsTask.class, "本地没有LOG文件");
 		}
-		if(mService != null)
+		if (mService != null)
 			mService.stopSelf();
 	}
 
@@ -83,13 +86,15 @@ public class SendCrashReportsTask extends AsyncTask<Void, Void, Integer> {
 		// TODO 使用HTTP Post 发送错误报告到服务器
 		// 这里不再详述,开发者可以根据OPhoneSDN上的其他网络操作
 		// 教程来提交错误报告
-		HttpEntityEnclosingRequestBase httpRequest = new HttpPost(ExceptionService.CRASH_UPLOAD_SERVER_URL);
+		HttpEntityEnclosingRequestBase httpRequest = new HttpPost(
+				ExceptionService.CRASH_UPLOAD_SERVER_URL);
 		List<NameValuePair> params = new ArrayList<NameValuePair>();
 		StringBuffer sb = new StringBuffer();
 		try {
 			readToBuffer(sb, new FileInputStream(file));
 		} catch (FileNotFoundException e1) {
-			ScheduleApplication.LogD(SendCrashReportsTask.class, "FileNotFoundException");
+			ScheduleApplication.LogD(SendCrashReportsTask.class,
+					"FileNotFoundException");
 			return false;
 		} catch (IOException e1) {
 			ScheduleApplication.LogD(SendCrashReportsTask.class, "IOException");
@@ -99,10 +104,12 @@ public class SendCrashReportsTask extends AsyncTask<Void, Void, Integer> {
 		params.add(new BasicNameValuePair("imei", tm.getDeviceId()));
 		try {
 			httpRequest.setEntity(new UrlEncodedFormEntity(params, HTTP.UTF_8));
-			HttpResponse httpResponse = new DefaultHttpClient().execute(httpRequest);
-			ScheduleApplication.LogD(SendCrashReportsTask.class, "StatusCode :" + httpResponse.getStatusLine().getStatusCode());
+			HttpResponse httpResponse = new DefaultHttpClient()
+					.execute(httpRequest);
+			ScheduleApplication.LogD(SendCrashReportsTask.class, "StatusCode :"
+					+ httpResponse.getStatusLine().getStatusCode());
 			if (httpResponse.getStatusLine().getStatusCode() == 200) {
-				 return true;
+				return true;
 			}
 		} catch (UnsupportedEncodingException e) {
 			// TODO Auto-generated catch block
@@ -118,14 +125,13 @@ public class SendCrashReportsTask extends AsyncTask<Void, Void, Integer> {
 			return false;
 		}
 		return false;
-		
+
 	}
-	
+
 	public void readToBuffer(StringBuffer buffer, InputStream is)
 			throws IOException {
 		String line; // 用来保存每行读取的内容
-		BufferedReader reader = new BufferedReader(
-				new InputStreamReader(is));
+		BufferedReader reader = new BufferedReader(new InputStreamReader(is));
 		line = reader.readLine(); // 读取第一行
 		while (line != null) { // 如果 line 为空说明读完了
 			buffer.append(line); // 将读到的内容添加到 buffer 中
@@ -133,9 +139,10 @@ public class SendCrashReportsTask extends AsyncTask<Void, Void, Integer> {
 			line = reader.readLine(); // 读取下一行
 		}
 	}
-	
+
 	/**
 	 * 获取错误报告文件名
+	 * 
 	 * @param ctx
 	 * @return
 	 */
@@ -151,5 +158,5 @@ public class SendCrashReportsTask extends AsyncTask<Void, Void, Integer> {
 		};
 		return filesDir.list(filter);
 	}
-	
+
 }

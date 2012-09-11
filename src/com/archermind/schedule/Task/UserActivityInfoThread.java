@@ -31,9 +31,12 @@ public class UserActivityInfoThread extends Thread {
 		while (!stop && times > 0) {
 			try {
 				SimpleDateFormat format = new SimpleDateFormat("yyyyMMdd");
-				int date = Integer.parseInt(format.format(System.currentTimeMillis()));
+				int date = Integer.parseInt(format.format(System
+						.currentTimeMillis()));
 				if (uploadCountToServer()) {
-					SharedPreferenceUtil.setValue(Constant.SendUserInfo.SEND_USER_ACTIVITY_INFO_DATE,String.valueOf(date));
+					SharedPreferenceUtil.setValue(
+							Constant.SendUserInfo.SEND_USER_ACTIVITY_INFO_DATE,
+							String.valueOf(date));
 					break;
 				}
 				times--;
@@ -52,14 +55,26 @@ public class UserActivityInfoThread extends Thread {
 	private boolean uploadCountToServer() {
 		if (NetworkUtils.getNetworkState(ScheduleApplication.getContext()) != NetworkUtils.NETWORN_NONE) {
 			try {
-				HttpEntityEnclosingRequestBase httpRequest = new HttpPost(Constant.UrlInfo.USER_ACTIVITY_INFO_URL);
+				HttpEntityEnclosingRequestBase httpRequest = new HttpPost(
+						Constant.UrlInfo.USER_ACTIVITY_INFO_URL);
 				List<NameValuePair> params = new ArrayList<NameValuePair>();
-				int times = Integer.parseInt(SharedPreferenceUtil.getValue(Constant.SendUserInfo.SEND_USER_ACTIVITY_INFO_TIMES,"1"));
-				int timesTamp = Integer.parseInt(SharedPreferenceUtil.getValue(Constant.SendUserInfo.SEND_USER_ACTIVITY_INFO_TIMESTAMP,"0"));
-				String value = "{"+DeviceInfo.getDeviceIMEI()+","+times+","+timesTamp+"}";
-//				params.add(new BasicNameValuePair(Constant.MediaWithServerConstant.request_parameter, value));
-				httpRequest.setEntity(new UrlEncodedFormEntity(params, HTTP.UTF_8));
-				HttpResponse httpResponse = new DefaultHttpClient().execute(httpRequest);
+				int times = Integer.parseInt(SharedPreferenceUtil.getValue(
+						Constant.SendUserInfo.SEND_USER_ACTIVITY_INFO_TIMES,
+						"1"));
+				int timesTamp = Integer
+						.parseInt(SharedPreferenceUtil
+								.getValue(
+										Constant.SendUserInfo.SEND_USER_ACTIVITY_INFO_TIMESTAMP,
+										"0"));
+				String value = "{" + DeviceInfo.getDeviceIMEI() + "," + times
+						+ "," + timesTamp + "}";
+				// params.add(new
+				// BasicNameValuePair(Constant.MediaWithServerConstant.request_parameter,
+				// value));
+				httpRequest.setEntity(new UrlEncodedFormEntity(params,
+						HTTP.UTF_8));
+				HttpResponse httpResponse = new DefaultHttpClient()
+						.execute(httpRequest);
 				if (httpResponse.getStatusLine().getStatusCode() == 200) {
 					return true;
 				}
@@ -73,7 +88,7 @@ public class UserActivityInfoThread extends Thread {
 		}
 		return false;
 	}
-	
+
 	public void stopThread() {
 		stop = true;
 	}

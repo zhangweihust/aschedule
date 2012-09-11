@@ -27,15 +27,15 @@ public class BorderText extends TextView {
 		Paint paint = new Paint();
 		paint.setColor(android.graphics.Color.BLACK);
 		// 绘制上边框
-		//canvas.drawLine(0, 0, this.getWidth() - 1, 0, paint);
+		// canvas.drawLine(0, 0, this.getWidth() - 1, 0, paint);
 		// 绘制左边框
-		//canvas.drawLine(0, 0, 0, this.getHeight() - 1, paint);
+		// canvas.drawLine(0, 0, 0, this.getHeight() - 1, paint);
 		// 绘制右边框
-		//canvas.drawLine(this.getWidth() - 1, 0, this.getWidth() - 1,
-		//this.getHeight() - 1, paint);
+		// canvas.drawLine(this.getWidth() - 1, 0, this.getWidth() - 1,
+		// this.getHeight() - 1, paint);
 		// 绘制下边框
-		canvas.drawLine(0, this.getHeight() - 1, this.getWidth() - 1, this
-				.getHeight() - 1, paint);
+		canvas.drawLine(0, this.getHeight() - 1, this.getWidth() - 1,
+				this.getHeight() - 1, paint);
 
 	}
 

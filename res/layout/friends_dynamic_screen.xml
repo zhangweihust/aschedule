@@ -55,6 +55,7 @@
             android:layout_centerHorizontal="true" 
             android:layout_marginTop="15dip"
             android:background="@drawable/button_bg"
+            android:textColor="#FFffffff"
             android:text="刷新"/>
     </LinearLayout>
     
@@ -99,6 +100,7 @@
             android:layout_centerHorizontal="true" 
             android:layout_marginTop="15dip"
             android:background="@drawable/button_bg"
+            android:textColor="#FFffffff"
             android:text="绑定"/>
     </LinearLayout>
     
@@ -129,6 +131,7 @@
             android:layout_centerHorizontal="true" 
             android:layout_marginTop="15dip"
             android:background="@drawable/button_bg"
+            android:textColor="#FFffffff"
             android:text="登录"/>
     </LinearLayout>
 

@@ -1,4 +1,3 @@
-
 package com.archermind.schedule.Screens;
 
 import android.os.Bundle;
@@ -10,23 +9,23 @@ import com.archermind.schedule.R;
 
 public class AboutScreen extends Screen implements OnClickListener {
 
-    private Button btnOut;
+	private Button btnOut;
 
-    @Override
-    protected void onCreate(Bundle savedInstanceState) {
+	@Override
+	protected void onCreate(Bundle savedInstanceState) {
 
-        super.onCreate(savedInstanceState);
-        setContentView(R.layout.about);
+		super.onCreate(savedInstanceState);
+		setContentView(R.layout.about);
 
-        btnOut = (Button)findViewById(R.id.title_bar_about_button);
-        btnOut.setOnClickListener(this);
-        
-    }
+		btnOut = (Button) findViewById(R.id.title_bar_about_button);
+		btnOut.setOnClickListener(this);
 
-    @Override
-    public void onClick(View v) {
+	}
 
-        finish();
-    }
+	@Override
+	public void onClick(View v) {
+
+		finish();
+	}
 
 }

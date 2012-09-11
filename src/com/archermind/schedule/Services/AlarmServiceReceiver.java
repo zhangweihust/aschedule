@@ -1,4 +1,3 @@
-
 package com.archermind.schedule.Services;
 
 import android.content.BroadcastReceiver;
@@ -7,18 +6,18 @@ import android.content.Intent;
 
 public class AlarmServiceReceiver extends BroadcastReceiver {
 
-    @Override
-    public void onReceive(Context context, Intent intent) {
+	@Override
+	public void onReceive(Context context, Intent intent) {
 
-        if (ServiceManager.isStarted()) {
+		if (ServiceManager.isStarted()) {
 
-        } else {
+		} else {
 
-            if (!ServiceManager.start()) {
-                ServiceManager.exit();
-                return;
-            }
-        }
-    }
+			if (!ServiceManager.start()) {
+				ServiceManager.exit();
+				return;
+			}
+		}
+	}
 
 }

@@ -1,4 +1,3 @@
-
 package com.archermind.schedule.Screens;
 
 import android.content.Intent;
@@ -19,109 +18,120 @@ import com.archermind.schedule.Views.SettingSlipSwitch;
 
 public class SettingScreen extends Screen implements OnClickListener {
 
-    private Button mBtnOut;
+	private Button mBtnOut;
 
-    private SettingSlipSwitch mSlipSwitch;
+	private SettingSlipSwitch mSlipSwitch;
 
-    private final int SMS_RINGTONE_PICKED = 0;
+	private final int SMS_RINGTONE_PICKED = 0;
 
-    // private Object mMmsSoundsPref;
+	// private Object mMmsSoundsPref;
 
-    @Override
-    protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        setContentView(R.layout.setting);
+	@Override
+	protected void onCreate(Bundle savedInstanceState) {
+		super.onCreate(savedInstanceState);
+		setContentView(R.layout.setting);
 
-        mBtnOut = (Button)findViewById(R.id.title_bar_setting_btn);
-        mBtnOut.setOnClickListener(this);
+		mBtnOut = (Button) findViewById(R.id.title_bar_setting_btn);
+		mBtnOut.setOnClickListener(this);
 
-//        LinearLayout llayout = (LinearLayout)findViewById(R.id.datatime);
-//        llayout.setOnClickListener(this);
+		// LinearLayout llayout = (LinearLayout)findViewById(R.id.datatime);
+		// llayout.setOnClickListener(this);
 
-        LinearLayout llayoutremind = (LinearLayout)findViewById(R.id.setting_remind);
-        llayoutremind.setOnClickListener(this);
-//
-//        mSlipSwitch = (SettingSlipSwitch)findViewById(R.id.settingslipswitch);
-//        mSlipSwitch.setImageResource(R.drawable.settingonandoff, R.drawable.settingonandoff,
-//                R.drawable.settingcover);
-//        mSlipSwitch.setSwitchState(true);
+		LinearLayout llayoutremind = (LinearLayout) findViewById(R.id.setting_remind);
+		llayoutremind.setOnClickListener(this);
+		//
+		// mSlipSwitch =
+		// (SettingSlipSwitch)findViewById(R.id.settingslipswitch);
+		// mSlipSwitch.setImageResource(R.drawable.settingonandoff,
+		// R.drawable.settingonandoff,
+		// R.drawable.settingcover);
+		// mSlipSwitch.setSwitchState(true);
 
-    }
+	}
 
-    @Override
-    public void onClick(View v) {
+	@Override
+	public void onClick(View v) {
 
-        switch (v.getId()) {
+		switch (v.getId()) {
 
-            case R.id.setting_remind:
+			case R.id.setting_remind :
 
-                doPickSmsRingtone();
-                break;
+				doPickSmsRingtone();
+				break;
 
-            case R.id.title_bar_setting_btn:
+			case R.id.title_bar_setting_btn :
 
-                finish();
-                break;
+				finish();
+				break;
 
-            default:
+			default :
 
-                break;
-                
-        }
-    }
+				break;
 
-    private void doPickSmsRingtone() {
-        
-        String tempRing = ServiceManager.getSPUserSetting(UserInfoData.SETTING_SOUND_REMIND);
-        String notificationStr = TextUtils.isEmpty(tempRing) ? null : tempRing;
-        
-        Intent intent = new Intent(RingtoneManager.ACTION_RINGTONE_PICKER);
-        intent.putExtra(RingtoneManager.EXTRA_RINGTONE_SHOW_DEFAULT, true);
-        intent.putExtra(RingtoneManager.EXTRA_RINGTONE_TYPE, RingtoneManager.TYPE_NOTIFICATION);
-        intent.putExtra(RingtoneManager.EXTRA_RINGTONE_DEFAULT_URI,
-                RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION));
+		}
+	}
 
-        intent.putExtra(RingtoneManager.EXTRA_RINGTONE_SHOW_SILENT, true);
+	private void doPickSmsRingtone() {
 
-        Uri notificationUri;
-        if (notificationStr != null) {
+		String tempRing = ServiceManager
+				.getSPUserSetting(UserInfoData.SETTING_SOUND_REMIND);
+		String notificationStr = TextUtils.isEmpty(tempRing) ? null : tempRing;
 
-            notificationUri = Uri.parse(notificationStr);
-            intent.putExtra(RingtoneManager.EXTRA_RINGTONE_EXISTING_URI, notificationUri);
-        } else { //如果没有值，则显示默认的铃声
-            
-            intent.putExtra(RingtoneManager.EXTRA_RINGTONE_EXISTING_URI,  RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION));
-        }
+		Intent intent = new Intent(RingtoneManager.ACTION_RINGTONE_PICKER);
+		intent.putExtra(RingtoneManager.EXTRA_RINGTONE_SHOW_DEFAULT, true);
+		intent.putExtra(RingtoneManager.EXTRA_RINGTONE_TYPE,
+				RingtoneManager.TYPE_NOTIFICATION);
+		intent.putExtra(RingtoneManager.EXTRA_RINGTONE_DEFAULT_URI,
+				RingtoneManager
+						.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION));
 
-        startActivityForResult(intent, SMS_RINGTONE_PICKED);
-    }
+		intent.putExtra(RingtoneManager.EXTRA_RINGTONE_SHOW_SILENT, true);
 
-    @Override
-    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+		Uri notificationUri;
+		if (notificationStr != null) {
 
-        if (resultCode != RESULT_OK) {
+			notificationUri = Uri.parse(notificationStr);
+			intent.putExtra(RingtoneManager.EXTRA_RINGTONE_EXISTING_URI,
+					notificationUri);
+		} else { // 如果没有值，则显示默认的铃声
 
-            return;
-        }
+			intent.putExtra(RingtoneManager.EXTRA_RINGTONE_EXISTING_URI,
+					RingtoneManager
+							.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION));
+		}
 
-        switch (requestCode) {
-            case SMS_RINGTONE_PICKED: {
+		startActivityForResult(intent, SMS_RINGTONE_PICKED);
+	}
 
-                Uri pickedUri = data.getParcelableExtra(RingtoneManager.EXTRA_RINGTONE_PICKED_URI);
-                if (null == pickedUri) {
+	@Override
+	protected void onActivityResult(int requestCode, int resultCode, Intent data) {
 
-                    ServiceManager.setSPUserSetting(UserInfoData.SETTING_SOUND_REMIND, "slient");
-                } else {
+		if (resultCode != RESULT_OK) {
 
-                    ServiceManager.setSPUserSetting(UserInfoData.SETTING_SOUND_REMIND,
-                            pickedUri.toString());
-                }
-            }
-                break;
+			return;
+		}
 
-            default:
-                break;
-        }
-    }
-    
+		switch (requestCode) {
+			case SMS_RINGTONE_PICKED : {
+
+				Uri pickedUri = data
+						.getParcelableExtra(RingtoneManager.EXTRA_RINGTONE_PICKED_URI);
+				if (null == pickedUri) {
+
+					ServiceManager.setSPUserSetting(
+							UserInfoData.SETTING_SOUND_REMIND, "slient");
+				} else {
+
+					ServiceManager.setSPUserSetting(
+							UserInfoData.SETTING_SOUND_REMIND,
+							pickedUri.toString());
+				}
+			}
+				break;
+
+			default :
+				break;
+		}
+	}
+
 }

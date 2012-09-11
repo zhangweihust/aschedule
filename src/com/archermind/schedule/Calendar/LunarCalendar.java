@@ -8,19 +8,19 @@ import java.util.Date;
 import android.util.Log;
 
 public class LunarCalendar {
-	private int year;   //农历的年份
+	private int year; // 农历的年份
 	private int month;
 	private int day;
-	private String lunarMonth;   //农历的月份
+	private String lunarMonth; // 农历的月份
 	private boolean leap;
-	public int leapMonth = 0;   //闰的是哪个月
+	public int leapMonth = 0; // 闰的是哪个月
 	public static String suffix = "_";
-	
-	final static String chineseNumber[] = { "一", "二", "三", "四", "五", "六", "七",
-			"八", "九", "十", "十一", "十二" };
+
+	final static String chineseNumber[] = {"一", "二", "三", "四", "五", "六", "七",
+			"八", "九", "十", "十一", "十二"};
 	static SimpleDateFormat chineseDateFormat = new SimpleDateFormat(
 			"yyyy年MM月dd日");
-	final static long[] lunarInfo = new long[] { 0x04bd8, 0x04ae0, 0x0a570,
+	final static long[] lunarInfo = new long[]{0x04bd8, 0x04ae0, 0x0a570,
 			0x054d5, 0x0d260, 0x0d950, 0x16554, 0x056a0, 0x09ad0, 0x055d2,
 			0x04ae0, 0x0a5b6, 0x0a4d0, 0x0d250, 0x1d255, 0x0b540, 0x0d6a0,
 			0x0ada2, 0x095b0, 0x14977, 0x04970, 0x0a4b0, 0x0b4b5, 0x06a50,
@@ -41,49 +41,32 @@ public class LunarCalendar {
 			0x0ad50, 0x05b52, 0x04b60, 0x0a6e6, 0x0a4e0, 0x0d260, 0x0ea65,
 			0x0d530, 0x05aa0, 0x076a3, 0x096d0, 0x04bd7, 0x04ad0, 0x0a4d0,
 			0x1d0b6, 0x0d250, 0x0d520, 0x0dd45, 0x0b5a0, 0x056d0, 0x055b2,
-			0x049b0, 0x0a577, 0x0a4b0, 0x0aa50, 0x1b255, 0x06d20, 0x0ada0 };
+			0x049b0, 0x0a577, 0x0a4b0, 0x0aa50, 0x1b255, 0x06d20, 0x0ada0};
 
-	//农历部分假日
-	final static String[] lunarHoliday = new String[]{
-										"0101 春节",
-										"0115 元宵",
-										"0505 端午",
-										"0707 七夕情人",
-										"0715 中元",
-										"0815 中秋",
-										"0909 重阳",
-										"1208 腊八",
-										"1224 小年",
-										"0100 除夕"
+	// 农历部分假日
+	final static String[] lunarHoliday = new String[]{"0101 春节", "0115 元宵",
+			"0505 端午", "0707 七夕情人", "0715 中元", "0815 中秋", "0909 重阳", "1208 腊八",
+			"1224 小年", "0100 除夕"};
+
+	// 公历部分节假日
+	final static String[] solarHoliday = new String[]{"0101 元旦", "0214 情人",
+			"0308 妇女", "0312 ֲ植树",
+			// "0315 消费者权益日",
+			"0401 愚人", "0501 劳动", "0504 青年",
+			// "0512 护士",
+			"0601 儿童", "0701 建党", "0801 建军", "0808 父亲",
+			// "0909 毛泽东逝世纪念日",
+			"0910 教师",
+			// "0928 孔子诞辰",
+			"1001 国庆",
+			// "1006 老人",
+			// "1024 联合国日",
+			// "1112 孙中山诞辰纪念",
+			// "1220 澳门回归纪念",
+			"1225 圣诞"
+	// "1226 毛泽东诞辰纪念�"
 	};
-	
-	//公历部分节假日
-	final static String[] solarHoliday = new String[]{
-										"0101 元旦",
-										"0214 情人",
-										"0308 妇女",
-										"0312 ֲ植树",
-//										"0315 消费者权益日",
-										"0401 愚人",
-										"0501 劳动",
-										"0504 青年",
-//										"0512 护士",
-										"0601 儿童",
-										"0701 建党",
-										"0801 建军",
-										"0808 父亲",
-//										"0909 毛泽东逝世纪念日",
-										"0910 教师",
-//										"0928 孔子诞辰",
-										"1001 国庆",
-//										"1006 老人",
-//										"1024 联合国日",
-//										"1112 孙中山诞辰纪念",
-//										"1220 澳门回归纪念",
-										"1225 圣诞"
-//										"1226 毛泽东诞辰纪念�"
-	};
-	
+
 	// ====== 传回农历Y年的总天数
 	final private int yearDays(int y) {
 		int i, sum = 348;
@@ -120,25 +103,28 @@ public class LunarCalendar {
 
 	// ====== 传回农历y年的生肖
 	final public String animalsYear(int year) {
-		final String[] Animals = new String[] { "鼠","牛","虎","兔","龙","蛇","马","羊","猴","鸡","狗","猪"};
+		final String[] Animals = new String[]{"鼠", "牛", "虎", "兔", "龙", "蛇",
+				"马", "羊", "猴", "鸡", "狗", "猪"};
 		return Animals[(year - 4) % 12];
 	}
 
-	// ====== 传入月日的offset  传回干支，0=甲子
+	// ====== 传入月日的offset 传回干支，0=甲子
 	final private String cyclicalm(int num) {
-		final String[] Gan = new String[] { "甲","乙","丙","丁","戊","己","庚","辛","壬","癸" };
-		final String[] Zhi = new String[] { "子","丑","寅","卯","辰","巳","午","未","申","酉","戌","亥" };
+		final String[] Gan = new String[]{"甲", "乙", "丙", "丁", "戊", "己", "庚",
+				"辛", "壬", "癸"};
+		final String[] Zhi = new String[]{"子", "丑", "寅", "卯", "辰", "巳", "午",
+				"未", "申", "酉", "戌", "亥"};
 		return (Gan[num % 10] + Zhi[num % 12]);
 	}
 
-	// ====== 传入offset  传回干支，0=甲子
+	// ====== 传入offset 传回干支，0=甲子
 	final public String cyclical(int year) {
 		int num = year - 1900 + 36;
 		return (cyclicalm(num));
 	}
 
 	public String getChinaDayString(int day) {
-		String chineseTen[] = { "初", "十", "廿", "卅" };
+		String chineseTen[] = {"初", "十", "廿", "卅"};
 		int n = day % 10 == 0 ? 9 : day % 10 - 1;
 		if (day > 30)
 			return "";
@@ -152,20 +138,22 @@ public class LunarCalendar {
 				System.out.println("day = " + day + "  n = " + n);
 				return chineseTen[1] + chineseNumber[5];
 			}
-			
+
 	}
 
 	/** */
 	/**
 	 * 
 	 * isday: 这个参数为false---日期韦节假日时，阴历日期就返回节假日，true---不管日期是否为节假日依然返回这天对应的阴历日期
+	 * 
 	 * @param cal
 	 * @return
 	 */
-	public synchronized String getLunarDate(int year_log, int month_log, int day_log, boolean isday) {
+	public synchronized String getLunarDate(int year_log, int month_log,
+			int day_log, boolean isday) {
 		// @SuppressWarnings("unused")
 		int yearCyl, monCyl, dayCyl;
-		//int leapMonth = 0;
+		// int leapMonth = 0;
 		String nowadays;
 		Date baseDate = null;
 		Date nowaday = null;
@@ -203,15 +191,15 @@ public class LunarCalendar {
 		}
 		// 农历年份
 		year = iYear;
-        setYear(year);  //设置公历对应的农历年份
-		
+		setYear(year); // 设置公历对应的农历年份
+
 		yearCyl = iYear - 1864;
-			try {
-				leapMonth = leapMonth(iYear);
-			} catch (ArrayIndexOutOfBoundsException e) {
-				leapMonth = 0;
-				System.out.println("**************** iYear = " + iYear);
-			}
+		try {
+			leapMonth = leapMonth(iYear);
+		} catch (ArrayIndexOutOfBoundsException e) {
+			leapMonth = 0;
+			System.out.println("**************** iYear = " + iYear);
+		}
 		leap = false;
 
 		int iMonth, daysOfMonth = 0;
@@ -245,82 +233,81 @@ public class LunarCalendar {
 			--monCyl;
 		}
 		month = iMonth;
-			try {
-				setLunarMonth(chineseNumber[month - 1] + "月"); 
-			} catch (ArrayIndexOutOfBoundsException e) {
-				System.out.println("**************** month = " + month);
-				setLunarMonth(chineseNumber[0] + "月"); 
-			} 
+		try {
+			setLunarMonth(chineseNumber[month - 1] + "月");
+		} catch (ArrayIndexOutOfBoundsException e) {
+			System.out.println("**************** month = " + month);
+			setLunarMonth(chineseNumber[0] + "月");
+		}
 		day = offset + 1;
 
-		if(!isday){
-			//如果日期为节假日则阴历日期返回节假日
-			//setLeapMonth(leapMonth);
-			for(int i = 0; i < solarHoliday.length; i++){
-				//返回公历节假日名称
-				String sd = solarHoliday[i].split(" ")[0];  //节假日的日期
-				String sdv = solarHoliday[i].split(" ")[1]; //节假日的名称
-				String smonth_v = month_log+"";
-				String sday_v = day_log+"";
+		if (!isday) {
+			// 如果日期为节假日则阴历日期返回节假日
+			// setLeapMonth(leapMonth);
+			for (int i = 0; i < solarHoliday.length; i++) {
+				// 返回公历节假日名称
+				String sd = solarHoliday[i].split(" ")[0]; // 节假日的日期
+				String sdv = solarHoliday[i].split(" ")[1]; // 节假日的名称
+				String smonth_v = month_log + "";
+				String sday_v = day_log + "";
 				String smd = "";
-				if(month_log < 10){
-					smonth_v = "0"+month_log;
+				if (month_log < 10) {
+					smonth_v = "0" + month_log;
 				}
-				if(day_log < 10){
-					sday_v = "0"+day_log;
+				if (day_log < 10) {
+					sday_v = "0" + day_log;
 				}
-				smd = smonth_v+sday_v;
-				if(sd.trim().equals(smd.trim())){
+				smd = smonth_v + sday_v;
+				if (sd.trim().equals(smd.trim())) {
 					return sdv + suffix;
 				}
 			}
-			
-			for(int i = 0; i < lunarHoliday.length; i++){
-				//返回农历节假日名称
-				String ld =lunarHoliday[i].split(" ")[0];   //节假日的日期
-				String ldv = lunarHoliday[i].split(" ")[1];  //节假日的名称
-				String lmonth_v = month+"";
-				String lday_v = day+"";
+
+			for (int i = 0; i < lunarHoliday.length; i++) {
+				// 返回农历节假日名称
+				String ld = lunarHoliday[i].split(" ")[0]; // 节假日的日期
+				String ldv = lunarHoliday[i].split(" ")[1]; // 节假日的名称
+				String lmonth_v = month + "";
+				String lday_v = day + "";
 				String lmd = "";
-				if(month < 10){
-					lmonth_v = "0"+month;
+				if (month < 10) {
+					lmonth_v = "0" + month;
 				}
-				if(day < 10){
-					lday_v = "0"+day;
+				if (day < 10) {
+					lday_v = "0" + day;
 				}
-				lmd = lmonth_v+lday_v;
-				if(ld.trim().equals(lmd.trim())){
-					return ldv + suffix;       
+				lmd = lmonth_v + lday_v;
+				if (ld.trim().equals(lmd.trim())) {
+					return ldv + suffix;
 				}
 			}
 		}
-	    if (day == 1)
+		if (day == 1)
 			try {
-		    		return chineseNumber[month - 1] + "月";
-				} catch (Exception e) {
-					// TODO: handle exception
-					return chineseNumber[0] + "月";
-				}
+				return chineseNumber[month - 1] + "月";
+			} catch (Exception e) {
+				// TODO: handle exception
+				return chineseNumber[0] + "月";
+			}
 		else
 			return getChinaDayString(day);
 
 	}
 
-	public synchronized String getLunarDate(long millistime, boolean isday)
-	{
+	public synchronized String getLunarDate(long millistime, boolean isday) {
 		int year;
 		int month;
 		int day;
-		
+
 		Calendar cal = Calendar.getInstance();
 		cal.setTimeInMillis(millistime);
 		year = cal.get(Calendar.YEAR);
 		month = cal.get(Calendar.MONTH) + 1;
 		day = cal.get(Calendar.DAY_OF_MONTH);
-		
-		return getLunarDate(year,month,day,isday);
+
+		return getLunarDate(year, month, day, isday);
 	}
-	
+
 	public String toString() {
 		if (chineseNumber[month - 1] == "一" && getChinaDayString(day) == "初一")
 			return "农历" + year + "年";
@@ -331,7 +318,7 @@ public class LunarCalendar {
 		// return year + "��" + (leap ? "��" : "") + chineseNumber[month - 1] +
 		// "��" + getChinaDayString(day);
 	}
-	
+
 	public int getLeapMonth() {
 		return leapMonth;
 	}
@@ -339,21 +326,23 @@ public class LunarCalendar {
 	public void setLeapMonth(int leapMonth) {
 		this.leapMonth = leapMonth;
 	}
-	
+
 	/**
 	 * 得到当前日期对应的农历月份
+	 * 
 	 * @return
 	 */
 	public String getLunarMonth() {
 		return lunarMonth;
 	}
-	
+
 	public void setLunarMonth(String lunarMonth) {
 		this.lunarMonth = lunarMonth;
 	}
-	
+
 	/**
 	 * 得到当前年对应的农历年份
+	 * 
 	 * @return
 	 */
 	public int getYear() {
@@ -363,46 +352,37 @@ public class LunarCalendar {
 	public void setYear(int year) {
 		this.year = year;
 	}
-	
-	public synchronized String getHolidays(long times)
-    {
-    	String holiday = "";
-    	String strdate = "";
-    	int year = 0;
-    	int month = 0;
-    	int day = 0;
-    	Date date = new Date(times);
-    	SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
-    	strdate = sdf.format(date);
-    	year = Integer.parseInt(strdate.split("-")[0]);
-    	month = Integer.parseInt(strdate.split("-")[1]);
-    	day = Integer.parseInt(strdate.split("-")[2]);
-    	
-    	holiday = getLunarDate(year, month, day, false);
-    	
-    	if (!isHolidays(holiday))
-    	{
-    		holiday = "false";
-    	}
-    	else
-    	{
-    		holiday = holiday.replace("_", "");
-    	}
-    	
-    	return holiday;
-    }
-    
-    public boolean isHolidays(String lunar)
-    {	
-    	if (lunar.contains("初") 
-    			|| lunar.contains("十") 
-    			|| lunar.contains("廿") 
-    			|| lunar.contains("卅")
-    			|| lunar.contains("月"))
-    	{
-    		return false;
-    	}
-    	
-    	return true;
-    }
+
+	public synchronized String getHolidays(long times) {
+		String holiday = "";
+		String strdate = "";
+		int year = 0;
+		int month = 0;
+		int day = 0;
+		Date date = new Date(times);
+		SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+		strdate = sdf.format(date);
+		year = Integer.parseInt(strdate.split("-")[0]);
+		month = Integer.parseInt(strdate.split("-")[1]);
+		day = Integer.parseInt(strdate.split("-")[2]);
+
+		holiday = getLunarDate(year, month, day, false);
+
+		if (!isHolidays(holiday)) {
+			holiday = "false";
+		} else {
+			holiday = holiday.replace("_", "");
+		}
+
+		return holiday;
+	}
+
+	public boolean isHolidays(String lunar) {
+		if (lunar.contains("初") || lunar.contains("十") || lunar.contains("廿")
+				|| lunar.contains("卅") || lunar.contains("月")) {
+			return false;
+		}
+
+		return true;
+	}
 }

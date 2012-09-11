@@ -12,13 +12,10 @@ public class ScheduleBean {
 	private String weather;
 	private int slave;
 	private int order;
-    private int t_id;
-    private int user_id;
-    private boolean default_data;
-	
+	private int t_id;
+	private int user_id;
+	private boolean default_data;
 
-    
-    
 	public int getUser_id() {
 		return user_id;
 	}

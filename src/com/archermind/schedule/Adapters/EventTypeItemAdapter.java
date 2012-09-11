@@ -19,7 +19,8 @@ public class EventTypeItemAdapter extends BaseAdapter {
 	private LayoutInflater inflater;
 	private List<EventTypeItem> eventItems = new ArrayList<EventTypeItem>();
 
-	public EventTypeItemAdapter(ArrayList<EventTypeItem> eventItems, Context context) {
+	public EventTypeItemAdapter(ArrayList<EventTypeItem> eventItems,
+			Context context) {
 		super();
 		this.eventItems = eventItems;
 		inflater = LayoutInflater.from(context);

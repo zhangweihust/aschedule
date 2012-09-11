@@ -26,7 +26,7 @@ public class SimpleTimeSelectorDialog implements OnClickListener {
 	private boolean wheelScrolled = false;
 	private Dialog timeSelectorDialog;
 	private Context context;
-	private Button wheelView_cancel,wheelView_ok;
+	private Button wheelView_cancel, wheelView_ok;
 	private Window window = null;
 
 	public interface SimpleOnOkButtonClickListener {
@@ -45,9 +45,9 @@ public class SimpleTimeSelectorDialog implements OnClickListener {
 		timeSelectorDialog.setCanceledOnTouchOutside(true);
 		init();
 		wheelView_cancel = (Button) timeSelectorDialog
-		.findViewById(R.id.wheelView_cancel);
+				.findViewById(R.id.wheelView_cancel);
 		wheelView_ok = (Button) timeSelectorDialog
-		.findViewById(R.id.wheelView_ok);
+				.findViewById(R.id.wheelView_ok);
 		wheelView_cancel.setOnClickListener(this);
 		wheelView_ok.setOnClickListener(this);
 	}
@@ -62,65 +62,66 @@ public class SimpleTimeSelectorDialog implements OnClickListener {
 		Constant.YEAR = Integer.parseInt(DateTimeUtils.time2String("y", time));
 		Constant.MONTH = Integer.parseInt(DateTimeUtils.time2String("M", time));
 		Constant.DAY = Integer.parseInt(DateTimeUtils.time2String("d", time));
-//		wheelView_year.setCurrentItem(Constant.YEAR - 1901);
-//		wheelView_month.setCurrentItem(Constant.MONTH - 1);
-//		wheelView_day.setCurrentItem(Constant.DAY - 1);
+		// wheelView_year.setCurrentItem(Constant.YEAR - 1901);
+		// wheelView_month.setCurrentItem(Constant.MONTH - 1);
+		// wheelView_day.setCurrentItem(Constant.DAY - 1);
 
 	}
 
 	private void initWheel(int id) {
 		WheelView wheel = getWheel(id);
 		switch (id) {
-		case R.id.wheelView_year:
-			wheel.setType(Constant.wheel_year);
-//			wheel.setFlag(1);
-			wheel.setAdapter(new NumericWheelAdapter(1901, 2048,
-					NumericWheelAdapter.DEFAULT_CALENDER));
+			case R.id.wheelView_year :
+				wheel.setType(Constant.wheel_year);
+				// wheel.setFlag(1);
+				wheel.setAdapter(new NumericWheelAdapter(1901, 2048,
+						NumericWheelAdapter.DEFAULT_CALENDER));
 
-			wheel.setRealLabel("年");
-			wheel.setCurrentItem(Constant.YEAR - 1901);
-			wheel.addScrollingListener(scrolledListener);
-			wheelView_year = wheel;
-			break;
-		case R.id.wheelView_month:
-			wheel.setType(Constant.wheel_month);
-//			wheel.setFlag(1);
-			wheel.setAdapter(new NumericWheelAdapter(1, 12,
-					NumericWheelAdapter.DEFAULT_CALENDER));
-			
-			wheel.setRealLabel("月");
-			wheel.setCurrentItem(Constant.MONTH - 1);
-			wheel.addScrollingListener(scrolledListener);
-			wheelView_month = wheel;
-			break;
-		case R.id.wheelView_day:
-			wheel.setType(Constant.wheel_day);
-//			wheel.setFlag(1);
-			wheel.setAdapter(new NumericWheelAdapter(1, SpecialCalendar
-					.getDaysOfMonth(SpecialCalendar.isLeapYear(Constant.YEAR),
-							Constant.MONTH),
-					NumericWheelAdapter.DEFAULT_CALENDER));
-//			wheel.setRealLabel(SpecialCalendar.getCapitelNumberWeekDay(Constant.YEAR,
-//					Constant.MONTH, Constant.DAY));
-			wheel.setRealLabel("日");
-			wheel.setCurrentItem(Constant.DAY - 1);
-			wheel.addScrollingListener(scrolledListener);
-			wheelView_day = wheel;
-			break;
+				wheel.setRealLabel("年");
+				wheel.setCurrentItem(Constant.YEAR - 1901);
+				wheel.addScrollingListener(scrolledListener);
+				wheelView_year = wheel;
+				break;
+			case R.id.wheelView_month :
+				wheel.setType(Constant.wheel_month);
+				// wheel.setFlag(1);
+				wheel.setAdapter(new NumericWheelAdapter(1, 12,
+						NumericWheelAdapter.DEFAULT_CALENDER));
+
+				wheel.setRealLabel("月");
+				wheel.setCurrentItem(Constant.MONTH - 1);
+				wheel.addScrollingListener(scrolledListener);
+				wheelView_month = wheel;
+				break;
+			case R.id.wheelView_day :
+				wheel.setType(Constant.wheel_day);
+				// wheel.setFlag(1);
+				wheel.setAdapter(new NumericWheelAdapter(1, SpecialCalendar
+						.getDaysOfMonth(
+								SpecialCalendar.isLeapYear(Constant.YEAR),
+								Constant.MONTH),
+						NumericWheelAdapter.DEFAULT_CALENDER));
+				// wheel.setRealLabel(SpecialCalendar.getCapitelNumberWeekDay(Constant.YEAR,
+				// Constant.MONTH, Constant.DAY));
+				wheel.setRealLabel("日");
+				wheel.setCurrentItem(Constant.DAY - 1);
+				wheel.addScrollingListener(scrolledListener);
+				wheelView_day = wheel;
+				break;
 		}
 		wheel.setInterpolator(new AnticipateOvershootInterpolator());
 	}
-    public void windowDeploy(int x, int y){
-        window = timeSelectorDialog.getWindow(); //得到对话框
-        window.setWindowAnimations(R.style.dialogWindowAnim); //设置窗口弹出动画
-        WindowManager.LayoutParams wl = window.getAttributes();
-        //根据x，y坐标设置窗口需要显示的位置
-        wl.x = x; //x小于0左移，大于0右移
-        wl.y = y; //y小于0上移，大于0下移 
-//        wl.alpha = 0.6f; //设置透明度
-        wl.gravity = Gravity.BOTTOM; //设置重力
-        window.setAttributes(wl);
-    }
+	public void windowDeploy(int x, int y) {
+		window = timeSelectorDialog.getWindow(); // 得到对话框
+		window.setWindowAnimations(R.style.dialogWindowAnim); // 设置窗口弹出动画
+		WindowManager.LayoutParams wl = window.getAttributes();
+		// 根据x，y坐标设置窗口需要显示的位置
+		wl.x = x; // x小于0左移，大于0右移
+		wl.y = y; // y小于0上移，大于0下移
+		// wl.alpha = 0.6f; //设置透明度
+		wl.gravity = Gravity.BOTTOM; // 设置重力
+		window.setAttributes(wl);
+	}
 	private WheelView getWheel(int id) {
 		return (WheelView) timeSelectorDialog.findViewById(id);
 	}
@@ -132,7 +133,7 @@ public class SimpleTimeSelectorDialog implements OnClickListener {
 
 		public void onScrollingFinished(WheelView wheel) {
 			wheelScrolled = false;
-//			updateStatus();
+			// updateStatus();
 		}
 	};
 
@@ -147,20 +148,20 @@ public class SimpleTimeSelectorDialog implements OnClickListener {
 	}
 
 	public void show() {
-		windowDeploy(0,0);
+		windowDeploy(0, 0);
 		init();
 		timeSelectorDialog.show();
 	}
 
 	public void dismiss() {
 		timeSelectorDialog.dismiss();
-		if(wheelView_day != null){
+		if (wheelView_day != null) {
 			wheelView_day = null;
 		}
-		if(wheelView_month != null){
+		if (wheelView_month != null) {
 			wheelView_month = null;
 		}
-		if(wheelView_year != null){
+		if (wheelView_year != null) {
 			wheelView_year = null;
 		}
 	}
@@ -168,14 +169,14 @@ public class SimpleTimeSelectorDialog implements OnClickListener {
 	@Override
 	public void onClick(View v) {
 		// TODO Auto-generated method stub
-		switch(v.getId()){
-		case R.id.wheelView_cancel:
-			dismiss();
-			break;
-		case R.id.wheelView_ok:
-			dismiss();
-		    mOnOkButtonClickListener.onOkButtonClick(this);
-			break;
+		switch (v.getId()) {
+			case R.id.wheelView_cancel :
+				dismiss();
+				break;
+			case R.id.wheelView_ok :
+				dismiss();
+				mOnOkButtonClickListener.onOkButtonClick(this);
+				break;
 		}
 	}
 
