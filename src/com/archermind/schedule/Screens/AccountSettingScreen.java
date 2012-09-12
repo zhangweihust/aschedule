@@ -20,6 +20,7 @@ import android.content.DialogInterface.OnDismissListener;
 import android.content.Intent;
 import android.database.Cursor;
 import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
 import android.net.Uri;
@@ -44,6 +45,7 @@ import com.archermind.schedule.R;
 import com.archermind.schedule.ScheduleApplication;
 import com.archermind.schedule.Dialog.ModifyNickDialog;
 import com.archermind.schedule.Image.SmartImageView;
+import com.archermind.schedule.Image.WebImageCache;
 import com.archermind.schedule.Model.UserInfoData;
 import com.archermind.schedule.Services.ServiceManager;
 import com.archermind.schedule.Utils.AlbumInfoUtil;
@@ -160,7 +162,7 @@ public class AccountSettingScreen extends Activity implements OnClickListener {
 
 						ScheduleApplication.LogD(AccountSettingScreen.class,
 								"上传图片url成功 url = " + mUpPhotoUrl);
-						ServiceManager.setAvator_url(getUriFormWeb());
+						ServiceManager.setAvator_url(mUpPhotoUrl);
 						Toast.makeText(getApplicationContext(), "上传图片成功！",
 								Toast.LENGTH_LONG).show();
 
@@ -213,7 +215,7 @@ public class AccountSettingScreen extends Activity implements OnClickListener {
 		loginNick.setText(ServiceManager.getSPUserInfo(UserInfoData.NICK));
 		mUserName = ServiceManager.getSPUserInfo(UserInfoData.EMAIL);
 
-		fileName = ServiceManager.getSPUserInfo(UserInfoData.USER_ID) + ".jpg";
+		fileName = ServiceManager.getSPUserInfo(UserInfoData.USER_ID) + "_" + System.currentTimeMillis() + ".jpg";
 		String uri = getUriFormWeb();
 		ServiceManager.setAvator_url(uri);
 		System.out.println("***********uri = " + uri);

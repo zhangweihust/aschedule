@@ -47,7 +47,6 @@ public class AsyncScheduleLoader {
 		new Thread() {
 			@Override
 			public void run() {
-
 				Cursor slaveCursors = ServiceManager.getDbManager()
 						.querySlaveShareSchedules(t_id);
 				Log.i(TAG, "loadSchedule" + t_id);
@@ -95,6 +94,8 @@ public class AsyncScheduleLoader {
 									friendCursor.close();
 								}
 							});
+						} else {
+							friendCursor.close();
 						}
 						if (user_id == ServiceManager.getUserId()) {
 							nick = "我";

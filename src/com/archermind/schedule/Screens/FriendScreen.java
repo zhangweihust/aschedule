@@ -335,6 +335,7 @@ public class FriendScreen extends Screen
 							}
 							Friend friend = new Friend();
 							if (friendList.contains(user_id)) {// 更新好友信息
+								ScheduleApplication.LogD(getClass(), "我的好友:" + nick);
 								friend.setId(user_id);
 								friend.setTelephone(tel);
 								friend.setType(Constant.FriendType.friend_yes);
@@ -370,6 +371,7 @@ public class FriendScreen extends Screen
 							}
 
 							if (ignoreList.contains(user_id)) {// 更新好友屏蔽信息
+								ScheduleApplication.LogD(getClass(), "屏蔽的好友:" + nick);
 								friend.setId(user_id);
 								friend.setTelephone(tel);
 								friend.setType(Constant.FriendType.friend_Ignore);
@@ -403,7 +405,7 @@ public class FriendScreen extends Screen
 								continue;
 
 							}
-
+							ScheduleApplication.LogD(getClass(), "正在使用微日程的:" + nick);
 							friend.setId(user_id);
 							friend.setTelephone(tel);
 							friend.setType(Constant.FriendType.friend_contact_use);
@@ -495,32 +497,30 @@ public class FriendScreen extends Screen
 			Cursor cursor = null;
 			for (String tel : contactToalList) {
 				cursor = database.queryContactIdByTel(tel);
-				if (cursor.moveToNext()) {
-					String id = cursor.getString(cursor
-							.getColumnIndex(DatabaseHelper.COLUMN_CONTACT_ID));
-					String telephone = cursor
-							.getString(cursor
-									.getColumnIndex(DatabaseHelper.ASCHEDULE_CONTACT_NUM));
-					String name = cursor
-							.getString(cursor
-									.getColumnIndex(DatabaseHelper.ASCHEDULE_CONTACT_NAME));
-					String headImagePath = cursor
-							.getString(cursor
-									.getColumnIndex(DatabaseHelper.ASCHEDULE_CONTACT_IMGPATH));
-					Friend friend = new Friend();
-					friend.setId(id);
-					friend.setTelephone(telephone);
-					friend.setName(name);
-					friend.setHeadImagePath(headImagePath);
-					friend.setType(Constant.FriendType.friend_contact);
-					contact.add(friend);
+				if (cursor != null) {
+					if (cursor.moveToNext()) {
+						String id = cursor.getString(cursor
+								.getColumnIndex(DatabaseHelper.COLUMN_CONTACT_ID));
+						String telephone = cursor
+								.getString(cursor
+										.getColumnIndex(DatabaseHelper.ASCHEDULE_CONTACT_NUM));
+						String name = cursor
+								.getString(cursor
+										.getColumnIndex(DatabaseHelper.ASCHEDULE_CONTACT_NAME));
+						String headImagePath = cursor
+								.getString(cursor
+										.getColumnIndex(DatabaseHelper.ASCHEDULE_CONTACT_IMGPATH));
+						Friend friend = new Friend();
+						friend.setId(id);
+						friend.setTelephone(telephone);
+						friend.setName(name);
+						friend.setHeadImagePath(headImagePath);
+						friend.setType(Constant.FriendType.friend_contact);
+						contact.add(friend);
+					}
+					cursor.close();
 				}
 			}
-
-			if (cursor != null) {
-				cursor.close();
-			}
-
 		} else {
 
 		}
@@ -529,7 +529,6 @@ public class FriendScreen extends Screen
 		hashMap.put(Constant.FriendType.FRIEND_IGNORE_KEY, ignores);
 		hashMap.put(Constant.FriendType.FRIEND_CONTACT_USE_KEY, contact_use);
 		hashMap.put(Constant.FriendType.FRIEND_CONTACT_KEY, contact);
-
 		handler.sendEmptyMessage(CONTACT_SYNC_SUCCESS);
 		return hashMap;
 	}

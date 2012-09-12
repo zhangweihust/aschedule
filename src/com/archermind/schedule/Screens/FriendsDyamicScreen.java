@@ -370,10 +370,14 @@ public class FriendsDyamicScreen extends Screen
 	@Override
 	public void onItemClick(AdapterView<?> parent, View view, int position,
 			long id) {
-		if (dataArrayList.size() != 0
-				&& !dataArrayList.get(position - 1).isDefault_data()) {
-			initPopWindow(FriendsDyamicScreen.this,
-					dataArrayList.get(position - 1).getT_id());
+		try {
+			if (dataArrayList.size() != 0
+					&& !dataArrayList.get(position - 1).isDefault_data()) {
+				initPopWindow(FriendsDyamicScreen.this,
+						dataArrayList.get(position - 1).getT_id());
+			}
+		} catch (Exception e){
+			ScheduleApplication.LogD(getClass(), "onItemClick error");
 		}
 	}
 
