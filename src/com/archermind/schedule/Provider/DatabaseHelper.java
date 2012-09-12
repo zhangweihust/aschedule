@@ -125,6 +125,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 			+ COLUMN_SCHEDULE_CONTENT + " TEXT " + ")";
 
 	public static final String ASCHEDULE_CONTACT = "schedule_contact"; /* 微日程联系人表 */
+	public static final String ASCHEDULE_CONTACT_ID = "_id"; 
 	public static final String COLUMN_CONTACT_ID = "contact_id"; /* 微日程联系人表 */
 	public static final String COLUMN_FRIEND_ID = "friend_id";
 	public static final String ASCHEDULE_CONTACT_NUM = "number"; /* 微日程联系人表 */
@@ -135,8 +136,10 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 	private static final String CREATE_CONTACT_TABLE = " CREATE TABLE IF NOT EXISTS "
 			+ ASCHEDULE_CONTACT
 			+ " ( "
-			+ COLUMN_CONTACT_ID
+			+ ASCHEDULE_CONTACT_ID
 			+ " INTEGER PRIMARY KEY, "
+			+ COLUMN_CONTACT_ID
+			+ " INTEGER , "
 			+ COLUMN_FRIEND_ID
 			+ " INTEGER DEFAULT '-1', "
 			+ ASCHEDULE_CONTACT_NUM

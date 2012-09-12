@@ -30,9 +30,10 @@ public class Contact {
 
 		Cursor LocalContact = ServiceManager.getDbManager().getLocalContacts();
 		if (LocalContact.getCount() != AscheduleContact.getCount()) {
+			ScheduleApplication.LogD(getClass(), "应用的联系人与系统的联系人数量不一致，需要重新同步 LocalContact.getCount() =" 
+					+ LocalContact.getCount() + "  AscheduleContact.getCount() = " + AscheduleContact.getCount());
 			AscheduleContact.close();
 			LocalContact.close();
-			ScheduleApplication.LogD(getClass(), "应用的联系人与系统的联系人数量不一致，需要重新同步");
 			return true;
 		}
 
@@ -96,6 +97,10 @@ public class Contact {
 						ServiceManager.getEventservice().onUpdateEvent(
 								new EventArgs(EventTypes.CONTACT_SYNC_CANCEL));
 					}
+				} else {
+					ScheduleApplication.LogD(getClass(), "没有网络，不需要同步");
+					ServiceManager.getEventservice().onUpdateEvent(
+							new EventArgs(EventTypes.CONTACT_SYNC_CANCEL));
 				}
 			};
 		}.start();
@@ -139,7 +144,9 @@ public class Contact {
 			cv.put(DatabaseHelper.COLUMN_CONTACT_ID, contactid);
 			cv.put(DatabaseHelper.ASCHEDULE_CONTACT_NUM, number);
 			cv.put(DatabaseHelper.ASCHEDULE_CONTACT_NAME, name);
-			ServiceManager.getDbManager().insertContact(cv);
+			if(ServiceManager.getDbManager().insertContact(cv) == -1){
+				ScheduleApplication.LogD(getClass(), "插入联系人失败：" + name + "  contactid:" + contactid);
+			} 
 		}
 		LocalContact.close();
 	}

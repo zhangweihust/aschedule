@@ -312,7 +312,7 @@ public class FriendScreen extends Screen
 			String jsonString = ServiceManager.getServerInterface()
 					.checkUserSchedule(
 							String.valueOf(ServiceManager.getUserId()));
-			ScheduleApplication.LogD(getClass(), "");
+			ScheduleApplication.LogD(getClass(), "获取我的好友信息："+jsonString);
 			ContentValues values = null;
 			if (jsonString != null && !"".equals(jsonString)) {
 				if (jsonString.indexOf("user_id") >= 0) {// 防止返回错误码
@@ -340,6 +340,7 @@ public class FriendScreen extends Screen
 								friend.setType(Constant.FriendType.friend_yes);
 								friend.setNick(nick);
 								friend.setHeadImagePath(photo_url);
+								friend.setName(database.queryNameByTel(tel));
 								friends.add(friend);
 
 								Cursor cursor = database.queryFriend(Integer
@@ -428,7 +429,11 @@ public class FriendScreen extends Screen
 
 	protected HashMap<String, List<Friend>> getData() {
 		// TODO Auto-generated method stub
-
+		handler.post(new Runnable(){
+			@Override
+			public void run() {
+				loading.setVisibility(View.VISIBLE);
+			}});
 		List<String> contactToalList = new ArrayList<String>();
 		List<String> friendList = new ArrayList<String>();
 		List<String> ignoreList = new ArrayList<String>();

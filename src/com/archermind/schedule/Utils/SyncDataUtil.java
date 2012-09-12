@@ -77,13 +77,13 @@ public class SyncDataUtil {
 							jsonObject.getString("content"));
 					ScheduleApplication.LogD(SyncDataUtil.class, "user_id:"
 							+ user_id + " order:" + order);
-					if (user_id.equals(userId) && "0".equals(order)) {
-						ScheduleApplication.LogD(
-								SyncDataUtil.class,
-								"该帖子是自己发的主贴，在好友动态里面不要显示:"
-										+ jsonObject.getString("content"));
-						continue;
-					}
+//					if (user_id.equals(userId) && "0".equals(order)) {
+//						ScheduleApplication.LogD(
+//								SyncDataUtil.class,
+//								"该帖子是自己发的主贴，在好友动态里面不要显示:"
+//										+ jsonObject.getString("content"));
+//						continue;
+//					}
 					if (!ServiceManager.getDbManager().isInShareSchedules(t_id)) {
 						if (isService) {
 							ServiceManager.getEventservice().onUpdateEvent(

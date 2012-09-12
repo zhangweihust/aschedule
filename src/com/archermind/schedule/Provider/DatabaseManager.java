@@ -266,8 +266,9 @@ public class DatabaseManager {
 
 	public Cursor queryShareSchedules(int start, int end) {
 		return database.query(DatabaseHelper.TAB_SHARE_SCHEDULE, null,
-				DatabaseHelper.COLUMN_SCHEDULE_ORDER + " =? ", new String[]{
-						"0", String.valueOf(start), String.valueOf(end)}, null,
+				DatabaseHelper.COLUMN_SCHEDULE_ORDER + " =? AND "
+				+ DatabaseHelper.COLUMN_SCHEDULE_USER_ID + " != ?", new String[]{
+						"0", String.valueOf(ServiceManager.getUserId()), String.valueOf(start), String.valueOf(end)}, null,
 				null, DatabaseHelper.COLUMN_SCHEDULE_START_TIME + " DESC "
 						+ " LIMIT ? , ? ");
 	}
@@ -282,8 +283,9 @@ public class DatabaseManager {
 	public Cursor queryShareSchedules(long time, int size) {
 		return database.query(DatabaseHelper.TAB_SHARE_SCHEDULE, null,
 				DatabaseHelper.COLUMN_SCHEDULE_ORDER + " =? AND "
+				        + DatabaseHelper.COLUMN_SCHEDULE_USER_ID + " != ? AND "
 						+ DatabaseHelper.COLUMN_SCHEDULE_START_TIME + " < ? ",
-				new String[]{"0", String.valueOf(time), String.valueOf(size)},
+				new String[]{"0", String.valueOf(ServiceManager.getUserId()), String.valueOf(time), String.valueOf(size)},
 				null, null, DatabaseHelper.COLUMN_SCHEDULE_START_TIME
 						+ " DESC " + " LIMIT ? ");
 	}
@@ -291,11 +293,11 @@ public class DatabaseManager {
 	public Cursor queryLocalSchedules(int start, int end) {
 
 		return database.query(
-				DatabaseHelper.TAB_LOCAL_SCHEDULE,
+				DatabaseHelper.TAB_SHARE_SCHEDULE,
 				null,
-				DatabaseHelper.COLUMN_SCHEDULE_SHARE + " =? AND "
+				DatabaseHelper.COLUMN_SCHEDULE_USER_ID + " =? AND "
 						+ DatabaseHelper.COLUMN_SCHEDULE_ORDER + " =?",
-				new String[]{"1", "0", String.valueOf(start),
+				new String[]{String.valueOf(ServiceManager.getUserId()), "0", String.valueOf(start),
 						String.valueOf(end)}, null, null,
 				DatabaseHelper.COLUMN_SCHEDULE_START_TIME + " DESC "
 						+ " LIMIT ? , ? ");
@@ -304,11 +306,11 @@ public class DatabaseManager {
 
 	public Cursor queryLocalSchedules(long time, int size) {
 
-		return database.query(DatabaseHelper.TAB_LOCAL_SCHEDULE, null,
-				DatabaseHelper.COLUMN_SCHEDULE_SHARE + " =? AND "
+		return database.query(DatabaseHelper.TAB_SHARE_SCHEDULE, null,
+				DatabaseHelper.COLUMN_SCHEDULE_USER_ID + " =? AND "
 						+ DatabaseHelper.COLUMN_SCHEDULE_START_TIME
 						+ " < ? AND " + DatabaseHelper.COLUMN_SCHEDULE_ORDER
-						+ " =?", new String[]{"1", String.valueOf(time), "0",
+						+ " =?", new String[]{String.valueOf(ServiceManager.getUserId()), String.valueOf(time), "0",
 						String.valueOf(size)}, null, null,
 				DatabaseHelper.COLUMN_SCHEDULE_START_TIME + " DESC "
 						+ " LIMIT ? ");
