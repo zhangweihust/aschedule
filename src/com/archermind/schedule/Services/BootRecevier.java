@@ -40,7 +40,7 @@ public class BootRecevier extends BroadcastReceiver {
 				Cursor c = dbManager.queryNotOutdateschedule(System
 						.currentTimeMillis());
 				ScheduleApplication.LogD(BootRecevier.class,
-						"not outdate count ::" + c.getCount());
+					" 需要修改日程闹钟的个数是 " + c.getCount());
 				if (c != null) {
 					for (c.moveToFirst(); !c.isAfterLast(); c.moveToNext()) {
 						schedule_id = c

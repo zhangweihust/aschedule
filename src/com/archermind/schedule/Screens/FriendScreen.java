@@ -522,7 +522,116 @@ public class FriendScreen extends Screen
 				}
 			}
 		} else {
-
+			cursor = database.queryFriendYes();
+			while (cursor.moveToNext()) {
+				String id = cursor.getString(cursor
+						.getColumnIndex(DatabaseHelper.ASCHEDULE_FRIEND_ID));
+				String telephone = cursor
+						.getString(cursor
+								.getColumnIndex(DatabaseHelper.ASCHEDULE_FRIEND_NUM));
+				String name = cursor
+						.getString(cursor
+								.getColumnIndex(DatabaseHelper.ASCHEDULE_FRIEND_NAME));
+				String headImagePath = cursor
+						.getString(cursor
+								.getColumnIndex(DatabaseHelper.ASCHEDULE_FRIEND_PHOTO_URL));
+				Friend friend = new Friend();
+				friend.setId(id);
+				friend.setTelephone(telephone);
+				friend.setName(name);
+				friend.setHeadImagePath(headImagePath);
+				friend.setType(Constant.FriendType.friend_yes);
+				
+				friends.add(friend);
+			}
+			
+			if (cursor != null) {
+				cursor.close();
+			}
+			
+			
+			cursor = database.queryFriendIgnore();
+			while (cursor.moveToNext()) {
+				String id = cursor.getString(cursor
+						.getColumnIndex(DatabaseHelper.ASCHEDULE_FRIEND_ID));
+				String telephone = cursor
+						.getString(cursor
+								.getColumnIndex(DatabaseHelper.ASCHEDULE_FRIEND_NUM));
+				String name = cursor
+						.getString(cursor
+								.getColumnIndex(DatabaseHelper.ASCHEDULE_FRIEND_NAME));
+				String headImagePath = cursor
+						.getString(cursor
+								.getColumnIndex(DatabaseHelper.ASCHEDULE_FRIEND_PHOTO_URL));
+				Friend friend = new Friend();
+				friend.setId(id);
+				friend.setTelephone(telephone);
+				friend.setName(name);
+				friend.setHeadImagePath(headImagePath);
+				friend.setType(Constant.FriendType.friend_Ignore);
+				
+				ignores.add(friend);
+			}
+			
+			if (cursor != null) {
+				cursor.close();
+			}
+			
+			
+			cursor = database.queryContactUse();
+			while (cursor.moveToNext()) {
+				String id = cursor.getString(cursor
+						.getColumnIndex(DatabaseHelper.COLUMN_CONTACT_ID));
+				String telephone = cursor
+						.getString(cursor
+								.getColumnIndex(DatabaseHelper.ASCHEDULE_CONTACT_NUM));
+				String name = cursor
+						.getString(cursor
+								.getColumnIndex(DatabaseHelper.ASCHEDULE_CONTACT_NAME));
+				String headImagePath = cursor
+						.getString(cursor
+								.getColumnIndex(DatabaseHelper.ASCHEDULE_CONTACT_IMGPATH));
+				Friend friend = new Friend();
+				friend.setId(id);
+				friend.setTelephone(telephone);
+				friend.setName(name);
+				friend.setHeadImagePath(headImagePath);
+				friend.setType(Constant.FriendType.friend_contact_use);
+				
+				contact_use.add(friend);
+			}
+			
+			if (cursor != null) {
+				cursor.close();
+			}
+			
+			
+			cursor = database.queryContact();
+			while (cursor.moveToNext()) {
+				String id = cursor.getString(cursor
+						.getColumnIndex(DatabaseHelper.COLUMN_CONTACT_ID));
+				String telephone = cursor
+						.getString(cursor
+								.getColumnIndex(DatabaseHelper.ASCHEDULE_CONTACT_NUM));
+				String name = cursor
+						.getString(cursor
+								.getColumnIndex(DatabaseHelper.ASCHEDULE_CONTACT_NAME));
+				String headImagePath = cursor
+						.getString(cursor
+								.getColumnIndex(DatabaseHelper.ASCHEDULE_CONTACT_IMGPATH));
+				Friend friend = new Friend();
+				friend.setId(id);
+				friend.setTelephone(telephone);
+				friend.setName(name);
+				friend.setHeadImagePath(headImagePath);
+				friend.setType(Constant.FriendType.friend_contact);
+				
+				contact_use.add(friend);
+			}
+			
+			if (cursor != null) {
+				cursor.close();
+			}
 		}
 
 		hashMap.put(Constant.FriendType.FRIEND_YES_KEY, friends);

@@ -64,8 +64,10 @@ public class AlarmRecevier extends BroadcastReceiver {
 						+ DateTimeUtils.time2String("yyyy-MM-dd-HH-mm",
 								currentTime));
 
-		if (currentTime - alarmTime < 55 * 1000) {// 说明是准时触发，通知栏提示
+		if (currentTime - alarmTime < 59 * 1000) {// 说明是准时触发，通知栏提示
 
+		    ScheduleApplication.LogD(AlarmRecevier.class,"时间在误差之内闹钟被触发");
+		    
 			mNotificationManager = (NotificationManager) context
 					.getSystemService(Context.NOTIFICATION_SERVICE);
 			// 点击通知进入的界面
@@ -98,8 +100,7 @@ public class AlarmRecevier extends BroadcastReceiver {
 
 		} else { // 说明是系统自动触发已过期的闹钟，不提示
 
-			ScheduleApplication.LogD(AlarmRecevier.class,
-					"currentTime > alarmTime ");
+		    ScheduleApplication.LogD(AlarmRecevier.class,"时间在误差之外闹钟没有被触发");
 		}
 
 		new Thread() {

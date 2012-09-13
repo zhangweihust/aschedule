@@ -273,6 +273,8 @@ public class TelephoneBindScreen extends Screen implements OnClickListener {
 				telephone_bind_get_verification.setVisibility(View.VISIBLE);
 				break;
 			case R.id.telephone_bind_goback :
+                Intent intent = new Intent(this, AccountSettingScreen.class);
+                startActivity(intent);
 				finish();
 				break;
 			default :
@@ -290,6 +292,14 @@ public class TelephoneBindScreen extends Screen implements OnClickListener {
 			e.printStackTrace();
 		}
 
-		return ret;
-	}
+        return ret;
+    }
+
+    @Override
+    public void onBackPressed() {
+
+        Intent i = new Intent(this, AccountSettingScreen.class);
+        startActivity(i);
+        super.onBackPressed();
+    }
 }

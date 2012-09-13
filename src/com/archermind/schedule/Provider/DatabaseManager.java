@@ -383,6 +383,14 @@ public class DatabaseManager {
 						.valueOf(Constant.FriendType.friend_contact_use)},
 				null, null, null);
 	}
+	
+	public Cursor queryContact() {
+		return database.query(DatabaseHelper.ASCHEDULE_CONTACT, null,
+				DatabaseHelper.ASCHEDULE_CONTACT_TYPE + " =? ",
+				new String[]{String
+						.valueOf(Constant.FriendType.friend_contact)},
+				null, null, null);
+	}
 
 	public boolean hasData(int contactid, String number) {
 		Cursor cursor = database.query(DatabaseHelper.ASCHEDULE_CONTACT, null,
@@ -507,13 +515,15 @@ public class DatabaseManager {
 		return database.insert(DatabaseHelper.TAB_SCHEDULE_WEATHER, null, cv) > 0;
 	}
 
-	public Cursor queryNotOutdateschedule(long time) {
-		return database.query(DatabaseHelper.TAB_LOCAL_SCHEDULE, null,
-				DatabaseHelper.COLUMN_SCHEDULE_NOTICE_END + " >= ? AND "
-						+ DatabaseHelper.COLUMN_SCHEDULE_NOTICE_FLAG + " = ?",
-				new String[]{String.valueOf(time), String.valueOf(1)}, null,
-				null, null);
-	}
+    public Cursor queryNotOutdateschedule(long time) {
+        return database.query(DatabaseHelper.TAB_LOCAL_SCHEDULE, null,
+                DatabaseHelper.COLUMN_SCHEDULE_NOTICE_END + " >= ? AND "
+                        + DatabaseHelper.COLUMN_SCHEDULE_NOTICE_FLAG + " = ? AND "
+                        + DatabaseHelper.COLUMN_SCHEDULE_OPER_FLAG + " != ? ", new String[] {
+                        String.valueOf(time), String.valueOf(1),
+                        DatabaseHelper.SCHEDULE_OPER_DELETE
+                }, null, null, null);
+    }
 
 	public long insertSchedules(ContentValues values) {
 		return database.insert(DatabaseHelper.TAB_LOCAL_SCHEDULE, null, values);

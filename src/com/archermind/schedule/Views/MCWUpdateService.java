@@ -1,3 +1,4 @@
+
 package com.archermind.schedule.Views;
 
 import java.util.Calendar;
@@ -22,141 +23,134 @@ import android.widget.RemoteViews;
 
 public class MCWUpdateService extends IntentService {
 
-	private static int yearNow;
-	private static int monthNow;
-	private static int today;
+    private static int yearNow;
 
-	private static int jumpYear;
-	private static int jumpMonth;
+    private static int monthNow;
 
-	private static String[] dayNumber = new String[42];
+    private static int today;
 
-	private static CalendarData calendarData;
+    private static int jumpYear;
 
-	public MCWUpdateService() {
-		super("MCWUpdateService");
-	}
+    private static int jumpMonth;
 
-	@Override
-	public void onHandleIntent(Intent intent) {
-		initMonthDisplayHelper();
-		updateCalendar(this);
-	}
+    private static String[] dayNumber = new String[42];
 
-	public static void initMonthDisplayHelper() {
-		Calendar cal = Calendar.getInstance();
-		yearNow = cal.get(Calendar.YEAR);
-		monthNow = cal.get(Calendar.MONTH);
-		today = cal.get(Calendar.DATE);
-	}
+    private static CalendarData calendarData;
 
-	public static void nextMonth() {
-		jumpMonth++;
-	}
+    public MCWUpdateService() {
+        super("MCWUpdateService");
+    }
 
-	public static void previousMonth() {
-		jumpMonth--;
-	}
+    @Override
+    public void onHandleIntent(Intent intent) {
+        initMonthDisplayHelper();
+        updateCalendar(this);
+    }
 
-	public static void updateCalendar(Context context) {
-		ComponentName widget = new ComponentName(context, MonthCalWidget.class);
-		AppWidgetManager mgr = AppWidgetManager.getInstance(context);
-		RemoteViews remViews = buildUpdate(context);
-		mgr.updateAppWidget(widget, remViews);
-	}
+    public static void initMonthDisplayHelper() {
+        Calendar cal = Calendar.getInstance();
+        yearNow = cal.get(Calendar.YEAR);
+        monthNow = cal.get(Calendar.MONTH);
+        today = cal.get(Calendar.DATE);
+    }
 
-	private static RemoteViews buildUpdate(Context context) {
-		RemoteViews views = new RemoteViews(context.getPackageName(),
-				R.layout.main_layout);
-		setViewAction(context, views, MonthCalWidget.WIDGET_CLICK_NEXT,
-				R.id.nextmonth);
-		setViewAction(context, views, MonthCalWidget.WIDGET_CLICK_PREV,
-				R.id.prevmonth);
-		setViewAction(context, views, MonthCalWidget.WIDGET_CLICK_MYTV,
-				R.id.monthyear);
-		setCalendar(context, views);
-		return views;
-	}
+    public static void nextMonth() {
+        jumpMonth++;
+    }
 
-	private static void setViewAction(Context cont, RemoteViews rv,
-			String action, int idView) {
-		Intent intent = new Intent(cont, MonthCalWidget.class);
-		intent.setAction(action);
-		rv.setOnClickPendingIntent(idView,
-				PendingIntent.getBroadcast(cont, 0, intent, 0));
-	}
+    public static void previousMonth() {
+        jumpMonth--;
+    }
 
-	private static void setCalendar(Context context, RemoteViews rv) {
+    public static void updateCalendar(Context context) {
+        ComponentName widget = new ComponentName(context, MonthCalWidget.class);
+        AppWidgetManager mgr = AppWidgetManager.getInstance(context);
+        RemoteViews remViews = buildUpdate(context);
+        mgr.updateAppWidget(widget, remViews);
+    }
 
-		calendarData = new CalendarData(context, jumpMonth, jumpYear, yearNow,
-				monthNow, today, Constant.flagType);
-		dayNumber = calendarData.getDayNumber();
-		rv.setTextViewText(R.id.monthyear, calendarData.getShowYear() + "."
-				+ calendarData.getShowMonth());
+    private static RemoteViews buildUpdate(Context context) {
+        RemoteViews views = new RemoteViews(context.getPackageName(), R.layout.main_layout);
+        setViewAction(context, views, MonthCalWidget.WIDGET_CLICK_NEXT, R.id.nextmonth);
+        setViewAction(context, views, MonthCalWidget.WIDGET_CLICK_PREV, R.id.prevmonth);
+        setViewAction(context, views, MonthCalWidget.WIDGET_CLICK_MYTV, R.id.monthyear);
+        setCalendar(context, views);
+        return views;
+    }
 
-		int identifier_week = 0;
-		int identifier_day = 0;
-		int identifier_mark = 0;
-		int identifier_holiday = 0;
-		for (int i = 0; i < 7; i++) {
-			identifier_week = context.getResources().getIdentifier("day" + i,
-					"id", context.getPackageName());
-			rv.setTextViewText(identifier_week, calendarData.getWeek()[i]);
-		}
-		for (int i = 0; i < dayNumber.length; i++) {
+    private static void setViewAction(Context cont, RemoteViews rv, String action, int idView) {
+        Intent intent = new Intent(cont, MonthCalWidget.class);
+        intent.setAction(action);
+        rv.setOnClickPendingIntent(idView, PendingIntent.getBroadcast(cont, 0, intent, 0));
+    }
 
-			identifier_day = context.getResources().getIdentifier("date" + i,
-					"id", context.getPackageName());
-			identifier_mark = context.getResources().getIdentifier("mark" + i,
-					"id", context.getPackageName());
-			identifier_holiday = context.getResources().getIdentifier(
-					"holiday" + i, "id", context.getPackageName());
+    private static void setCalendar(Context context, RemoteViews rv) {
 
-			// rv.setViewVisibility(identifier_mark, View.GONE);
-			// rv.setViewVisibility(identifier_holiday, View.GONE);
+        calendarData = new CalendarData(context, jumpMonth, jumpYear, yearNow, monthNow, today,
+                Constant.flagType);
+        dayNumber = calendarData.getDayNumber();
+        rv.setTextViewText(R.id.monthyear,
+                calendarData.getShowYear() + "." + calendarData.getShowMonth());
 
-			String temp = dayNumber[i].split("\\.")[1];
-			if (temp.contains(LunarCalendar.suffix)) {
-				rv.setViewVisibility(identifier_holiday, View.VISIBLE);
-				rv.setImageViewResource(identifier_holiday,
-						R.drawable.other_holiday);
-			}
+        int identifier_week = 0;
+        int identifier_day = 0;
+        int identifier_mark = 0;
+        int identifier_holiday = 0;
+        for (int i = 0; i < 7; i++) {
+            identifier_week = context.getResources().getIdentifier("day" + i, "id",
+                    context.getPackageName());
+            rv.setTextViewText(identifier_week, calendarData.getWeek()[i]);
+        }
+        for (int i = 0; i < dayNumber.length; i++) {
 
-			if (i < calendarData.getDaysOfWeek()) {
-			} else if (i < calendarData.getDayOfWeek()
-					+ calendarData.getDaysOfWeek()) { // 前一个月
-				SpannableStringBuilder ssb = new SpannableStringBuilder();
-				ssb.append(dayNumber[i].split("\\.")[0]);
-				rv.setTextColor(identifier_day, Color.GRAY);
-				rv.setTextViewText(identifier_day, dayNumber[i].split("\\.")[0]);
+            identifier_day = context.getResources().getIdentifier("date" + i, "id",
+                    context.getPackageName());
+            identifier_mark = context.getResources().getIdentifier("mark" + i, "id",
+                    context.getPackageName());
+            identifier_holiday = context.getResources().getIdentifier("holiday" + i, "id",
+                    context.getPackageName());
 
-			} else if (i < calendarData.getDaysOfMonth()
-					+ calendarData.getDayOfWeek()
-					+ calendarData.getDaysOfWeek()) { // 本月
-				SpannableStringBuilder ssb = new SpannableStringBuilder();
-				ssb.append(dayNumber[i].split("\\.")[0]);
-				rv.setTextColor(identifier_day, Color.BLACK);
-				if (i == today) {
-					ssb.setSpan(new BackgroundColorSpan(context.getResources()
-							.getColor(R.color.selector)), 0, 2,
-							Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
+            // rv.setViewVisibility(identifier_mark, View.GONE);
+            // rv.setViewVisibility(identifier_holiday, View.GONE);
 
-				}
-				rv.setTextViewText(identifier_day, ssb);
+            String temp = dayNumber[i].split("\\.")[1];
+            if (temp.contains(LunarCalendar.suffix)) {
+                rv.setViewVisibility(identifier_holiday, View.VISIBLE);
+                rv.setImageViewResource(identifier_holiday, R.drawable.other_holiday);
+            }
 
-				if (calendarData.getMarkcount()[i] > 0) {
-					rv.setViewVisibility(identifier_holiday, View.GONE);
-					rv.setViewVisibility(identifier_mark, View.VISIBLE);
-					rv.setTextViewText(identifier_mark,
-							calendarData.getMarkcount()[i] + "");
-				}
+            if (i < calendarData.getDaysOfWeek()) {
+            } else if (i < calendarData.getDayOfWeek() + calendarData.getDaysOfWeek()) { // 前一个月
+                SpannableStringBuilder ssb = new SpannableStringBuilder();
+                ssb.append(dayNumber[i].split("\\.")[0]);
+                rv.setTextColor(identifier_day, Color.GRAY);
+                rv.setTextViewText(identifier_day, dayNumber[i].split("\\.")[0]);
 
-			} else { // 下一个月
-				SpannableStringBuilder ssb = new SpannableStringBuilder();
-				ssb.append(dayNumber[i].split("\\.")[0]);
-				rv.setTextColor(identifier_day, Color.GRAY);
-				rv.setTextViewText(identifier_day, ssb);
-			}
-		}
-	}
+            } else if (i < calendarData.getDaysOfMonth() + calendarData.getDayOfWeek()
+                    + calendarData.getDaysOfWeek()) { // 本月
+                SpannableStringBuilder ssb = new SpannableStringBuilder();
+                ssb.append(dayNumber[i].split("\\.")[0]);
+                rv.setTextColor(identifier_day, Color.BLACK);
+                if (i == today) {
+                    ssb.setSpan(
+                            new BackgroundColorSpan(context.getResources().getColor(
+                                    R.color.selector)), 0, 2, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
+
+                }
+                rv.setTextViewText(identifier_day, ssb);
+
+                if (calendarData.getMarkcount()[i] > 0) {
+                    rv.setViewVisibility(identifier_holiday, View.GONE);
+                    rv.setViewVisibility(identifier_mark, View.VISIBLE);
+                    rv.setTextViewText(identifier_mark, calendarData.getMarkcount()[i] + "");
+                }
+
+            } else { // 下一个月
+                SpannableStringBuilder ssb = new SpannableStringBuilder();
+                ssb.append(dayNumber[i].split("\\.")[0]);
+                rv.setTextColor(identifier_day, Color.GRAY);
+                rv.setTextViewText(identifier_day, ssb);
+            }
+        }
+    }
 }

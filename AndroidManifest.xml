@@ -126,19 +126,20 @@
                 android:name="android.appwidget.provider"
                 android:resource="@xml/widget_weather" />
         </receiver>
+
+        <!--
+        微日程天气的配置文件 
+                
         <receiver android:name="com.archermind.schedule.Views.MonthCalWidget" >
             <intent-filter>
                 <action android:name="android.appwidget.action.APPWIDGET_UPDATE" />
-            </intent-filter>
-            <intent-filter>
-                <action android:name="android.intent.action.DATE_CHANGED" />
             </intent-filter>
 
             <meta-data
                 android:name="android.appwidget.provider"
                 android:resource="@xml/monthcal_widget_provider" />
-        </receiver>
-
+        </receiver> 
+        -->
         <service android:name="com.archermind.schedule.Views.MCWUpdateService" />
     </application>
 

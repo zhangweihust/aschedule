@@ -1,6 +1,9 @@
 package com.archermind.schedule.Model;
 
 public class ScheduleData {
+    
+    public static final String LUNARDATE = "LunarDate";
+    
 	public int id;
 	public String content;
 	public long time;

@@ -28,8 +28,12 @@ import android.content.SharedPreferences;
 import android.database.Cursor;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.Message;
 import android.util.Log;
 import android.view.Display;
+import android.view.View;
+import android.widget.Toast;
 
 public class WeatherScreen extends Screen
 		implements
@@ -52,8 +56,10 @@ public class WeatherScreen extends Screen
 
 	WeatherDialog mwWeatherDialog;
 	SharedPreferences sp;
-
+	Getweathertrd Getweatherthread;
+	
 	ProgressDialog mProgress;
+	Cursor c ;
 
 	// private String
 	@Override
@@ -70,15 +76,24 @@ public class WeatherScreen extends Screen
 		screenHeight = display.getHeight();
 		sp = getSharedPreferences("com.archermind.schedule_preferences",
 				Context.MODE_WORLD_WRITEABLE);
+//		cityInfoMap.put("province", "北京");
+//		cityInfoMap.put("city", "北京");
+//		weatherMap = getWeathermap();
+//		si = ServiceManager.getServerInterface();
+//		readLocalWeather();
+//		handler.sendEmptyMessageDelayed(1, 5000);
 
-		new Getweathertrd().execute();
+	
+		Getweatherthread = new Getweathertrd();
+		Getweatherthread.execute();
+		
 	}
 
 	class Getweathertrd extends AsyncTask<Void, Void, Void> {
 
 		@Override
 		protected Void doInBackground(Void... params) {
-
+		
 			getWeatherData(sp.getString("province", "北京"),
 					sp.getString("city", "北京"));
 			return null;
@@ -91,12 +106,9 @@ public class WeatherScreen extends Screen
 			if (mProgress != null && mProgress.isShowing()) {
 				mProgress.dismiss();
 			}
-			Log.i("free", "in" + screenWidth + screenHeight + cityInfoMap
-					+ weatherMap + itemsmap);
 			mwWeatherDialog = new WeatherDialog(WeatherScreen.this,
 					screenWidth, screenHeight, cityInfoMap, weatherMap,
 					itemsmap);
-			Log.i("free", "in");
 			mwWeatherDialog.show();
 
 		}
@@ -113,7 +125,6 @@ public class WeatherScreen extends Screen
 		@Override
 		protected void onCancelled() {
 			super.onCancelled();
-			Log.i("free", "onCancelled");
 		}
 
 	}
@@ -178,7 +189,7 @@ public class WeatherScreen extends Screen
 
 			mCalendar.add(Calendar.DAY_OF_MONTH, 1);
 		}
-		Cursor c = ServiceManager.getDbManager().queryScheduleWeather(date[0]);
+		c = ServiceManager.getDbManager().queryScheduleWeather(date[0]);
 		// 如果不存在当天天气，则什么都不显示
 		if (c.getCount() != 0) {
 
@@ -277,6 +288,8 @@ public class WeatherScreen extends Screen
 				c.close();
 			}
 
+		}else{
+			c.close();
 		}
 
 	}
@@ -459,4 +472,16 @@ public class WeatherScreen extends Screen
 		// TODO Auto-generated method stub
 		this.finish();
 	}
+	
+//	private Handler handler = new Handler() {
+//		public void handleMessage(Message msg) {
+//			Getweatherthread.onCancelled();
+//			c.close();
+//			mwWeatherDialog = new WeatherDialog(WeatherScreen.this,
+//					screenWidth, screenHeight, cityInfoMap, weatherMap,
+//					itemsmap);
+//			mwWeatherDialog.show();
+//			Toast.makeText(WeatherScreen.this, "加载天气失败", Toast.LENGTH_LONG).show();
+//		};
+//	};
 }

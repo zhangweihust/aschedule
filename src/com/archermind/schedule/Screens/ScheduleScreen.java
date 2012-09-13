@@ -208,6 +208,9 @@ public class ScheduleScreen extends Screen
 					case LOAD_OVERD_GOTO_TODAY :
 						// hsa.setData(listdata);
 						gototodaypos();
+						schedule_headview_prompt
+								.setText(getHeadViewText(getDateByMillisTime(System
+										.currentTimeMillis())));
 						break;
 				}
 				super.handleMessage(msg);
@@ -222,6 +225,7 @@ public class ScheduleScreen extends Screen
 				int pos = hsa.getTodayPosition(getDateByMillisTime(System
 						.currentTimeMillis()));
 				list2.setSelection(pos + 1); /* 最上面的上翻更新数据也算一个位置,,所以+1 */
+
 			}
 		});
 
@@ -245,6 +249,7 @@ public class ScheduleScreen extends Screen
 			}
 
 			public void onViewScrollFinished(int currentPage) {
+
 			}
 
 			@Override
@@ -325,8 +330,9 @@ public class ScheduleScreen extends Screen
 		super.onWindowFocusChanged(hasFocus);
 		if (flag) {
 			flag = false;
-			calendarData = new CalendarData(jumpMonth, jumpYear, year_c,
-					month_c, day_c, Constant.flagType);
+
+			calendarData = new CalendarData(ScheduleScreen.this, jumpMonth,
+					jumpYear, year_c, month_c, day_c, Constant.flagType);
 			calV = new CalendarAdapter(this, flipper.getHeight(), calendarData);
 
 			addGridView();
@@ -470,14 +476,20 @@ public class ScheduleScreen extends Screen
 				+ velocityY);
 		int gvFlag = 0; // 每次添加gridview到viewflipper中时给的标记
 		if (e1.getX() - e2.getX() > 100) {
+
+			long pretime = System.currentTimeMillis();
 			// 向左滑动
 			addGridView(); // 添加一个gridview
 			jumpMonth++; // 下一个月
 
-			calendarData = new CalendarData(jumpMonth, jumpYear, year_c,
-					month_c, day_c, Constant.flagType);
+			calendarData = new CalendarData(ScheduleScreen.this, jumpMonth,
+					jumpYear, year_c, month_c, day_c, Constant.flagType);
+			ScheduleApplication.LogD(getClass(),
+					"获取数据花费时间是：" + (System.currentTimeMillis() - pretime));
 			calV = new CalendarAdapter(this, flipper.getHeight(), calendarData);
 			gridView.setAdapter(calV);
+			ScheduleApplication.LogD(getClass(),
+					"设置到view里面的时间：" + (System.currentTimeMillis() - pretime));
 			// flipper.addView(gridView);
 			addTextToTopTextView(current_date);
 			gvFlag++;
@@ -503,13 +515,16 @@ public class ScheduleScreen extends Screen
 			}.start();
 			gototoday.setVisibility(View.INVISIBLE);
 
+			ScheduleApplication.LogD(getClass(),
+					"总共的时间" + (System.currentTimeMillis() - pretime));
+
 			return true;
 		} else if (e1.getX() - e2.getX() < -100) {
 			// 向右滑动
 			addGridView(); // 添加一个gridview
 			jumpMonth--; // 上一个月
-			calendarData = new CalendarData(jumpMonth, jumpYear, year_c,
-					month_c, day_c, Constant.flagType);
+			calendarData = new CalendarData(ScheduleScreen.this, jumpMonth,
+					jumpYear, year_c, month_c, day_c, Constant.flagType);
 			calV = new CalendarAdapter(this, flipper.getHeight(), calendarData);
 			gridView.setAdapter(calV);
 			gvFlag++;
@@ -779,8 +794,8 @@ public class ScheduleScreen extends Screen
 				// 向左滑动
 				addGridView(); // 添加一个gridview
 				jumpMonth--; // 下一年
-				calendarData = new CalendarData(jumpMonth, jumpYear, year_c,
-						month_c, day_c, Constant.flagType);
+				calendarData = new CalendarData(ScheduleScreen.this, jumpMonth,
+						jumpYear, year_c, month_c, day_c, Constant.flagType);
 				calV = new CalendarAdapter(this, flipper.getHeight(),
 						calendarData);
 				gridView.setAdapter(calV);
@@ -815,8 +830,8 @@ public class ScheduleScreen extends Screen
 				// 向右滑动
 				addGridView(); // 添加一个gridview
 				jumpMonth++; // 上一年
-				calendarData = new CalendarData(jumpMonth, jumpYear, year_c,
-						month_c, day_c, Constant.flagType);
+				calendarData = new CalendarData(ScheduleScreen.this, jumpMonth,
+						jumpYear, year_c, month_c, day_c, Constant.flagType);
 				calV = new CalendarAdapter(this, flipper.getHeight(),
 						calendarData);
 				gridView.setAdapter(calV);
@@ -861,8 +876,8 @@ public class ScheduleScreen extends Screen
 				this.month = month_c = Integer
 						.parseInt(currentDate.split("-")[1]);
 				this.day = day_c = Integer.parseInt(currentDate.split("-")[2]);
-				calendarData = new CalendarData(jumpMonth, jumpYear, year_c,
-						month_c, day_c, Constant.flagType);
+				calendarData = new CalendarData(ScheduleScreen.this, jumpMonth,
+						jumpYear, year_c, month_c, day_c, Constant.flagType);
 				calV = new CalendarAdapter(this, flipper.getHeight(),
 						calendarData);
 				gridView.setAdapter(calV);
@@ -910,6 +925,9 @@ public class ScheduleScreen extends Screen
 						};
 					}.start();
 				}
+				schedule_headview_prompt
+						.setText(getHeadViewText(getDateByMillisTime(System
+								.currentTimeMillis())));
 				break;
 		}
 	}
@@ -930,8 +948,8 @@ public class ScheduleScreen extends Screen
 	public boolean onEvent(Object sender, EventArgs e) {
 		switch (e.getType()) {
 			case LOCAL_SCHEDULE_UPDATE :
-				calendarData = new CalendarData(jumpMonth, jumpYear, year_c,
-						month_c, day_c, Constant.flagType);
+				calendarData = new CalendarData(ScheduleScreen.this, jumpMonth,
+						jumpYear, year_c, month_c, day_c, Constant.flagType);
 				calV = new CalendarAdapter(this, flipper.getHeight(),
 						calendarData);
 				ScheduleApplication.LogD(ScheduleScreen.class,

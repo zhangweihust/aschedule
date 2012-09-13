@@ -47,6 +47,7 @@ public class AsyncScheduleLoader {
 		new Thread() {
 			@Override
 			public void run() {
+
 				Cursor slaveCursors = ServiceManager.getDbManager()
 						.querySlaveShareSchedules(t_id);
 				Log.i(TAG, "loadSchedule" + t_id);

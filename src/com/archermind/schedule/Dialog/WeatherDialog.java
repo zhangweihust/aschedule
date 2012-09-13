@@ -230,9 +230,10 @@ public class WeatherDialog implements OnClickListener {
 		todayWeek.setText(week[0]);
 
 		mWeather1 = itemsmap.get("weather1");
+		
 		if (mWeather1 == null) {
 			mWeather1 = "  ";
-		} else {
+		}else{
 			mWeather1 = getweatherMap(mWeather1, weathermap);
 		}
 
@@ -260,7 +261,7 @@ public class WeatherDialog implements OnClickListener {
 		mWeather2 = itemsmap.get("weather2");
 		if (mWeather2 == null) {
 			mWeather2 = "  ";
-		} else {
+		}else{
 			mWeather2 = getweatherMap(mWeather2, weathermap);
 		}
 		oneDAfterWeather.setText(mWeather2);
@@ -285,8 +286,8 @@ public class WeatherDialog implements OnClickListener {
 		twoDAfterMaxTemp.setText(mintemp3);
 		mWeather3 = itemsmap.get("weather3");
 		if (mWeather3 == null) {
-			mWeather3 = " ";
-		} else {
+			mWeather3 = "  ";
+		}else{
 			mWeather3 = getweatherMap(mWeather3, weathermap);
 		}
 		twoDAfterWeather.setText(mWeather3);
@@ -311,8 +312,8 @@ public class WeatherDialog implements OnClickListener {
 		threeDAfterMaxTemp.setText(mintemp4);
 		mWeather4 = itemsmap.get("weather4");
 		if (mWeather4 == null) {
-			mWeather4 = " ";
-		} else {
+			mWeather4 = "  ";
+		}else{
 			mWeather4 = getweatherMap(mWeather4, weathermap);
 		}
 		threeDAfterWeather.setText(mWeather4);

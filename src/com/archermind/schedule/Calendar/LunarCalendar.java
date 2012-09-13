@@ -5,6 +5,8 @@ import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
 
+import com.archermind.schedule.ScheduleApplication;
+
 import android.util.Log;
 
 public class LunarCalendar {
@@ -54,7 +56,7 @@ public class LunarCalendar {
 			// "0315 消费者权益日",
 			"0401 愚人", "0501 劳动", "0504 青年",
 			// "0512 护士",
-			"0601 儿童", "0701 建党", "0801 建军", "0808 父亲",
+			"0601 儿童", "0701 建党", "0801 建军",
 			// "0909 毛泽东逝世纪念日",
 			"0910 教师",
 			// "0928 孔子诞辰",
@@ -179,7 +181,7 @@ public class LunarCalendar {
 		// i最终结果是农历的年份
 		// offset是当年的第几天
 		int iYear, daysOfYear = 0;
-		for (iYear = 1900; iYear < 10000 && offset > 0; iYear++) {
+		for (iYear = 1900; iYear < 2049 && offset > 0; iYear++) {
 			daysOfYear = yearDays(iYear);
 			offset -= daysOfYear;
 			monCyl += 12;
