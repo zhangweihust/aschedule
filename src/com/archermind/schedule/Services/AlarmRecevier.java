@@ -52,22 +52,16 @@ public class AlarmRecevier extends BroadcastReceiver {
 		mContext = context;
 		schedule_id = intent.getLongExtra("schedule_id", 1);
 		long alarmTime = intent.getLongExtra("alarmtime", 1);
-		ScheduleApplication.LogD(
-				AlarmRecevier.class,
-				" schedule alarm time is  alarmTime = "
-						+ DateTimeUtils.time2String("yyyy-MM-dd-HH-mm",
-								alarmTime));
+		ScheduleApplication.LogD(AlarmRecevier.class, " 闹钟设置的时间是 alarmTime = "
+				+ DateTimeUtils.time2String("yyyy-MM-dd-HH-mm", alarmTime));
 		long currentTime = System.currentTimeMillis();
-		ScheduleApplication.LogD(
-				AlarmRecevier.class,
-				" current time is  currentTime = "
-						+ DateTimeUtils.time2String("yyyy-MM-dd-HH-mm",
-								currentTime));
+		ScheduleApplication.LogD(AlarmRecevier.class, " 当前时间是 currentTime = "
+				+ DateTimeUtils.time2String("yyyy-MM-dd-HH-mm", currentTime));
 
 		if (currentTime - alarmTime < 59 * 1000) {// 说明是准时触发，通知栏提示
 
-		    ScheduleApplication.LogD(AlarmRecevier.class,"时间在误差之内闹钟被触发");
-		    
+			ScheduleApplication.LogD(AlarmRecevier.class, "时间在误差之内闹钟被触发");
+
 			mNotificationManager = (NotificationManager) context
 					.getSystemService(Context.NOTIFICATION_SERVICE);
 			// 点击通知进入的界面
@@ -100,7 +94,7 @@ public class AlarmRecevier extends BroadcastReceiver {
 
 		} else { // 说明是系统自动触发已过期的闹钟，不提示
 
-		    ScheduleApplication.LogD(AlarmRecevier.class,"时间在误差之外闹钟没有被触发");
+			ScheduleApplication.LogD(AlarmRecevier.class, "时间在误差之外,闹钟已过期");
 		}
 
 		new Thread() {
@@ -151,9 +145,18 @@ public class AlarmRecevier extends BroadcastReceiver {
 				}
 
 				if (nextTime != 0) {
+
 					// 设置闹钟
 					DateTimeUtils.sendAlarm(nextTime, flagAlarm, schedule_id);
+					ScheduleApplication.LogD(AlarmRecevier.class, "日程的下一次时间是："
+							+ nextTime);
+
+				} else {
+
+					ScheduleApplication.LogD(AlarmRecevier.class,
+							"这是本日程的最后一个提醒，没有下一次的时间");
 				}
+
 				dbManager.close();
 
 			}

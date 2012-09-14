@@ -29,6 +29,7 @@ public class Constant {
 		public final static int friend_Ignore = 1;
 		public final static int friend_contact_use = 2;
 		public final static int friend_contact = 3;
+		public final static int friends_friends =4;//是好友的好友，不是自己的好友
 
 		public final static String FRIEND_YES_KEY = "friend_yes_key";
 		public final static String FRIEND_IGNORE_KEY = "friend_ingnore_key";

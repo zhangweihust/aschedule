@@ -265,26 +265,30 @@ public class HomeScreen extends TabActivity
 	public boolean dispatchKeyEvent(KeyEvent event) {
 		ScheduleApplication.LogD(HomeScreen.class,
 				"onKeyDown" + event.getKeyCode());
-		if (event.getKeyCode() == KeyEvent.KEYCODE_BACK
-				&& event.getAction() == KeyEvent.ACTION_UP) {
-			if (mExit_Flag) {
-				CancelRestartService();
-				ScheduleApplication.LogD(HomeScreen.class, "mExit_Flag");
-				this.finish();
-				ServiceManager.exit();
-			} else {
-				Toast.makeText(this, getString(R.string.exit),
-						Toast.LENGTH_SHORT).show();
-				mExit_Flag = true;
-				new Handler().postDelayed(new Runnable() {
-					@Override
-					public void run() {
-						mExit_Flag = false;
-					}
-				}, 10000);
+		if ((mCurSelectTabIndex != 0) || (!ScheduleScreen.isUp)) {
+
+			if (event.getKeyCode() == KeyEvent.KEYCODE_BACK
+					&& event.getAction() == KeyEvent.ACTION_UP) {
+				if (mExit_Flag) {
+					CancelRestartService();
+					ScheduleApplication.LogD(HomeScreen.class, "mExit_Flag");
+					this.finish();
+					ServiceManager.exit();
+				} else {
+					Toast.makeText(this, getString(R.string.exit),
+							Toast.LENGTH_SHORT).show();
+					mExit_Flag = true;
+					new Handler().postDelayed(new Runnable() {
+						@Override
+						public void run() {
+							mExit_Flag = false;
+						}
+					}, 10000);
+				}
+				return true;
 			}
-			return true;
 		}
+
 		return super.dispatchKeyEvent(event);
 	}
 

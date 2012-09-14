@@ -5,6 +5,7 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
 
+import android.R.integer;
 import android.database.Cursor;
 import android.graphics.Color;
 import android.graphics.Typeface;
@@ -36,6 +37,7 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 import android.widget.ViewFlipper;
 
 import com.archermind.schedule.R;
@@ -43,6 +45,7 @@ import com.archermind.schedule.ScheduleApplication;
 import com.archermind.schedule.Adapters.CalendarAdapter;
 import com.archermind.schedule.Adapters.HistoryScheduleAdapter;
 import com.archermind.schedule.Calendar.CalendarData;
+import com.archermind.schedule.Calendar.SpecialCalendar;
 import com.archermind.schedule.Dialog.ScheduleOperateDialog;
 import com.archermind.schedule.Events.EventArgs;
 import com.archermind.schedule.Events.IEventHandler;
@@ -163,6 +166,8 @@ public class ScheduleScreen extends Screen
 	private boolean flag = false;
 
 	private TextView gototoday;
+
+	public static boolean isUp = false;
 
 	public ScheduleScreen() {
 		Date date = new Date();
@@ -298,13 +303,23 @@ public class ScheduleScreen extends Screen
 		hsa = new HistoryScheduleAdapter(this);
 	}
 
-	@Override
 	public boolean onKeyUp(int keyCode, KeyEvent event) {
-		// TODO Auto-generated method stub
 
-		if (keyCode == KeyEvent.KEYCODE_MENU) {
-			HomeScreen.switchActivity();
+		switch (keyCode) {
+			case KeyEvent.KEYCODE_BACK :
+
+				showListSchedule();
+				return true;
+
+			case KeyEvent.KEYCODE_MENU :
+
+				HomeScreen.switchActivity();
+				break;
+
+			default :
+				break;
 		}
+
 		return super.onKeyUp(keyCode, event);
 	}
 
@@ -790,8 +805,8 @@ public class ScheduleScreen extends Screen
 				showListSchedule();
 				break;
 
-			case R.id.previous_year :
-				// 向左滑动
+			case R.id.previous_year :// 点击上一个月
+
 				addGridView(); // 添加一个gridview
 				jumpMonth--; // 下一年
 				calendarData = new CalendarData(ScheduleScreen.this, jumpMonth,
@@ -824,10 +839,11 @@ public class ScheduleScreen extends Screen
 						handler.sendEmptyMessage(LOAD_DATA_OVER);
 					};
 				}.start();
+
 				break;
 
-			case R.id.next_year :
-				// 向右滑动
+			case R.id.next_year :// 点击下一个月
+
 				addGridView(); // 添加一个gridview
 				jumpMonth++; // 上一年
 				calendarData = new CalendarData(ScheduleScreen.this, jumpMonth,
@@ -901,33 +917,33 @@ public class ScheduleScreen extends Screen
 				}
 				flipper.removeViewAt(0);
 
-				if (Integer.parseInt(current_date.getText().toString()
-						.split("\\.")[0]) != curScrollYear
-						|| Integer.parseInt(current_date.getText().toString()
-								.split("\\.")[1]) != curScrollMonth) {
-					curScrollYear = Integer.parseInt(current_date.getText()
-							.toString().split("\\.")[0]);
-					curScrollMonth = Integer.parseInt(current_date.getText()
-							.toString().split("\\.")[1]);
-					new Thread() {
-						public void run() {
-							listdata = calendarData.getMonthSchedule(
-									curScrollYear, curScrollMonth);
-							handler.sendEmptyMessage(LOAD_DATA_OVER);
-							handler.post(new Runnable() {
+				curScrollYear = Integer.parseInt(current_date.getText()
+						.toString().split("\\.")[0]);
+				curScrollMonth = Integer.parseInt(current_date.getText()
+						.toString().split("\\.")[1]);
 
-								@Override
-								public void run() {
-									// TODO Auto-generated method stub
-									handler.sendEmptyMessage(LOAD_OVERD_GOTO_TODAY);
-								}
-							});
-						};
-					}.start();
-				}
-				schedule_headview_prompt
-						.setText(getHeadViewText(getDateByMillisTime(System
-								.currentTimeMillis())));
+				new Thread() {
+					public void run() {
+						listdata = calendarData.getMonthSchedule(curScrollYear,
+								curScrollMonth);
+						handler.sendEmptyMessage(LOAD_DATA_OVER);
+						// handler.post(new Runnable() {
+						//
+						// @Override
+						// public void run() {
+						// // TODO Auto-generated method stub
+						// handler.sendEmptyMessage(LOAD_OVERD_GOTO_TODAY);
+						// }
+						// });
+					};
+				}.start();
+
+				// 点击回到今天，把值设置到今天
+				curSelectedDate = getDateByMillisTime(System
+						.currentTimeMillis());
+				curDay = DateTimeUtils.time2String("dd",
+						System.currentTimeMillis());
+
 				break;
 		}
 	}
@@ -937,11 +953,15 @@ public class ScheduleScreen extends Screen
 		Integer tag = (Integer) mListHeader.getTag();
 		if (tag != null) {
 			if (tag.intValue() == R.drawable.listview_header_up) {
+				isUp = true;
 				pager.snapToPage(1);
 			} else if (tag.intValue() == R.drawable.listview_header_down) {
+				isUp = false;
 				pager.snapToPage(0);
 			}
 		}
+
+		ScheduleApplication.LogD(getClass(), " isup= " + isUp);
 	}
 
 	@Override
@@ -1072,8 +1092,8 @@ public class ScheduleScreen extends Screen
 		//
 		// return strtext;
 
-		int count = hsa.getScheduleCountInDay(date);
 		String dataTime = "";
+		int count = 0;
 
 		if (curScrollMonth < 10) {
 
@@ -1086,6 +1106,34 @@ public class ScheduleScreen extends Screen
 			dataTime += isFling ? curDay : new String(date.toCharArray(), 8, 2);
 		}
 
+		// database.openwithnoservice();
+
+		long timeInMillis = DateTimeUtils.time2Long("yyyy.MM.dd", dataTime);
+		int year = Integer.parseInt(DateTimeUtils.time2String("yyyy",
+				timeInMillis));
+		int month = Integer.parseInt(DateTimeUtils.time2String("M",
+				timeInMillis));
+		int day = Integer
+				.parseInt(DateTimeUtils.time2String("d", timeInMillis));
+
+		String dayOfYear = month + "." + day;
+		String dayOfMonth = Integer.toString(day);
+		String dayOfWeek = SpecialCalendar.getNumberWeekDay(year, month, day);
+
+		Cursor cursor = database.queryIsMarkWithDay(timeInMillis, dayOfYear,
+				dayOfMonth, dayOfWeek);
+
+		if (cursor != null) {
+
+			count = cursor.getCount();
+			cursor.close();
+		}
+
+		// int count = hsa.getScheduleCountInDay(dataTime);
+		ScheduleApplication.LogD(ScheduleScreen.class, " date is " + date
+				+ " count is " + count);
+
+		// database.close();
 		String strtext = "";
 		if (count > 0) {
 
@@ -1097,5 +1145,4 @@ public class ScheduleScreen extends Screen
 
 		return strtext;
 	}
-
 }

@@ -20,7 +20,7 @@ public class SettingScreen extends Screen implements OnClickListener {
 
 	private Button mBtnOut;
 
-	private SettingSlipSwitch mSlipSwitch;
+//	private SettingSlipSwitch mSlipSwitch;
 
 	private final int SMS_RINGTONE_PICKED = 0;
 
