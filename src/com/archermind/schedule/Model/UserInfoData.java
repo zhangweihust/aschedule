@@ -15,6 +15,7 @@ public class UserInfoData {
 	public static final String TEL = "tel";
 	public static final String PHOTO_URL = "photo_url";
 	public static final String COOKIE = "cookie";
+	public static final String BIND = "bind";
 
 	public static final String SETTING_SOUND_REMIND = "setting_sound_remind";
 

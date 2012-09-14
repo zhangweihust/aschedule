@@ -214,18 +214,19 @@ public class FriendsDyamicScreen extends Screen
 			new Thread(new Runnable() {
 				@Override
 				public void run() {
-					SyncDataUtil.getSchedulesFromWeb(String
-							.valueOf(ServiceManager.getUserId()));
-					dataArrayList.clear();
-					c = ServiceManager.getDbManager().queryShareSchedules(
-							start, end);
-					if (c != null) {
-						if (c.getCount() == 0) {
-							mHandler.sendEmptyMessage(RefreshLayout_Visible);
-							c.close();
-						} else {
-							mHandler.sendEmptyMessage(RefreshLayout_Gone);
-							cursorToArrayList(c);
+					if(SyncDataUtil.getSchedulesFromWeb(String
+							.valueOf(ServiceManager.getUserId()))){
+						dataArrayList.clear();
+						c = ServiceManager.getDbManager().queryShareSchedules(
+								start, end);
+						if (c != null) {
+							if (c.getCount() == 0) {
+								mHandler.sendEmptyMessage(RefreshLayout_Visible);
+								c.close();
+							} else {
+								mHandler.sendEmptyMessage(RefreshLayout_Gone);
+								cursorToArrayList(c);
+							}
 						}
 					}
 					mHandler.sendEmptyMessage(ON_Refresh);

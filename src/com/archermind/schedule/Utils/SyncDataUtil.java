@@ -10,17 +10,19 @@ import android.database.Cursor;
 import com.archermind.schedule.ScheduleApplication;
 import com.archermind.schedule.Events.EventArgs;
 import com.archermind.schedule.Events.EventTypes;
+import com.archermind.schedule.Model.Friend;
 import com.archermind.schedule.Provider.DatabaseHelper;
 import com.archermind.schedule.Screens.FriendsDyamicScreen;
 import com.archermind.schedule.Services.ServiceManager;
 
 public class SyncDataUtil {
 
-	public static void getSchedulesFromWeb(String userId) {
-		getSchedulesFromWeb(userId, false);
+	public static boolean getSchedulesFromWeb(String userId) {
+		return getSchedulesFromWeb(userId, false);
 	}
 
-	public static void getSchedulesFromWeb(String userId, boolean isService) {
+	public static boolean getSchedulesFromWeb(String userId, boolean isService) {
+		boolean flag = false;
 		if (NetworkUtils.getNetworkState(ScheduleApplication.getContext()) != NetworkUtils.NETWORN_NONE
 				&& ServiceManager.getUserId() != 0) {
 			Cursor updateTimeCursor = ServiceManager.getDbManager()
@@ -91,6 +93,7 @@ public class SyncDataUtil {
 						}
 						ServiceManager.getDbManager().insertShareSchedules(
 								contentvalues);
+						flag = true;
 					} else {
 						ServiceManager.getDbManager().updateShareSchedules(
 								contentvalues, t_id);
@@ -102,5 +105,53 @@ public class SyncDataUtil {
 				e.printStackTrace();
 			}
 		}
+		return flag;
+	}
+	
+	public static Friend makeFriendFromInet(String id, int type) {
+		if (NetworkUtils.getNetworkState(ScheduleApplication.getContext()) != NetworkUtils.NETWORN_NONE) {
+			String jsonString = ServiceManager.getServerInterface()
+					.findUserInfobyUserId(id);
+			ContentValues values = null;
+			Friend friend = null;
+			if (jsonString != null && !"".equals(jsonString)) {
+				if (jsonString.indexOf("tel") >= 0) {// 防止返回错误码
+					try {
+						JSONArray jsonArray = new JSONArray(jsonString);
+						ScheduleApplication.LogD(FriendsDyamicScreen.class,
+								jsonString + jsonArray.length());
+						for (int i = 0; i < jsonArray.length(); i++) {
+							JSONObject jsonObject = (JSONObject) jsonArray
+									.opt(i);
+							String tel = jsonObject.getString("tel");
+							String nick = jsonObject.getString("nick");
+							String photo_url = jsonObject
+									.getString("photo_url");
+							values = new ContentValues();
+							values.put(DatabaseHelper.ASCHEDULE_FRIEND_ID, id);
+							values.put(DatabaseHelper.ASCHEDULE_FRIEND_TYPE,
+									type);
+							values.put(DatabaseHelper.ASCHEDULE_FRIEND_NUM, tel);
+							values.put(DatabaseHelper.ASCHEDULE_FRIEND_NICK,
+									nick);
+							values.put(
+									DatabaseHelper.ASCHEDULE_FRIEND_PHOTO_URL,
+									photo_url);
+							values.put(DatabaseHelper.ASCHEDULE_FRIEND_NAME,
+									ServiceManager.getDbManager().queryNameByTel(tel));
+							ServiceManager.getDbManager().addFriend(values);
+							friend = new Friend();
+							friend.setNick(nick);
+							friend.setHeadImagePath(photo_url);
+							return friend;
+						}
+					} catch (JSONException e) {
+						// TODO Auto-generated catch block
+						return null;
+					}
+				}
+			}
+		}
+		return null;
 	}
 }

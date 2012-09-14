@@ -303,6 +303,7 @@ public class FriendScreen extends Screen
 			loading.setVisibility(View.GONE);
 		};
 	};
+	private Cursor cursor;
 
 	private void makeFriendContactUseFromInet(List<Friend> friendContactUs,
 			List<Friend> friends, List<Friend> ignores, List<String> tempList,

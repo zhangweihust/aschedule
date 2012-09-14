@@ -12,11 +12,9 @@ import org.json.JSONObject;
 
 import android.app.Dialog;
 import android.app.Service;
-import android.content.ContentValues;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
-import android.database.Cursor;
 import android.content.SharedPreferences.Editor;
 import android.os.Handler;
 import android.os.IBinder;
@@ -36,13 +34,10 @@ import com.archermind.schedule.R;
 import com.archermind.schedule.ScheduleApplication;
 import com.archermind.schedule.Events.EventArgs;
 import com.archermind.schedule.Events.EventTypes;
-import com.archermind.schedule.Model.Friend;
 import com.archermind.schedule.Model.UserInfoData;
-import com.archermind.schedule.Provider.DatabaseHelper;
 import com.archermind.schedule.Provider.DatabaseManager;
 import com.archermind.schedule.Screens.FriendsDyamicScreen;
 import com.archermind.schedule.Screens.HomeScreen;
-import com.archermind.schedule.Screens.RegisterScreen;
 import com.archermind.schedule.Utils.Constant;
 import com.archermind.schedule.Utils.Contact;
 import com.archermind.schedule.Utils.CookieCrypt;
@@ -111,7 +106,7 @@ public class ServiceManager extends Service implements OnClickListener {
 				showDialog(msg_adds.get(i));
 			}
 			for (int i = 0; i < msg_accepets.size(); i++) {
-				makeFriendFromInet(msg_accepets.get(i),
+				SyncDataUtil.makeFriendFromInet(msg_accepets.get(i),
 						Constant.FriendType.friend_yes);
 				serverInerface.acceptConfirm(String.valueOf(getUserId()),
 						msg_accepets.get(i));
@@ -320,11 +315,11 @@ public class ServiceManager extends Service implements OnClickListener {
 	}
 
 	public static void setBindFlag(boolean bindflag) {
-		bIsBindFlag = bindflag;
+		sharedPreferences.edit().putBoolean(UserInfoData.BIND, bindflag).commit();
 	}
 
 	public static boolean getBindFlag() {
-		return bIsBindFlag;
+		return sharedPreferences.getBoolean(UserInfoData.BIND, false);
 	}
 
 	public static void setCookie(String cookiestr) {
@@ -468,7 +463,7 @@ public class ServiceManager extends Service implements OnClickListener {
 				if (0 == serverInerface.acceptFriend(
 						String.valueOf(ServiceManager.getUserId()), id)) {
 					// 成功添加好r友
-					if (makeFriendFromInet(id, Constant.FriendType.friend_yes)) {
+					if (SyncDataUtil.makeFriendFromInet(id, Constant.FriendType.friend_yes) != null) {
 						eventService.onUpdateEvent(new EventArgs(
 								EventTypes.ADD_FRIEND)
 								.putExtra("friend_id", id));
@@ -486,50 +481,6 @@ public class ServiceManager extends Service implements OnClickListener {
 		dialog.dismiss();
 	}
 
-	private boolean makeFriendFromInet(String id, int type) {
-		if (NetworkUtils.getNetworkState(this) != NetworkUtils.NETWORN_NONE) {
-			String jsonString = ServiceManager.getServerInterface()
-					.findUserInfobyUserId(id);
-			ContentValues values = null;
-			if (jsonString != null && !"".equals(jsonString)) {
-				if (jsonString.indexOf("tel") >= 0) {// 防止返回错误码
-					try {
-						JSONArray jsonArray = new JSONArray(jsonString);
-						ScheduleApplication.LogD(FriendsDyamicScreen.class,
-								jsonString + jsonArray.length());
-						for (int i = 0; i < jsonArray.length(); i++) {
-							JSONObject jsonObject = (JSONObject) jsonArray
-									.opt(i);
-							String tel = jsonObject.getString("tel");
-							String nick = jsonObject.getString("nick");
-							String photo_url = jsonObject
-									.getString("photo_url");
-
-							values = new ContentValues();
-							values.put(DatabaseHelper.ASCHEDULE_FRIEND_ID, id);
-							values.put(DatabaseHelper.ASCHEDULE_FRIEND_TYPE,
-									type);
-							values.put(DatabaseHelper.ASCHEDULE_FRIEND_NUM, tel);
-							values.put(DatabaseHelper.ASCHEDULE_FRIEND_NICK,
-									nick);
-							values.put(
-									DatabaseHelper.ASCHEDULE_FRIEND_PHOTO_URL,
-									photo_url);
-							values.put(DatabaseHelper.ASCHEDULE_FRIEND_NAME,
-									dbManager.queryNameByTel(tel));
-							dbManager.addFriend(values);
-							return true;
-						}
-					} catch (JSONException e) {
-						// TODO Auto-generated catch block
-						return false;
-					}
-				}
-			}
-
-		}
-		return false;
-	}
 
 	private String getFriendInfoFromInet(String id) {
 		if (NetworkUtils.getNetworkState(this) != NetworkUtils.NETWORN_NONE) {

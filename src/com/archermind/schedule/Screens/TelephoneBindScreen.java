@@ -3,19 +3,10 @@ package com.archermind.schedule.Screens;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import com.archermind.schedule.R;
-import com.archermind.schedule.ScheduleApplication;
-import com.archermind.schedule.Events.EventArgs;
-import com.archermind.schedule.Events.EventTypes;
-import com.archermind.schedule.Model.UserInfoData;
-import com.archermind.schedule.Services.ServiceManager;
-import com.archermind.schedule.Utils.DeviceInfo;
-
-import android.app.Activity;
+import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
-import android.util.Log;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.Button;
@@ -23,6 +14,14 @@ import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
+
+import com.archermind.schedule.R;
+import com.archermind.schedule.ScheduleApplication;
+import com.archermind.schedule.Events.EventArgs;
+import com.archermind.schedule.Events.EventTypes;
+import com.archermind.schedule.Model.UserInfoData;
+import com.archermind.schedule.Services.ServiceManager;
+import com.archermind.schedule.Utils.DeviceInfo;
 
 public class TelephoneBindScreen extends Screen implements OnClickListener {
 
