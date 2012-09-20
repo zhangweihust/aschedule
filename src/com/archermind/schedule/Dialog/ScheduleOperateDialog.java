@@ -101,6 +101,7 @@ public class ScheduleOperateDialog implements OnClickListener {
 								.onUpdateEvent(
 										new EventArgs(
 												EventTypes.LOCAL_SCHEDULE_UPDATE));
+						ServiceManager.sendBroadcastForUpdateSchedule(context);
 					}
 				}).start();
 				break;

@@ -474,16 +474,12 @@ public class WidgetWeather extends AppWidgetProvider {
 		weathermap.put("多云", R.drawable.cloudy_100);
 		weathermap.put("阴", R.drawable.shade_100);
 		weathermap.put("阵雨", R.drawable.shower_100);
-		// weathermap.put("雷阵雨", R.drawable.thundershowers_100);
-		// weathermap.put("雷阵雨伴有冰雹", R.drawable.thundershowers_hail_100);
 		weathermap.put("雨夹雪", R.drawable.sleet_100);
 		weathermap.put("小雨", R.drawable.light_rain_100);
 		weathermap.put("中雨", R.drawable.moderate_rain_100);
 		weathermap.put("大雨", R.drawable.heavy_rain_100);
 
 		weathermap.put("暴雨", R.drawable.rainstorm_100);
-		// weathermap.put("大暴雨", R.drawable.downpour_100);
-		// weathermap.put("特大暴雨", R.drawable.heavy_rainfall_100);
 		weathermap.put("阵雪", R.drawable.shower_snow_100);
 		weathermap.put("小雪", R.drawable.slight_snow_100);
 		weathermap.put("中雪", R.drawable.moderate_snow_100);
@@ -492,17 +488,7 @@ public class WidgetWeather extends AppWidgetProvider {
 		weathermap.put("雾", R.drawable.fog_100);
 		weathermap.put("冻雨", R.drawable.freezing_rain_100);
 
-		// weathermap.put("小雨-中雨", R.drawable.moderate_rain_100);
-		// weathermap.put("中雨-大雨", R.drawable.heavy_rain_100);
-		// weathermap.put("大雨-暴雨", R.drawable.rainstorm_100);
-		// weathermap.put("暴雨-大暴雨", R.drawable.downpour_100);
-		// weathermap.put("大暴雨-特大暴雨", R.drawable.heavy_rainfall_100);
-		// weathermap.put("小雪-中雪", R.drawable.moderate_snow_100);
-		// weathermap.put("中雪-大雪", R.drawable.heavy_snow_100);
-		// weathermap.put("大雪-暴雪", R.drawable.blizzard_100);
 		weathermap.put("沙城暴", R.drawable.sand_storm_100);
-		// weathermap.put("强沙尘暴", R.drawable.sand_storm_100);
-
 		weathermap.put("浮尘", R.drawable.sand_100);
 		weathermap.put("扬沙", R.drawable.sand_100);
 

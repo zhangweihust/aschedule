@@ -75,6 +75,7 @@ public class BootRecevier extends BroadcastReceiver {
 						DateTimeUtils.sendAlarm(nextTime, flagAlarm,
 								schedule_id);
 					}
+					
 					c.close();
 				}
 

@@ -27,6 +27,8 @@ import com.archermind.schedule.Dialog.EventTypeDialog;
 import com.archermind.schedule.Dialog.EventTypeDialog.OnEventTypeSelectListener;
 import com.archermind.schedule.Dialog.TimeSelectorDialog;
 import com.archermind.schedule.Dialog.TimeSelectorDialog.OnOkButtonClickListener;
+import com.archermind.schedule.Events.EventArgs;
+import com.archermind.schedule.Events.EventTypes;
 import com.archermind.schedule.Provider.DatabaseHelper;
 import com.archermind.schedule.Services.ServiceManager;
 import com.archermind.schedule.Utils.Constant;
@@ -419,9 +421,15 @@ public class NewScheduleScreen extends Screen implements OnClickListener {
 				// 同步新建日程到服务器
 				si.uploadSchedule("0", "1");
 
-				Intent intent = new Intent();
-				intent.setAction("android.appwidget.action.LOCAL_SCHEDULE_UPDATE");
-				sendBroadcast(intent);
+				ServiceManager
+						.sendBroadcastForUpdateSchedule(NewScheduleScreen.this);
+
+				if (mShare) {
+
+					eventService.onUpdateEvent(new EventArgs(
+							EventTypes.LOCAL_MYDYAMIC_SCHEDULE_UPDATE));
+				}
+
 			}
 		}).start();
 	}

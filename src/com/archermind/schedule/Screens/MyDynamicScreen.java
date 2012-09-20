@@ -110,14 +110,12 @@ public class MyDynamicScreen extends Screen
 				case RefreshLayout_Visible :
 					refreshLayout.setVisibility(View.VISIBLE);
 					break;
-
 			}
 			if (!dataArrayList.isEmpty()) {
 				list.setXListViewListener(MyDynamicScreen.this);
 				list.setPullRefreshEnable(true);
 				list.setPullLoadEnable(true);
 			}
-
 		}
 	};
 
@@ -164,23 +162,7 @@ public class MyDynamicScreen extends Screen
 				onRefresh();
 			}
 		});
-		if (ServiceManager.getUserId() == 0) {
-			loginLayout.setVisibility(View.VISIBLE);
-		} else {
-			if (ServiceManager.getBindFlag()) {
-				loginLayout.setVisibility(View.GONE);
-				bindLayout.setVisibility(View.GONE);
-				new Thread(new Runnable() {
-					@Override
-					public void run() {
-						loadSchedules();
-					}
-				}).start();
-			} else {
-				loginLayout.setVisibility(View.GONE);
-				bindLayout.setVisibility(View.VISIBLE);
-			}
-		}
+
 	}
 
 	@Override
@@ -359,11 +341,46 @@ public class MyDynamicScreen extends Screen
 	}
 
 	@Override
+	protected void onResume() {
+		super.onResume();
+		if (ServiceManager.getUserId() == 0) {
+			if (!dataArrayList.isEmpty()) {
+
+				dataArrayList.clear();
+				mAdapter.setList(dataArrayList);
+			}
+			list.setPullRefreshEnable(false);
+			list.setPullLoadEnable(false);
+			loginLayout.setVisibility(View.VISIBLE);
+		} else {
+			if (ServiceManager.getBindFlag()) {
+				loginLayout.setVisibility(View.GONE);
+				bindLayout.setVisibility(View.GONE);
+				new Thread(new Runnable() {
+					@Override
+					public void run() {
+						loadSchedules();
+					}
+				}).start();
+			} else {
+				loginLayout.setVisibility(View.GONE);
+				bindLayout.setVisibility(View.VISIBLE);
+			}
+		}
+	}
+
+	@Override
 	public void onItemClick(AdapterView<?> parent, View view, int position,
 			long id) {
-		if (!dataArrayList.get(position - 1).isDefault_data()) {
-			initPopWindow(MyDynamicScreen.this, dataArrayList.get(position - 1)
-					.getT_id());
+
+		try {
+			if (dataArrayList.size() != 0
+					&& !dataArrayList.get(position - 1).isDefault_data()) {
+				initPopWindow(MyDynamicScreen.this,
+						dataArrayList.get(position - 1).getT_id());
+			}
+		} catch (Exception e) {
+			ScheduleApplication.LogD(getClass(), "onItemClick error");
 		}
 	}
 
@@ -428,8 +445,17 @@ public class MyDynamicScreen extends Screen
 					}
 				});
 				break;
+
+			case LOCAL_MYDYAMIC_SCHEDULE_UPDATE : {
+
+				if (ServiceManager.getUserId() != 0) {
+
+					onRefresh();
+				}
+			}
+				break;
+
 		}
 		return true;
 	}
-
 }

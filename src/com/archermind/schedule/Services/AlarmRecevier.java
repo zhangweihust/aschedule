@@ -141,6 +141,7 @@ public class AlarmRecevier extends BroadcastReceiver {
 										+ DateTimeUtils.time2String(
 												"yyyy-MM-dd-HH-mm", nextTime));
 					}
+					
 					c.close();
 				}
 
@@ -149,7 +150,8 @@ public class AlarmRecevier extends BroadcastReceiver {
 					// 设置闹钟
 					DateTimeUtils.sendAlarm(nextTime, flagAlarm, schedule_id);
 					ScheduleApplication.LogD(AlarmRecevier.class, "日程的下一次时间是："
-							+ nextTime);
+							+ DateTimeUtils.time2String(
+									"yyyy-MM-dd-HH-mm", nextTime));
 
 				} else {
 
@@ -158,7 +160,6 @@ public class AlarmRecevier extends BroadcastReceiver {
 				}
 
 				dbManager.close();
-
 			}
 		}.start();
 	}

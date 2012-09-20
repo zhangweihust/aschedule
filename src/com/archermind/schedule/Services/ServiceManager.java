@@ -120,6 +120,13 @@ public class ServiceManager extends Service implements OnClickListener {
 
 	private Dialog dialog;
 
+	public static void sendBroadcastForUpdateSchedule(Context context) {
+
+		Intent intent = new Intent();
+		intent.setAction("android.appwidget.action.LOCAL_SCHEDULE_UPDATE");
+		context.sendBroadcast(intent);
+	}
+
 	public void showDialog(String id) {
 		dialog = new Dialog(homeScreen, R.style.WeatherDialog);
 		dialog.setContentView(R.layout.friend_dialog);
@@ -300,7 +307,7 @@ public class ServiceManager extends Service implements OnClickListener {
 	public static boolean isStarted() {
 		return started;
 	}
-
+	
 	public static ServerInterface getServerInterface() {
 		return serverInerface;
 	}

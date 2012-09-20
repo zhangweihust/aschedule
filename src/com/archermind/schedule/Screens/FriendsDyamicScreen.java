@@ -52,7 +52,7 @@ public class FriendsDyamicScreen extends Screen
 			OnItemClickListener,
 			IEventHandler {
 
-	private XListView list;
+	private XListView list = null;
 
 	private Button loginBtn, bindBtn, refreshBtn;
 
@@ -167,23 +167,6 @@ public class FriendsDyamicScreen extends Screen
 			}
 		});
 
-		if (ServiceManager.getUserId() == 0) {
-			loginLayout.setVisibility(View.VISIBLE);
-		} else {
-			if (ServiceManager.getBindFlag()) {
-				loginLayout.setVisibility(View.GONE);
-				bindLayout.setVisibility(View.GONE);
-				new Thread(new Runnable() {
-					@Override
-					public void run() {
-						loadSchedules();
-					}
-				}).start();
-			} else {
-				loginLayout.setVisibility(View.GONE);
-				bindLayout.setVisibility(View.VISIBLE);
-			}
-		}
 	}
 
 	@Override
@@ -214,19 +197,18 @@ public class FriendsDyamicScreen extends Screen
 			new Thread(new Runnable() {
 				@Override
 				public void run() {
-					if(SyncDataUtil.getSchedulesFromWeb(String
-							.valueOf(ServiceManager.getUserId()))){
-						dataArrayList.clear();
-						c = ServiceManager.getDbManager().queryShareSchedules(
-								start, end);
-						if (c != null) {
-							if (c.getCount() == 0) {
-								mHandler.sendEmptyMessage(RefreshLayout_Visible);
-								c.close();
-							} else {
-								mHandler.sendEmptyMessage(RefreshLayout_Gone);
-								cursorToArrayList(c);
-							}
+					SyncDataUtil.getSchedulesFromWeb(String
+							.valueOf(ServiceManager.getUserId()));
+					dataArrayList.clear();
+					c = ServiceManager.getDbManager().queryShareSchedules(
+							start, end);
+					if (c != null) {
+						if (c.getCount() == 0) {
+							mHandler.sendEmptyMessage(RefreshLayout_Visible);
+							c.close();
+						} else {
+							mHandler.sendEmptyMessage(RefreshLayout_Gone);
+							cursorToArrayList(c);
 						}
 					}
 					mHandler.sendEmptyMessage(ON_Refresh);
@@ -377,7 +359,7 @@ public class FriendsDyamicScreen extends Screen
 				initPopWindow(FriendsDyamicScreen.this,
 						dataArrayList.get(position - 1).getT_id());
 			}
-		} catch (Exception e){
+		} catch (Exception e) {
 			ScheduleApplication.LogD(getClass(), "onItemClick error");
 		}
 	}
@@ -408,6 +390,37 @@ public class FriendsDyamicScreen extends Screen
 	protected void onDestroy() {
 		eventService.remove(this);
 		super.onDestroy();
+	}
+
+	@Override
+	protected void onResume() {
+		super.onResume();
+		if (ServiceManager.getUserId() == 0) {
+			if (!dataArrayList.isEmpty()) {
+
+				dataArrayList.clear();
+				mAdapter.setList(dataArrayList);
+			}
+			
+			loginLayout.setVisibility(View.VISIBLE);
+			list.setPullRefreshEnable(false);
+			list.setPullLoadEnable(false);
+	
+		} else {
+			if (ServiceManager.getBindFlag()) {
+				loginLayout.setVisibility(View.GONE);
+				bindLayout.setVisibility(View.GONE);
+				new Thread(new Runnable() {
+					@Override
+					public void run() {
+						loadSchedules();
+					}
+				}).start();
+			} else {
+				loginLayout.setVisibility(View.GONE);
+				bindLayout.setVisibility(View.VISIBLE);
+			}
+		}
 	}
 
 	@Override

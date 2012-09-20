@@ -57,7 +57,7 @@ public class Contact {
 		LocalContact.close();
 		return false;
 	}
-
+    
 	public void checkSync(final Context context) {
 		new Thread() {
 			public void run() {

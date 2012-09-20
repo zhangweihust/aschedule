@@ -424,7 +424,6 @@ public class LoginScreen extends Screen implements OnClickListener {
         }
 
         // 判断网络是否链接
-
         if (NetworkUtils.getNetworkState(this) != NetworkUtils.NETWORN_NONE) {
 
             new Thread() {

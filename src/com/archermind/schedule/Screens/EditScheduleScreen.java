@@ -433,10 +433,13 @@ public class EditScheduleScreen extends Screen implements OnClickListener {
 
 				si.uploadSchedule("0", "1");
 
-				Intent intent = new Intent();
-				intent.setAction("android.appwidget.action.LOCAL_SCHEDULE_UPDATE");
-				EditScheduleScreen.this.sendBroadcast(intent);
+//				Intent intent = new Intent();
+//				intent.setAction("android.appwidget.action.LOCAL_SCHEDULE_UPDATE");
+//				EditScheduleScreen.this.sendBroadcast(intent);
 
+
+				ServiceManager.sendBroadcastForUpdateSchedule(EditScheduleScreen.this);
+				
 			}
 		}).start();
 	}
