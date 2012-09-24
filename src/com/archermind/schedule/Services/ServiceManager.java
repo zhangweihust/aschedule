@@ -113,7 +113,7 @@ public class ServiceManager extends Service implements OnClickListener {
 			}
 			for (int i = 0; i < msg_refuses.size(); i++) {
 				serverInerface.refuseConfirm(String.valueOf(getUserId()),
-						msg_accepets.get(i));
+						msg_refuses.get(i));
 			}
 		};
 	};
