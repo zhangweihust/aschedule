@@ -128,25 +128,27 @@ public class ServiceManager extends Service implements OnClickListener {
 	}
 
 	public void showDialog(String id) {
-		dialog = new Dialog(homeScreen, R.style.WeatherDialog);
-		dialog.setContentView(R.layout.friend_dialog);
-		Button accept_friend = (Button) dialog.findViewById(R.id.accept_friend);
-		Button refuse_friend = (Button) dialog.findViewById(R.id.refuse_friend);
-		TextView fried_nick = (TextView) dialog.findViewById(R.id.frined_nick);
-		fried_nick.setText(getFriendInfoFromInet(id));
-		accept_friend.setOnClickListener(this);
-		refuse_friend.setOnClickListener(this);
-		accept_friend.setTag(id);
-		refuse_friend.setTag(id);
-
-		Display display = homeScreen.getWindowManager().getDefaultDisplay();
-		int screenWidth = display.getWidth();
-		Window window = dialog.getWindow(); // 得到对话框
-		WindowManager.LayoutParams wl = window.getAttributes();
-		wl.width = screenWidth * 7 / 8;
-		wl.gravity = Gravity.CENTER; // 设置重力
-		window.setAttributes(wl);
-		dialog.show();
+		if (homeScreen != null) {
+			dialog = new Dialog(homeScreen, R.style.WeatherDialog);
+			dialog.setContentView(R.layout.friend_dialog);
+			Button accept_friend = (Button) dialog.findViewById(R.id.accept_friend);
+			Button refuse_friend = (Button) dialog.findViewById(R.id.refuse_friend);
+			TextView fried_nick = (TextView) dialog.findViewById(R.id.frined_nick);
+			fried_nick.setText(getFriendInfoFromInet(id));
+			accept_friend.setOnClickListener(this);
+			refuse_friend.setOnClickListener(this);
+			accept_friend.setTag(id);
+			refuse_friend.setTag(id);
+			
+			Display display = homeScreen.getWindowManager().getDefaultDisplay();
+			int screenWidth = display.getWidth();
+			Window window = dialog.getWindow(); // 得到对话框
+			WindowManager.LayoutParams wl = window.getAttributes();
+			wl.width = screenWidth * 7 / 8;
+			wl.gravity = Gravity.CENTER; // 设置重力
+			window.setAttributes(wl);
+			dialog.show();
+		}
 	}
 
 	@Override
