@@ -282,6 +282,17 @@ public class FriendContactAdapter extends BaseAdapter
 					info = "发送好友请求成功";
 				} else if (-2 == result) {
 					info ="对方已经是好友";
+					removeFriendContactUse(element);
+					notifyDataSetChanged();
+					ListViewUtil.setListViewHeightBasedOnChildren(getListView());
+					database.updateContactType(
+								database.queryContactIdByTel(friend.getTelephone()),
+								Constant.FriendType.friend_yes,
+								friend.getId());
+						
+					friendAdapter.getFriends().add(friend);
+					friendAdapter.notifyDataSetChanged();
+					ListViewUtil.setListViewHeightBasedOnChildren(friendAdapter.getListView());
 				} else {
 					info = "添加好友失败";
 				}
@@ -293,12 +304,5 @@ public class FriendContactAdapter extends BaseAdapter
 				break;
 		}
 
-		// friendAdapter.getFriends().add(friend);
-		// friendAdapter.notifyDataSetChanged();
-		// ListViewUtil.setListViewHeightBasedOnChildren(friendAdapter.getListView());
-		//
-		// removeFriendContactUse(element);
-		// notifyDataSetChanged();
-		// ListViewUtil.setListViewHeightBasedOnChildren(getListView());
 	}
 }
