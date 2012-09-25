@@ -10,6 +10,7 @@ import android.text.SpannableString;
 import android.text.Spanned;
 import android.text.style.RelativeSizeSpan;
 import android.text.style.StyleSpan;
+import android.util.TimeUtils;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -19,8 +20,10 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.archermind.schedule.R;
+import com.archermind.schedule.ScheduleApplication;
 import com.archermind.schedule.Calendar.CalendarData;
 import com.archermind.schedule.Calendar.LunarCalendar;
+import com.archermind.schedule.Utils.DateTimeUtils;
 
 /**
  * 日历gridview中的每一个item显示的textview
@@ -60,6 +63,33 @@ public class CalendarAdapter extends BaseAdapter {
 		SimpleDateFormat sdf = new SimpleDateFormat("yyyy-M-d");
 		String currentDate = sdf.format(date); // 当前日期
 		currentDay = currentDate.split("-")[2];
+		this.context = context;
+		this.height = height;
+		this.calendarData = calendarData;
+		this.dayNumber = calendarData.getDayNumber();
+		// this.schDateTagFlag = calendarData.getSchDateTagFlag();
+
+		if (height % 6 == 0) {
+			height1 = height2 = height / 6;
+		} else {
+			height1 = height / 6;
+			height2 = height / 6 + height % 6;
+		}
+
+	}
+	
+	public CalendarAdapter(Context context, int height,
+			CalendarData calendarData,String curday) {
+
+		Date date = new Date();
+		SimpleDateFormat sdf = new SimpleDateFormat("yyyy-M-d");
+		String currentDate = sdf.format(date); // 当前日期
+		ScheduleApplication.LogD(getClass(), "curday ="+curday);
+		long time = DateTimeUtils.time2Long("yyyy.MM.dd", curday);
+		ScheduleApplication.LogD(getClass(), "time ="+time);
+ 		String currenday = DateTimeUtils.time2String("d",time ) ;
+ 		ScheduleApplication.LogD(getClass(), "currenday ="+currenday);
+		currentDay = currenday;
 		this.context = context;
 		this.height = height;
 		this.calendarData = calendarData;

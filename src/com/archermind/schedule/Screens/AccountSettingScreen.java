@@ -43,13 +43,15 @@ import com.amtcloud.mobile.android.business.MessageTypes;
 import com.archermind.schedule.R;
 import com.archermind.schedule.ScheduleApplication;
 import com.archermind.schedule.Dialog.ModifyNickDialog;
+import com.archermind.schedule.Events.EventArgs;
+import com.archermind.schedule.Events.EventTypes;
 import com.archermind.schedule.Image.SmartImageView;
 import com.archermind.schedule.Model.UserInfoData;
 import com.archermind.schedule.Services.ServiceManager;
 import com.archermind.schedule.Utils.AlbumInfoUtil;
 import com.archermind.schedule.Utils.NetworkUtils;
 
-public class AccountSettingScreen extends Activity implements OnClickListener {
+public class AccountSettingScreen extends Screen implements OnClickListener {
 
 	private static final int LOGOUT_FAILED = 0;
 
@@ -278,6 +280,8 @@ public class AccountSettingScreen extends Activity implements OnClickListener {
 											.getUserId())).equals("0")) {
 								ServiceManager.setCookie("");
 								handler.sendEmptyMessage(LOGOUT_SUCCESS);
+								eventService.onUpdateEvent(new EventArgs(
+										EventTypes.LOGOUT_SUCCESS));
 							} else {
 								handler.sendEmptyMessage(LOGOUT_FAILED);
 							}
@@ -356,12 +360,19 @@ public class AccountSettingScreen extends Activity implements OnClickListener {
 				}
 				break;
 			case 2 :
-				ScheduleApplication.LogD(getClass(), "1 拍照返回的数据 ");
-				File temp = new File(Environment.getExternalStorageDirectory()
-						+ "/headImage.jpg");
-				uri = Uri.fromFile(temp);
-				startPhotoZoom(uri);
-				// headImagePath = uri.getPath();
+
+				if (resultCode == Activity.RESULT_OK) {
+
+					ScheduleApplication.LogD(getClass(), "1 拍照返回的数据 ");
+					File temp = new File(
+							Environment.getExternalStorageDirectory()
+									+ "/headImage.jpg");
+					uri = Uri.fromFile(temp);
+					startPhotoZoom(uri);
+				} else {
+
+					ScheduleApplication.LogD(getClass(), "1 拍照返回的数据 取消拍照 ");
+				}
 				break;
 			case 3 :
 				if (data != null) {
@@ -370,7 +381,6 @@ public class AccountSettingScreen extends Activity implements OnClickListener {
 				break;
 			default :
 				break;
-
 		}
 		super.onActivityResult(requestCode, resultCode, data);
 	}

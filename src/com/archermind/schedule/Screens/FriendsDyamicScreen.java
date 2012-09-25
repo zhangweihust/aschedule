@@ -118,7 +118,6 @@ public class FriendsDyamicScreen extends Screen
 				list.setPullRefreshEnable(true);
 				list.setPullLoadEnable(true);
 			}
-
 		}
 	};
 
@@ -167,6 +166,39 @@ public class FriendsDyamicScreen extends Screen
 			}
 		});
 
+		if (ServiceManager.getUserId() == 0) {
+
+			ScheduleApplication.LogD(getClass(), " onCreate 未登录 userid "
+					+ ServiceManager.getUserId());
+			if (!dataArrayList.isEmpty()) {
+
+				dataArrayList.clear();
+				mAdapter.setList(dataArrayList);
+			}
+			loginLayout.setVisibility(View.VISIBLE);
+			list.setPullRefreshEnable(false);
+			list.setPullLoadEnable(false);
+
+		} else {
+			if (ServiceManager.getBindFlag()) {
+				ScheduleApplication.LogD(
+						getClass(),
+						" onCreate 已登录且已绑定 userid "
+								+ ServiceManager.getUserId());
+				loginLayout.setVisibility(View.GONE);
+				bindLayout.setVisibility(View.GONE);
+				new Thread(new Runnable() {
+					@Override
+					public void run() {
+						loadSchedules();
+					}
+				}).start();
+			} else {
+				ScheduleApplication.LogD(getClass(), " onCreate 未绑定  ");
+				loginLayout.setVisibility(View.GONE);
+				bindLayout.setVisibility(View.VISIBLE);
+			}
+		}
 	}
 
 	@Override
@@ -322,12 +354,15 @@ public class FriendsDyamicScreen extends Screen
 				m.toggleSoftInput(0, InputMethodManager.HIDE_NOT_ALWAYS);
 			}
 		}, 500);
-
 	}
 
 	private void cursorToArrayList(Cursor c) {
 		if (c != null && c.getCount() > 0) {
+
 			ScheduleBean bean;
+			if (dataArrayList != null) {// 清除掉原有的内容
+				dataArrayList.clear();
+			}
 			for (c.moveToFirst(); !c.isAfterLast(); c.moveToNext()) {
 				bean = new ScheduleBean();
 				bean.setContent(c.getString(c
@@ -339,7 +374,7 @@ public class FriendsDyamicScreen extends Screen
 				bean.setUser_id(c.getInt(c
 						.getColumnIndex(DatabaseHelper.COLUMN_SCHEDULE_USER_ID)));
 				bean.setTime(c.getLong(c
-						.getColumnIndex(DatabaseHelper.COLUMN_SCHEDULE_START_TIME)));
+						.getColumnIndex(DatabaseHelper.COLUMN_SCHEDULE_UPDATE_TIME)));
 				bean.setType(c.getInt(c
 						.getColumnIndex(DatabaseHelper.COLUMN_SCHEDULE_TYPE)));
 				bean.setDefault_data(c.getInt(c
@@ -392,50 +427,53 @@ public class FriendsDyamicScreen extends Screen
 		super.onDestroy();
 	}
 
-	@Override
-	protected void onResume() {
-		super.onResume();
-		if (ServiceManager.getUserId() == 0) {
-			if (!dataArrayList.isEmpty()) {
-
-				dataArrayList.clear();
-				mAdapter.setList(dataArrayList);
-			}
-			
-			loginLayout.setVisibility(View.VISIBLE);
-			list.setPullRefreshEnable(false);
-			list.setPullLoadEnable(false);
-	
-		} else {
-			if (ServiceManager.getBindFlag()) {
-				loginLayout.setVisibility(View.GONE);
-				bindLayout.setVisibility(View.GONE);
-				new Thread(new Runnable() {
-					@Override
-					public void run() {
-						loadSchedules();
-					}
-				}).start();
-			} else {
-				loginLayout.setVisibility(View.GONE);
-				bindLayout.setVisibility(View.VISIBLE);
-			}
-		}
-	}
+	// @Override
+	// protected void onResume() {
+	// super.onResume();
+	// if (ServiceManager.getUserId() == 0) {
+	// if (!dataArrayList.isEmpty()) {
+	//
+	// dataArrayList.clear();
+	// mAdapter.setList(dataArrayList);
+	// }
+	//
+	// loginLayout.setVisibility(View.VISIBLE);
+	// list.setPullRefreshEnable(false);
+	// list.setPullLoadEnable(false);
+	//
+	// } else {
+	// if (ServiceManager.getBindFlag()) {
+	// loginLayout.setVisibility(View.GONE);
+	// bindLayout.setVisibility(View.GONE);
+	// new Thread(new Runnable() {
+	// @Override
+	// public void run() {
+	// loadSchedules();
+	// }
+	// }).start();
+	// } else {
+	// loginLayout.setVisibility(View.GONE);
+	// bindLayout.setVisibility(View.VISIBLE);
+	// }
+	// }
+	// }
 
 	@Override
 	public boolean onEvent(Object sender, EventArgs e) {
 		switch (e.getType()) {
+
 			case LOGIN_SUCCESS :
 				this.runOnUiThread(new Runnable() {
 					@Override
 					public void run() {
+
 						if (ServiceManager.getBindFlag()) {
 							loginLayout.setVisibility(View.GONE);
 							bindLayout.setVisibility(View.GONE);
 							new Thread(new Runnable() {
 								@Override
 								public void run() {
+
 									loadSchedules();
 								}
 							}).start();
@@ -446,6 +484,7 @@ public class FriendsDyamicScreen extends Screen
 					}
 				});
 				break;
+
 			case TELEPHONE_BIND_SUCCESS :
 				this.runOnUiThread(new Runnable() {
 					@Override
@@ -456,8 +495,24 @@ public class FriendsDyamicScreen extends Screen
 					}
 				});
 				break;
+
+			case LOGOUT_SUCCESS :
+				this.runOnUiThread(new Runnable() {
+					@Override
+					public void run() {
+
+						if (!dataArrayList.isEmpty()) {
+
+							dataArrayList.clear();
+							mAdapter.setList(dataArrayList);
+						}
+						loginLayout.setVisibility(View.VISIBLE);
+						list.setPullRefreshEnable(false);
+						list.setPullLoadEnable(false);
+					}
+				});
+				break;
 		}
 		return true;
 	}
-
 }

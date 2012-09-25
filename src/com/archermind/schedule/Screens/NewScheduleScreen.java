@@ -340,16 +340,14 @@ public class NewScheduleScreen extends Screen implements OnClickListener {
 				mStageRemind = alarmPopwindow.getStageRemind();
 
 				if (mStageRemind) {
-
 					startTime = alarmPopwindow.getStartTime();
 					Log.i(TAG,
 							" insert database startTime = "
 									+ DateTimeUtils.time2String(
 											"yyyy-MM-dd-HH-mm", startTime));
 					endTime = alarmPopwindow.getEndTime();
-
+					
 				} else {
-
 					if (mSelectTime != 0) {
 						startTime = mSelectTime;
 					}

@@ -1,5 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:clickable="true"
+    android:id="@+id/widgetweatherlayout"
     android:layout_width="288dp"
     android:layout_height="144dp" >
 
@@ -34,7 +36,7 @@
                     android:id="@+id/widgetweathercity"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="WuHan"
+                    android:text="未知"
                     android:textSize="16sp" >
                 </TextView>
             </LinearLayout>
@@ -61,7 +63,7 @@
                         android:id="@+id/widgetweathertemp"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="50°"
+                        android:text=""
                         android:textSize="20sp" >
                     </TextView>
                 </LinearLayout>
@@ -85,7 +87,7 @@
                             android:gravity="bottom"
                             android:layout_weight="1"
                             android:textSize="10sp"
-                            android:text="10℃" >
+                            android:text="" >
                         </TextView>
                     </LinearLayout>
 
@@ -101,7 +103,7 @@
                             android:layout_height="0dp"
                             android:layout_weight="1"
                             android:textSize="10sp"
-                            android:text="10℃" >
+                            android:text="" >
                         </TextView>
                     </LinearLayout>
                 </LinearLayout>
@@ -113,11 +115,9 @@
                 android:src="@drawable/widget_weather_split" />
 
             <LinearLayout
-                android:id="@+id/widgetweatherlayoutschedule"
                 android:layout_width="0dp"
                 android:layout_height="fill_parent"
                 android:layout_weight="2"
-                android:clickable="true"
                 android:orientation="vertical" >
 
                 <LinearLayout
@@ -145,6 +145,8 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:text="月亮下的对白，单纯的像小孩"
+                        android:singleLine="true"
+                        android:ellipsize="end"
                         android:textSize="10sp" />
                 </LinearLayout>
             </LinearLayout>
@@ -172,7 +174,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_weight="1"
-            android:src="@drawable/fog_100"
+            android:src="@drawable/noweather_100"
             android:textColor="#000000"
             android:textSize="40sp"
             android:textStyle="bold" />

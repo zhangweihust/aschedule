@@ -48,66 +48,79 @@ public class SyncDataUtil {
 									Long.parseLong(time)));
 			ScheduleApplication.LogD(SyncDataUtil.class, "jsonString:"
 					+ jsonString);
-			try {
-				JSONArray jsonArray = new JSONArray(jsonString);
-				ContentValues contentvalues;
-				for (int i = 0; i < jsonArray.length(); i++) {
-					JSONObject jsonObject = (JSONObject) jsonArray.opt(i);
-					contentvalues = new ContentValues();
-					String t_id = jsonObject.getString("TID");
-					contentvalues
-							.put(DatabaseHelper.COLUMN_SCHEDULE_T_ID, t_id);
-					String order = jsonObject.getString("num");
-					contentvalues.put(DatabaseHelper.COLUMN_SCHEDULE_ORDER,
-							order);
-					contentvalues.put(DatabaseHelper.COLUMN_SCHEDULE_SLAVE_ID,
-							jsonObject.getString("host"));
-					String user_id = jsonObject.getString("user_id");
-					contentvalues.put(DatabaseHelper.COLUMN_SCHEDULE_USER_ID,
-							user_id);
-					contentvalues.put(DatabaseHelper.COLUMN_SCHEDULE_TYPE,
-							jsonObject.getString("type"));
-					contentvalues.put(
-							DatabaseHelper.COLUMN_SCHEDULE_START_TIME,
-							jsonObject.getString("start_time"));
-					contentvalues.put(
-							DatabaseHelper.COLUMN_SCHEDULE_UPDATE_TIME,
-							jsonObject.getString("update_time"));
-					contentvalues.put(DatabaseHelper.COLUMN_SCHEDULE_CITY,
-							jsonObject.getString("city"));
-					contentvalues.put(DatabaseHelper.COLUMN_SCHEDULE_CONTENT,
-							jsonObject.getString("content"));
-					ScheduleApplication.LogD(SyncDataUtil.class, "user_id:"
-							+ user_id + " order:" + order);
-//					if (user_id.equals(userId) && "0".equals(order)) {
-//						ScheduleApplication.LogD(
-//								SyncDataUtil.class,
-//								"该帖子是自己发的主贴，在好友动态里面不要显示:"
-//										+ jsonObject.getString("content"));
-//						continue;
-//					}
-					if (!ServiceManager.getDbManager().isInShareSchedules(t_id)) {
-						if (isService) {
-							ServiceManager.getEventservice().onUpdateEvent(
-									new EventArgs(EventTypes.SERVICE_TIP_ON));
+			
+			if (jsonString.contains("host")) {
+				try {
+					JSONArray jsonArray = new JSONArray(jsonString);
+					ContentValues contentvalues;
+					for (int i = 0; i < jsonArray.length(); i++) {
+						JSONObject jsonObject = (JSONObject) jsonArray.opt(i);
+						contentvalues = new ContentValues();
+						String t_id = jsonObject.getString("TID");
+						contentvalues.put(DatabaseHelper.COLUMN_SCHEDULE_T_ID,
+								t_id);
+						String order = jsonObject.getString("num");
+						contentvalues.put(DatabaseHelper.COLUMN_SCHEDULE_ORDER,
+								order);
+						contentvalues.put(
+								DatabaseHelper.COLUMN_SCHEDULE_SLAVE_ID,
+								jsonObject.getString("host"));
+						String user_id = jsonObject.getString("user_id");
+						contentvalues
+								.put(DatabaseHelper.COLUMN_SCHEDULE_USER_ID,
+										user_id);
+						contentvalues.put(DatabaseHelper.COLUMN_SCHEDULE_TYPE,
+								jsonObject.getString("type"));
+						contentvalues.put(
+								DatabaseHelper.COLUMN_SCHEDULE_START_TIME,
+								jsonObject.getString("start_time"));
+						contentvalues.put(
+								DatabaseHelper.COLUMN_SCHEDULE_UPDATE_TIME,
+								jsonObject.getString("update_time"));
+						contentvalues.put(DatabaseHelper.COLUMN_SCHEDULE_CITY,
+								jsonObject.getString("city"));
+						contentvalues.put(
+								DatabaseHelper.COLUMN_SCHEDULE_CONTENT,
+								jsonObject.getString("content"));
+						ScheduleApplication.LogD(SyncDataUtil.class, "user_id:"
+								+ user_id + " order:" + order);
+						// if (user_id.equals(userId) && "0".equals(order)) {
+						// ScheduleApplication.LogD(
+						// SyncDataUtil.class,
+						// "该帖子是自己发的主贴，在好友动态里面不要显示:"
+						// + jsonObject.getString("content"));
+						// continue;
+						// }
+						if (!ServiceManager.getDbManager().isInShareSchedules(
+								t_id)) {
+							if (isService) {
+								ServiceManager
+										.getEventservice()
+										.onUpdateEvent(
+												new EventArgs(
+														EventTypes.SERVICE_TIP_ON));
+							}
+							ServiceManager.getDbManager().insertShareSchedules(
+									contentvalues);
+							flag = true;
+						} else {
+							ServiceManager.getDbManager().updateShareSchedules(
+									contentvalues, t_id);
+							ScheduleApplication.LogD(SyncDataUtil.class,
+									"重复的TID：" + t_id);
 						}
-						ServiceManager.getDbManager().insertShareSchedules(
-								contentvalues);
-						flag = true;
-					} else {
-						ServiceManager.getDbManager().updateShareSchedules(
-								contentvalues, t_id);
-						ScheduleApplication.LogD(SyncDataUtil.class, "重复的TID："
-								+ t_id);
 					}
+				} catch (JSONException e) {
+					e.printStackTrace();
 				}
-			} catch (JSONException e) {
-				e.printStackTrace();
+			}else {
+				
+				ScheduleApplication.LogD(SyncDataUtil.class, "数据下载失败");
 			}
 		}
 		return flag;
 	}
-	
+
 	public static Friend makeFriendFromInet(String id, int type) {
 		if (NetworkUtils.getNetworkState(ScheduleApplication.getContext()) != NetworkUtils.NETWORN_NONE) {
 			String jsonString = ServiceManager.getServerInterface()
@@ -138,7 +151,8 @@ public class SyncDataUtil {
 									DatabaseHelper.ASCHEDULE_FRIEND_PHOTO_URL,
 									photo_url);
 							values.put(DatabaseHelper.ASCHEDULE_FRIEND_NAME,
-									ServiceManager.getDbManager().queryNameByTel(tel));
+									ServiceManager.getDbManager()
+											.queryNameByTel(tel));
 							ServiceManager.getDbManager().addFriend(values);
 							friend = new Friend();
 							friend.setNick(nick);

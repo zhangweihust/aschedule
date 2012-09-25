@@ -149,7 +149,7 @@ public class ScheduleScreen extends Screen
 	public static int jumpYear = 0; // 滑动跨越一年，则增加或者减去一年，默认为0（即当前年）
 
 	// public static int jumpDay = 0;
-	public String currentDay = null;
+//	public String currentDay = null;
 
 	private int year_c = 0;
 
@@ -971,7 +971,7 @@ public class ScheduleScreen extends Screen
 				calendarData = new CalendarData(ScheduleScreen.this, jumpMonth,
 						jumpYear, year_c, month_c, day_c, Constant.flagType);
 				calV = new CalendarAdapter(this, flipper.getHeight(),
-						calendarData);
+						calendarData,curSelectedDate);
 				ScheduleApplication.LogD(ScheduleScreen.class,
 						"LOCAL_SCHEDULE_UPDATE");
 

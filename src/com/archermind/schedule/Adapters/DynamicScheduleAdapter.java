@@ -73,9 +73,7 @@ public class DynamicScheduleAdapter extends BaseAdapter {
 		ScheduleItem item;
 
 		if (convertView == null) {
-
 			Log.i(TAG, "scheduleCallback" + "create View is " + position);
-
 			View view = inflater.inflate(R.layout.dynamic_schedule_item, null);
 			item = new ScheduleItem();
 			item.date = (TextView) view.findViewById(R.id.date);
@@ -100,7 +98,7 @@ public class DynamicScheduleAdapter extends BaseAdapter {
 		final ScheduleBean data = list.get(position);
 		if (data != null) {
 			item.content.setText(data.getContent());
-			long time = data.getTime();
+			long time = data.getTime()*1000+1;
 			item.time.setText(DateTimeUtils.time2String("hh:mm", time));
 			item.date.setText(DateTimeUtils.time2String("yyyy.MM.dd", time));
 			String amORpm = DateTimeUtils.time2String("a", time);

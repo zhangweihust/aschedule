@@ -2,7 +2,7 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="fill_parent"
     android:layout_height="fill_parent"
-    android:background="#ececec"
+    android:background="#ececee"
     android:orientation="vertical" >
 
     <FrameLayout
@@ -82,7 +82,8 @@
             <TextView 
                 android:layout_width="fill_parent"
                 android:layout_height="fill_parent"
-                android:text="     客服：027-87491770"
+                android:text="   客服：027-87491770"
+                android:singleLine="true"
                 android:textColor="#000000"
                 />
         </LinearLayout>
@@ -95,11 +96,11 @@
                 android:layout_width="fill_parent"
                 android:layout_height="fill_parent"
                 android:gravity="bottom"
+                android:singleLine="true"
                  android:textColor="#000000"
-                android:text="     邮箱：player_support@163.com"
+                android:text="   邮箱：player_support@163.com"
                 />
         </LinearLayout>
-        
     </LinearLayout>
 
     <LinearLayout

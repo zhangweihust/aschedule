@@ -27,6 +27,7 @@ import android.provider.ContactsContract.CommonDataKinds.Relation;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.Button;
+import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.RelativeLayout;
 import android.widget.Toast;
@@ -54,16 +55,15 @@ public class FriendScreen extends Screen
 		implements
 			OnClickListener,
 			IEventHandler {
+
 	private ListView friend_listView;
 	private ListView friend_contact_listView;
 	private Button friend_button_state;
 	private Button friend_contact_button_state;
 	private AScheduleBroadcast ContactCheckReceiver;
 	private AlarmManager AScheduleAM;
-	private static final int CONTACT_SYNC_INTERVAL = 60 * 60 * 1000; /*
-																	 * 1
-																	 * 个小时检测一次联系人是否有变化
-																	 */
+
+	private static final int CONTACT_SYNC_INTERVAL = 60 * 60 * 1000; // 1个小时检测一次联系人是否有变化
 	private static final int CONTACT_SYNC_SUCCESS = 0x101;
 	private static final int CONTACT_SYNC_ERROR = 0x102;
 	private static final int CONTACT_SYNC_CANCEL = 0x103;
@@ -75,6 +75,14 @@ public class FriendScreen extends Screen
 	private SharedPreferences sp;
 	private String friendId = null;
 
+	private LinearLayout myFriendLayout;
+	private LinearLayout myContactFriendLayout;
+	private LinearLayout bindLayout;
+	private LinearLayout loginLayout;
+	private Button loginFriendBtn;
+	private Button bindFriendBtn;
+	private Cursor cursor;
+	
 	public FriendScreen() {
 		database = ServiceManager.getDbManager();
 		serverInterface = new ServerInterface();
@@ -86,6 +94,7 @@ public class FriendScreen extends Screen
 		setContentView(R.layout.friend_screen);
 		eventService.add(this);
 		initView();
+
 		PendingIntent contactcheckintent = PendingIntent.getBroadcast(
 				ScheduleApplication.getContext(), 0, new Intent(
 						AScheduleBroadcast.ASCHEDULE_CHECK_CONTACT), 1);
@@ -99,17 +108,19 @@ public class FriendScreen extends Screen
 				AScheduleBroadcast.ASCHEDULE_CHECK_CONTACT);
 		registerReceiver(ContactCheckReceiver, intentfilter);
 		sp = getSharedPreferences("Data", Context.MODE_PRIVATE);
-		boolean sync = sp.getBoolean("sync", false);
-		if (sync) {
-			new Thread() {
-				public void run() {
-					getData();
-				};
-			}.start();
-		}
+
+		loginFriendBtn.setOnClickListener(this);
+		bindFriendBtn.setOnClickListener(this);
+		showData();
 	}
 
 	public void initView() {
+		myFriendLayout = (LinearLayout) findViewById(R.id.myfriendlayout);
+		myContactFriendLayout = (LinearLayout) findViewById(R.id.mycontactfriendlayout);
+
+		bindLayout = (LinearLayout) findViewById(R.id.bindTelfriend);
+		loginLayout = (LinearLayout) findViewById(R.id.loginUpfriend);
+
 		friend_listView = (ListView) findViewById(R.id.friend_listView);
 		friend_contact_listView = (ListView) findViewById(R.id.friend_contact_listView);
 		loading = (RelativeLayout) findViewById(R.id.loading);
@@ -117,6 +128,11 @@ public class FriendScreen extends Screen
 		friend_contact_button_state = (Button) findViewById(R.id.friend_contact_button_state);
 		friend_button_state.setOnClickListener(this);
 		friend_contact_button_state.setOnClickListener(this);
+		myFriendLayout.setOnClickListener(this);
+		myContactFriendLayout.setOnClickListener(this);
+
+		loginFriendBtn = (Button) findViewById(R.id.loginfriend);
+		bindFriendBtn = (Button) findViewById(R.id.bindfriend);
 	}
 
 	public void initAdapter() {
@@ -202,6 +218,7 @@ public class FriendScreen extends Screen
 	public void onClick(View v) {
 		// TODO Auto-generated method stub
 		switch (v.getId()) {
+			case R.id.myfriendlayout :
 			case R.id.friend_button_state :
 				if (friend_listView.getVisibility() == View.VISIBLE) {
 					friend_listView.setVisibility(View.GONE);
@@ -213,6 +230,7 @@ public class FriendScreen extends Screen
 							.setBackgroundResource(R.drawable.friend_group_expand);
 				}
 				break;
+			case R.id.mycontactfriendlayout :
 			case R.id.friend_contact_button_state :
 				if (friend_contact_listView.getVisibility() == View.VISIBLE) {
 					friend_contact_listView.setVisibility(View.GONE);
@@ -224,12 +242,53 @@ public class FriendScreen extends Screen
 							.setBackgroundResource(R.drawable.friend_group_expand);
 				}
 				break;
+
+			case R.id.bindfriend :
+				Intent it = new Intent(FriendScreen.this,
+						TelephoneBindScreen.class);
+				startActivity(it);
+				break;
+
+			case R.id.loginfriend :
+				Intent itlogin = new Intent(FriendScreen.this,
+						LoginScreen.class);
+				startActivity(itlogin);
+				break;
+
 		}
 	}
 
 	@Override
 	protected void onResume() {
 		super.onResume();
+		if (ServiceManager.getUserId() == 0) {// 用户没有登录或已退出
+			bindLayout.setVisibility(View.GONE);
+			loginLayout.setVisibility(View.VISIBLE);
+		} else {
+		
+			if (ServiceManager.getBindFlag()) {
+				loginLayout.setVisibility(View.GONE);
+				bindLayout.setVisibility(View.GONE);
+				
+				showData();
+				
+			} else {
+				loginLayout.setVisibility(View.GONE);
+				bindLayout.setVisibility(View.VISIBLE);
+			}
+		}
+	}
+
+	private void showData() {
+
+		boolean sync = sp.getBoolean("sync", false);
+		if (sync) {
+			new Thread() {
+				public void run() {
+					getData();
+				};
+			}.start();
+		}
 	}
 
 	@Override
@@ -303,7 +362,6 @@ public class FriendScreen extends Screen
 			loading.setVisibility(View.GONE);
 		};
 	};
-	private Cursor cursor;
 
 	private void makeFriendContactUseFromInet(List<Friend> friendContactUs,
 			List<Friend> friends, List<Friend> ignores, List<String> tempList,
@@ -313,7 +371,7 @@ public class FriendScreen extends Screen
 			String jsonString = ServiceManager.getServerInterface()
 					.checkUserSchedule(
 							String.valueOf(ServiceManager.getUserId()));
-			ScheduleApplication.LogD(getClass(), "获取我的好友信息："+jsonString);
+			ScheduleApplication.LogD(getClass(), "获取我的好友信息：" + jsonString);
 			ContentValues values = null;
 			if (jsonString != null && !"".equals(jsonString)) {
 				if (jsonString.indexOf("user_id") >= 0) {// 防止返回错误码
@@ -336,7 +394,8 @@ public class FriendScreen extends Screen
 							}
 							Friend friend = new Friend();
 							if (friendList.contains(user_id)) {// 更新好友信息
-								ScheduleApplication.LogD(getClass(), "我的好友:" + nick);
+								ScheduleApplication.LogD(getClass(), "我的好友:"
+										+ nick);
 								friend.setId(user_id);
 								friend.setTelephone(tel);
 								friend.setType(Constant.FriendType.friend_yes);
@@ -372,7 +431,8 @@ public class FriendScreen extends Screen
 							}
 
 							if (ignoreList.contains(user_id)) {// 更新好友屏蔽信息
-								ScheduleApplication.LogD(getClass(), "屏蔽的好友:" + nick);
+								ScheduleApplication.LogD(getClass(), "屏蔽的好友:"
+										+ nick);
 								friend.setId(user_id);
 								friend.setTelephone(tel);
 								friend.setType(Constant.FriendType.friend_Ignore);
@@ -406,7 +466,8 @@ public class FriendScreen extends Screen
 								continue;
 
 							}
-							ScheduleApplication.LogD(getClass(), "正在使用微日程的:" + nick);
+							ScheduleApplication.LogD(getClass(), "正在使用微日程的:"
+									+ nick);
 							friend.setId(user_id);
 							friend.setTelephone(tel);
 							friend.setType(Constant.FriendType.friend_contact_use);
@@ -432,11 +493,12 @@ public class FriendScreen extends Screen
 
 	protected HashMap<String, List<Friend>> getData() {
 		// TODO Auto-generated method stub
-		handler.post(new Runnable(){
+		handler.post(new Runnable() {
 			@Override
 			public void run() {
 				loading.setVisibility(View.VISIBLE);
-			}});
+			}
+		});
 		List<String> contactToalList = new ArrayList<String>();
 		List<String> friendList = new ArrayList<String>();
 		List<String> ignoreList = new ArrayList<String>();
@@ -500,8 +562,9 @@ public class FriendScreen extends Screen
 				cursor = database.queryContactIdByTel(tel);
 				if (cursor != null) {
 					if (cursor.moveToNext()) {
-						String id = cursor.getString(cursor
-								.getColumnIndex(DatabaseHelper.COLUMN_CONTACT_ID));
+						String id = cursor
+								.getString(cursor
+										.getColumnIndex(DatabaseHelper.COLUMN_CONTACT_ID));
 						String telephone = cursor
 								.getString(cursor
 										.getColumnIndex(DatabaseHelper.ASCHEDULE_CONTACT_NUM));
@@ -527,12 +590,10 @@ public class FriendScreen extends Screen
 			while (cursor.moveToNext()) {
 				String id = cursor.getString(cursor
 						.getColumnIndex(DatabaseHelper.ASCHEDULE_FRIEND_ID));
-				String telephone = cursor
-						.getString(cursor
-								.getColumnIndex(DatabaseHelper.ASCHEDULE_FRIEND_NUM));
-				String name = cursor
-						.getString(cursor
-								.getColumnIndex(DatabaseHelper.ASCHEDULE_FRIEND_NAME));
+				String telephone = cursor.getString(cursor
+						.getColumnIndex(DatabaseHelper.ASCHEDULE_FRIEND_NUM));
+				String name = cursor.getString(cursor
+						.getColumnIndex(DatabaseHelper.ASCHEDULE_FRIEND_NAME));
 				String headImagePath = cursor
 						.getString(cursor
 								.getColumnIndex(DatabaseHelper.ASCHEDULE_FRIEND_PHOTO_URL));
@@ -542,25 +603,22 @@ public class FriendScreen extends Screen
 				friend.setName(name);
 				friend.setHeadImagePath(headImagePath);
 				friend.setType(Constant.FriendType.friend_yes);
-				
+
 				friends.add(friend);
 			}
-			
+
 			if (cursor != null) {
 				cursor.close();
 			}
-			
-			
+
 			cursor = database.queryFriendIgnore();
 			while (cursor.moveToNext()) {
 				String id = cursor.getString(cursor
 						.getColumnIndex(DatabaseHelper.ASCHEDULE_FRIEND_ID));
-				String telephone = cursor
-						.getString(cursor
-								.getColumnIndex(DatabaseHelper.ASCHEDULE_FRIEND_NUM));
-				String name = cursor
-						.getString(cursor
-								.getColumnIndex(DatabaseHelper.ASCHEDULE_FRIEND_NAME));
+				String telephone = cursor.getString(cursor
+						.getColumnIndex(DatabaseHelper.ASCHEDULE_FRIEND_NUM));
+				String name = cursor.getString(cursor
+						.getColumnIndex(DatabaseHelper.ASCHEDULE_FRIEND_NAME));
 				String headImagePath = cursor
 						.getString(cursor
 								.getColumnIndex(DatabaseHelper.ASCHEDULE_FRIEND_PHOTO_URL));
@@ -570,25 +628,22 @@ public class FriendScreen extends Screen
 				friend.setName(name);
 				friend.setHeadImagePath(headImagePath);
 				friend.setType(Constant.FriendType.friend_Ignore);
-				
+
 				ignores.add(friend);
 			}
-			
+
 			if (cursor != null) {
 				cursor.close();
 			}
-			
-			
+
 			cursor = database.queryContactUse();
 			while (cursor.moveToNext()) {
 				String id = cursor.getString(cursor
 						.getColumnIndex(DatabaseHelper.COLUMN_CONTACT_ID));
-				String telephone = cursor
-						.getString(cursor
-								.getColumnIndex(DatabaseHelper.ASCHEDULE_CONTACT_NUM));
-				String name = cursor
-						.getString(cursor
-								.getColumnIndex(DatabaseHelper.ASCHEDULE_CONTACT_NAME));
+				String telephone = cursor.getString(cursor
+						.getColumnIndex(DatabaseHelper.ASCHEDULE_CONTACT_NUM));
+				String name = cursor.getString(cursor
+						.getColumnIndex(DatabaseHelper.ASCHEDULE_CONTACT_NAME));
 				String headImagePath = cursor
 						.getString(cursor
 								.getColumnIndex(DatabaseHelper.ASCHEDULE_CONTACT_IMGPATH));
@@ -598,25 +653,22 @@ public class FriendScreen extends Screen
 				friend.setName(name);
 				friend.setHeadImagePath(headImagePath);
 				friend.setType(Constant.FriendType.friend_contact_use);
-				
+
 				contact_use.add(friend);
 			}
-			
+
 			if (cursor != null) {
 				cursor.close();
 			}
-			
-			
+
 			cursor = database.queryContact();
 			while (cursor.moveToNext()) {
 				String id = cursor.getString(cursor
 						.getColumnIndex(DatabaseHelper.COLUMN_CONTACT_ID));
-				String telephone = cursor
-						.getString(cursor
-								.getColumnIndex(DatabaseHelper.ASCHEDULE_CONTACT_NUM));
-				String name = cursor
-						.getString(cursor
-								.getColumnIndex(DatabaseHelper.ASCHEDULE_CONTACT_NAME));
+				String telephone = cursor.getString(cursor
+						.getColumnIndex(DatabaseHelper.ASCHEDULE_CONTACT_NUM));
+				String name = cursor.getString(cursor
+						.getColumnIndex(DatabaseHelper.ASCHEDULE_CONTACT_NAME));
 				String headImagePath = cursor
 						.getString(cursor
 								.getColumnIndex(DatabaseHelper.ASCHEDULE_CONTACT_IMGPATH));
@@ -626,10 +678,10 @@ public class FriendScreen extends Screen
 				friend.setName(name);
 				friend.setHeadImagePath(headImagePath);
 				friend.setType(Constant.FriendType.friend_contact);
-				
+
 				contact_use.add(friend);
 			}
-			
+
 			if (cursor != null) {
 				cursor.close();
 			}

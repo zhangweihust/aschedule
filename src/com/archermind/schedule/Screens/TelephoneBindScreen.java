@@ -274,7 +274,7 @@ public class TelephoneBindScreen extends Screen implements OnClickListener {
 			case R.id.telephone_bind_goback :
                 Intent intent = new Intent(this, AccountSettingScreen.class);
                 startActivity(intent);
-				finish();
+                finish();
 				break;
 			default :
 				break;

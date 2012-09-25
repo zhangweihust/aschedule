@@ -163,6 +163,40 @@ public class MyDynamicScreen extends Screen
 			}
 		});
 
+		if (ServiceManager.getUserId() == 0) {
+
+			ScheduleApplication.LogD(getClass(), " onCreate 未登录 userid "
+					+ ServiceManager.getUserId());
+			if (!dataArrayList.isEmpty()) {
+
+				dataArrayList.clear();
+				mAdapter.setList(dataArrayList);
+			}
+			loginLayout.setVisibility(View.VISIBLE);
+			list.setPullRefreshEnable(false);
+			list.setPullLoadEnable(false);
+
+		} else {
+			if (ServiceManager.getBindFlag()) {
+				ScheduleApplication.LogD(
+						getClass(),
+						" onCreate 已登录且已绑定 userid "
+								+ ServiceManager.getUserId());
+				loginLayout.setVisibility(View.GONE);
+				bindLayout.setVisibility(View.GONE);
+				new Thread(new Runnable() {
+					@Override
+					public void run() {
+						loadSchedules();
+					}
+				}).start();
+			} else {
+				ScheduleApplication.LogD(getClass(), " onCreate 未绑定  ");
+				loginLayout.setVisibility(View.GONE);
+				bindLayout.setVisibility(View.VISIBLE);
+			}
+		}
+
 	}
 
 	@Override
@@ -188,8 +222,10 @@ public class MyDynamicScreen extends Screen
 			Toast.makeText(MyDynamicScreen.this, "请登录以后再刷新", Toast.LENGTH_SHORT)
 					.show();
 		} else {
-			if (dataArrayList.isEmpty())
+
+			if (dataArrayList.isEmpty()) {
 				loading.setVisibility(View.VISIBLE);
+			}
 			new Thread(new Runnable() {
 				@Override
 				public void run() {
@@ -316,7 +352,6 @@ public class MyDynamicScreen extends Screen
 				m.toggleSoftInput(0, InputMethodManager.HIDE_NOT_ALWAYS);
 			}
 		}, 500);
-
 	}
 
 	private void cursorToArrayList(Cursor c) {
@@ -329,7 +364,7 @@ public class MyDynamicScreen extends Screen
 				bean.setT_id(c.getInt(c
 						.getColumnIndex(DatabaseHelper.COLUMN_SCHEDULE_T_ID)));
 				bean.setTime(c.getLong(c
-						.getColumnIndex(DatabaseHelper.COLUMN_SCHEDULE_START_TIME)));
+						.getColumnIndex(DatabaseHelper.COLUMN_SCHEDULE_UPDATE_TIME)));
 				bean.setType(c.getInt(c
 						.getColumnIndex(DatabaseHelper.COLUMN_SCHEDULE_TYPE)));
 				bean.setUser_id(c.getInt(c
@@ -338,35 +373,6 @@ public class MyDynamicScreen extends Screen
 			}
 		}
 		c.close();
-	}
-
-	@Override
-	protected void onResume() {
-		super.onResume();
-		if (ServiceManager.getUserId() == 0) {
-			if (!dataArrayList.isEmpty()) {
-
-				dataArrayList.clear();
-				mAdapter.setList(dataArrayList);
-			}
-			list.setPullRefreshEnable(false);
-			list.setPullLoadEnable(false);
-			loginLayout.setVisibility(View.VISIBLE);
-		} else {
-			if (ServiceManager.getBindFlag()) {
-				loginLayout.setVisibility(View.GONE);
-				bindLayout.setVisibility(View.GONE);
-				new Thread(new Runnable() {
-					@Override
-					public void run() {
-						loadSchedules();
-					}
-				}).start();
-			} else {
-				loginLayout.setVisibility(View.GONE);
-				bindLayout.setVisibility(View.VISIBLE);
-			}
-		}
 	}
 
 	@Override
@@ -413,8 +419,10 @@ public class MyDynamicScreen extends Screen
 	}
 
 	@Override
+	
 	public boolean onEvent(Object sender, EventArgs e) {
 		switch (e.getType()) {
+
 			case LOGIN_SUCCESS :
 				this.runOnUiThread(new Runnable() {
 					@Override
@@ -435,6 +443,7 @@ public class MyDynamicScreen extends Screen
 					}
 				});
 				break;
+
 			case TELEPHONE_BIND_SUCCESS :
 				this.runOnUiThread(new Runnable() {
 					@Override
@@ -446,12 +455,31 @@ public class MyDynamicScreen extends Screen
 				});
 				break;
 
+			case LOGOUT_SUCCESS :
+				this.runOnUiThread(new Runnable() {
+					@Override
+					public void run() {
+
+						if (!dataArrayList.isEmpty()) {// 程序登出，清除数据
+							dataArrayList.clear();
+							mAdapter.setList(dataArrayList);
+						}
+						loginLayout.setVisibility(View.VISIBLE);
+						list.setPullRefreshEnable(false);
+						list.setPullLoadEnable(false);
+					}
+				});
+				break;
+
 			case LOCAL_MYDYAMIC_SCHEDULE_UPDATE : {
+				this.runOnUiThread(new Runnable() {
+					public void run() {
+						if (ServiceManager.getUserId() != 0) {
 
-				if (ServiceManager.getUserId() != 0) {
-
-					onRefresh();
-				}
+							onRefresh();
+						}
+					}
+				});
 			}
 				break;
 

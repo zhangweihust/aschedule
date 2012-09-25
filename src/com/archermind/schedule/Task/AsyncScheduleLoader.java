@@ -24,7 +24,7 @@ public class AsyncScheduleLoader {
 	String TAG = "AsyncScheduleLoader";
 
 	public AsyncScheduleLoader() {
-
+		
 	}
 
 	private class CommentItem {
@@ -137,26 +137,21 @@ public class AsyncScheduleLoader {
 												.getColumnIndex(DatabaseHelper.COLUMN_SCHEDULE_CONTENT)));
 						long commentTime = slaveCursors
 								.getLong(slaveCursors
-										.getColumnIndex(DatabaseHelper.COLUMN_SCHEDULE_START_TIME));
+										.getColumnIndex(DatabaseHelper.COLUMN_SCHEDULE_UPDATE_TIME))*1000;
 						commentItem.time.setText(DateTimeUtils.time2String(
-								"yyyy.MM.dd hh:mm:ss", commentTime));
+								"yyyy.MM.dd HH:mm:ss", commentTime));
 						layout.addView(commentView);
 					}
 				}
-
 				Message message = handler.obtainMessage(0, layout);
 				handler.sendMessage(message);
-
 				slaveCursors.close();
 			}
-
 		}.start();
 	}
 
 	public interface ScheduleCallback {
-
 		public void scheduleCallback(LinearLayout listView, int t_id);
-
 	}
 
 }

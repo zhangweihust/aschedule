@@ -293,7 +293,7 @@ public class WidgetWeather extends AppWidgetProvider {
 		Intent intent = new Intent(context, HomeScreen.class);
 		PendingIntent pIntentHomeScreen = PendingIntent.getActivity(context, 0,
 				intent, 0);
-		views.setOnClickPendingIntent(R.id.widgetweatherlayoutschedule,
+		views.setOnClickPendingIntent(R.id.widgetweatherlayout,
 				pIntentHomeScreen);
 
 		// Intent intentweather = new Intent(context, WeatherScreen.class);
@@ -428,8 +428,10 @@ public class WidgetWeather extends AppWidgetProvider {
 	}
 
 	private void setViewCityandWeather(RemoteViews views) {
-
-		setRemoteView(views, R.id.widgetweathertemp, mCurrentTemp + "°");
+		if (mCurrentTemp!=null) {
+			
+			setRemoteView(views, R.id.widgetweathertemp, mCurrentTemp + "°");			
+		}
 		setRemoteView(views, R.id.widgetweatherMaxTemp, mMax);
 		setRemoteView(views, R.id.widgetweatherMinTemp, mMin);
 		setRemoteView(views, R.id.widgetweathercity, mCity);
@@ -458,7 +460,6 @@ public class WidgetWeather extends AppWidgetProvider {
 	}
 
 	private void setViewLocalSchedule(RemoteViews views) {
-
 		if (!TextUtils.isEmpty(mContent)) {
 
 			views.setTextViewText(R.id.widgetweathercontent, mContent);
@@ -496,7 +497,6 @@ public class WidgetWeather extends AppWidgetProvider {
 	}
 
 	public Integer getweatherMap(String key, Map<String, Integer> weathermap) {
-
 		Iterator<Entry<String, Integer>> iterator = weathermap.entrySet()
 				.iterator();
 		Entry<String, Integer> entry = null;
