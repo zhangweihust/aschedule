@@ -20,6 +20,7 @@ import android.content.ContentValues;
 import android.content.Context;
 import android.content.Intent;
 import android.content.pm.ServiceInfo;
+import android.net.Uri;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.View.OnClickListener;
@@ -251,12 +252,19 @@ public class FriendContactAdapter extends BaseAdapter
 		private TextView name;
 		private Button friend_button2;
 	}
-	private void goToShare() {
-		Intent intent = new Intent(Intent.ACTION_SEND);
-		intent.setType("text/plain");
-		String textMessage = "邀请好友阿";
-		intent.putExtra(Intent.EXTRA_TEXT, textMessage);
-		context.startActivity(Intent.createChooser(intent, "邀请好友"));
+	
+//	private void goToShare() {
+//		Intent intent = new Intent(Intent.ACTION_SEND);
+//		intent.setType("text/plain");
+//		String textMessage = "邀请好友阿";
+//		intent.putExtra(Intent.EXTRA_TEXT, textMessage);
+//		context.startActivity(Intent.createChooser(intent, "邀请好友"));
+//	}
+	
+	private void sendSMS(String tel){
+		Intent intent = new Intent(Intent.ACTION_SENDTO, Uri.parse("smsto:"+tel));
+		intent.putExtra("sms_body", context.getString(R.string.sms_body));
+		context.startActivity(intent);
 	}
 
 	@Override
@@ -266,18 +274,22 @@ public class FriendContactAdapter extends BaseAdapter
 		Friend friend = element.getFriend();
 		switch (friend.getType()) {
 			case Constant.FriendType.friend_contact_use :
-				if (0 == serverInterface.inviteFriend(
+				int result = serverInterface.inviteFriend(
 						String.valueOf(ServiceManager.getUserId()),
-						friend.getId())) {
-					Toast.makeText(context, "正在添加好友...", Toast.LENGTH_LONG)
-							.show();
+						friend.getId());
+				String info = "";
+				if (0 == result || -3 == result) {
+					info = "发送好友请求成功";
+				} else if (-2 == result) {
+					info ="对方已经是好友";
 				} else {
-					Toast.makeText(context, "添加好友失败", Toast.LENGTH_LONG).show();
+					info = "添加好友失败";
 				}
+				Toast.makeText(context, info, Toast.LENGTH_LONG).show();
 				break;
 			case Constant.FriendType.friend_contact :
-				goToShare();
-
+//				goToShare();
+				sendSMS(friend.getTelephone());
 				break;
 		}
 
