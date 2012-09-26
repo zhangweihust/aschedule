@@ -493,7 +493,6 @@ public class FriendScreen extends Screen
 	}
 
 	protected HashMap<String, List<Friend>> getData() {
-		// TODO Auto-generated method stub
 		handler.post(new Runnable() {
 			@Override
 			public void run() {
@@ -689,7 +688,7 @@ public class FriendScreen extends Screen
 					friend.setHeadImagePath(headImagePath);
 					friend.setType(Constant.FriendType.friend_contact);
 					
-					contact_use.add(friend);
+					contact.add(friend);
 					cursor.moveToNext();
 				}
 			}
