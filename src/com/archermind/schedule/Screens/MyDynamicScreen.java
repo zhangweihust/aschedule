@@ -38,9 +38,11 @@ import com.archermind.schedule.Events.EventArgs;
 import com.archermind.schedule.Events.EventTypes;
 import com.archermind.schedule.Events.IEventHandler;
 import com.archermind.schedule.Model.ScheduleBean;
+import com.archermind.schedule.Model.UserInfoData;
 import com.archermind.schedule.Provider.DatabaseHelper;
 import com.archermind.schedule.Services.ServiceManager;
 import com.archermind.schedule.Utils.DateTimeUtils;
+import com.archermind.schedule.Utils.DeviceInfo;
 import com.archermind.schedule.Utils.SyncDataUtil;
 import com.archermind.schedule.Views.XListView;
 import com.archermind.schedule.Views.XListView.IXListViewListener;
@@ -177,8 +179,10 @@ public class MyDynamicScreen extends Screen
 			list.setPullLoadEnable(false);
 
 		} else {
-			if (ServiceManager.getBindFlag()) {
-				ScheduleApplication.LogD(
+		    
+		    String imsi = DeviceInfo.getDeviceIMSI();// 号码发生变更，和绑定做统一处理            
+			if (ServiceManager.getBindFlag()&&!imsi.equals(ServiceManager.getSPUserInfo(UserInfoData.IMSI))) {
+			    ScheduleApplication.LogD(
 						getClass(),
 						" onCreate 已登录且已绑定 userid "
 								+ ServiceManager.getUserId());
@@ -196,7 +200,6 @@ public class MyDynamicScreen extends Screen
 				bindLayout.setVisibility(View.VISIBLE);
 			}
 		}
-
 	}
 
 	@Override

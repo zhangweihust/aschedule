@@ -41,7 +41,7 @@ public class ExceptionService implements IService {
 
 	public static String crashPath = savePath + "crash/";
 
-	public static final String DOWNLOAD_SERVER_BASE = "http://player.archermind.com/";// "http://219.138.163.58/";
+	public static final String DOWNLOAD_SERVER_BASE = "http://arc.archermind.com/";// "http://219.138.163.58/";
 
 	public static final String CRASH_UPLOAD_SERVER_URL = DOWNLOAD_SERVER_BASE
 			+ "ci/index.php/aschedule/sendCrashReports";

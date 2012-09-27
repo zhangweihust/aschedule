@@ -125,7 +125,6 @@ public class ServerInterface {
 	/**************************************
 	 * 判断isNickName合法性 长度小于10，且没有特殊字符
 	 ***************************************/
-
 	public boolean isNickName(String nickName) {
 		if (nickName.length() == 0 || nickName.length() > 10) {
 			return false;
@@ -151,7 +150,7 @@ public class ServerInterface {
 		map.put("prov", prov);
 		String ret = HttpUtils
 				.doPost(map,
-						"http://player.archermind.com/ci/index.php/aschedule/getWeather");
+						"http://arc.archermind.com/ci/index.php/aschedule/getWeather");
 		return ret;
 	}
 
@@ -216,7 +215,7 @@ public class ServerInterface {
 		map.put("user_acc", user_acc);
 
 		String ret = HttpUtils.doPost(map,
-				"http://player.archermind.com/ci/index.php/aschedule/register");
+				"http://arc.archermind.com/ci/index.php/aschedule/register");
 
 		return ret;
 	}
@@ -247,7 +246,7 @@ public class ServerInterface {
 		map.put("newpass", newpassword);;
 		String ret = HttpUtils
 				.doPost(map,
-						"http://player.archermind.com/ci/index.php/aschedule/pswdModify");
+						"http://arc.archermind.com/ci/index.php/aschedule/pswdModify");
 		if (ret.equals("0")) {
 			return SUCCESS;
 		} else if (ret.equals("-1") || ret.equals("-2")) {
@@ -290,7 +289,7 @@ public class ServerInterface {
 		// return ERROR_WEB_ERROR;
 		// }
 		String ret = HttpUtils.doPost(map,
-				"http://player.archermind.com/ci/index.php/aschedule/login");
+				"http://arc.archermind.com/ci/index.php/aschedule/login");
 		// if (ret.equals("0") || ret.length() > 20) {
 		// return SUCCESS;
 		// } else {
@@ -305,7 +304,7 @@ public class ServerInterface {
 		Map<String, String> map = new HashMap<String, String>();
 		map.put("user_id", user_id);
 		String ret = HttpUtils.doPost(map,
-				"http://player.archermind.com/ci/index.php/aschedule/logout");
+				"http://arc.archermind.com/ci/index.php/aschedule/logout");
 		return ret;
 	}
 
@@ -338,7 +337,7 @@ public class ServerInterface {
 		map.put("user_id", user_id);
 		String ret = HttpUtils
 				.doPost(map,
-						"http://player.archermind.com/ci/index.php/aschedule/getMessage");
+						"http://arc.archermind.com/ci/index.php/aschedule/getMessage");
 		return ret;
 	}
 
@@ -348,7 +347,7 @@ public class ServerInterface {
 		map.put("user_id", user_id);
 		String ret = HttpUtils
 				.doPost(map,
-						"http://player.archermind.com/ci/index.php/aschedule/findUserInfobyUserId");
+						"http://arc.archermind.com/ci/index.php/aschedule/findUserInfobyUserId");
 		return ret;
 	}
 
@@ -359,7 +358,7 @@ public class ServerInterface {
 		map.put("duser_id", duser_id);
 		String ret = HttpUtils
 				.doPost(map,
-						"http://player.archermind.com/ci/index.php/aschedule/inviteFriend");
+						"http://arc.archermind.com/ci/index.php/aschedule/inviteFriend");
 		// System.out.println("zhangguopeng+++++++"+ret);
 		if (ret.equals("-2")) {
 			return -2; // 已经是好友了
@@ -379,7 +378,7 @@ public class ServerInterface {
 		map.put("duser_id", duser_id);
 		String ret = HttpUtils
 				.doPost(map,
-						"http://player.archermind.com/ci/index.php/aschedule/refuseConfirm");
+						"http://arc.archermind.com/ci/index.php/aschedule/refuseConfirm");
 		if (ret.equals("0")) {
 			return 0; // 消息发送成功
 		} else {
@@ -394,7 +393,7 @@ public class ServerInterface {
 		map.put("duser_id", duser_id);
 		String ret = HttpUtils
 				.doPost(map,
-						"http://player.archermind.com/ci/index.php/aschedule/refuseFriend");
+						"http://arc.archermind.com/ci/index.php/aschedule/refuseFriend");
 		if (ret.equals("0")) {
 			return 0; // 消息发送成功
 		} else {
@@ -409,7 +408,7 @@ public class ServerInterface {
 		map.put("duser_id", duser_id);
 		String ret = HttpUtils
 				.doPost(map,
-						"http://player.archermind.com/ci/index.php/aschedule/acceptFriend");
+						"http://arc.archermind.com/ci/index.php/aschedule/acceptFriend");
 		if (ret.equals("0")) {
 			return 0; // 消息发送成功
 		} else {
@@ -424,7 +423,7 @@ public class ServerInterface {
 		map.put("duser_id", duser_id);
 		String ret = HttpUtils
 				.doPost(map,
-						"http://player.archermind.com/ci/index.php/aschedule/acceptConfirm");
+						"http://arc.archermind.com/ci/index.php/aschedule/acceptConfirm");
 		if (ret.equals("0")) {
 			return 0; // 消息发送成功
 		} else {
@@ -438,7 +437,7 @@ public class ServerInterface {
 		map.put("duser_id", duser_id);
 		String ret = HttpUtils
 				.doPost(map,
-						"http://player.archermind.com/ci/index.php/aschedule/removeFriend");
+						"http://arc.archermind.com/ci/index.php/aschedule/removeFriend");
 		if (ret.equals("0")) {
 			return SUCCESS; // 删除成功
 		} else {
@@ -452,11 +451,11 @@ public class ServerInterface {
 		map.put("duser_id", duser_id);
 		String ret = HttpUtils
 				.doPost(map,
-						"http://player.archermind.com/ci/index.php/aschedule/removeFriend");
+						"http://arc.archermind.com/ci/index.php/aschedule/removeFriend");
 		if (ret.equals("0")) {
 			ret = HttpUtils
 					.doPost(map,
-							"http://player.archermind.com/ci/index.php/aschedule/shieldFriend");
+							"http://arc.archermind.com/ci/index.php/aschedule/shieldFriend");
 			if (ret.equals("0")) {
 				return SUCCESS; // 屏蔽成功
 			} else {
@@ -472,7 +471,7 @@ public class ServerInterface {
 		map.put("user_id", userid);
 		String ret = HttpUtils
 				.doPost(map,
-						"http://player.archermind.com/ci/index.php/aschedule/getFriendRel");
+						"http://arc.archermind.com/ci/index.php/aschedule/getFriendRel");
 		return ret;
 	}
 
@@ -485,7 +484,7 @@ public class ServerInterface {
 		map.put("tel", tel);
 		String ret = HttpUtils
 				.doPost(map,
-						"http://player.archermind.com/ci/index.php/aschedule/friendSchedule");
+						"http://arc.archermind.com/ci/index.php/aschedule/friendSchedule");
 		return ret;
 	}
 
@@ -499,7 +498,7 @@ public class ServerInterface {
 		map.put("user_id", user_id);
 		String ret = HttpUtils
 				.doPost(map,
-						"http://player.archermind.com/ci/index.php/aschedule/checkUserSchedule");
+						"http://arc.archermind.com/ci/index.php/aschedule/checkUserSchedule");
 
 		return ret;
 	}
@@ -514,7 +513,7 @@ public class ServerInterface {
 		map.put("telist", tellist);
 		String ret = HttpUtils
 				.doPost(map,
-						"http://player.archermind.com/ci/index.php/aschedule/uploadContact");
+						"http://arc.archermind.com/ci/index.php/aschedule/uploadContact");
 		if (ret.equals("0")) {
 			return SUCCESS;
 		} else {
@@ -530,7 +529,7 @@ public class ServerInterface {
 		map.put("user_id", user_id);
 		String ret = HttpUtils
 				.doPost(map,
-						"http://player.archermind.com/ci/index.php/aschedule/syncContact");
+						"http://arc.archermind.com/ci/index.php/aschedule/syncContact");
 		return ret;
 	}
 
@@ -615,7 +614,7 @@ public class ServerInterface {
 						cursor1.close();
 						String ret = HttpUtils
 								.doPost(map,
-										"http://player.archermind.com/ci/index.php/aschedule/uploadSchedule");
+										"http://arc.archermind.com/ci/index.php/aschedule/uploadSchedule");
 						// ContentValues cv = new ContentValues();
 						try {
 							result = Integer.parseInt(ret);
@@ -642,7 +641,7 @@ public class ServerInterface {
 					} else if (text != null && text.equals("M")) {
 						String ret = HttpUtils
 								.doPost(map,
-										"http://player.archermind.com/ci/index.php/aschedule/uploadSchedule");
+										"http://arc.archermind.com/ci/index.php/aschedule/uploadSchedule");
 						try {
 							result = Integer.parseInt(ret);
 						} catch (Exception e) {
@@ -669,7 +668,7 @@ public class ServerInterface {
 					} else if (text != null && text.equals("D")) {
 						String ret = HttpUtils
 								.doPost(map,
-										"http://player.archermind.com/ci/index.php/aschedule/uploadSchedule");
+										"http://arc.archermind.com/ci/index.php/aschedule/uploadSchedule");
 						try {
 							result = Integer.parseInt(ret);
 						} catch (Exception e) {
@@ -702,7 +701,7 @@ public class ServerInterface {
 		map.put("updateTime", updateTime);
 		String ret = HttpUtils
 				.doPost(map,
-						"http://player.archermind.com/ci/index.php/aschedule/syncFriendShare");
+						"http://arc.archermind.com/ci/index.php/aschedule/syncFriendShare");
 		return ret;
 	}
 
@@ -711,7 +710,7 @@ public class ServerInterface {
 		map.put("user_id", user_id);
 		String ret = HttpUtils
 				.doPost(map,
-						"http://player.archermind.com/ci/index.php/aschedule/syncSchedule");
+						"http://arc.archermind.com/ci/index.php/aschedule/syncSchedule");
 		return ret;
 	}
 
@@ -903,7 +902,7 @@ public class ServerInterface {
 		map.put("type", type);
 		map.put("user_acc", user_acc);
 		String ret = HttpUtils.doPost(map,
-				"http://player.archermind.com/ci/index.php/aschedule/BinInfo");
+				"http://arc.archermind.com/ci/index.php/aschedule/BinInfo");
 		System.out.println("Bin_Info====" + ret);
 		return ret;
 	}
@@ -914,7 +913,7 @@ public class ServerInterface {
 		map.put("type", type);
 		map.put("user_acc", user_acc);
 		String ret = HttpUtils.doPost(map,
-				"http://player.archermind.com/ci/index.php/aschedule/Binlogin");
+				"http://arc.archermind.com/ci/index.php/aschedule/Binlogin");
 		System.out.println("Bin_Info====" + ret);
 		return ret;
 	}
@@ -928,7 +927,7 @@ public class ServerInterface {
 		map.put("Mobile", Mobile);
 		map.put("Action", Action);
 		String ret = HttpUtils.doPost(map,
-				"http://player.archermind.com/ci/index.php/SMSUtils/sendSMS");
+				"http://arc.archermind.com/ci/index.php/SMSUtils/sendSMS");
 		System.out.println("sendSMS====" + ret);
 		return ret;
 	}
@@ -949,7 +948,7 @@ public class ServerInterface {
 		map.put("imsi", imsi);
 		System.out.println("smsID = " + smsID + ",tel = " + tel);
 		String ret = HttpUtils.doPost(map,
-				"http://player.archermind.com/ci/index.php/SMSUtils/checkSMS");
+				"http://arc.archermind.com/ci/index.php/SMSUtils/checkSMS");
 		System.out.println("sendSMS====" + ret);
 		int result = 0;
 		try {
@@ -966,7 +965,7 @@ public class ServerInterface {
 		map.put("tel", tel);
 		String ret = HttpUtils
 				.doPost(map,
-						"http://player.archermind.com/ci/index.php/aschedule/is_tel_bind");
+						"http://arc.archermind.com/ci/index.php/aschedule/is_tel_bind");
 		int result = 0;
 		try {
 			result = Integer.parseInt(ret);
@@ -994,7 +993,7 @@ public class ServerInterface {
 		map.put("photo_url", url);
 		String res = HttpUtils
 				.doPost(map,
-						"http://player.archermind.com/ci/index.php/aschedule/uploadPhoto");
+						"http://arc.archermind.com/ci/index.php/aschedule/uploadPhoto");
 		int result = 0;
 
 		try {
@@ -1014,7 +1013,7 @@ public class ServerInterface {
 		map.put("user_id", user_id);
 		String res = HttpUtils
 				.doPost(map,
-						"http://player.archermind.com/ci/index.php/aschedule/downloadPhoto");
+						"http://arc.archermind.com/ci/index.php/aschedule/downloadPhoto");
 		return res;
 	}
 
@@ -1023,7 +1022,7 @@ public class ServerInterface {
 		map.put("user_id", user_id);
 		String ret = HttpUtils
 				.doPost(map,
-						"http://player.archermind.com/ci/index.php/aschedule/session_check_2");
+						"http://arc.archermind.com/ci/index.php/aschedule/session_check_2");
 		return ret;
 	}
 
@@ -1034,7 +1033,7 @@ public class ServerInterface {
 		map.put("suggestion", suggestion);
 		String ret = HttpUtils
 				.doPost(map,
-						"http://player.archermind.com/ci/index.php/aschedule/suggestionfeedback");
+						"http://arc.archermind.com/ci/index.php/aschedule/suggestionfeedback");
 		int result = 0;
 		try {
 			result = Integer.parseInt(ret);
@@ -1049,7 +1048,7 @@ public class ServerInterface {
 		map.put("user_id", user_id);
 		String ret = HttpUtils
 				.doPost(map,
-						"http://player.archermind.com/ci/index.php/aschedule/tel_unbind");
+						"http://arc.archermind.com/ci/index.php/aschedule/tel_unbind");
 		int result = 0;
 		try {
 			result = Integer.parseInt(ret);
@@ -1066,7 +1065,7 @@ public class ServerInterface {
 		map.put("nick", nick);
 		String ret = HttpUtils
 				.doPost(map,
-						"http://player.archermind.com/ci/index.php/aschedule/nickModify");
+						"http://arc.archermind.com/ci/index.php/aschedule/nickModify");
 		int result = 0;
 		try {
 			result = Integer.parseInt(ret);

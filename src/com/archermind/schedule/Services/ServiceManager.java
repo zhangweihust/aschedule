@@ -200,8 +200,14 @@ public class ServiceManager extends Service implements OnClickListener {
 				UserInfoData.USER_SETTING, Context.MODE_WORLD_READABLE);
 		mSPEditorSetting = sharedPreferencesSetting.edit();
 
-		user_id = Integer.parseInt(sharedPreferences.getString(
-				UserInfoData.USER_ID, "0"));
+        user_id = Integer.parseInt(sharedPreferences.getString(UserInfoData.USER_ID, "0"));
+
+        if (user_id != 0) {
+
+            if (!isUserLogining(user_id)) {
+                user_id = 0;
+            }
+        }
 		cookie = sharedPreferences.getString(UserInfoData.COOKIE, "");
 		avator_url = sharedPreferences.getString(UserInfoData.PHOTO_URL, "");
 		mTimer = new Timer();

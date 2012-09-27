@@ -1,3 +1,4 @@
+
 package com.archermind.schedule.Screens;
 
 import android.app.AlarmManager;
@@ -13,111 +14,116 @@ import android.view.KeyEvent;
 import android.widget.ImageView;
 
 import com.archermind.schedule.R;
+import com.archermind.schedule.ScheduleApplication;
 import com.archermind.schedule.Services.AlarmServiceReceiver;
+import com.archermind.schedule.Services.ServiceManager;
 
 public class LoadingScreen extends Screen {
 
-	private ImageView mImageView;
+    private ImageView mImageView;
 
-	private AnimationDrawable mAnimaition;
+    private AnimationDrawable mAnimaition;
 
-	public LoadingScreen() {
-		super();
-	}
+    public LoadingScreen() {
+        super();
+    }
 
-	@Override
-	public void onCreate(Bundle savedInstanceState) {
-		super.onCreate(savedInstanceState);
-		setContentView(R.layout.main);
-		mImageView = (ImageView) findViewById(R.id.ivloadingsthreepoint);
+    @Override
+    public void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.main);
+        mImageView = (ImageView)findViewById(R.id.ivloadingsthreepoint);
 
-		// 设置动画背景
-		mImageView.setBackgroundResource(R.anim.loading_show_hide);
-		// 获得动画对象
-		mAnimaition = (AnimationDrawable) mImageView.getBackground();
+        // 设置动画背景
+        mImageView.setBackgroundResource(R.anim.loading_show_hide);
+        // 获得动画对象
+        mAnimaition = (AnimationDrawable)mImageView.getBackground();
 
-		new Thread() {
-			public void run() {
+        new Thread() {
+            public void run() {
 
-				try {
-					Thread.sleep(2 * 1000);
-				} catch (InterruptedException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
-				}
+                try {
+                    Thread.sleep(2 * 1000);
+                } catch (InterruptedException e) {
+                    // TODO Auto-generated catch block
+                    e.printStackTrace();
+                }
 
-				handler.sendEmptyMessage(1);
+                handler.sendEmptyMessage(1);
+            }
+        }.start();
 
-			}
-		}.start();
+        // 下面这一段是当servicemanager被关闭的时候，自动重新启动的
+        Intent myIntent = new Intent(this, AlarmServiceReceiver.class);
+        PendingIntent sender = PendingIntent.getBroadcast(this, 0, myIntent, 0);
 
-		// 下面这一段是当servicemanager被关闭的时候，自动重新启动的
-		Intent myIntent = new Intent(this, AlarmServiceReceiver.class);
-		PendingIntent sender = PendingIntent.getBroadcast(this, 0, myIntent, 0);
+        long firstime = SystemClock.elapsedRealtime();
+        AlarmManager am = (AlarmManager)this.getSystemService(Context.ALARM_SERVICE);
 
-		long firstime = SystemClock.elapsedRealtime();
-		AlarmManager am = (AlarmManager) this
-				.getSystemService(Context.ALARM_SERVICE);
+        // 10秒一个周期，不停的发送广播
+        am.setRepeating(AlarmManager.ELAPSED_REALTIME_WAKEUP, firstime, 10 * 1000, sender);
 
-		// 10秒一个周期，不停的发送广播
-		am.setRepeating(AlarmManager.ELAPSED_REALTIME_WAKEUP, firstime,
-				10 * 1000, sender);
+        ScheduleApplication.LogD(getClass(), "userid = "+ServiceManager.getUserId());
+        
+//        if (!ServiceManager.isUserLogining(ServiceManager.getUserId())) {
+//            
+//            ServiceManager.setUserId(0);
+//        }
 
-	}
+    }
 
-	/**
-	 * 用Handler来更新UI
-	 */
-	private Handler handler = new Handler() {
+    /**
+     * 用Handler来更新UI
+     */
+    private Handler handler = new Handler() {
 
-		public void handleMessage(Message msg) {
+        public void handleMessage(Message msg) {
 
-			switch (msg.what) {
+            switch (msg.what) {
 
-				case 1 :
+                case 1:
 
-					if (mAnimaition.isRunning()) {
+                    if (mAnimaition.isRunning()) {
 
-						mAnimaition.stop();
-					}
+                        mAnimaition.stop();
+                    }
 
-					Intent it = new Intent(LoadingScreen.this, HomeScreen.class);
-					startActivity(it);
-					finish();
+                    Intent it = new Intent(LoadingScreen.this, HomeScreen.class);
+                    startActivity(it);
+                    finish();
 
-					break;
+                    break;
 
-				default :
-					break;
-			}
-		}
-	};
+                default:
+                    break;
+            }
+        }
+    };
 
-	@Override
-	protected void onDestroy() {
-		super.onDestroy();
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
 
-		if (mAnimaition.isRunning()) {
+        if (mAnimaition.isRunning()) {
 
-			mAnimaition.stop();
+            mAnimaition.stop();
+        }
+    }
 
-		}
-	}
+    @Override
+    public void onWindowFocusChanged(boolean hasFocus) {
+        super.onWindowFocusChanged(hasFocus);
 
-	@Override
-	public void onWindowFocusChanged(boolean hasFocus) {
-		super.onWindowFocusChanged(hasFocus);
+        mAnimaition.start();
+    }
 
-		mAnimaition.start();
-	}
+    @Override
+    public boolean dispatchKeyEvent(KeyEvent event) {
 
-	@Override
-	public boolean dispatchKeyEvent(KeyEvent event) {
-		if (event.getKeyCode() == KeyEvent.KEYCODE_BACK
-				&& event.getAction() == KeyEvent.ACTION_UP) {
-			return true;
-		}
-		return super.dispatchKeyEvent(event);
-	}
+        if (event.getKeyCode() == KeyEvent.KEYCODE_BACK && event.getAction() == KeyEvent.ACTION_UP) {
+            return true;
+        }
+        return super.dispatchKeyEvent(event);
+    }
 
 }
