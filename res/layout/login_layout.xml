@@ -32,8 +32,7 @@
             android:text="登录"
              />
 	</LinearLayout>
-	
-        
+	        
     <LinearLayout 
         android:layout_width="fill_parent"
         android:layout_height="fill_parent"
@@ -131,7 +130,7 @@
                 	android:gravity="center"
                 	android:textColor="#3F3F3F"
                 	android:textSize="13sp"
-			        android:text="用户名" />
+			        android:text="邮    箱" />
 			    <EditText
 			        android:id="@+id/login_username"
 			        android:layout_width="fill_parent"
@@ -140,7 +139,7 @@
 			        android:textSize="13sp"
 			        android:background="#00ffffff"
 			        android:focusable="true"
-			        android:hint="邮箱/用户名"
+			        android:hint="注册邮箱"
 			        android:singleLine="true" />	    
 			</LinearLayout>
 			<TextView

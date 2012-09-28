@@ -166,7 +166,6 @@ public class MyDynamicScreen extends Screen
 		});
 
 		if (ServiceManager.getUserId() == 0) {
-
 			ScheduleApplication.LogD(getClass(), " onCreate 未登录 userid "
 					+ ServiceManager.getUserId());
 			if (!dataArrayList.isEmpty()) {
@@ -181,7 +180,8 @@ public class MyDynamicScreen extends Screen
 		} else {
 		    
 		    String imsi = DeviceInfo.getDeviceIMSI();// 号码发生变更，和绑定做统一处理            
-			if (ServiceManager.getBindFlag()&&!imsi.equals(ServiceManager.getSPUserInfo(UserInfoData.IMSI))) {
+			
+		    if (ServiceManager.getBindFlag()&&imsi.equals(ServiceManager.getSPUserInfo(UserInfoData.IMSI))) {
 			    ScheduleApplication.LogD(
 						getClass(),
 						" onCreate 已登录且已绑定 userid "
@@ -422,7 +422,6 @@ public class MyDynamicScreen extends Screen
 	}
 
 	@Override
-	
 	public boolean onEvent(Object sender, EventArgs e) {
 		switch (e.getType()) {
 

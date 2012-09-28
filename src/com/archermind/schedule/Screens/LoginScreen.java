@@ -3,6 +3,7 @@ package com.archermind.schedule.Screens;
 
 import org.json.JSONObject;
 
+import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
@@ -27,6 +28,7 @@ import com.archermind.schedule.Services.ServiceManager;
 import com.archermind.schedule.Utils.AlbumInfoUtil;
 import com.archermind.schedule.Utils.DeviceInfo;
 import com.archermind.schedule.Utils.HttpUtils;
+import com.archermind.schedule.Utils.MyProgressDialog;
 import com.archermind.schedule.Utils.NetworkUtils;
 import com.renren.api.connect.android.Renren;
 import com.renren.api.connect.android.exception.RenrenAuthError;
@@ -83,6 +85,8 @@ public class LoginScreen extends Screen implements OnClickListener {
 
     private boolean loginflag = false;
 
+    private ProgressDialog mpDialog;
+
     private static final int LOGIN_FAILED_EMAILORPSWD_NULL = -1; // 邮箱或密码为空
 
     private static final int LOGIN_FAILED_EMAILORPSWD_ERROR = -2; // 邮箱或密码错误
@@ -113,13 +117,19 @@ public class LoginScreen extends Screen implements OnClickListener {
         login_renren.setOnClickListener(this);
         login_submit.setOnClickListener(this);
 
+        mpDialog = MyProgressDialog.getProgressDialog(LoginScreen.this);
+
         handler = new Handler() {
 
             @Override
             public void handleMessage(Message msg) {
-
                 super.handleMessage(msg);
-
+                
+                if (mpDialog.isShowing()) {
+                    
+                    mpDialog.hide();
+                }
+                
                 if (msg != null && msg.obj != null) {
                     String retValue = (String)msg.obj;
                     String prompt = "";
@@ -154,17 +164,17 @@ public class LoginScreen extends Screen implements OnClickListener {
                     } else {
                         int ret = Integer.parseInt(retValue);
                         switch (ret) {
-                            
+
                             case LOGIN_FAILED_EMAILORPSWD_NULL:
                                 prompt = "：邮箱或密码为空";
                                 break;
-                            
+
                             case LOGIN_FAILED_EMAILORPSWD_ERROR:
                                 prompt = "：邮箱或密码错误";
                                 break;
 
-                            case -101://程序中偶尔出现
-                                
+                            case -101:// 程序中偶尔出现
+
                                 prompt = "请10秒后重试！";
                                 break;
 
@@ -186,7 +196,6 @@ public class LoginScreen extends Screen implements OnClickListener {
 
         if (!loginflag) {
             loginflag = true;
-
             switch (v.getId()) {
                 case R.id.login_goback:
                     onBackPressed();
@@ -444,6 +453,9 @@ public class LoginScreen extends Screen implements OnClickListener {
         if (NetworkUtils.getNetworkState(this) != NetworkUtils.NETWORN_NONE) {
             ScheduleApplication.LogD(LoginScreen.class, "loginSubmit ok ");
 
+            mpDialog.show();
+            ScheduleApplication.LogD(getClass(), "isshowing  " + mpDialog.isShowing());
+
             new Thread() {
                 public void run() {
                     String passwordCrypt = ServiceManager.enCrypt(password);
@@ -464,4 +476,5 @@ public class LoginScreen extends Screen implements OnClickListener {
         }
         ScheduleApplication.LogD(LoginScreen.class, "loginSubmit end ");
     }
+
 }

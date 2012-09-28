@@ -97,6 +97,7 @@ public class DeviceInfo {
         if (imsi == null) {
             imsi = "";
         }
+        ScheduleApplication.LogD(DeviceInfo.class, "imsi= "+imsi);
         return imsi;
     }
 

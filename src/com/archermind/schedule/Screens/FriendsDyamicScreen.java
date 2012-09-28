@@ -182,8 +182,12 @@ public class FriendsDyamicScreen extends Screen
 			list.setPullLoadEnable(false);
 
 		} else {
-		    String imsi = DeviceInfo.getDeviceIMSI();// 号码发生变更，和绑定做统一处理            
-            if (ServiceManager.getBindFlag()&&!imsi.equals(ServiceManager.getSPUserInfo(UserInfoData.IMSI)))
+		    
+		    String imsi = DeviceInfo.getDeviceIMSI();// 号码发生变更，和绑定做统一处理  
+		    String localimsi = ServiceManager.getSPUserInfo(UserInfoData.IMSI);
+		    ScheduleApplication.LogD(getClass(), "localimsi = "+localimsi);
+		    
+            if (ServiceManager.getBindFlag()&&imsi.equals(ServiceManager.getSPUserInfo(UserInfoData.IMSI)))
               {
 				ScheduleApplication.LogD(
 						getClass(),

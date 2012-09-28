@@ -6,22 +6,23 @@
     android:orientation="vertical" >
 
     <LinearLayout
-        android:layout_width="fill_parent" 
+        android:layout_width="fill_parent"
         android:layout_height="60dip"
         android:gravity="center" >
+
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginLeft="10dip"
             android:background="@drawable/menu_schedule" />
-        
+
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="13dip"
             android:layout_marginLeft="10dip"
             android:layout_marginTop="5dip"
             android:background="@drawable/menu_title" />
-        
+
         <Button
             android:id="@+id/gotonext"
             android:layout_width="wrap_content"
@@ -29,92 +30,91 @@
             android:layout_marginLeft="100dip"
             android:background="@drawable/menu_goback_selector" />
     </LinearLayout>
-    
-     <TextView 
-         android:layout_width="fill_parent"
-         android:layout_height="1px"
-         android:background="#181818" />
-     <TextView 
-         android:layout_width="fill_parent"
-         android:layout_height="1px"
-         android:background="#494949" />   
-     
+
+    <TextView
+        android:layout_width="fill_parent"
+        android:layout_height="1px"
+        android:background="#181818" />
+
+    <TextView
+        android:layout_width="fill_parent"
+        android:layout_height="1px"
+        android:background="#494949" />
+
     <RelativeLayout
         android:layout_width="fill_parent"
-	    android:layout_height="fill_parent"
-	    android:orientation="vertical" >
-        
-	    <Button
-	        android:id="@+id/menu_account_btn"
-	        android:layout_width="wrap_content"
-	        android:layout_height="wrap_content"
-	        android:layout_marginLeft="35dip"
-	        android:layout_marginTop="@dimen/menu_first_row_btn_up"
-	        android:drawableLeft="@drawable/menu_account"
-	        android:drawablePadding="3dip"
-	        android:gravity="center_vertical"
-	        android:textColor="#ffffff"
-	        android:text="账户"
-	        android:background="@drawable/menu_btn_selector" />
-	    
-	    <Button
-	        android:id="@+id/menu_setting_btn"
-	        android:layout_width="wrap_content"
-	        android:layout_height="wrap_content"
-	        android:layout_toRightOf="@id/menu_account_btn"
-	        android:layout_alignTop="@id/menu_account_btn"
-	        android:layout_marginLeft="50dip"
-	        android:drawableLeft="@drawable/menu_setting"
-	        android:drawablePadding="3dip"
-	        android:gravity="center_vertical"
-	        android:textColor="#ffffff"
-	        android:text="设置"
-	        android:background="@drawable/menu_btn_selector" />
-   
-	    <Button
-	        android:id="@+id/menu_weather_btn"
-	        android:layout_width="wrap_content"
-	        android:layout_height="wrap_content"
-	        android:layout_below="@id/menu_account_btn"
-	        android:layout_marginTop="@dimen/menu_between_btn"
-	        android:layout_alignLeft="@id/menu_account_btn"
-	        android:drawableLeft="@drawable/menu_weather"
-	        android:drawablePadding="3dip"
-	        android:gravity="center_vertical"
-	        android:textColor="#ffffff"
-	        android:text="天气"
-	        android:background="@drawable/menu_btn_selector" />
-	    
-	    <Button
-	        android:id="@+id/menu_about_btn"
-	        android:layout_width="wrap_content"
-	        android:layout_height="wrap_content"
-	        android:layout_below="@id/menu_setting_btn"
-	        android:layout_marginTop="@dimen/menu_between_btn"
-	        android:layout_alignLeft="@id/menu_setting_btn"
-	        android:drawableLeft="@drawable/menu_about"
-	        android:drawablePadding="3dip"
-	        android:gravity="center_vertical"
-	        android:textColor="#ffffff"
-	        android:text="关于"
-	        android:background="@drawable/menu_btn_selector" />
-    
+        android:layout_height="fill_parent"
+        android:orientation="vertical" >
+
+        <Button
+            android:id="@+id/menu_account_btn"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="35dip"
+            android:layout_marginTop="@dimen/menu_first_row_btn_up"
+            android:background="@drawable/menu_btn_selector"
+            android:drawableLeft="@drawable/menu_account"
+            android:drawablePadding="3dip"
+            android:gravity="center_vertical"
+            android:text="账户"
+            android:textColor="#ffffff" />
+
+        <Button
+            android:id="@+id/menu_setting_btn"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignTop="@id/menu_account_btn"
+            android:layout_marginLeft="50dip"
+            android:layout_toRightOf="@id/menu_account_btn"
+            android:background="@drawable/menu_btn_selector"
+            android:drawableLeft="@drawable/menu_setting"
+            android:drawablePadding="3dip"
+            android:gravity="center_vertical"
+            android:text="设置"
+            android:textColor="#ffffff" />
+
+        <Button
+            android:id="@+id/menu_weather_btn"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignLeft="@id/menu_account_btn"
+            android:layout_below="@id/menu_account_btn"
+            android:layout_marginTop="@dimen/menu_between_btn"
+            android:background="@drawable/menu_btn_selector"
+            android:drawableLeft="@drawable/menu_weather"
+            android:drawablePadding="3dip"
+            android:gravity="center_vertical"
+            android:text="天气"
+            android:textColor="#ffffff" />
+
+        <Button
+            android:id="@+id/menu_about_btn"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignLeft="@id/menu_setting_btn"
+            android:layout_below="@id/menu_setting_btn"
+            android:layout_marginTop="@dimen/menu_between_btn"
+            android:background="@drawable/menu_btn_selector"
+            android:drawableLeft="@drawable/menu_about"
+            android:drawablePadding="3dip"
+            android:gravity="center_vertical"
+            android:text="关于"
+            android:textColor="#ffffff" />
+
         <Button
             android:id="@+id/menu_feedback_btn"
             android:layout_width="wrap_content"
-	        android:layout_height="wrap_content"
-	        android:layout_below="@id/menu_weather_btn"
-	        android:layout_marginTop="@dimen/menu_between_btn"
-	        android:layout_alignLeft="@id/menu_weather_btn"
+            android:layout_height="wrap_content"
+            android:layout_alignLeft="@id/menu_weather_btn"
+            android:layout_below="@id/menu_weather_btn"
+            android:layout_marginTop="@dimen/menu_between_btn"
+            android:background="@drawable/menu_btn_selector"
             android:drawableLeft="@drawable/menu_feedback"
-	        android:drawablePadding="3dip"
-	        android:gravity="center_vertical"
-	        android:textColor="#ffffff"
-		    android:text="意见反馈"
-		    android:background="@drawable/menu_btn_selector" />
-        
+            android:drawablePadding="3dip"
+            android:gravity="center_vertical"
+            android:text="意见反馈"
+            android:textColor="#ffffff" />
+
     </RelativeLayout>
-        
-    
 
 </LinearLayout>

@@ -1,23 +1,24 @@
 
 package com.archermind.schedule.Screens;
 
-import com.archermind.schedule.R;
-import com.archermind.schedule.Calendar.LunarCalendar;
-import com.archermind.schedule.Model.UserInfoData;
-import com.archermind.schedule.Services.ServiceManager;
-import com.archermind.schedule.Utils.DeviceInfo;
-
 import android.app.Activity;
+import android.app.ProgressDialog;
 import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
-import android.util.Log;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.Window;
 import android.widget.Button;
+import android.widget.ProgressBar;
 import android.widget.Toast;
+
+import com.archermind.schedule.R;
+import com.archermind.schedule.Model.UserInfoData;
+import com.archermind.schedule.Services.ServiceManager;
+import com.archermind.schedule.Utils.DeviceInfo;
+import com.archermind.schedule.Utils.MyProgressDialog;
 
 public class MenuScreen extends Activity implements OnClickListener {
 
@@ -43,6 +44,8 @@ public class MenuScreen extends Activity implements OnClickListener {
 
     private boolean account_btn_flag = false;
 
+    private ProgressDialog mpDialog;
+
     /** Called when the activity is first created. */
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -65,10 +68,12 @@ public class MenuScreen extends Activity implements OnClickListener {
         menu_feedback.setOnClickListener(this);
         menu_about.setOnClickListener(this);
 
+        mpDialog = MyProgressDialog.getProgressDialog(MenuScreen.this);
+
         handler = new Handler() {
             public void handleMessage(Message msg) {
                 Intent it;
-
+                mpDialog.hide();
                 switch (msg.what) {
                     case LOGIN_STATUS_FAILED:
                         it = new Intent(MenuScreen.this, LoginScreen.class);
@@ -87,14 +92,13 @@ public class MenuScreen extends Activity implements OnClickListener {
                         } else {
                             ServiceManager.ToastShow("您的帐号尚未绑定手机号,请进行绑定!");
                         }
-
                         it = new Intent(MenuScreen.this, TelephoneBindScreen.class);
                         break;
+
                     default:
                         it = new Intent(MenuScreen.this, LoginScreen.class);
                         break;
                 }
-
                 startActivity(it);
                 account_btn_flag = false;
                 overridePendingTransition(R.anim.right_in, R.anim.right_out);
@@ -111,6 +115,8 @@ public class MenuScreen extends Activity implements OnClickListener {
                 onBackPressed();
                 break;
             case R.id.menu_account_btn:
+           
+                mpDialog.show();
                 if (!account_btn_flag) {
                     account_btn_flag = true;
                     new Thread() {
@@ -128,6 +134,7 @@ public class MenuScreen extends Activity implements OnClickListener {
                     }.start();
                 }
                 break;
+
             case R.id.menu_weather_btn:
                 startActivity(new Intent(MenuScreen.this, WeatherScreen.class));
                 break;

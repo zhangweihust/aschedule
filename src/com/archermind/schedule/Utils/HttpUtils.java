@@ -98,6 +98,10 @@ public class HttpUtils implements Runnable {
 					if (httphead.indexOf("sid=") > 0) {
 						httphead = httphead
 								.substring(httphead.indexOf("sid=") + 4);
+						if(httphead.indexOf("header") > 0){
+						    httphead = httphead
+	                                .substring(0,httphead.indexOf("header"));
+						}
 						if (httphead != null && !httphead.equals("")) {
 							httphead = httphead.replace("\r\n", "");
 						}

@@ -554,6 +554,7 @@ public class ServiceManager extends Service implements OnClickListener {
 		boolean ret = false;
 		if (NetworkUtils.getNetworkState(ScheduleApplication.getContext()) != NetworkUtils.NETWORN_NONE) {
 			/* 发送userid给服务器，服务器判断userid的用户是否登录 */
+		    ScheduleApplication.LogD(ServiceManager.class, "userid = "+userid);
 			if (serverInerface.session_check(String.valueOf(user_id)).equals(
 					"0")) {
 				ret = true;
