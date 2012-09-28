@@ -117,7 +117,9 @@ public class Contact {
 							.getColumnIndex(ContactsContract.CommonDataKinds.Phone.NUMBER));
 			if (number.matches("^(\\+86)?1[3|4|5|8][0-9]\\d{8}$")) {
 				number = number.replace("+86", "");
-				Contactsb.append(number + ",");
+				if(Contactsb.indexOf(number)==-1){
+					Contactsb.append(number + ",");
+				}
 			}
 		}
 		LocalContact.close();

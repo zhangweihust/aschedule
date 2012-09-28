@@ -387,8 +387,7 @@ public class FriendScreen extends Screen
 							String tel = jsonObject.getString("tel");
 
 							tempList.add(tel);
-
-							if (user_id.equals(ServiceManager.getUserId())) {// 屏蔽自己
+							if (user_id.equals(String.valueOf(ServiceManager.getUserId()))) {// 屏蔽自己
 								continue;
 							}
 							Friend friend = new Friend();
