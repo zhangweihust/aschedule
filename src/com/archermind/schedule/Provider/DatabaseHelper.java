@@ -1,5 +1,10 @@
 package com.archermind.schedule.Provider;
 
+import java.io.File;
+import java.io.IOException;
+import java.io.InputStream;
+import com.archermind.schedule.R;
+import com.archermind.schedule.Utils.FileUtils;
 import android.content.Context;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
@@ -191,6 +196,22 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 			+ " TEXT, "
 			+ COLUMN_WEATHER_TEMP_RANGE
 			+ " TEXT, " + COLUMN_WEATHER_WEATHER + " TEXT " + " ); ";
+	public static final String TAB_CALENDAR_MAP = "calendar_map";
+	public static final String COLUMN_CALENDAR_ID = "_id";
+	public static final String COLUMN_CALENDAR_MONTH = "calendar_month";
+	public static final String COLUMN_CALENDAR_LUNARDATE = "calendar_lunar_date";
+	public static final String COLUMN_CALENDAR_DAYOFWEEK = "calendar_lunar_dayofweek";
+	private static final String CREATE_TABLE_CALENDAR_MAP = "CREATE TABLE IF NOT EXISTS "
+			+ TAB_CALENDAR_MAP
+			+ " ( "
+			+ COLUMN_CALENDAR_ID
+			+ " INTEGER PRIMARY KEY, "
+			+ COLUMN_CALENDAR_MONTH
+			+ " TEXT, "
+			+ COLUMN_CALENDAR_LUNARDATE
+			+ " TEXT, "
+			+ COLUMN_CALENDAR_DAYOFWEEK
+			+ " TEXT " + " ); ";
 	public DatabaseHelper(Context context) {
 		super(context, NAME, null, version);
 	}
@@ -212,6 +233,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 		db.execSQL(CREATE_CONTACT_TABLE);
 		db.execSQL(CREATE_FRIEND_TABLE);
 		db.execSQL(CREATE_TABLE_WEATHER);
+//		db.execSQL(CREATE_TABLE_CALENDAR_MAP);
 	}
 
 }

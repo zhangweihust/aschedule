@@ -2,6 +2,7 @@ package com.archermind.schedule.Screens;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 
@@ -54,6 +55,7 @@ import com.archermind.schedule.Provider.DatabaseHelper;
 import com.archermind.schedule.Services.ServiceManager;
 import com.archermind.schedule.Utils.Constant;
 import com.archermind.schedule.Utils.DateTimeUtils;
+import com.archermind.schedule.Utils.LostTime;
 import com.archermind.schedule.Views.VerticalScrollView;
 import com.archermind.schedule.Views.XListView;
 import com.archermind.schedule.Views.XListView.IXListViewListener;
@@ -74,6 +76,7 @@ public class ScheduleScreen extends Screen
 	private static final int LOAD_DATA_OVER = 1;
 
 	private static final int LOAD_OVERD_GOTO_TODAY = 2;
+	private static final int LOCAL_SCHEDULE_UPDATE_OVER = 3;
 
 	private ImageView mListHeader;
 
@@ -202,12 +205,8 @@ public class ScheduleScreen extends Screen
 			public void handleMessage(Message msg) {
 				switch (msg.what) {
 					case LOAD_DATA_OVER :
-						gridView.setAdapter(calV);
 						hsa.setData(listdata);
-						gototoday.setVisibility(View.INVISIBLE);
-						schedule_headview_prompt
-								.setText(getHeadViewText(curSelectedDate));
-						isFling = false;
+						showListSchedule();
 						break;
 
 					case LOAD_OVERD_GOTO_TODAY :
@@ -216,6 +215,13 @@ public class ScheduleScreen extends Screen
 						schedule_headview_prompt
 								.setText(getHeadViewText(getDateByMillisTime(System
 										.currentTimeMillis())));
+						break;
+					case LOCAL_SCHEDULE_UPDATE_OVER :
+						gridView.setAdapter(calV);
+						hsa.setData(listdata);
+						gototoday.setVisibility(View.INVISIBLE);
+						schedule_headview_prompt
+								.setText(getHeadViewText(curSelectedDate));
 						break;
 				}
 				super.handleMessage(msg);
@@ -363,7 +369,7 @@ public class ScheduleScreen extends Screen
 			list2.setAdapter(hsa);
 			listdata = calendarData.getMonthSchedule(curScrollYear,
 					curScrollMonth);
-			handler.sendEmptyMessage(LOAD_DATA_OVER);
+//			handler.sendEmptyMessage(LOAD_DATA_OVER);
 
 			// flipper.addView(gridView);
 			flipper.addView(gridView, 0);
@@ -506,7 +512,6 @@ public class ScheduleScreen extends Screen
 			ScheduleApplication.LogD(getClass(),
 					"设置到view里面的时间：" + (System.currentTimeMillis() - pretime));
 			// flipper.addView(gridView);
-			addTextToTopTextView(current_date);
 			gvFlag++;
 			flipper.addView(gridView, gvFlag);
 			this.flipper.setInAnimation(AnimationUtils.loadAnimation(this,
@@ -516,19 +521,7 @@ public class ScheduleScreen extends Screen
 			this.flipper.showNext();
 			flipper.removeViewAt(0);
 
-			curScrollYear = Integer.parseInt(current_date.getText().toString()
-					.split("\\.")[0]);
-			curScrollMonth = Integer.parseInt(current_date.getText().toString()
-					.split("\\.")[1]);
-			new Thread() {
-				public void run() {
-					listdata = calendarData.getMonthSchedule(curScrollYear,
-							curScrollMonth);
-					isFling = true;
-					handler.sendEmptyMessage(LOAD_DATA_OVER);
-				};
-			}.start();
-			gototoday.setVisibility(View.INVISIBLE);
+			setScheduleData();
 
 			ScheduleApplication.LogD(getClass(),
 					"总共的时间" + (System.currentTimeMillis() - pretime));
@@ -543,7 +536,6 @@ public class ScheduleScreen extends Screen
 			calV = new CalendarAdapter(this, flipper.getHeight(), calendarData);
 			gridView.setAdapter(calV);
 			gvFlag++;
-			addTextToTopTextView(current_date);
 			// flipper.addView(gridView);
 			flipper.addView(gridView, gvFlag);
 
@@ -554,19 +546,7 @@ public class ScheduleScreen extends Screen
 			this.flipper.showPrevious();
 			flipper.removeViewAt(0);
 
-			curScrollYear = Integer.parseInt(current_date.getText().toString()
-					.split("\\.")[0]);
-			curScrollMonth = Integer.parseInt(current_date.getText().toString()
-					.split("\\.")[1]);
-			new Thread() {
-				public void run() {
-					listdata = calendarData.getMonthSchedule(curScrollYear,
-							curScrollMonth);
-					isFling = true;
-					handler.sendEmptyMessage(LOAD_DATA_OVER);
-				};
-			}.start();
-			gototoday.setVisibility(View.INVISIBLE);
+			setScheduleData();
 
 			return true;
 		}
@@ -794,6 +774,19 @@ public class ScheduleScreen extends Screen
 		return false;
 	}
 
+	private void setScheduleData() {
+		addTextToTopTextView(current_date);
+		curScrollYear = Integer.parseInt(current_date.getText()
+				.toString().split("\\.")[0]);
+		curScrollMonth = Integer.parseInt(current_date.getText()
+				.toString().split("\\.")[1]);
+		listdata = null;
+		isFling = true;
+		gototoday.setVisibility(View.INVISIBLE);
+		schedule_headview_prompt
+				.setText(getHeadViewText(curSelectedDate));
+		isFling = false;
+	}
 	@Override
 	public void onClick(View v) {
 		// TODO Auto-generated method stub
@@ -801,8 +794,17 @@ public class ScheduleScreen extends Screen
 		switch (v.getId()) {
 
 			case R.id.schedule_headview_prompt :
-
-				showListSchedule();
+				new Thread() {
+					public void run() {
+	
+						if (listdata == null) {
+							listdata = calendarData.getMonthSchedule(curScrollYear,
+									curScrollMonth);
+						}
+						handler.sendEmptyMessage(LOAD_DATA_OVER);
+	
+					};
+				}.start();
 				break;
 
 			case R.id.previous_year :// 点击上一个月
@@ -815,7 +817,7 @@ public class ScheduleScreen extends Screen
 						calendarData);
 				gridView.setAdapter(calV);
 				// flipper.addView(gridView);
-				addTextToTopTextView(current_date);
+				
 				gvFlag++;
 				flipper.addView(gridView, gvFlag);
 				this.flipper.setInAnimation(AnimationUtils.loadAnimation(this,
@@ -825,20 +827,9 @@ public class ScheduleScreen extends Screen
 				this.flipper.showNext();
 				flipper.removeViewAt(0);
 
-				curScrollYear = Integer.parseInt(current_date.getText()
-						.toString().split("\\.")[0]);
-				curScrollMonth = Integer.parseInt(current_date.getText()
-						.toString().split("\\.")[1]);
 
-				new Thread() {
-					public void run() {
+				setScheduleData();
 
-						listdata = calendarData.getMonthSchedule(curScrollYear,
-								curScrollMonth);
-						isFling = true;
-						handler.sendEmptyMessage(LOAD_DATA_OVER);
-					};
-				}.start();
 
 				break;
 
@@ -852,7 +843,7 @@ public class ScheduleScreen extends Screen
 						calendarData);
 				gridView.setAdapter(calV);
 				gvFlag++;
-				addTextToTopTextView(current_date);
+				
 				// flipper.addView(gridView);
 				flipper.addView(gridView, gvFlag);
 
@@ -863,18 +854,8 @@ public class ScheduleScreen extends Screen
 				this.flipper.showPrevious();
 				flipper.removeViewAt(0);
 
-				curScrollYear = Integer.parseInt(current_date.getText()
-						.toString().split("\\.")[0]);
-				curScrollMonth = Integer.parseInt(current_date.getText()
-						.toString().split("\\.")[1]);
-				new Thread() {
-					public void run() {
-						listdata = calendarData.getMonthSchedule(curScrollYear,
-								curScrollMonth);
-						isFling = true;
-						handler.sendEmptyMessage(LOAD_DATA_OVER);
-					};
-				}.start();
+				setScheduleData();
+				
 
 				break;
 			case R.id.current_day :
@@ -897,7 +878,6 @@ public class ScheduleScreen extends Screen
 				calV = new CalendarAdapter(this, flipper.getHeight(),
 						calendarData);
 				gridView.setAdapter(calV);
-				addTextToTopTextView(current_date);
 				gvFlag++;
 				flipper.addView(gridView, gvFlag);
 				if (xMonth == 0 && xYear == 0) {
@@ -917,16 +897,7 @@ public class ScheduleScreen extends Screen
 				}
 				flipper.removeViewAt(0);
 
-				curScrollYear = Integer.parseInt(current_date.getText()
-						.toString().split("\\.")[0]);
-				curScrollMonth = Integer.parseInt(current_date.getText()
-						.toString().split("\\.")[1]);
 
-				new Thread() {
-					public void run() {
-						listdata = calendarData.getMonthSchedule(curScrollYear,
-								curScrollMonth);
-						handler.sendEmptyMessage(LOAD_DATA_OVER);
 						// handler.post(new Runnable() {
 						//
 						// @Override
@@ -935,8 +906,7 @@ public class ScheduleScreen extends Screen
 						// handler.sendEmptyMessage(LOAD_OVERD_GOTO_TODAY);
 						// }
 						// });
-					};
-				}.start();
+				setScheduleData();
 
 				// 点击回到今天，把值设置到今天
 				curSelectedDate = getDateByMillisTime(System
@@ -977,7 +947,7 @@ public class ScheduleScreen extends Screen
 
 				listdata = calendarData.getMonthSchedule(curScrollYear,
 						curScrollMonth);
-				handler.sendEmptyMessage(LOAD_DATA_OVER);
+				handler.sendEmptyMessage(LOCAL_SCHEDULE_UPDATE_OVER);
 
 				// ScheduleScreen.this.runOnUiThread(new Runnable(){
 				// @Override

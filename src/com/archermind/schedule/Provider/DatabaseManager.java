@@ -1,5 +1,7 @@
 package com.archermind.schedule.Provider;
 
+import java.io.File;
+import java.io.IOException;
 import java.util.Calendar;
 
 import android.content.ContentValues;
@@ -16,15 +18,25 @@ import com.archermind.schedule.Services.EventService;
 import com.archermind.schedule.Services.ServiceManager;
 import com.archermind.schedule.Utils.Constant;
 import com.archermind.schedule.Utils.DateTimeUtils;
+import com.archermind.schedule.Utils.FileUtils;
 
 public class DatabaseManager {
 	private Context context;
 	private DatabaseHelper databaseHelper;
 	private SQLiteDatabase database;
+	private LunarDatesDatabaseHelper lunarDatesDatabaseHelper;
+	private SQLiteDatabase lunarDatesDatabase;
 	EventService eventService;
 
 	public DatabaseManager(Context context) {
-
+		File dest = new File(LunarDatesDatabaseHelper.PATH + LunarDatesDatabaseHelper.NAME);
+		if (!dest.exists()) {
+			try {
+				FileUtils.unzipFirstEntryToFile(context.getAssets().open(LunarDatesDatabaseHelper.SRC_FILE), dest);
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
+		}
 		this.context = context;
 	}
 
@@ -32,12 +44,16 @@ public class DatabaseManager {
 
 		databaseHelper = new DatabaseHelper(context);
 		database = databaseHelper.getWritableDatabase();
+		lunarDatesDatabaseHelper= new LunarDatesDatabaseHelper(context);
+		lunarDatesDatabase = databaseHelper.getWritableDatabase();
 		eventService = ServiceManager.getEventservice();
 	}
 
 	public void openwithnoservice() {
 		databaseHelper = new DatabaseHelper(context);
 		database = databaseHelper.getWritableDatabase();
+		lunarDatesDatabaseHelper= new LunarDatesDatabaseHelper(context);
+		lunarDatesDatabase = lunarDatesDatabaseHelper.getWritableDatabase();
 	}
 
 	public void close() {
@@ -538,5 +554,21 @@ public class DatabaseManager {
 				DatabaseHelper.COLUMN_WEATHER_DATE + " = ?",
 				new String[]{String.valueOf(date)}, null, null, null);
 
+	}
+	public long insertCalendarMap(ContentValues values) {
+		return database.insert(DatabaseHelper.TAB_CALENDAR_MAP, null, values);
+	}
+	public Cursor queryLunarDate(String month) {
+		return lunarDatesDatabase.query(LunarDatesDatabaseHelper.TAB_CALENDAR_MAP, null,
+				LunarDatesDatabaseHelper.COLUMN_CALENDAR_MONTH + " = ?",
+				new String[]{String.valueOf(month)}, null, null, null);
+	}
+	public Cursor queryLunarDatesOnYear(String year) {
+		String sql = "select * from "
+				+ LunarDatesDatabaseHelper.TAB_CALENDAR_MAP
+				+ " where "
+				+ LunarDatesDatabaseHelper.COLUMN_CALENDAR_MONTH + " like '%"
+				+ year + "%'";
+		return lunarDatesDatabase.rawQuery(sql, null);
 	}
 }

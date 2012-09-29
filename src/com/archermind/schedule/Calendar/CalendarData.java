@@ -23,9 +23,14 @@ import com.archermind.schedule.Model.ScheduleData;
 import com.archermind.schedule.Model.UserInfoData;
 import com.archermind.schedule.Provider.DatabaseHelper;
 import com.archermind.schedule.Provider.DatabaseManager;
+import com.archermind.schedule.Provider.LunarDatesDatabaseHelper;
 import com.archermind.schedule.Services.ServiceManager;
+import com.archermind.schedule.Utils.LostTime;
 
 public class CalendarData {
+	private static int BASE_YEAR = 1900;
+	private static int LAST_YEAR = 2049;
+	private static LunarMonthDates[] lunarMonthDates = new LunarMonthDates[(LAST_YEAR - BASE_YEAR + 1) * 12];
 	private DatabaseManager database;
 
 	private boolean isLeapyear = false; // 是否为闰年
@@ -162,6 +167,22 @@ public class CalendarData {
 		currentYear = String.valueOf(stepYear);; // 得到当前的年份
 		currentMonth = String.valueOf(stepMonth); // 得到本月（jumpMonth为滑动的次数，每滑动一次就增加一月或减一月）
 		currentDay = String.valueOf(day_c); // 得到当前日期是哪天
+//Thread t = new Thread(new Runnable() {
+//
+//	@Override
+//	public void run() {
+//		// TODO Auto-generated method stub
+//
+//        	for (int i=1900; i<=2049; i++) {
+//        		for (int j=1; j<=12; j++) {
+//        			getCalendar(i, j, 3);
+//        		}
+//        	}
+//
+//        database.close();
+//	}}) {
+//	
+//};t.start();
 		getCalendar(Integer.parseInt(currentYear),
 				Integer.parseInt(currentMonth), flagType);
 
@@ -193,135 +214,148 @@ public class CalendarData {
 				+ lastDaysOfMonth);
 		getweek(year, month, flagType);
 	}
+	
+	private boolean loadLunarMonthDatesOnYear(int year) {
+    	//System.out.println("=CCC= loadLunarMonthDatesOnYear");
+		if (year <= BASE_YEAR || year > LAST_YEAR)
+			return false;
 
-	// 将一个月中的每一天的值添加入数组dayNuber中
-	private synchronized void getweek(int year, int month, int flagType) {
-
-		SharedPreferences sharedPreferences = mContext.getSharedPreferences(
-				ScheduleData.LUNARDATE, Context.MODE_WORLD_READABLE);
-		boolean isExist = false;
-		String date = year + "-" + month;// 表示查询哪个月
-
-		Editor spedit = sharedPreferences.edit();
-		String res = sharedPreferences.getString(date, "");
-
-		if (!TextUtils.isEmpty(res)) {// 已经存在，不需要计算
-
-			isExist = true;
-			dayNumber = res.split(",");
-			ScheduleApplication.LogD(CalendarData.class, " 默认的阴历: " + res
-					+ "daynum number is " + dayNumber.length);
-
-		} else {
-
-			ScheduleApplication.LogD(CalendarData.class, "没有默认的阴历:" + date);
-		}
-
-		if (flagType == 1) {
-			week = new String[]{"周一", "周二", "周三", "周四", "周五", "周六", "周日"};
-			dayOfWeek -= 1;
-			if (dayOfWeek < 0) {
-				dayOfWeek = 6;
+		boolean loadSuccess = false;
+		int monthPos = (year - BASE_YEAR) * 12;
+		Cursor cursor = database.queryLunarDatesOnYear(String.valueOf(year));
+		if (cursor != null) {
+			if (cursor.getCount() == 12) {
+				while (cursor.moveToNext()) {
+					lunarMonthDates[monthPos] = new LunarMonthDates();
+					lunarMonthDates[monthPos].lunarDates = cursor
+							.getString(cursor
+									.getColumnIndex(LunarDatesDatabaseHelper.COLUMN_CALENDAR_LUNARDATE));
+					lunarMonthDates[monthPos].dayOfWeeks = cursor
+							.getString(cursor
+									.getColumnIndex(LunarDatesDatabaseHelper.COLUMN_CALENDAR_DAYOFWEEK));
+					monthPos++;
+				}
+				loadSuccess = true;
 			}
+			cursor.close();
 		}
-
-		int j = 1;
-		String lunarDay = "";
-		mark_count = new int[42];
-		for (int i = 0; i < dayNumber.length; i++) {
-			int k = 1;
-			// 周一
-			if (i < daysOfWeek) {
-				dayNumber[i] = week[i] + "." + " ";
-			} else if (i < dayOfWeek + daysOfWeek) { // 前一个月
-				int temp = lastDaysOfMonth - dayOfWeek + k - daysOfWeek;
-
-				if (!isExist) {
-
-					lunarDay = lc
-							.getLunarDate(year, month - 1, temp + i, false);
-					dayNumber[i] = (temp + i) + "." + lunarDay;
-				}
-
-			} else if (i < daysOfMonth + dayOfWeek + daysOfWeek) { // 本月
-				String day = String.valueOf(i - dayOfWeek + k - daysOfWeek); // 得到的日期
-
-				if (!isExist) {
-
-					lunarDay = lc.getLunarDate(year, month, i - dayOfWeek + k
-							- daysOfWeek, false);
-					dayNumber[i] = i - dayOfWeek + k - daysOfWeek + "."
-							+ lunarDay;
-				}
-
-				String startData = year + "." + month + "." + day;
-				String dayOfYear = month + "." + day;
-				String dayOfMonth = day;
-				String dayOfWeek = SpecialCalendar.getNumberWeekDay(year,
-						month, Integer.parseInt(day));
-
-				Cursor cursor = null;
-
-				long starTimeInMillis = getMillisTimeByDate(startData);
-				int count = 0;
-				cursor = database.queryIsMarkWithDay(starTimeInMillis,
-						dayOfYear, dayOfMonth, dayOfWeek);
-
-				if (cursor != null) {
-
-					count = cursor.getCount();
-					cursor.close();
-				}
-
-				// 对于当前月才去标记当前日期
-				if (sys_year.equals(String.valueOf(year))
-						&& sys_month.equals(String.valueOf(month))
-						&& sys_day.equals(day)) {
-					// 笔记当前日期
-					currentFlag = i;
-				}
-
-				// 标记日程日期
-				if (count > 0) {
-					mark_count[Integer.parseInt(day)] = count;
-				}
-
-				setShowYear(String.valueOf(year));
-				setShowMonth(String.valueOf(month));
-				setAnimalsYear(lc.animalsYear(year));
-				setLeapMonth(lc.leapMonth == 0 ? "" : String
-						.valueOf(lc.leapMonth));
-				setCyclical(lc.cyclical(year));
-
-			} else { // 下一个月
-
-				if (!isExist) {
-					lunarDay = lc.getLunarDate(year, month + 1, j, false);
-					dayNumber[i] = j + "." + lunarDay;
-				}
-
-				j++;
-			}
-		}
-
-		if (!isExist) {
-
-			String data = "";
-
-			for (int l = 0; l < dayNumber.length; l++) {
-
-				data = data + dayNumber[l] + ",";
-			}
-
-			spedit.putString(date, data);
-			spedit.commit();
-			ScheduleApplication.LogD(CalendarData.class, "写入默认的阴历:" + date
-					+ " 数据是： " + data);
-		} else {
-
-		}
-
+		return loadSuccess;
 	}
+
+
+    // 将一个月中的每一天的值添加入数组dayNuber中
+    private synchronized void getweek(int year, int month, int flagType) {
+    	//LostTime.cast("getweek 1");
+        String date = year + "." + month;// 表示查询哪个月
+
+        if (flagType == 1) {
+            week = new String[] {
+                    "周一", "周二", "周三", "周四", "周五", "周六", "周日"
+            };
+            dayOfWeek -= 1;
+            if (dayOfWeek < 0) {
+                dayOfWeek = 6;
+            }
+        }
+
+        //LostTime.cast("getweek 2");
+		int monthPos = (year - BASE_YEAR) * 12 + month -1;
+		boolean hasLunarMonthDates = (lunarMonthDates[monthPos] != null);
+		if (!hasLunarMonthDates) {
+			hasLunarMonthDates = loadLunarMonthDatesOnYear(year);
+		}
+		
+		String[] dayOfWeeks = new String[42];
+		if (hasLunarMonthDates) {
+			this.dayNumber = lunarMonthDates[monthPos].lunarDates.split(",");
+			dayOfWeeks = lunarMonthDates[monthPos].dayOfWeeks.split(",");
+		}
+		
+		//LostTime.cast("getweek 3");
+		
+		//LostTime.sum_reset();
+        	
+        int j = 1;
+        String lunarDay = "";
+        mark_count = new int[42];
+        for (int i = 0; i < dayNumber.length; i++) {
+        	int k = 1;
+
+        	
+            // 周一
+            if (i < daysOfWeek) {
+            } else if (i < dayOfWeek + daysOfWeek) { // 前一个月
+            } else if (i < daysOfMonth + dayOfWeek + daysOfWeek) { // 本月
+            	String day = String.valueOf(i - dayOfWeek + k - daysOfWeek); // 得到的日期
+            	String startData = year + "." + month + "." + day;
+                String dayOfYear = month + "." + day;
+                String dayOfMonth = day;
+                //LostTime.sum_mark_start();
+//                String dayOfWeek = SpecialCalendar.getNumberWeekDay(year, month,
+//                        Integer.parseInt(day));
+//                
+
+                Cursor cursor = null;
+
+                long starTimeInMillis = getMillisTimeByDate(startData);
+                int count = 0;
+                cursor = database.queryIsMarkWithDay(starTimeInMillis, dayOfYear, dayOfMonth,
+                		dayOfWeeks[i]);
+                
+                count = cursor.getCount();
+                
+                if (cursor != null) {
+                    cursor.close();
+                }
+
+                // 对于当前月才去标记当前日期
+                if (sys_year.equals(String.valueOf(year))
+                        && sys_month.equals(String.valueOf(month)) && sys_day.equals(day)) {
+                    // 笔记当前日期
+                    currentFlag = i;
+                }
+
+                // 标记日程日期
+                if (count > 0) {
+                    mark_count[Integer.parseInt(day)] = count;
+                }
+
+                setShowYear(String.valueOf(year));
+                setShowMonth(String.valueOf(month));
+                setAnimalsYear(lc.animalsYear(year));
+                setLeapMonth(lc.leapMonth == 0 ? "" : String.valueOf(lc.leapMonth));
+                //LostTime.sum_mark_end();
+                setCyclical(lc.cyclical(year));
+
+            } else { // 下一个月
+                j++;
+            }
+        }
+        //LostTime.sum_cast("getNumberWeekDay");
+        //LostTime.cast("getweek 4");
+        
+//        if (flagType == 3) {
+//			String data0 = year + "." + month;
+//
+//			String data1 = "";
+//
+//			for (int l = 0; l < dayNumber.length; l++) {
+//				data1 = data1 + dayNumber[l] + ",";
+//			}
+//			
+//			String data2 = "";
+//			
+//			for (int ll = 0; ll < dayOfWeeks.length; ll++) {
+//				data2 = data2 + dayOfWeeks[ll] + ",";
+//			}
+//
+//			ContentValues contentvalues = new ContentValues();
+//			contentvalues.put(DatabaseHelper.COLUMN_CALENDAR_MONTH, data0);
+//			contentvalues.put(DatabaseHelper.COLUMN_CALENDAR_LUNARDATE, data1);
+//			contentvalues.put(DatabaseHelper.COLUMN_CALENDAR_DAYOFWEEK, data2);
+//			ServiceManager.getDbManager().insertCalendarMap(contentvalues);
+//		}
+    }
 
 	public synchronized List<ScheduleData> getMonthSchedule(int year, int month) {
 		database.openwithnoservice();
@@ -475,5 +509,9 @@ public class CalendarData {
 			return -1;
 		}
 	}
+    class LunarMonthDates {
+    	String lunarDates;
+    	String dayOfWeeks;
+    }
 
 }
