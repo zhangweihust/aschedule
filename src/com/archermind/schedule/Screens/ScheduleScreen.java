@@ -378,7 +378,7 @@ public class ScheduleScreen extends Screen
 					curScrollMonth);
 			listScrollYear = curScrollYear;
 			listScrollMonth = curScrollMonth;
-//			handler.sendEmptyMessage(LOAD_DATA_OVER);
+			handler.sendEmptyMessage(LOAD_DATA_OVER);
 
 			// flipper.addView(gridView);
 			flipper.addView(gridView, 0);
