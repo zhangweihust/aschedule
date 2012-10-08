@@ -57,7 +57,8 @@ public class DatabaseManager {
 	}
 
 	public void close() {
-
+		lunarDatesDatabaseHelper.close();
+		lunarDatesDatabase.close();
 		databaseHelper.close();
 		database.close();
 	}

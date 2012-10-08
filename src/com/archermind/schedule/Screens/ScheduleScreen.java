@@ -122,6 +122,10 @@ public class ScheduleScreen extends Screen
 	private int curScrollYear = 0;
 
 	private int curScrollMonth = 0;
+	
+	private int listScrollYear = 0;
+
+	private int listScrollMonth = 0;
 
 	private String curDay = "";
 
@@ -198,15 +202,16 @@ public class ScheduleScreen extends Screen
 				.inflate(R.layout.schedule_list_headview, null);
 		schedule_headview_prompt = (TextView) schedulelistHeadView
 				.findViewById(R.id.schedule_headview_prompt);
+		Typeface type = Typeface.createFromAsset(getAssets(),"xdxwzt.ttf");
+		schedule_headview_prompt.setTypeface(type);
 		schedule_headview_prompt.setOnClickListener(this);
 
 		handler = new Handler() {
 
 			public void handleMessage(Message msg) {
 				switch (msg.what) {
-					case LOAD_DATA_OVER :
+					case LOAD_DATA_OVER:
 						hsa.setData(listdata);
-						showListSchedule();
 						break;
 
 					case LOAD_OVERD_GOTO_TODAY :
@@ -254,6 +259,8 @@ public class ScheduleScreen extends Screen
 				showListSchedule();
 			}
 		});
+		schedule_headview_prompt
+		.setText(getHeadViewText(curSelectedDate));
 
 		pager.addOnScrollListener(new VerticalScrollView.OnScrollListener() {
 			public void onScroll(int scrollX) {
@@ -369,6 +376,8 @@ public class ScheduleScreen extends Screen
 			list2.setAdapter(hsa);
 			listdata = calendarData.getMonthSchedule(curScrollYear,
 					curScrollMonth);
+			listScrollYear = curScrollYear;
+			listScrollMonth = curScrollMonth;
 //			handler.sendEmptyMessage(LOAD_DATA_OVER);
 
 			// flipper.addView(gridView);
@@ -421,8 +430,8 @@ public class ScheduleScreen extends Screen
 		scrollToPreMonth();
 		new Thread() {
 			public void run() {
-				listdata = calendarData.getMonthSchedule(curScrollYear,
-						curScrollMonth);
+				listdata = calendarData.getMonthSchedule(listScrollYear,
+						listScrollMonth);
 				handler.sendEmptyMessage(LOAD_DATA_OVER);
 			};
 		}.start();
@@ -437,8 +446,8 @@ public class ScheduleScreen extends Screen
 		scrollToAftMonth();
 		new Thread() {
 			public void run() {
-				listdata = calendarData.getMonthSchedule(curScrollYear,
-						curScrollMonth);
+				listdata = calendarData.getMonthSchedule(listScrollYear,
+						listScrollMonth);
 				handler.sendEmptyMessage(LOAD_DATA_OVER);
 			};
 		}.start();
@@ -659,20 +668,20 @@ public class ScheduleScreen extends Screen
 	}
 
 	public void scrollToPreMonth() {
-		if (curScrollMonth > 1) {
-			curScrollMonth--;
+		if (listScrollMonth > 1) {
+			listScrollMonth--;
 		} else {
-			curScrollMonth = 12;
-			curScrollYear--;
+			listScrollMonth = 12;
+			listScrollYear--;
 		}
 	}
 
 	public void scrollToAftMonth() {
-		if (curScrollMonth < 12) {
-			curScrollMonth++;
+		if (listScrollMonth < 12) {
+			listScrollMonth++;
 		} else {
-			curScrollMonth = 1;
-			curScrollYear++;
+			listScrollMonth = 1;
+			listScrollYear++;
 		}
 	}
 
@@ -797,14 +806,19 @@ public class ScheduleScreen extends Screen
 				new Thread() {
 					public void run() {
 	
-						if (listdata == null) {
+						if (listScrollYear != curScrollYear 
+								|| listScrollMonth != curScrollMonth) {
 							listdata = calendarData.getMonthSchedule(curScrollYear,
 									curScrollMonth);
+							listScrollYear = curScrollYear;
+							listScrollMonth = curScrollMonth;
+							
 						}
 						handler.sendEmptyMessage(LOAD_DATA_OVER);
 	
 					};
 				}.start();
+				showListSchedule();
 				break;
 
 			case R.id.previous_year :// 点击上一个月
