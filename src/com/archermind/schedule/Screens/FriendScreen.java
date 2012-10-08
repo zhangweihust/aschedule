@@ -24,6 +24,7 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
 import android.provider.ContactsContract.CommonDataKinds.Relation;
+import android.view.KeyEvent;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.Button;
@@ -708,4 +709,14 @@ public class FriendScreen extends Screen
 		return hashMap;
 	}
 
+	@Override
+	public boolean onKeyUp(int keyCode, KeyEvent event) {
+		// TODO Auto-generated method stub
+
+		if (keyCode == KeyEvent.KEYCODE_MENU) {
+			HomeScreen.switchActivity();
+		}
+		return super.onKeyUp(keyCode, event);
+	}
+	
 }
