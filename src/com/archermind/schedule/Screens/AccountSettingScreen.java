@@ -8,6 +8,8 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.util.ArrayList;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -22,6 +24,13 @@ import android.content.DialogInterface.OnDismissListener;
 import android.content.Intent;
 import android.database.Cursor;
 import android.graphics.Bitmap;
+import android.graphics.Bitmap.Config;
+import android.graphics.Canvas;
+import android.graphics.Paint;
+import android.graphics.PorterDuff;
+import android.graphics.PorterDuffXfermode;
+import android.graphics.Rect;
+import android.graphics.RectF;
 import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
 import android.net.Uri;
@@ -30,6 +39,7 @@ import android.os.Environment;
 import android.os.Handler;
 import android.os.Message;
 import android.provider.MediaStore;
+import android.text.TextUtils;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.Window;
@@ -65,7 +75,11 @@ public class AccountSettingScreen extends Screen implements OnClickListener {
     private SmartImageView headImage;
 
     private LinearLayout bindTelephone;
+    
+    private LinearLayout headImageSetLayout;
 
+    private LinearLayout nickNameSetLayout;
+    
     private Button logout;
 
     private String mUserName = "";
@@ -74,6 +88,8 @@ public class AccountSettingScreen extends Screen implements OnClickListener {
 
     private TextView loginNick;
 
+    private ProgressDialog mpDialog;
+    
     // url http://api.amtbaas.com/0/services
     // /showPictrue?appId=462b39f3eb7c4fb9a8e027473a6cd322&appSecret=482a4afe2f0e4020832078a4b4eeeae4
     //  &username=liqifan@163.com&filename=17_20120910_155620.jpg&album=myalbumname
@@ -85,7 +101,8 @@ public class AccountSettingScreen extends Screen implements OnClickListener {
 
     private Handler handler;
 
-    private String dictionry = Environment.getExternalStorageDirectory() + "/schedule";
+    private String dictionry = Environment.getExternalStorageDirectory().getPath()+ "/"
+            + ScheduleApplication.getContext().getPackageName()+ "/schedule";
 
     private String fileName = null;
 
@@ -144,10 +161,10 @@ public class AccountSettingScreen extends Screen implements OnClickListener {
                     break;
 
                 case MessageTypes.MESSAGE_UPLOADPIC:
-
                     // 上传头像文件成功，开始执行插入数据库操作
                     ScheduleApplication.LogD(AccountSettingScreen.class, "图片上传成功");
                     String filename = headImagePath.substring(headImagePath.lastIndexOf("/") + 1);
+                    
                     mUpPhotoUrl = mUpPhotoUrl + "&username=" + mUserName + "&filename=" + filename
                             + "&album=" + ALBUMNAME_AVATAR;
 
@@ -160,6 +177,9 @@ public class AccountSettingScreen extends Screen implements OnClickListener {
                         Toast.makeText(getApplicationContext(), "上传图片成功！", Toast.LENGTH_LONG)
                                 .show();
 
+                        String uri = getUriFormWeb();
+                        headImage.setImageUrl(uri, R.drawable.friend_item_img, R.drawable.friend_item_img);
+                                                
                     } else {
 
                         ScheduleApplication.LogD(AccountSettingScreen.class, "上传图片url失败");
@@ -174,7 +194,7 @@ public class AccountSettingScreen extends Screen implements OnClickListener {
         }
     };
 
-    private ProgressDialog mpDialog;
+ 
 
     /** Called when the activity is first created. */
     @Override
@@ -194,44 +214,77 @@ public class AccountSettingScreen extends Screen implements OnClickListener {
         });
 
         mpDialog = MyProgressDialog.getProgressDialog(AccountSettingScreen.this);
-
-        
         headImage = (SmartImageView)findViewById(R.id.headImage);
         loginNick = (TextView)findViewById(R.id.login_nick);
         bindTelephone = (LinearLayout)findViewById(R.id.bindTelephone);
+        headImageSetLayout =(LinearLayout)findViewById(R.id.headimageset);
+        nickNameSetLayout = (LinearLayout)findViewById(R.id.login_nick_set);
         logout = (Button)findViewById(R.id.logout);
         goback = (Button)findViewById(R.id.title_bar_setting_btn);
 
+        
         loginNick.setOnClickListener(this);
         headImage.setOnClickListener(this);
         bindTelephone.setOnClickListener(this);
         logout.setOnClickListener(this);
         goback.setOnClickListener(this);
-
+        headImageSetLayout.setOnClickListener(this);
+        nickNameSetLayout.setOnClickListener(this);
+        
         loginNick.setText(ServiceManager.getSPUserInfo(UserInfoData.NICK));
         mUserName = ServiceManager.getSPUserInfo(UserInfoData.EMAIL);
-
-        fileName = ServiceManager.getSPUserInfo(UserInfoData.USER_ID) + "_"
-                + System.currentTimeMillis() + ".jpg";
         String uri = getUriFormWeb();
-        ServiceManager.setAvator_url(uri);
-        System.out.println("***********uri = " + uri);
-
-        if (fileName != null) {
-
-            headImagePath = dictionry + "/" + fileName;
-            if (new File(headImagePath).exists()) {
-                ScheduleApplication.LogD(getClass(), "本地有头像，使用本地头像");
-                headImage.setImageURI(Uri.parse(headImagePath));
-            } else {
-                ScheduleApplication.LogD(getClass(), "本地没有头像，从网上获取头像");
-                headImage.setImageUrl(uri, R.drawable.friend_item_img, R.drawable.friend_item_img);
+        ScheduleApplication.LogD(getClass(), "uri =" +uri);
+        
+        //出问题了，亲
+        Pattern p = Pattern.compile("(filename=)([^<].*?)\\&");// 正则表达式，
+       
+        if (!TextUtils.isEmpty(uri)) {
+            
+            Matcher m = p.matcher(uri);
+            while (m.find()) {
+                fileName = m.group(2);
+                ScheduleApplication.LogD(getClass(), "urifile =" + fileName);
             }
         }
 
+        ServiceManager.setAvator_url(uri);
+        System.out.println("***********uri = " + uri);
+        
+        fileName = ServiceManager.getSPUserInfo(UserInfoData.USER_ID) + "_"
+                + System.currentTimeMillis() + ".jpg";
+        headImagePath = dictionry + "/" + fileName;
+        
+//        if (fileName != null) {
+//
+//            headImagePath = dictionry + "/" + fileName;
+//            if (new File(headImagePath).exists()) {
+//
+//                ScheduleApplication.LogD(getClass(), "本地有头像，使用本地头像");
+//                headImage.setImageURI(Uri.parse(headImagePath));
+//
+//            } else {
+//
+//                fileName = ServiceManager.getSPUserInfo(UserInfoData.USER_ID) + "_"
+//                        + System.currentTimeMillis() + ".jpg";
+//                headImagePath = dictionry + "/" + fileName;
+//
+//                ScheduleApplication.LogD(getClass(), "本地没有头像，从网上获取头像");
+//                headImage.setImageUrl(uri, R.drawable.friend_item_img, R.drawable.friend_item_img);
+//            }
+//        } else {
+//
+//            fileName = ServiceManager.getSPUserInfo(UserInfoData.USER_ID) + "_"
+//                    + System.currentTimeMillis() + ".jpg";
+//        }
+
+        headImage.setImageUrl(uri, R.drawable.friend_item_img, R.drawable.friend_item_img);
+        
         handler = new Handler() {
             public void handleMessage(Message msg) {
-                mpDialog.hide();
+                if (mpDialog != null) {
+                    mpDialog.dismiss();
+                }
                 switch (msg.what) {
                     case LOGOUT_FAILED:
                         String res = "";
@@ -269,10 +322,10 @@ public class AccountSettingScreen extends Screen implements OnClickListener {
     public void onClick(View v) {
         // TODO Auto-generated method stub
         switch (v.getId()) {
-            case R.id.login_nick:
+            case R.id.login_nick_set:
                 modifyNickDialog.show();
                 break;
-            case R.id.headImage:
+            case R.id.headimageset:
                 ShowPickDialog();
                 break;
             case R.id.bindTelephone:
@@ -394,7 +447,7 @@ public class AccountSettingScreen extends Screen implements OnClickListener {
                     setPicToView(data);
                 }
                 break;
-                
+
             default:
                 break;
         }
@@ -423,11 +476,34 @@ public class AccountSettingScreen extends Screen implements OnClickListener {
                     }
                 }
             }
-
         }
         return null;
     }
 
+    public static Bitmap toRoundCorner(Bitmap bitmap, int pixels) {  
+        if (bitmap == null)
+            return null;
+        
+        Bitmap output = Bitmap.createBitmap(bitmap.getWidth(), bitmap.getHeight(), Config.ARGB_8888);  
+        Canvas canvas = new Canvas(output);  
+  
+        final int color = 0xff424242;  
+        final Paint paint = new Paint();  
+        final Rect rect = new Rect(0, 0, bitmap.getWidth(), bitmap.getHeight());  
+        final RectF rectF = new RectF(rect);  
+        final float roundPx = pixels;  
+  
+        paint.setAntiAlias(true);  
+        canvas.drawARGB(0, 0, 0, 0);  
+        paint.setColor(color);  
+        canvas.drawRoundRect(rectF, roundPx, roundPx, paint);  
+
+        paint.setXfermode(new PorterDuffXfermode(PorterDuff.Mode.SRC_IN));  
+        canvas.drawBitmap(bitmap, rect, rect, paint);  
+  
+        return output;  
+    }
+    
     public void startPhotoZoom(Uri uri) {
 
         Intent intent = new Intent("com.android.camera.action.CROP");
@@ -449,7 +525,15 @@ public class AccountSettingScreen extends Screen implements OnClickListener {
         File dir = new File(dictionry);
         File file = null;
         if (!dir.exists()) {
-            dir.mkdirs();
+            
+            ScheduleApplication.LogD(getClass(), "文件夹不存在");            
+            if (dir.mkdirs()) {
+                
+                ScheduleApplication.LogD(getClass(), "创建文件夹成功"+dir.getPath());     
+            }else {
+                ScheduleApplication.LogD(getClass(), "创建文件夹失败"+dir.getPath());  
+            }
+            
             file = new File(dir, fileName);
         } else {
             file = new File(dir, fileName);
@@ -487,12 +571,13 @@ public class AccountSettingScreen extends Screen implements OnClickListener {
 
             // 显示头像
             Bitmap photo = extras.getParcelable("data");
+            photo= toRoundCorner(photo,15);
             Drawable drawable = new BitmapDrawable(photo);
             ByteArrayOutputStream stream = new ByteArrayOutputStream();
-            photo.compress(Bitmap.CompressFormat.JPEG, 60, stream);
+            photo.compress(Bitmap.CompressFormat.PNG, 60, stream);
             byte[] b = stream.toByteArray();
             writePhoto(b);
-            headImage.setImageDrawable(drawable);// 显示头像
+//            headImage.setImageDrawable(drawable);// 显示头像
             ScheduleApplication.LogD(getClass(), " setPicToView ");
             // 给用户创建相册用于上传头像
             ServiceManager.getServerInterface().InitAmtCloud(this);
