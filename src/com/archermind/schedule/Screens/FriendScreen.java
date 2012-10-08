@@ -81,6 +81,7 @@ public class FriendScreen extends Screen
 	private LinearLayout loginLayout;
 	private Button loginFriendBtn;
 	private Button bindFriendBtn;
+	private View view;
 	
 	public FriendScreen() {
 		database = ServiceManager.getDbManager();
@@ -132,6 +133,7 @@ public class FriendScreen extends Screen
 
 		loginFriendBtn = (Button) findViewById(R.id.loginfriend);
 		bindFriendBtn = (Button) findViewById(R.id.bindfriend);
+		view = (View) findViewById(R.id.view);
 	}
 
 	public void initAdapter() {
@@ -220,10 +222,12 @@ public class FriendScreen extends Screen
 			case R.id.myfriendlayout :
 			case R.id.friend_button_state :
 				if (friend_listView.getVisibility() == View.VISIBLE) {
+					view.setVisibility(View.VISIBLE);
 					friend_listView.setVisibility(View.GONE);
 					friend_button_state
 							.setBackgroundResource(R.drawable.friend_group_shrink);
 				} else {
+					view.setVisibility(View.GONE);
 					friend_listView.setVisibility(View.VISIBLE);
 					friend_button_state
 							.setBackgroundResource(R.drawable.friend_group_expand);

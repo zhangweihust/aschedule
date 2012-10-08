@@ -128,6 +128,11 @@
                 android:divider="@drawable/listview_divider"
                 android:listSelector="@drawable/friend_divider" >
             </ListView>
+            <View  
+                android:id="@+id/view"
+                android:visibility="gone"
+                android:layout_width="fill_parent"
+                android:layout_height="5dip"/>
         </LinearLayout>
 
         <LinearLayout
