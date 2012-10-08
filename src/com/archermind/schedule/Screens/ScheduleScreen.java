@@ -807,7 +807,8 @@ public class ScheduleScreen extends Screen
 					public void run() {
 	
 						if (listScrollYear != curScrollYear 
-								|| listScrollMonth != curScrollMonth) {
+								|| listScrollMonth != curScrollMonth
+								|| listdata == null) {
 							listdata = calendarData.getMonthSchedule(curScrollYear,
 									curScrollMonth);
 							listScrollYear = curScrollYear;
