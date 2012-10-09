@@ -35,8 +35,8 @@ public class UserInfoService implements IService {
 			// 发送请求
 			deviceInfoThread = new DeviceInfoThread(0, this);
 			deviceInfoThread.start();
-			SharedPreferenceUtil.setValue(
-					Constant.SendUserInfo.SEND_USER_DEVICE_INFO, "true");
+//			SharedPreferenceUtil.setValue(
+//					Constant.SendUserInfo.SEND_USER_DEVICE_INFO, "true");
 		}
 
 		int oldDate = Integer.parseInt(SharedPreferenceUtil.getValue(

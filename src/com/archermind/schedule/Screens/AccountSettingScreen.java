@@ -223,8 +223,8 @@ public class AccountSettingScreen extends Screen implements OnClickListener {
         goback = (Button)findViewById(R.id.title_bar_setting_btn);
 
         
-        loginNick.setOnClickListener(this);
-        headImage.setOnClickListener(this);
+//        loginNick.setOnClickListener(this);
+//        headImage.setOnClickListener(this);
         bindTelephone.setOnClickListener(this);
         logout.setOnClickListener(this);
         goback.setOnClickListener(this);

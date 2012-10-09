@@ -39,10 +39,11 @@ public class UserActivityInfoThread extends Thread {
 							String.valueOf(date));
 					break;
 				}
-				times--;
 				sleep(countService.getCountDuration());
 			} catch (Exception e) {
 				e.printStackTrace();
+			} finally {
+				times--;
 			}
 		}
 	}
