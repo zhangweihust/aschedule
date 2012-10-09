@@ -10,7 +10,9 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
 import android.os.SystemClock;
+import android.util.Log;
 import android.view.KeyEvent;
+import android.view.WindowManager;
 import android.widget.ImageView;
 
 import com.archermind.schedule.R;
@@ -23,6 +25,8 @@ public class LoadingScreen extends Screen {
     private ImageView mImageView;
 
     private AnimationDrawable mAnimaition;
+    
+    private boolean flag = false;
 
     public LoadingScreen() {
         super();
@@ -87,11 +91,11 @@ public class LoadingScreen extends Screen {
 
                         mAnimaition.stop();
                     }
-
-                    Intent it = new Intent(LoadingScreen.this, HomeScreen.class);
-                    startActivity(it);
-                    finish();
-
+                    if(!flag){
+                    	 Intent it = new Intent(LoadingScreen.this, HomeScreen.class);
+                         startActivity(it);
+                         finish();
+                    }
                     break;
 
                 default:
@@ -122,8 +126,18 @@ public class LoadingScreen extends Screen {
 
         if (event.getKeyCode() == KeyEvent.KEYCODE_BACK && event.getAction() == KeyEvent.ACTION_UP) {
             return true;
+        } else if (event.getKeyCode() == KeyEvent.KEYCODE_HOME){
+        	flag = true;
+        	this.finish();
         }
         return super.dispatchKeyEvent(event);
     }
+    
+    @Override
+    public void onAttachedToWindow () {
+        this.getWindow().setType(WindowManager.LayoutParams.TYPE_KEYGUARD);
+        super.onAttachedToWindow();
+    }
+    
 
 }
