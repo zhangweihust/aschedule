@@ -217,7 +217,11 @@ public class FriendContactAdapter extends BaseAdapter
 			// }
 			if (friend != null) {
 				if (Constant.FriendType.friend_contact_use == friend.getType()) {
-					contentHolderView.name.setText(friend.getNick()+ "(" + friend.getName() + ")");
+					if(friend.getName() == null){
+						contentHolderView.name.setText(friend.getNick());
+					}else {
+						contentHolderView.name.setText(friend.getNick()+ "(" + friend.getName() + ")");
+					}
 					contentHolderView.friend_button2.setText(context
 							.getResources().getString(R.string.friend_add));
 					contentHolderView.friend_button2.setTag(this);

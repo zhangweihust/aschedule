@@ -367,9 +367,8 @@ public class FriendScreen extends Screen
 		};
 	};
 
-	private boolean makeFriendContactUseFromInet(List<Friend> friendContactUs,
-			List<Friend> friends, List<Friend> ignores, List<String> tempList,
-			List<String> friendList, List<String> ignoreList) {
+	private boolean makeFriendContactUseFromInet(List<Friend> friendContactUs,List<Friend> ignores,
+			List<String> tempList,List<String> friendList, List<String> ignoreList) {
 		if (NetworkUtils.getNetworkState(this) != NetworkUtils.NETWORN_NONE) {
 
 			String jsonString = ServiceManager.getServerInterface()
@@ -396,40 +395,41 @@ public class FriendScreen extends Screen
 								continue;
 							}
 							Friend friend = new Friend();
-							if (friendList.contains(user_id)) {// 更新好友信息
-								ScheduleApplication.LogD(getClass(), "我的好友:"
-										+ nick);
-								friend.setId(user_id);
-								friend.setTelephone(tel);
-								friend.setType(Constant.FriendType.friend_yes);
-								friend.setNick(nick);
-								friend.setHeadImagePath(photo_url);
-								friend.setName(database.queryNameByTel(tel));
-								friends.add(friend);
-
-								Cursor cursor = database.queryFriend(Integer
-										.parseInt(user_id));
-								values = new ContentValues();
-								values.put(
-										DatabaseHelper.ASCHEDULE_FRIEND_TYPE,
-										Constant.FriendType.friend_yes);
-								values.put(DatabaseHelper.ASCHEDULE_FRIEND_NUM,
-										tel);
-								values.put(
-										DatabaseHelper.ASCHEDULE_FRIEND_NICK,
-										nick);
-								values.put(
-										DatabaseHelper.ASCHEDULE_FRIEND_PHOTO_URL,
-										photo_url);
-								if (cursor.moveToNext()) {
-									database.updateFriend(user_id, values);
-								} else {
-									values.put(
-											DatabaseHelper.ASCHEDULE_FRIEND_ID,
-											user_id);
-									database.addFriend(values);
-								}
-								cursor.close();
+							if (friendList.contains(user_id)) {
+								//好友信息已经保存，直接跳过
+//								ScheduleApplication.LogD(getClass(), "我的好友:"
+//										+ nick);
+//								friend.setId(user_id);
+//								friend.setTelephone(tel);
+//								friend.setType(Constant.FriendType.friend_yes);
+//								friend.setNick(nick);
+//								friend.setHeadImagePath(photo_url);
+//								friend.setName(database.queryNameByTel(tel));
+//								friends.add(friend);
+//
+//								Cursor cursor = database.queryFriend(Integer
+//										.parseInt(user_id));
+//								values = new ContentValues();
+//								values.put(
+//										DatabaseHelper.ASCHEDULE_FRIEND_TYPE,
+//										Constant.FriendType.friend_yes);
+//								values.put(DatabaseHelper.ASCHEDULE_FRIEND_NUM,
+//										tel);
+//								values.put(
+//										DatabaseHelper.ASCHEDULE_FRIEND_NICK,
+//										nick);
+//								values.put(
+//										DatabaseHelper.ASCHEDULE_FRIEND_PHOTO_URL,
+//										photo_url);
+//								if (cursor.moveToNext()) {
+//									database.updateFriend(user_id, values);
+//								} else {
+//									values.put(
+//											DatabaseHelper.ASCHEDULE_FRIEND_ID,
+//											user_id);
+//									database.addFriend(values);
+//								}
+//								cursor.close();
 								continue;
 							}
 
@@ -521,35 +521,92 @@ public class FriendScreen extends Screen
 			if (jsonString != null && !"".equals(jsonString)) {
 				if (jsonString.indexOf("user_id") >= 0) {// 防止返回错误码
 					try {
-						JSONArray jsonArray = new JSONArray(jsonString);
-						ScheduleApplication.LogD(FriendsDyamicScreen.class,
-								jsonString + jsonArray.length());
-						JSONObject jsonObject = (JSONObject) jsonArray.opt(0);
-						String user_id = jsonObject.getString("user_id");
-						String contact_list = jsonObject
-								.getString("contact_list");
-						String friends_list = jsonObject
-								.getString("friends_list");
-						String shield_list = jsonObject
-								.getString("shield_list");
-
-						String[] contacts = contact_list.split(",");
-						for (int i = 0; i < contacts.length; i++) {
-							contactToalList.add(contacts[i]);
-						}
-
-						String[] friendes = friends_list.split(",");
-						for (int i = 0; i < friendes.length; i++) {
-							friendList.add(friendes[i]);
-						}
-
-						String[] shields = shield_list.split(",");
-						for (int i = 0; i < shields.length; i++) {
-							ignoreList.add(shields[i]);
-						}
+						String[] stringArray = jsonString.split("####");
 						List<String> tempList = new ArrayList<String>();
+						ContentValues values = null;
+						for (int i = 0; i < stringArray.length; i++) {
+							if (i == 0) {
+								JSONArray jsonArray = new JSONArray(jsonString);
+								ScheduleApplication.LogD(FriendsDyamicScreen.class,
+										jsonString + jsonArray.length());
+								JSONObject jsonObject = (JSONObject) jsonArray.opt(0);
+//								String user_id = jsonObject.getString("user_id");
+								
+								String contact_list = jsonObject
+										.getString("contact_list");
+								String friends_list = jsonObject
+										.getString("friends_list");
+								String shield_list = jsonObject
+										.getString("shield_list");
+								
+								String[] contacts = contact_list.split(",");
+								for (int j = 0; j < contacts.length; j++) {
+									contactToalList.add(contacts[j]);
+								}
+								
+								String[] friendes = friends_list.split(",");
+								for (int j = 0; j < friendes.length; j++) {
+									friendList.add(friendes[j]);
+								}
+								
+								String[] shields = shield_list.split(",");
+								for (int j = 0; j < shields.length; j++) {
+									ignoreList.add(shields[j]);
+								}
+							}else {
+								JSONArray jsonArray = new JSONArray(stringArray[i]);
+								JSONObject jsonObject = (JSONObject) jsonArray
+										.opt(0);
+								String user_id = jsonObject.getString("user_id");
+								String nick = jsonObject.getString("nick");
+								String photo_url = jsonObject
+										.getString("photo_url");
+								String tel = jsonObject.getString("tel");
+								if (user_id.equals(String.valueOf(ServiceManager.getUserId()))) {// 屏蔽自己
+									continue;
+								}
+								Friend friend = new Friend();
+								if (friendList.contains(user_id)) {// 更新好友信息
+									ScheduleApplication.LogD(getClass(), "我的好友:"
+											+ nick);
+									friend.setId(user_id);
+									friend.setTelephone(tel);
+									friend.setType(Constant.FriendType.friend_yes);
+									friend.setNick(nick);
+									friend.setHeadImagePath(photo_url);
+									friend.setName(database.queryNameByTel(tel));
+									friends.add(friend);
+
+									Cursor cursor = database.queryFriend(Integer
+											.parseInt(user_id));
+									values = new ContentValues();
+									values.put(
+											DatabaseHelper.ASCHEDULE_FRIEND_TYPE,
+											Constant.FriendType.friend_yes);
+									values.put(DatabaseHelper.ASCHEDULE_FRIEND_NUM,
+											tel);
+									values.put(
+											DatabaseHelper.ASCHEDULE_FRIEND_NICK,
+											nick);
+									values.put(
+											DatabaseHelper.ASCHEDULE_FRIEND_PHOTO_URL,
+											photo_url);
+									if (cursor.moveToNext()) {
+										database.updateFriend(user_id, values);
+									} else {
+										values.put(
+												DatabaseHelper.ASCHEDULE_FRIEND_ID,
+												user_id);
+										database.addFriend(values);
+									}
+									cursor.close();
+								}
+								
+							}
+						}
+						
 						//查询好友信息
-						getFriendsOK = makeFriendContactUseFromInet(contact_use, friends, ignores,
+						getFriendsOK = makeFriendContactUseFromInet(contact_use, ignores,
 								tempList, friendList, ignoreList);
 						for (String tel : tempList) {
 							contactToalList.remove(tel);
