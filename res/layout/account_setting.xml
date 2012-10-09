@@ -45,7 +45,7 @@
         android:orientation="vertical" >
 
         <LinearLayout
-            android:id="@+id/datatime"
+            android:id="@+id/headimageset"
             android:layout_width="fill_parent"
             android:layout_height="60dp"
             android:clickable="true"
@@ -83,6 +83,7 @@
             android:background="@drawable/schedule_new_line" />
 
         <LinearLayout
+            android:id="@+id/login_nick_set"
             android:layout_width="fill_parent"
             android:layout_height="60dp"
             android:clickable="true"
@@ -105,7 +106,6 @@
                 android:layout_marginRight="40dip"
                 android:layout_weight="0"
                 android:background="#00ffffff"
-                android:focusable="true"
                 android:hint="ZHANG"
                 android:textColor="#000000"
                 android:textSize="13sp" />

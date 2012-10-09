@@ -159,9 +159,9 @@ public class HistoryScheduleAdapter extends BaseAdapter {
 				case DatabaseHelper.SCHEDULE_EVENT_TYPE_NONE :
 					item.typeView.setBackgroundResource(R.drawable.type_none);
 					break;
-				case DatabaseHelper.SCHEDULE_EVENT_TYPE_NOTICE :
-					item.typeView.setBackgroundResource(R.drawable.type_notice);
-					break;
+//				case DatabaseHelper.SCHEDULE_EVENT_TYPE_NOTICE :
+//					item.typeView.setBackgroundResource(R.drawable.type_notice);
+//					break;
 				case DatabaseHelper.SCHEDULE_EVENT_TYPE_ACTIVE :
 					item.typeView.setBackgroundResource(R.drawable.type_active);
 					break;

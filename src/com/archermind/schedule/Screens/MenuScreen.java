@@ -73,7 +73,9 @@ public class MenuScreen extends Activity implements OnClickListener {
         handler = new Handler() {
             public void handleMessage(Message msg) {
                 Intent it;
-                mpDialog.hide();
+                if (mpDialog != null) {
+                    mpDialog.dismiss();
+                }
                 switch (msg.what) {
                     case LOGIN_STATUS_FAILED:
                         it = new Intent(MenuScreen.this, LoginScreen.class);
@@ -115,7 +117,7 @@ public class MenuScreen extends Activity implements OnClickListener {
                 onBackPressed();
                 break;
             case R.id.menu_account_btn:
-           
+
                 mpDialog.show();
                 if (!account_btn_flag) {
                     account_btn_flag = true;

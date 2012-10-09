@@ -107,8 +107,9 @@ public class TelephoneBindScreen extends Screen implements OnClickListener {
         String imsi = DeviceInfo.getDeviceIMSI();// 号码发生变更，和绑定做统一处理
         ScheduleApplication.LogD(getClass(), "imsi = " + imsi);
 
-        if (!imsi.equals(ServiceManager.getSPUserInfo(UserInfoData.IMSI))
+        if (imsi.equals(ServiceManager.getSPUserInfo(UserInfoData.IMSI))
                 || ServiceManager.getBindFlag()) {
+            
             telephone_bind_is_bind.setVisibility(View.VISIBLE);
             String promptstr = "您的帐号 " + ServiceManager.getSPUserInfo(UserInfoData.EMAIL)
                     + " 已经与手机号 " + ServiceManager.getSPUserInfo(UserInfoData.TEL) + " 绑定!";

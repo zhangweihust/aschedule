@@ -1,5 +1,7 @@
 package com.archermind.schedule.Views;
 
+import com.archermind.schedule.R;
+
 import android.content.Context;
 import android.graphics.Canvas;
 import android.graphics.Color;
@@ -33,7 +35,7 @@ public class FeedBackEditText extends EditText {
 	/**
 	 * 分割线颜色
 	 */
-	public static int lineColor = 0x800000FF;
+	public static int lineColor =0x800000FF;
 
 	/**
 	 * 文本追加高度
@@ -46,7 +48,7 @@ public class FeedBackEditText extends EditText {
 		mRect = new Rect();
 		mPaint = new Paint();
 		mPaint.setStyle(Paint.Style.STROKE);
-		mPaint.setColor(lineColor);
+		mPaint.setColor(context.getResources().getColor(R.color.lineColor));
 		setTextSize(fontSize);
 		setTextColor(fontColor);
 

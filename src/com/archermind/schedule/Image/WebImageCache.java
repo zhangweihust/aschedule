@@ -1,3 +1,4 @@
+
 package com.archermind.schedule.Image;
 
 import java.io.BufferedOutputStream;
@@ -19,155 +20,167 @@ import android.os.Environment;
 import com.archermind.schedule.ScheduleApplication;
 
 public class WebImageCache {
-	private static final String DISK_CACHE_PATH = "/"
-			+ ScheduleApplication.getContext().getPackageName() + "/image/";
-	private static final String DATA_CACHE_PATH = "/webimage_cache/";
-	private ConcurrentHashMap<String, SoftReference<Bitmap>> memoryCache;
-	private String diskCachePath;
-	private boolean diskCacheEnabled = false;
-	private ExecutorService writeThread;
+    private static final String DISK_CACHE_PATH = "/"
+            + ScheduleApplication.getContext().getPackageName() + "/image/";
 
-	public WebImageCache(Context context) {
-		// Set up in-memory cache store
-		memoryCache = new ConcurrentHashMap<String, SoftReference<Bitmap>>();
+    private static final String DATA_CACHE_PATH = "/webimage_cache/";
 
-		// Set up disk cache store
-		if (Environment.getExternalStorageState().equals(
-				android.os.Environment.MEDIA_MOUNTED)) {
-			diskCachePath = Environment.getExternalStorageDirectory().getPath()
-					+ DISK_CACHE_PATH;
-		} else {
-			Context appContext = context.getApplicationContext();
-			diskCachePath = appContext.getCacheDir().getAbsolutePath()
-					+ DATA_CACHE_PATH;
-		}
+    private ConcurrentHashMap<String, SoftReference<Bitmap>> memoryCache;
 
-		File outFile = new File(diskCachePath);
-		outFile.mkdirs();
+    private String diskCachePath;
 
-		diskCacheEnabled = outFile.exists();
+    private boolean diskCacheEnabled = false;
 
-		// Set up threadpool for image fetching tasks
-		writeThread = Executors.newSingleThreadExecutor();
-	}
+    private ExecutorService writeThread;
 
-	public Bitmap get(final String url) {
-		Bitmap bitmap = null;
+    public WebImageCache(Context context) {
+        // Set up in-memory cache store
+        memoryCache = new ConcurrentHashMap<String, SoftReference<Bitmap>>();
 
-		// Check for image in memory
-		bitmap = getBitmapFromMemory(url);
+        // Set up disk cache store
+        if (Environment.getExternalStorageState().equals(android.os.Environment.MEDIA_MOUNTED)) {
+            diskCachePath = Environment.getExternalStorageDirectory().getPath() + DISK_CACHE_PATH;
+        } else {
+            Context appContext = context.getApplicationContext();
+            diskCachePath = appContext.getCacheDir().getAbsolutePath() + DATA_CACHE_PATH;
+        }
 
-		// Check for image on disk cache
-		if (bitmap == null) {
-			bitmap = getBitmapFromDisk(url);
+        File outFile = new File(diskCachePath);
 
-			// Write bitmap back into memory cache
-			if (bitmap != null) {
-				cacheBitmapToMemory(url, bitmap);
-			}
-		}
+        if (outFile.mkdirs()) {
+            ScheduleApplication.LogD(getClass(), "文件夹创建成功+ path = " + outFile.getPath());
 
-		return bitmap;
-	}
+        } else {
+            ScheduleApplication.LogD(getClass(), "文件夹创建失败+ path = " + outFile.getPath());
+        }
 
-	public void put(String url, Bitmap bitmap) {
-		cacheBitmapToMemory(url, bitmap);
-		cacheBitmapToDisk(url, bitmap);
-	}
+        diskCacheEnabled = outFile.exists();
 
-	public void remove(String url) {
-		if (url == null) {
-			return;
-		}
+        // Set up threadpool for image fetching tasks
+        writeThread = Executors.newSingleThreadExecutor();
+    }
 
-		// Remove from memory cache
-		memoryCache.remove(getCacheKey(url));
+    public Bitmap get(final String url) {
+        Bitmap bitmap = null;
 
-		// Remove from file cache
-		File f = new File(diskCachePath, url);
-		if (f.exists() && f.isFile()) {
-			f.delete();
-		}
-	}
+        // Check for image in memory
+        bitmap = getBitmapFromMemory(url);
 
-	public void clear() {
-		// Remove everything from memory cache
-		memoryCache.clear();
+        // Check for image on disk cache
+        if (bitmap == null) {
+            bitmap = getBitmapFromDisk(url);
 
-		// Remove everything from file cache
-		File cachedFileDir = new File(diskCachePath);
-		if (cachedFileDir.exists() && cachedFileDir.isDirectory()) {
-			File[] cachedFiles = cachedFileDir.listFiles();
-			for (File f : cachedFiles) {
-				if (f.exists() && f.isFile()) {
-					f.delete();
-				}
-			}
-		}
-	}
+            // Write bitmap back into memory cache
+            if (bitmap != null) {
+                cacheBitmapToMemory(url, bitmap);
+            }
+        }
 
-	private void cacheBitmapToMemory(final String url, final Bitmap bitmap) {
-		memoryCache.put(getCacheKey(url), new SoftReference<Bitmap>(bitmap));
-	}
+        return bitmap;
+    }
 
-	private void cacheBitmapToDisk(final String url, final Bitmap bitmap) {
-		writeThread.execute(new Runnable() {
-			@Override
-			public void run() {
-				if (diskCacheEnabled) {
-					BufferedOutputStream ostream = null;
-					try {
-						ostream = new BufferedOutputStream(
-								new FileOutputStream(new File(diskCachePath,
-										getCacheKey(url))), 2 * 1024);
-						bitmap.compress(CompressFormat.JPEG, 90, ostream);
-					} catch (FileNotFoundException e) {
-						e.printStackTrace();
-					} finally {
-						try {
-							if (ostream != null) {
-								ostream.flush();
-								ostream.close();
-							}
-						} catch (IOException e) {
-						}
-					}
-				}
-			}
-		});
-	}
+    public void put(String url, Bitmap bitmap) {
+        cacheBitmapToMemory(url, bitmap);
+        cacheBitmapToDisk(url, bitmap);
+    }
 
-	private Bitmap getBitmapFromMemory(String url) {
-		Bitmap bitmap = null;
-		SoftReference<Bitmap> softRef = memoryCache.get(getCacheKey(url));
-		if (softRef != null) {
-			bitmap = softRef.get();
-		}
+    public void remove(String url) {
+        if (url == null) {
+            return;
+        }
 
-		return bitmap;
-	}
+        // Remove from memory cache
+        memoryCache.remove(getCacheKey(url));
 
-	private Bitmap getBitmapFromDisk(String url) {
-		Bitmap bitmap = null;
-		if (diskCacheEnabled) {
-			String filePath = getFilePath(url);
-			File file = new File(filePath);
-			if (file.exists()) {
-				bitmap = BitmapFactory.decodeFile(filePath);
-			}
-		}
-		return bitmap;
-	}
+        // Remove from file cache
+        File f = new File(diskCachePath, url);
+        if (f.exists() && f.isFile()) {
+            f.delete();
+        }
+    }
 
-	private String getFilePath(String url) {
-		return diskCachePath + getCacheKey(url);
-	}
+    public void clear() {
+        // Remove everything from memory cache
+        memoryCache.clear();
 
-	private String getCacheKey(String url) {
-		if (url == null) {
-			throw new RuntimeException("Null url passed in");
-		} else {
-			return url.replaceAll("[.:/,%?&=]", "+").replaceAll("[+]+", "+");
-		}
-	}
+        // Remove everything from file cache
+        File cachedFileDir = new File(diskCachePath);
+        if (cachedFileDir.exists() && cachedFileDir.isDirectory()) {
+            File[] cachedFiles = cachedFileDir.listFiles();
+            for (File f : cachedFiles) {
+                if (f.exists() && f.isFile()) {
+                    f.delete();
+                }
+            }
+        }
+    }
+
+    private void cacheBitmapToMemory(final String url, final Bitmap bitmap) {
+        memoryCache.put(getCacheKey(url), new SoftReference<Bitmap>(bitmap));
+    }
+
+ /**
+ * 
+ *  这个就是下载后存图片的地方
+ *  
+ * */
+    private void cacheBitmapToDisk(final String url, final Bitmap bitmap) {
+        writeThread.execute(new Runnable() {
+            @Override
+            public void run() {
+                if (diskCacheEnabled) {
+                    BufferedOutputStream ostream = null;
+                    try {
+                        ostream = new BufferedOutputStream(new FileOutputStream(new File(
+                                diskCachePath, getCacheKey(url))), 2 * 1024);
+                        bitmap.compress(CompressFormat.PNG, 90, ostream);
+                    } catch (FileNotFoundException e) {
+                        e.printStackTrace();
+                    } finally {
+                        try {
+                            if (ostream != null) {
+                                ostream.flush();
+                                ostream.close();
+                            }
+                        } catch (IOException e) {
+                        }
+                    }
+                }
+            }
+        });
+    }
+
+    private Bitmap getBitmapFromMemory(String url) {
+        Bitmap bitmap = null;
+        SoftReference<Bitmap> softRef = memoryCache.get(getCacheKey(url));
+        if (softRef != null) {
+            bitmap = softRef.get();
+        }
+
+        return bitmap;
+    }
+
+    private Bitmap getBitmapFromDisk(String url) {
+        Bitmap bitmap = null;
+        if (diskCacheEnabled) {
+            String filePath = getFilePath(url);
+            File file = new File(filePath);
+            if (file.exists()) {
+                bitmap = BitmapFactory.decodeFile(filePath);
+            }
+        }
+        return bitmap;
+    }
+
+    private String getFilePath(String url) {
+        return diskCachePath + getCacheKey(url);
+    }
+
+    private String getCacheKey(String url) {
+        if (url == null) {
+            throw new RuntimeException("Null url passed in");
+        } else {
+            return url.replaceAll("[.:/,%?&=]", "+").replaceAll("[+]+", "+");
+        }
+    }
 }

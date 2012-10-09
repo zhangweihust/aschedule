@@ -118,16 +118,14 @@ public class LoginScreen extends Screen implements OnClickListener {
         login_submit.setOnClickListener(this);
 
         mpDialog = MyProgressDialog.getProgressDialog(LoginScreen.this);
-
         handler = new Handler() {
 
             @Override
             public void handleMessage(Message msg) {
                 super.handleMessage(msg);
                 
-                if (mpDialog.isShowing()) {
-                    
-                    mpDialog.hide();
+                if (mpDialog!=null) {
+                    mpDialog.dismiss();
                 }
                 
                 if (msg != null && msg.obj != null) {

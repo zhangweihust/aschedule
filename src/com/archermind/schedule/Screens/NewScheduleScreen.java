@@ -65,7 +65,7 @@ public class NewScheduleScreen extends Screen implements OnClickListener {
 
 	private boolean mRemind = false;
 
-	private int mType = -1;
+	private int mType = DatabaseHelper.SCHEDULE_EVENT_TYPE_NONE;
 
 	private long startTime = 0;
 
@@ -360,6 +360,7 @@ public class NewScheduleScreen extends Screen implements OnClickListener {
 				weekType = alarmPopwindow.getWeekValue();
 				remindCycle = alarmPopwindow.getRepeatType();
 				mType = eventTypeDialog.getEventType();
+
 				cv.put(DatabaseHelper.COLUMN_SCHEDULE_USER_ID,
 						ServiceManager.getUserId());
 				cv.put(DatabaseHelper.COLUMN_SCHEDULE_TYPE, mType);

@@ -8,38 +8,35 @@
     <TextView
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
-        android:layout_marginLeft="10dip"
         android:gravity="center_horizontal"
         android:text="修改昵称"
         android:textColor="@android:color/white"
-        android:textSize="20dp" />
+        android:textSize="18dp" />
 
     <LinearLayout
         android:layout_width="fill_parent"
         android:layout_height="100dip"
         android:gravity="center"
         android:orientation="horizontal" >
-        
-            <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginLeft="10dip"
-        android:gravity="center_horizontal"
-        android:text="昵称："
-        android:textSize="20dp" 
-        android:textColor="#636363"/>
-            
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="10dip"
+            android:gravity="center_horizontal"
+            android:text="昵称："
+            android:textColor="#636363"
+            android:textSize="20dp" />
+
         <EditText
-                android:id="@+id/nick"
-                android:layout_width="120dip"
-                android:layout_height="wrap_content"
-                android:layout_marginRight="40dip"
-                android:layout_weight="0"
-                android:focusable="true"
-                android:singleLine="true"
-                android:hint="NICK"
-                android:textColor="#636363" />
-        
+            android:id="@+id/nick"
+            android:layout_width="120dip"
+            android:layout_height="wrap_content"
+            android:layout_marginRight="40dip"
+            android:layout_weight="0"
+            android:focusable="true"
+            android:singleLine="true"
+            android:textColor="#636363" />
     </LinearLayout>
 
     <RelativeLayout
