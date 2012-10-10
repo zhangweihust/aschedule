@@ -5,10 +5,15 @@ import android.app.AlarmManager;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.app.TabActivity;
+import android.content.ContentResolver;
 import android.content.Context;
 import android.content.Intent;
+import android.database.ContentObserver;
+import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
+import android.os.Message;
+import android.provider.ContactsContract;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -38,6 +43,7 @@ public class HomeScreen extends TabActivity
 		implements
 			OnTabChangeListener,
 			IEventHandler {
+
 
 	/** Called when the activity is first created. */
 	private TabHost mTabHost;
@@ -113,12 +119,47 @@ public class HomeScreen extends TabActivity
 		eventService.add(this);
 
 		mNotificationManager = (NotificationManager) this
-				.getSystemService(this.NOTIFICATION_SERVICE);
+				.getSystemService(NOTIFICATION_SERVICE);
 		int id = getIntent().getIntExtra("notify_id", 1);
 		mNotificationManager.cancel(id);
 
+		//注册监听联系人变化
+		ContentResolver localResolver = getContentResolver();
+		Uri localUri1 = ContactsContract.Data.CONTENT_URI;
+		localResolver.registerContentObserver(localUri1, true, mObserver);
 	}
 
+	private static final int CONTACT_CHANGED = 1;
+	
+	private Handler handler = new Handler() {
+		public void handleMessage(Message msg) {
+			switch (msg.what) {
+				case CONTACT_CHANGED:
+					//检测到联系人变化就进行同步
+					ServiceManager.getContact().checkSync(HomeScreen.this);
+					return;
+			}
+		};
+	};
+	
+	private ContentObserver mObserver = new AScheduleObserver(handler);
+    
+	class AScheduleObserver extends ContentObserver{
+
+		private Handler mHandler;
+		
+		public AScheduleObserver(Handler handler) {
+			super(handler);
+			this.mHandler = handler;
+		}
+
+		@Override
+		public void onChange(boolean selfChange) {
+			super.onChange(selfChange);
+			mHandler.sendEmptyMessage(CONTACT_CHANGED);
+		}
+	}
+	
 	private void initView() {
 		mTabHost = this.getTabHost();
 		menuBtn = (Button) findViewById(R.id.title_bar_menu_button);
@@ -135,10 +176,12 @@ public class HomeScreen extends TabActivity
 
 			@Override
 			public void onCheckedChanged(RadioGroup group, int checkId) {
-				if (checkId == myDynamicBtn.getId()) {
-					mChildTabHost.setCurrentTab(1);
-				} else if (checkId == friendsDynamicBtn.getId()) {
-					mChildTabHost.setCurrentTab(0);
+				if (mChildTabHost != null ) {
+					if (checkId == myDynamicBtn.getId()) {
+						mChildTabHost.setCurrentTab(1);
+					} else if (checkId == friendsDynamicBtn.getId()) {
+						mChildTabHost.setCurrentTab(0);
+					}
 				}
 			}
 		});
@@ -349,6 +392,7 @@ public class HomeScreen extends TabActivity
 
 	protected void onDestroy() {
 		super.onDestroy();
+		getContentResolver().unregisterContentObserver(mObserver);
 		eventService.remove(this);
 	}
 }

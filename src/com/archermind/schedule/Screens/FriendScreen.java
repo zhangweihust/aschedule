@@ -1,29 +1,20 @@
 package com.archermind.schedule.Screens;
 
 import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
-
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
-
-import android.app.AlarmManager;
-import android.app.PendingIntent;
-import android.app.ProgressDialog;
 import android.content.ContentValues;
 import android.content.Context;
 import android.content.Intent;
-import android.content.IntentFilter;
 import android.content.SharedPreferences;
 import android.content.SharedPreferences.Editor;
 import android.database.Cursor;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
-import android.provider.ContactsContract.CommonDataKinds.Relation;
 import android.view.KeyEvent;
 import android.view.View;
 import android.view.View.OnClickListener;
@@ -32,7 +23,6 @@ import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.RelativeLayout;
 import android.widget.Toast;
-
 import com.archermind.schedule.R;
 import com.archermind.schedule.ScheduleApplication;
 import com.archermind.schedule.Adapters.FriendAdapter;
@@ -41,16 +31,12 @@ import com.archermind.schedule.Adapters.FriendContactAdapter.ListElement;
 import com.archermind.schedule.Events.EventArgs;
 import com.archermind.schedule.Events.IEventHandler;
 import com.archermind.schedule.Model.Friend;
-import com.archermind.schedule.Model.ScheduleData;
 import com.archermind.schedule.Provider.DatabaseHelper;
 import com.archermind.schedule.Provider.DatabaseManager;
 import com.archermind.schedule.Services.ServiceManager;
-import com.archermind.schedule.Utils.AScheduleBroadcast;
 import com.archermind.schedule.Utils.Constant;
-import com.archermind.schedule.Utils.Contact;
 import com.archermind.schedule.Utils.ListViewUtil;
 import com.archermind.schedule.Utils.NetworkUtils;
-import com.archermind.schedule.Utils.ServerInterface;
 
 public class FriendScreen extends Screen
 		implements
@@ -61,16 +47,16 @@ public class FriendScreen extends Screen
 	private ListView friend_contact_listView;
 	private Button friend_button_state;
 	private Button friend_contact_button_state;
-	private AScheduleBroadcast ContactCheckReceiver;
-	private AlarmManager AScheduleAM;
+//	private AScheduleBroadcast ContactCheckReceiver;
+//	private AlarmManager AScheduleAM;
 
-	private static final int CONTACT_SYNC_INTERVAL = 60 * 60 * 1000; // 1个小时检测一次联系人是否有变化
+//	private static final int CONTACT_SYNC_INTERVAL = 60 * 60 * 1000; // 1个小时检测一次联系人是否有变化
 	private static final int CONTACT_SYNC_SUCCESS = 0x101;
 	private static final int CONTACT_SYNC_ERROR = 0x102;
 	private static final int CONTACT_SYNC_CANCEL = 0x103;
 
 	private DatabaseManager database;
-	private ServerInterface serverInterface;
+//	private ServerInterface serverInterface;
 	private HashMap<String, List<Friend>> hashMap = new HashMap<String, List<Friend>>();
 	private RelativeLayout loading;
 	private SharedPreferences sp;
@@ -86,7 +72,7 @@ public class FriendScreen extends Screen
 	
 	public FriendScreen() {
 		database = ServiceManager.getDbManager();
-		serverInterface = new ServerInterface();
+//		serverInterface = new ServerInterface();
 	}
 
 	@Override
@@ -96,18 +82,20 @@ public class FriendScreen extends Screen
 		eventService.add(this);
 		initView();
 
-		PendingIntent contactcheckintent = PendingIntent.getBroadcast(
-				ScheduleApplication.getContext(), 0, new Intent(
-						AScheduleBroadcast.ASCHEDULE_CHECK_CONTACT), 1);
-		AScheduleAM = (AlarmManager) ScheduleApplication.getContext()
-				.getSystemService(ALARM_SERVICE);
-		AScheduleAM.setRepeating(AlarmManager.RTC,
-				System.currentTimeMillis() + 3000, CONTACT_SYNC_INTERVAL,
-				contactcheckintent);
-		ContactCheckReceiver = new AScheduleBroadcast();
-		IntentFilter intentfilter = new IntentFilter(
-				AScheduleBroadcast.ASCHEDULE_CHECK_CONTACT);
-		registerReceiver(ContactCheckReceiver, intentfilter);
+		//监听联系人变化
+//		PendingIntent contactcheckintent = PendingIntent.getBroadcast(
+//				ScheduleApplication.getContext(), 0, new Intent(
+//						AScheduleBroadcast.ASCHEDULE_CHECK_CONTACT), 1);
+//		AScheduleAM = (AlarmManager) ScheduleApplication.getContext()
+//				.getSystemService(ALARM_SERVICE);
+//		AScheduleAM.setRepeating(AlarmManager.RTC,
+//				System.currentTimeMillis() + 3000, CONTACT_SYNC_INTERVAL,
+//				contactcheckintent);
+//		ContactCheckReceiver = new AScheduleBroadcast();
+//		IntentFilter intentfilter = new IntentFilter(
+//				AScheduleBroadcast.ASCHEDULE_CHECK_CONTACT);
+//		registerReceiver(ContactCheckReceiver, intentfilter);
+		
 		sp = getSharedPreferences("Data", Context.MODE_PRIVATE);
 
 		loginFriendBtn.setOnClickListener(this);
@@ -115,6 +103,23 @@ public class FriendScreen extends Screen
 		showData();
 	}
 
+	private Handler handler = new Handler() {
+		public void handleMessage(Message msg) {
+			switch (msg.what) {
+				case CONTACT_SYNC_SUCCESS :
+					initAdapter();
+					break;
+				case CONTACT_SYNC_ERROR :
+					Toast.makeText(FriendScreen.this, "同步失败！",
+							Toast.LENGTH_SHORT).show();
+					break;
+				case CONTACT_SYNC_CANCEL :
+					break;
+			}
+			loading.setVisibility(View.GONE);
+		};
+	};
+	
 	public void initView() {
 		myFriendLayout = (LinearLayout) findViewById(R.id.myfriendlayout);
 		myContactFriendLayout = (LinearLayout) findViewById(R.id.mycontactfriendlayout);
@@ -295,17 +300,17 @@ public class FriendScreen extends Screen
 		}
 	}
 
-	@Override
-	protected void onDestroy() {
-		// TODO Auto-generated method stub
-		PendingIntent contactcheckintent = PendingIntent.getBroadcast(
-				ScheduleApplication.getContext(), 0, new Intent(
-						AScheduleBroadcast.ASCHEDULE_CHECK_CONTACT), 1);
-		AScheduleAM.cancel(contactcheckintent);
-		eventService.remove(this);
-		unregisterReceiver(ContactCheckReceiver);
-		super.onDestroy();
-	}
+//	@Override
+//	protected void onDestroy() {
+//		PendingIntent contactcheckintent = PendingIntent.getBroadcast(
+//				ScheduleApplication.getContext(), 0, new Intent(
+//						AScheduleBroadcast.ASCHEDULE_CHECK_CONTACT), 1);
+//		AScheduleAM.cancel(contactcheckintent);
+//		eventService.remove(this);
+//		unregisterReceiver(ContactCheckReceiver);
+//		getContentResolver().unregisterContentObserver(mObserver);
+//		super.onDestroy();
+//	}
 
 	@Override
 	public boolean onEvent(Object sender, EventArgs e) {
@@ -350,22 +355,6 @@ public class FriendScreen extends Screen
 		return true;
 	}
 
-	private Handler handler = new Handler() {
-		public void handleMessage(Message msg) {
-			switch (msg.what) {
-				case CONTACT_SYNC_SUCCESS :
-					initAdapter();
-					break;
-				case CONTACT_SYNC_ERROR :
-					Toast.makeText(FriendScreen.this, "同步失败！",
-							Toast.LENGTH_SHORT).show();
-					break;
-				case CONTACT_SYNC_CANCEL :
-					break;
-			}
-			loading.setVisibility(View.GONE);
-		};
-	};
 
 	private boolean makeFriendContactUseFromInet(List<Friend> friendContactUs,List<Friend> ignores,
 			List<String> tempList,List<String> friendList, List<String> ignoreList) {
