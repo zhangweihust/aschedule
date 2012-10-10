@@ -21,6 +21,13 @@ public class SpecialCalendar {
 		hashMap.put("周五", "5");
 		hashMap.put("周六", "6");
 		hashMap.put("周日", "7");
+		hashMap.put("Mon", "1");
+		hashMap.put("Tue", "2");
+		hashMap.put("Wed", "3");
+		hashMap.put("Thu", "4");
+		hashMap.put("Fri", "5");
+		hashMap.put("Sat", "6");
+		hashMap.put("Sun", "7");
 
 		capitelHashMap.put("周一", "一");
 		capitelHashMap.put("周二", "二");

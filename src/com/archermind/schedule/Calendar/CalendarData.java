@@ -10,6 +10,7 @@ import java.util.List;
 
 import org.w3c.dom.Text;
 
+import android.content.ContentValues;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.content.SharedPreferences.Editor;
@@ -131,7 +132,7 @@ public class CalendarData {
 				Integer.parseInt(currentMonth), flagType);
 	}
 
-	public CalendarData(Context context, int jumpMonth, int jumpYear,
+	public CalendarData(final Context context, int jumpMonth, int jumpYear,
 			int year_c, int month_c, int day_c, int flagType) {
 		mContext = context;
 		database = new DatabaseManager(context);
@@ -167,12 +168,19 @@ public class CalendarData {
 		currentYear = String.valueOf(stepYear);; // 得到当前的年份
 		currentMonth = String.valueOf(stepMonth); // 得到本月（jumpMonth为滑动的次数，每滑动一次就增加一月或减一月）
 		currentDay = String.valueOf(day_c); // 得到当前日期是哪天
+		
+		getCalendar(Integer.parseInt(currentYear),
+				Integer.parseInt(currentMonth), flagType);
+
+		database.close();
+		
 //Thread t = new Thread(new Runnable() {
 //
 //	@Override
 //	public void run() {
 //		// TODO Auto-generated method stub
-//
+//		database = new DatabaseManager(context);
+//		database.openwithnoservice();
 //        	for (int i=1900; i<=2049; i++) {
 //        		for (int j=1; j<=12; j++) {
 //        			getCalendar(i, j, 3);
@@ -183,10 +191,7 @@ public class CalendarData {
 //	}}) {
 //	
 //};t.start();
-		getCalendar(Integer.parseInt(currentYear),
-				Integer.parseInt(currentMonth), flagType);
 
-		database.close();
 	}
 
 	public long getMillisTimeByDate(String date) {
@@ -229,10 +234,10 @@ public class CalendarData {
 					lunarMonthDates[monthPos] = new LunarMonthDates();
 					lunarMonthDates[monthPos].lunarDates = cursor
 							.getString(cursor
-									.getColumnIndex(LunarDatesDatabaseHelper.COLUMN_CALENDAR_LUNARDATE));
+									.getColumnIndex(LunarDatesDatabaseHelper.COLUMN_CALENDAR_LUNARDATE)).split(",");
 					lunarMonthDates[monthPos].dayOfWeeks = cursor
 							.getString(cursor
-									.getColumnIndex(LunarDatesDatabaseHelper.COLUMN_CALENDAR_DAYOFWEEK));
+									.getColumnIndex(LunarDatesDatabaseHelper.COLUMN_CALENDAR_DAYOFWEEK)).split(",");
 					monthPos++;
 				}
 				loadSuccess = true;
@@ -242,6 +247,60 @@ public class CalendarData {
 		return loadSuccess;
 	}
 
+//	static SimpleDateFormat chineseDateFormat = new SimpleDateFormat(
+//	"yyyy年MM月dd日");
+	
+	private LunarDateInfo getLunarDateInfo(int year_log, int month_log,
+			int day_log) {
+		LunarDateInfo info = new LunarDateInfo();
+		
+		if (month_log <= 0) {
+			month_log += 12;
+			year_log -= 1;
+		}
+		
+		if (month_log > 12) {
+			month_log -= 12;
+			year_log += 1;
+		}
+		
+//		Date nowaday = null;
+//    	String nowadays = year_log + "年" + month_log + "月" + day_log + "日";
+//		try {
+//			nowaday = chineseDateFormat.parse(nowadays);
+//		} catch (ParseException e) {
+//			e.printStackTrace(); // To change body of catch statement use
+//			// Options | File Templates.
+//		}
+//		
+//		year_log = nowaday.getYear() + BASE_YEAR;
+//		month_log = nowaday.getMonth() + 1;
+//		day_log = nowaday.getDate();
+		
+		int monthPos = (year_log - BASE_YEAR) * 12 + month_log - 1;
+		boolean hasLunarMonthDates = (lunarMonthDates[monthPos] != null);
+		if (!hasLunarMonthDates) {
+			hasLunarMonthDates = loadLunarMonthDatesOnYear(year_log);
+		}
+		
+		if (hasLunarMonthDates && (lunarMonthDates[monthPos] != null)) {
+			try {
+				LunarMonthDates monthDates = lunarMonthDates[monthPos];
+				info.lunarDate = monthDates.lunarDates[day_log-1];
+				info.dayOfWeek = monthDates.dayOfWeeks[day_log-1 ];
+			} catch (ArrayIndexOutOfBoundsException e) {
+				info.lunarDate = day_log+"."+lc.getLunarDate(year_log, month_log, day_log, false);
+				info.dayOfWeek = SpecialCalendar.getNumberWeekDay(year_log, month_log, day_log);
+				//System.out.println("=CCC=1 "+ year_log+"."+month_log+"."+day_log + "==="+info.lunarDate+"==="+info.dayOfWeek);
+			}
+		} else {
+			info.lunarDate = day_log+"."+lc.getLunarDate(year_log, month_log, day_log, false);
+			info.dayOfWeek = SpecialCalendar.getNumberWeekDay(year_log, month_log, day_log);
+			//System.out.println("=CCC=2 "+ year_log+"."+month_log+"."+day_log + "==="+info.lunarDate+"==="+info.dayOfWeek+"==="+hasLunarMonthDates);
+		}
+		
+		return info;
+	} 
 
     // 将一个月中的每一天的值添加入数组dayNuber中
     private synchronized void getweek(int year, int month, int flagType) {
@@ -259,42 +318,56 @@ public class CalendarData {
         }
 
         //LostTime.cast("getweek 2");
-		int monthPos = (year - BASE_YEAR) * 12 + month -1;
-		boolean hasLunarMonthDates = (lunarMonthDates[monthPos] != null);
-		if (!hasLunarMonthDates) {
-			hasLunarMonthDates = loadLunarMonthDatesOnYear(year);
-		}
-		
-		String[] dayOfWeeks = new String[42];
-		if (hasLunarMonthDates) {
-			this.dayNumber = lunarMonthDates[monthPos].lunarDates.split(",");
-			dayOfWeeks = lunarMonthDates[monthPos].dayOfWeeks.split(",");
-		}
 		
 		//LostTime.cast("getweek 3");
 		
 		//LostTime.sum_reset();
         	
+		String data0 = year + "." + month;
+		String data1 = "";
+		String data2 = "";
+		
+		
+		String[] dayOfWeeks = new String[42];
         int j = 1;
         String lunarDay = "";
         mark_count = new int[42];
         for (int i = 0; i < dayNumber.length; i++) {
         	int k = 1;
 
-        	
             // 周一
             if (i < daysOfWeek) {
+            	dayNumber[i] = week[i] + "." + " ";
             } else if (i < dayOfWeek + daysOfWeek) { // 前一个月
+				int temp = lastDaysOfMonth - dayOfWeek + k - daysOfWeek;
+//				lunarDay = lc.getLunarDate(year, month - 1, temp + i, false);
+//				dayNumber[i] = (temp + i) + "." + lunarDay;
+            	dayNumber[i] = getLunarDateInfo(year, month - 1, temp + i).lunarDate;
             } else if (i < daysOfMonth + dayOfWeek + daysOfWeek) { // 本月
             	String day = String.valueOf(i - dayOfWeek + k - daysOfWeek); // 得到的日期
             	String startData = year + "." + month + "." + day;
                 String dayOfYear = month + "." + day;
                 String dayOfMonth = day;
                 //LostTime.sum_mark_start();
-//                String dayOfWeek = SpecialCalendar.getNumberWeekDay(year, month,
-//                        Integer.parseInt(day));
-//                
-
+                
+//				lunarDay = lc.getLunarDate(year, month, i - dayOfWeek + k
+//						- daysOfWeek, false);
+//				dayNumber[i] = i - dayOfWeek + k - daysOfWeek + "."
+//						+ lunarDay;
+//				dayOfWeeks[i] = SpecialCalendar.getNumberWeekDay(year,
+//						month, Integer.parseInt(day));
+				
+                
+//                if (flagType == 3) {
+//					data1 = data1 + dayNumber[i] + ",";
+//					data2 = data2 + dayOfWeeks[i] + ",";
+//				}
+				
+                LunarDateInfo info = getLunarDateInfo(year, month, i
+						- dayOfWeek + k - daysOfWeek);
+				dayNumber[i] = info.lunarDate;
+				dayOfWeeks[i] = info.dayOfWeek;
+                
                 Cursor cursor = null;
 
                 long starTimeInMillis = getMillisTimeByDate(startData);
@@ -328,6 +401,9 @@ public class CalendarData {
                 setCyclical(lc.cyclical(year));
 
             } else { // 下一个月
+				//lunarDay = lc.getLunarDate(year, month + 1, j, false);
+				//dayNumber[i] = j + "." + lunarDay;
+            	dayNumber[i] = getLunarDateInfo(year, month + 1, j).lunarDate;
                 j++;
             }
         }
@@ -335,25 +411,15 @@ public class CalendarData {
         //LostTime.cast("getweek 4");
         
 //        if (flagType == 3) {
-//			String data0 = year + "." + month;
-//
-//			String data1 = "";
-//
-//			for (int l = 0; l < dayNumber.length; l++) {
-//				data1 = data1 + dayNumber[l] + ",";
-//			}
-//			
-//			String data2 = "";
-//			
-//			for (int ll = 0; ll < dayOfWeeks.length; ll++) {
-//				data2 = data2 + dayOfWeeks[ll] + ",";
-//			}
-//
 //			ContentValues contentvalues = new ContentValues();
-//			contentvalues.put(DatabaseHelper.COLUMN_CALENDAR_MONTH, data0);
-//			contentvalues.put(DatabaseHelper.COLUMN_CALENDAR_LUNARDATE, data1);
-//			contentvalues.put(DatabaseHelper.COLUMN_CALENDAR_DAYOFWEEK, data2);
-//			ServiceManager.getDbManager().insertCalendarMap(contentvalues);
+//			contentvalues.put(DatabaseHelper.COLUMN_CALENDAR_MONTH,
+//					data0);
+//			contentvalues.put(DatabaseHelper.COLUMN_CALENDAR_LUNARDATE,
+//					data1);
+//			contentvalues.put(DatabaseHelper.COLUMN_CALENDAR_DAYOFWEEK,
+//					data2);
+//			ServiceManager.getDbManager().insertCalendarMap(
+//					contentvalues);
 //		}
     }
 
@@ -509,9 +575,14 @@ public class CalendarData {
 			return -1;
 		}
 	}
+	
     class LunarMonthDates {
-    	String lunarDates;
-    	String dayOfWeeks;
+    	String []lunarDates;
+    	String []dayOfWeeks;
     }
 
+    class LunarDateInfo {
+    	String lunarDate;
+    	String dayOfWeek;
+    }
 }

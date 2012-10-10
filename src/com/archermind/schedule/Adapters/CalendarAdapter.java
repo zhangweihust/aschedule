@@ -10,6 +10,7 @@ import android.text.SpannableString;
 import android.text.Spanned;
 import android.text.style.RelativeSizeSpan;
 import android.text.style.StyleSpan;
+import android.util.Log;
 import android.util.TimeUtils;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -47,6 +48,8 @@ public class CalendarAdapter extends BaseAdapter {
 	private int height2;
 	private CalendarData calendarData;
 	private String currentDay;
+	private String selectedDay;
+	private boolean isCurrentMonth = false;
 	public CalendarAdapter() {
 		// Date date = new Date();
 		// sysDate = sdf.format(date); //当前日期
@@ -63,11 +66,16 @@ public class CalendarAdapter extends BaseAdapter {
 		SimpleDateFormat sdf = new SimpleDateFormat("yyyy-M-d");
 		String currentDate = sdf.format(date); // 当前日期
 		currentDay = currentDate.split("-")[2];
+		selectedDay = currentDay;
 		this.context = context;
 		this.height = height;
 		this.calendarData = calendarData;
 		this.dayNumber = calendarData.getDayNumber();
 		// this.schDateTagFlag = calendarData.getSchDateTagFlag();
+		this.isCurrentMonth = String.valueOf(date.getYear()+1900).equals(
+				calendarData.getShowYear())
+				&& String.valueOf(date.getMonth()+1).equals(
+						calendarData.getShowMonth()); 
 
 		if (height % 6 == 0) {
 			height1 = height2 = height / 6;
@@ -79,22 +87,28 @@ public class CalendarAdapter extends BaseAdapter {
 	}
 	
 	public CalendarAdapter(Context context, int height,
-			CalendarData calendarData,String curday) {
-
+			CalendarData calendarData, String selDay) {
 		Date date = new Date();
 		SimpleDateFormat sdf = new SimpleDateFormat("yyyy-M-d");
 		String currentDate = sdf.format(date); // 当前日期
-		ScheduleApplication.LogD(getClass(), "curday ="+curday);
-		long time = DateTimeUtils.time2Long("yyyy.MM.dd", curday);
+		currentDay = currentDate.split("-")[2];
+		
+		ScheduleApplication.LogD(getClass(), "selectDay ="+selDay);
+		long time = DateTimeUtils.time2Long("yyyy.MM.dd", selDay);
 		ScheduleApplication.LogD(getClass(), "time ="+time);
- 		String currenday = DateTimeUtils.time2String("d",time ) ;
- 		ScheduleApplication.LogD(getClass(), "currenday ="+currenday);
-		currentDay = currenday;
+ 		String selday = DateTimeUtils.time2String("d",time ) ;
+ 		ScheduleApplication.LogD(getClass(), "currenday ="+selday);
+ 		selectedDay = selday;
 		this.context = context;
 		this.height = height;
 		this.calendarData = calendarData;
 		this.dayNumber = calendarData.getDayNumber();
 		// this.schDateTagFlag = calendarData.getSchDateTagFlag();
+		
+		this.isCurrentMonth = String.valueOf(date.getYear()+1900).equals(
+				calendarData.getShowYear())
+				&& String.valueOf(date.getMonth()+1).equals(
+						calendarData.getShowMonth()); 
 
 		if (height % 6 == 0) {
 			height1 = height2 = height / 6;
@@ -194,10 +208,13 @@ public class CalendarAdapter extends BaseAdapter {
 						.setBackgroundResource(R.drawable.calendar_schedule_number_bg);
 				holiday.setImageDrawable(null);
 			}
-			if (d.equals(currentDay)) {
+			if (d.equals(currentDay) && isCurrentMonth) {
 				// 设置当天的背景
 				calendar_number.setTextColor(context.getResources().getColor(
 						R.color.current_day));
+			}
+			
+			if (d.equals(selectedDay)) {
 				layout.setBackgroundColor(context.getResources().getColor(
 						R.color.selector));
 				setOldPosition(position);
