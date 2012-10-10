@@ -146,6 +146,7 @@ public class Contact {
 			cv.put(DatabaseHelper.COLUMN_CONTACT_ID, contactid);
 			cv.put(DatabaseHelper.ASCHEDULE_CONTACT_NUM, number);
 			cv.put(DatabaseHelper.ASCHEDULE_CONTACT_NAME, name);
+			cv.put(DatabaseHelper.ASCHEDULE_CONTACT_TYPE, Constant.FriendType.friend_contact);
 			if(ServiceManager.getDbManager().insertContact(cv) == -1){
 				ScheduleApplication.LogD(getClass(), "插入联系人失败：" + name + "  contactid:" + contactid);
 			} 
