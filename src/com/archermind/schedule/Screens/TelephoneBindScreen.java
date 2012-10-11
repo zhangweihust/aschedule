@@ -129,10 +129,12 @@ public class TelephoneBindScreen extends Screen implements OnClickListener {
                 super.handleMessage(msg);
 
                 switch (msg.what) {
+                    
                     case GET_VERIFICATION_CODE_FAILED:
                         ServiceManager.ToastShow("获取验证码失败!");
                         canRequestVerification = true;
                         break;
+                        
                     case GET_VERIFICATION_CODE_SUCCESS:
                         telephone_bind_prompt.setVisibility(View.VISIBLE);
                         telephone_bind_verification.setVisibility(View.VISIBLE);
@@ -146,6 +148,7 @@ public class TelephoneBindScreen extends Screen implements OnClickListener {
                             }
                         }, 60000);
                         break;
+                        
                     case TELEPHONE_BIND_FAILED:
                         int reason = (Integer)msg.obj;
                         String failedReason = "";
@@ -168,21 +171,26 @@ public class TelephoneBindScreen extends Screen implements OnClickListener {
                         }
                         ServiceManager.ToastShow("绑定失败 : " + failedReason);
                         break;
+                        
                     case TELEPHONE_BIND_SUCCESS:
                         telephone_bind_prompt.setVisibility(View.INVISIBLE);
                         ServiceManager.ToastShow("绑定成功!");
                         finish();
                         break;
+                        
                     case TELEPHONE_BIND_ALREADY:
                         Toast.makeText(TelephoneBindScreen.this, "这个手机号已经绑定!", Toast.LENGTH_SHORT)
                                 .show();
                         finish();
                         break;
+                        
                     case TELEPHONE_SIM_NONE:
                         ServiceManager.ToastShow("请插入SIM卡");
                         break;
+                        
                     default:
                         break;
+                        
                 }
             }
         };
@@ -272,7 +280,7 @@ public class TelephoneBindScreen extends Screen implements OnClickListener {
                                     msg.what = TELEPHONE_BIND_FAILED;
                                     msg.obj = ret;
                                     handler.sendMessage(msg);
-                                    ServiceManager.setBindFlag(false);
+//                                    ServiceManager.setBindFlag(false);
                                 }
                                 canBingFlag = true;
                             };

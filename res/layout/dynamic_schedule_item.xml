@@ -20,6 +20,7 @@
             android:layout_centerHorizontal="true"
             android:layout_marginTop="12.0dip"
             android:gravity="center"
+            android:padding="3dp"
             android:scaleType="fitCenter" />
 
         <ImageView

@@ -61,7 +61,6 @@ public class WeatherScreen extends Screen
 	ProgressDialog mProgress;
 	Cursor c ;
 
-	// private String
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		// TODO Auto-generated method stub
@@ -82,11 +81,8 @@ public class WeatherScreen extends Screen
 //		si = ServiceManager.getServerInterface();
 //		readLocalWeather();
 //		handler.sendEmptyMessageDelayed(1, 5000);
-
-	
 		Getweatherthread = new Getweathertrd();
 		Getweatherthread.execute();
-		
 	}
 
 	class Getweathertrd extends AsyncTask<Void, Void, Void> {
@@ -112,7 +108,6 @@ public class WeatherScreen extends Screen
 			mwWeatherDialog.show();
 
 		}
-
 		@Override
 		protected void onPreExecute() {
 			super.onPreExecute();
@@ -121,12 +116,10 @@ public class WeatherScreen extends Screen
 						"正在加载天气，请稍候...");
 			}
 		}
-
 		@Override
 		protected void onCancelled() {
 			super.onCancelled();
 		}
-
 	}
 
 	public Map<String, Integer> getWeatherMap() {
@@ -172,11 +165,9 @@ public class WeatherScreen extends Screen
 			}
 
 		}
-
 		// 没有联网，则读取本地数据库
 		readLocalWeather();
 		Log.i("free", "2222222222222");
-
 	}
 
 	private void readLocalWeather() {
@@ -291,7 +282,6 @@ public class WeatherScreen extends Screen
 		}else{
 			c.close();
 		}
-
 	}
 
 	private Date string2Date(String time) {

@@ -193,9 +193,7 @@ public class AccountSettingScreen extends Screen implements OnClickListener {
             }
         }
     };
-
- 
-
+    
     /** Called when the activity is first created. */
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -236,8 +234,7 @@ public class AccountSettingScreen extends Screen implements OnClickListener {
         String uri = getUriFormWeb();
         ScheduleApplication.LogD(getClass(), "uri =" +uri);
         
-        //出问题了，亲
-        Pattern p = Pattern.compile("(filename=)([^<].*?)\\&");// 正则表达式，
+       Pattern p = Pattern.compile("(filename=)([^<].*?)\\&");// 正则表达式，
        
         if (!TextUtils.isEmpty(uri)) {
             

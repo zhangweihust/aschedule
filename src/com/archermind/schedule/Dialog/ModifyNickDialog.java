@@ -55,6 +55,7 @@ public class ModifyNickDialog implements OnClickListener {
 		wl.width = screenWidth * 7 / 8;
 		wl.gravity = Gravity.CENTER; // 设置重力
 		window.setAttributes(wl);
+		nick.setText("");
 		modifyNickDialog.show();
 	}
 
