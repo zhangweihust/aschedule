@@ -46,8 +46,8 @@ public class Constant {
 	}
 
 	public final static class UrlInfo {
-		public final static String USER_DEVICE_INFO_URL = "user_device_info_url";
-		public final static String USER_ACTIVITY_INFO_URL = "user_activity_info_url";
+		public final static String USER_DEVICE_INFO_URL = "http://arc.archermind.com/ci/index.php/aschedule/setClientInfo";
+		public final static String USER_ACTIVITY_INFO_URL = "http://arc.archermind.com/ci/index.php/aschedule/setUserActionInfo";
 	}
 
 	public static boolean refrash = false;

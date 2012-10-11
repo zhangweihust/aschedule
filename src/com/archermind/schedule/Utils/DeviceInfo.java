@@ -226,7 +226,7 @@ public class DeviceInfo {
     }
 
     public enum InfoName {
-        IMEI("imei"), SYSTEM_VERSION("osVersion"), PHONE_KTV_VERSION("softVersion"), CPU_MODEL(
+        IMEI("imei"), SYSTEM_VERSION("osVersion"), SOFT_VERSION("softVersion"), CPU_MODEL(
                 "cpuModel"), CPU_MAX_FREQUENCY("cpuClk"), MEMORY_TOTAL("memSize"), SCREEN_DENSITYDPI(
                 "windowDensityDpi"), SCREEN_RESOLUTION("windowSize"), PHONE_MODEL("machModel");
         private String name;

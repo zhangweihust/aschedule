@@ -261,7 +261,7 @@ public class ServiceManager extends Service implements OnClickListener {
 
 		dbManager.open();
 		success &= eventService.start();
-		// success &= userInfoService.start();
+		success &= userInfoService.start();
 		success &= exceptionService.start();
 		if (!success) {
 			ScheduleApplication.LogD(ServiceManager.class,
@@ -285,7 +285,7 @@ public class ServiceManager extends Service implements OnClickListener {
 						ServiceManager.class));
 		boolean success = true;
 		success &= eventService.stop();
-		// success &= userInfoService.stop();
+		success &= userInfoService.stop();
 		success &= exceptionService.stop();
 		dbManager.close();
 		if (!success) {
