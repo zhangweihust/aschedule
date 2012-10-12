@@ -438,7 +438,7 @@ public class HomeScreen extends TabActivity
 					UpgradeManager.getInstance().installApk(mContext,
 							(String) msg.obj);
 				}
-				Toast.makeText(mContext, "文件已经下载完毕", 3000).show();
+				ScheduleApplication.LogD(getClass(), "文件已经下载完毕");
 				break;
 			case MessageTypes.DOWN_SUCCESS:
 				if (msg.obj != null) {
@@ -447,38 +447,38 @@ public class HomeScreen extends TabActivity
 							(String) msg.obj);
 				}
 				mNotificationManager.cancel(mNotificationId);
-				Toast.makeText(mContext, "下载成功", 3000).show();
+				ScheduleApplication.LogD(getClass(), "下载成功");
 				break;
 			case MessageTypes.DOWN_FAIL:
-				Toast.makeText(mContext, "下载失败", 3000).show();
+				ScheduleApplication.LogD(getClass(), "下载失败");
 				mNotificationManager.cancel(mNotificationId);
 				break;
 			case MessageTypes.NO_NEED_TO_UPGRADE:
-				Toast.makeText(mContext, "不需要更新", 3000).show();
+				ScheduleApplication.LogD(getClass(), "不需要更新");
 				ServiceManager.getSharedPreferences().edit().putString(XML_KEY_TIME, sDateFormat.format(new java.util.Date())).commit();
 				break;
 			case MessageTypes.NEED_TO_UPGRADE:
-				Toast.makeText(mContext, "需要更新", 3000).show();
+				ScheduleApplication.LogD(getClass(), "需要更新");
 				showNoticeDialog((Update) msg.obj);
 				ServiceManager.getSharedPreferences().edit().putString(XML_KEY_TIME, sDateFormat.format(new java.util.Date())).commit();
 				break;
 			case MessageTypes.ERROR:
-				Toast.makeText(mContext, "有异常", 3000).show();
+				ScheduleApplication.LogD(getClass(), "有异常");
 				switch ((Integer) msg.obj) {
 				case MessageTypes.ERROR_NO_SDCARD:
-					Toast.makeText(mContext, "没有SD卡", 3000).show();
+					ScheduleApplication.LogD(getClass(), "没有SD卡");
 					break;
 				case MessageTypes.ERROR_IO_ERROR:
-					Toast.makeText(mContext, "IO异常", 3000).show();
+					ScheduleApplication.LogD(getClass(), "IO异常");
 					break;
 				case MessageTypes.ERROR_PARSE_JSON_ERROR:
-					Toast.makeText(mContext, "JSON解析异常", 3000).show();
+					ScheduleApplication.LogD(getClass(), "JSON解析异常");
 					break;
 				case MessageTypes.ERROR_HTTP_DATA_ERROR:
-					Toast.makeText(mContext, "网络数据交互异常", 3000).show();
+					ScheduleApplication.LogD(getClass(), "网络数据交互异常");
 					break;
 				case MessageTypes.ERROR_FILE_ERROR:
-					Toast.makeText(mContext, "文件操作异常", 3000).show();
+					ScheduleApplication.LogD(getClass(), "文件操作异常");
 					break;
 				}
 				break;
