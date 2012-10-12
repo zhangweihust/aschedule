@@ -223,7 +223,7 @@ public class ScheduleScreen extends Screen
 						break;
 					case LOCAL_SCHEDULE_UPDATE_OVER :
 						gridView.setAdapter(calV);
-						hsa.setData(listdata);
+						//hsa.setData(listdata);
 						gototoday.setVisibility(View.INVISIBLE);
 						schedule_headview_prompt
 								.setText(getHeadViewText(curSelectedDate));
