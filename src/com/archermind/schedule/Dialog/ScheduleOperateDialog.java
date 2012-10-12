@@ -1,8 +1,10 @@
 package com.archermind.schedule.Dialog;
 
+import android.app.AlertDialog;
 import android.app.Dialog;
 import android.content.ContentValues;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.view.Gravity;
 import android.view.View;
@@ -10,7 +12,6 @@ import android.view.View.OnClickListener;
 import android.view.Window;
 import android.view.WindowManager;
 import android.widget.Button;
-
 import com.archermind.schedule.R;
 import com.archermind.schedule.Events.EventArgs;
 import com.archermind.schedule.Events.EventTypes;
@@ -76,38 +77,46 @@ public class ScheduleOperateDialog implements OnClickListener {
 		// TODO Auto-generated method stub
 		dismiss();
 		switch (v.getId()) {
-			case R.id.schedule_operate_modify :
-				Intent mIntent = new Intent(context, EditScheduleScreen.class);
-				mIntent.putExtra("id", (Integer) args.getExtra("id"));
-				mIntent.putExtra("first", (Boolean) args.getExtra("first"));
-				mIntent.putExtra("time", (Long) args.getExtra("time"));
-				context.startActivity(mIntent);
-				break;
-			case R.id.schedule_operate_delete :
-				new Thread(new Runnable() {
-					@Override
-					public void run() {
-						ContentValues contentvalues = new ContentValues();
-						contentvalues.put(
-								DatabaseHelper.COLUMN_SCHEDULE_OPER_FLAG,
-								DatabaseHelper.SCHEDULE_OPER_DELETE);
-						ServiceManager.getDbManager().updateScheduleById(
-								(Integer) args.getExtra("id"), contentvalues);
-						DateTimeUtils.cancelAlarm((Integer) args.getExtra("id"));
-						ServiceManager.getServerInterface().uploadSchedule("0",
-								"1");
-						ServiceManager
-								.getEventservice()
-								.onUpdateEvent(
-										new EventArgs(
-												EventTypes.LOCAL_SCHEDULE_UPDATE));
-						ServiceManager.sendBroadcastForUpdateSchedule(context);
-					}
-				}).start();
-				break;
-			case R.id.schedule_operate_goback :
-				break;
+		case R.id.schedule_operate_modify:
+			Intent mIntent = new Intent(context, EditScheduleScreen.class);
+			mIntent.putExtra("id", (Integer) args.getExtra("id"));
+			mIntent.putExtra("first", (Boolean) args.getExtra("first"));
+			mIntent.putExtra("time", (Long) args.getExtra("time"));
+			context.startActivity(mIntent);
+			break;
+		case R.id.schedule_operate_delete:
+			AlertDialog.Builder builder = new AlertDialog.Builder(context);
+			builder.setTitle(R.string.prompt)
+					.setMessage(R.string.content)
+					.setNegativeButton(android.R.string.cancel,null)
+					.setPositiveButton(android.R.string.ok,
+							new DialogInterface.OnClickListener() {
+								public void onClick(DialogInterface dialog,
+										int whichButton) {
+									deleteSchedule();
+								}
+							}).show();
+			break;
+		case R.id.schedule_operate_goback:
+			break;
 		}
 	}
 
+	private void deleteSchedule() {
+		new Thread(new Runnable() {
+			@Override
+			public void run() {
+				ContentValues contentvalues = new ContentValues();
+				contentvalues.put(DatabaseHelper.COLUMN_SCHEDULE_OPER_FLAG,
+						DatabaseHelper.SCHEDULE_OPER_DELETE);
+				ServiceManager.getDbManager().updateScheduleById(
+						(Integer) args.getExtra("id"), contentvalues);
+				DateTimeUtils.cancelAlarm((Integer) args.getExtra("id"));
+				ServiceManager.getServerInterface().uploadSchedule("0", "1");
+				ServiceManager.getEventservice().onUpdateEvent(
+						new EventArgs(EventTypes.LOCAL_SCHEDULE_UPDATE));
+				ServiceManager.sendBroadcastForUpdateSchedule(context);
+			}
+		}).start();
+	}
 }

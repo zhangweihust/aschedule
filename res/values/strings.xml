@@ -94,4 +94,6 @@
     <string name="app_upgrade_download_fail">新版本下载失败，请稍后再试.</string>
     
     <string name="sms_body">"我正在使用微日程，这是一款和家人、朋友一起分享自己日程的软件，下载地址是http://arc.archermind.com"</string>
+    <string name="prompt">"提示"</string>
+    <string name="content">"确定要删除该条日程吗？"</string>
 </resources>
