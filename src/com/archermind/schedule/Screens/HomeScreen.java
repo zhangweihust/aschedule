@@ -15,6 +15,7 @@ import android.content.ContentResolver;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.database.ContentObserver;
 import android.net.Uri;
 import android.os.Bundle;
@@ -45,6 +46,7 @@ import com.archermind.schedule.R;
 import com.archermind.schedule.ScheduleApplication;
 import com.archermind.schedule.Events.EventArgs;
 import com.archermind.schedule.Events.IEventHandler;
+import com.archermind.schedule.Model.UserInfoData;
 import com.archermind.schedule.Services.AlarmServiceReceiver;
 import com.archermind.schedule.Services.EventService;
 import com.archermind.schedule.Services.ServiceManager;
@@ -103,6 +105,8 @@ public class HomeScreen extends TabActivity
 	private PendingIntent mPendingIntent = null;
 	// 通知对话框
 	private Dialog noticeDialog;
+
+	private SharedPreferences sharedPreferences;
 	protected static Context mContext;
 	
 
@@ -121,6 +125,8 @@ public class HomeScreen extends TabActivity
 		mContext = HomeScreen.this;
 		initNotification();
 		initView();
+		sharedPreferences = getSharedPreferences(UserInfoData.USER_SETTING,
+				Context.MODE_WORLD_READABLE);
 		mTabHost.addTab(buildTabSpec("schedule", R.drawable.tab_schedule,
 				new Intent(this, ScheduleScreen.class)));
 		mTabHost.addTab(buildTabSpecAndTips("dynamic", R.drawable.tab_dynamic,
@@ -453,12 +459,12 @@ public class HomeScreen extends TabActivity
 				break;
 			case MessageTypes.NO_NEED_TO_UPGRADE:
 				ScheduleApplication.LogD(getClass(), "不需要更新");
-				ServiceManager.getSharedPreferences().edit().putString(XML_KEY_TIME, sDateFormat.format(new java.util.Date())).commit();
+				sharedPreferences.edit().putString(XML_KEY_TIME, sDateFormat.format(new java.util.Date())).commit();
 				break;
 			case MessageTypes.NEED_TO_UPGRADE:
 				ScheduleApplication.LogD(getClass(), "需要更新");
 				showNoticeDialog((Update) msg.obj);
-				ServiceManager.getSharedPreferences().edit().putString(XML_KEY_TIME, sDateFormat.format(new java.util.Date())).commit();
+				sharedPreferences.edit().putString(XML_KEY_TIME, sDateFormat.format(new java.util.Date())).commit();
 				break;
 			case MessageTypes.ERROR:
 				ScheduleApplication.LogD(getClass(), "有异常");
@@ -541,7 +547,7 @@ public class HomeScreen extends TabActivity
 		mNotificationManager = (NotificationManager) getSystemService(NOTIFICATION_SERVICE);
 	}
 	public void checkUpdate(){
-		String saveTime =ServiceManager.getSharedPreferences().getString(XML_KEY_TIME, null);
+		String saveTime =sharedPreferences.getString(XML_KEY_TIME, null);
 		if(saveTime != null && sDateFormat.format(new java.util.Date()).equals(saveTime)){
 			ScheduleApplication.LogD(getClass(), "不需要检测新版本");
 			return;
