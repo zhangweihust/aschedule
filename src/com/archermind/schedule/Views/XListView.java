@@ -47,7 +47,7 @@ public class XListView extends ListView implements OnScrollListener {
 
 	// -- footer view
 	private XListViewFooter mFooterView;
-	private boolean mEnablePullLoad = true;
+	private boolean mEnablePullLoad = false;
 	private boolean mPullLoading;
 	private boolean mIsFooterReady = false;
 
@@ -324,7 +324,8 @@ public class XListView extends ListView implements OnScrollListener {
 						}
 					}
 					resetHeaderHeight();
-				} else if (getLastVisiblePosition() == mTotalItemCount - 1) {
+				} 
+				if (getLastVisiblePosition() == mTotalItemCount - 1) {
 					// invoke load more.
 					if (mEnablePullLoad
 							&& mFooterView.getBottomMargin() > PULL_LOAD_MORE_DELTA) {

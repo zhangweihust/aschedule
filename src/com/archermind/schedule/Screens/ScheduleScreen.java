@@ -212,6 +212,7 @@ public class ScheduleScreen extends Screen
 				switch (msg.what) {
 					case LOAD_DATA_OVER:
 						hsa.setData(listdata);
+						onLoad();
 						break;
 
 					case LOAD_OVERD_GOTO_TODAY :
@@ -436,7 +437,6 @@ public class ScheduleScreen extends Screen
 			};
 		}.start();
 
-		onLoad();
 		// list2.setHeaderGone(false);
 	}
 
@@ -452,7 +452,6 @@ public class ScheduleScreen extends Screen
 			};
 		}.start();
 
-		onLoad();
 		// list2.setHeaderGone(false);
 	}
 
