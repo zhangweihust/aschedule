@@ -86,8 +86,6 @@ public class HomeScreen extends TabActivity
 
 	private Button titleAddBtn;
 
-	private static Context context;
-
 	private NotificationManager mNotificationManager;
 
 	private ImageView tipsImageView;
@@ -105,7 +103,7 @@ public class HomeScreen extends TabActivity
 	private PendingIntent mPendingIntent = null;
 	// 通知对话框
 	private Dialog noticeDialog;
-	protected Context mContext;
+	protected static Context mContext;
 	
 
 	@Override
@@ -320,8 +318,8 @@ public class HomeScreen extends TabActivity
 	}
 
 	public static void switchActivity() {
-		context.startActivity(new Intent(context, MenuScreen.class));
-		((Activity) context).overridePendingTransition(R.anim.right_in,
+		mContext.startActivity(new Intent(mContext, MenuScreen.class));
+		((Activity) mContext).overridePendingTransition(R.anim.right_in,
 				R.anim.right_out);
 	}
 
@@ -410,7 +408,7 @@ public class HomeScreen extends TabActivity
 				ServiceManager.ToastShow("检测到您的手机号发生变化,请重新绑定!");
 				startActivity(new Intent(HomeScreen.this,
 						TelephoneBindScreen.class));
-				ServiceManager.getContact().checkSync(context);
+				ServiceManager.getContact().checkSync(mContext);
 
 				break;
 			default :
