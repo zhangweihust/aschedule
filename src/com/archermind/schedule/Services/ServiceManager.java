@@ -339,6 +339,10 @@ public class ServiceManager extends Service implements OnClickListener {
 	public static boolean getBindFlag() {
 		return sharedPreferences.getBoolean(UserInfoData.BIND, false);
 	}
+	
+	public static SharedPreferences getSharedPreferences(){
+		return sharedPreferences;
+	}
 
 	public static void setCookie(String cookiestr) {
 		cookie = cookiestr;

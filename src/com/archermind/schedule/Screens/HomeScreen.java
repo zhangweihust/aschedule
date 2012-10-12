@@ -1,19 +1,28 @@
 package com.archermind.schedule.Screens;
 
+import java.text.SimpleDateFormat;
+
 import android.app.Activity;
 import android.app.AlarmManager;
+import android.app.AlertDialog;
+import android.app.AlertDialog.Builder;
+import android.app.Dialog;
+import android.app.Notification;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.app.TabActivity;
 import android.content.ContentResolver;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.database.ContentObserver;
 import android.net.Uri;
 import android.os.Bundle;
+import android.os.Environment;
 import android.os.Handler;
 import android.os.Message;
 import android.provider.ContactsContract;
+import android.util.Log;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -25,6 +34,7 @@ import android.widget.RadioButton;
 import android.widget.RadioGroup;
 import android.widget.RadioGroup.OnCheckedChangeListener;
 import android.widget.RelativeLayout;
+import android.widget.RemoteViews;
 import android.widget.TabHost;
 import android.widget.TabHost.OnTabChangeListener;
 import android.widget.TabHost.TabSpec;
@@ -38,6 +48,10 @@ import com.archermind.schedule.Events.IEventHandler;
 import com.archermind.schedule.Services.AlarmServiceReceiver;
 import com.archermind.schedule.Services.EventService;
 import com.archermind.schedule.Services.ServiceManager;
+import com.archermind.upgrade.DownloadManager;
+import com.archermind.upgrade.MessageTypes;
+import com.archermind.upgrade.Update;
+import com.archermind.upgrade.UpgradeManager;
 
 public class HomeScreen extends TabActivity
 		implements
@@ -79,6 +93,20 @@ public class HomeScreen extends TabActivity
 	private ImageView tipsImageView;
 
 	private EventService eventService = ServiceManager.getEventservice();
+	
+	private final static String URL = "http://arc.archermind.com/ci/index.php/AppUpdate/getUpdateInfo";
+	private final static String PATH = Environment
+			.getExternalStorageDirectory().getAbsolutePath() + "/"
+            + ScheduleApplication.getContext().getPackageName() + "/update/";
+	private static final String XML_KEY_TIME = "last_update_time";
+	public static final int mNotificationId = 100;
+	SimpleDateFormat sDateFormat = new SimpleDateFormat("yyyy-MM-dd");
+	private Notification mNotification = null;
+	private PendingIntent mPendingIntent = null;
+	// 通知对话框
+	private Dialog noticeDialog;
+	protected Context mContext;
+	
 
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
@@ -92,7 +120,8 @@ public class HomeScreen extends TabActivity
 				return;
 			}
 		}
-		context = HomeScreen.this;
+		mContext = HomeScreen.this;
+		initNotification();
 		initView();
 		mTabHost.addTab(buildTabSpec("schedule", R.drawable.tab_schedule,
 				new Intent(this, ScheduleScreen.class)));
@@ -127,6 +156,7 @@ public class HomeScreen extends TabActivity
 		ContentResolver localResolver = getContentResolver();
 		Uri localUri1 = ContactsContract.Data.CONTENT_URI;
 		localResolver.registerContentObserver(localUri1, true, mObserver);
+		checkUpdate();
 	}
 
 	private static final int CONTACT_CHANGED = 1;
@@ -394,5 +424,134 @@ public class HomeScreen extends TabActivity
 		super.onDestroy();
 		getContentResolver().unregisterContentObserver(mObserver);
 		eventService.remove(this);
+	}
+	
+	private Handler mHandler = new Handler() {
+		public void handleMessage(Message msg) {
+			switch (msg.what) {
+			case MessageTypes.DOWN_DATA_CHANGED:
+				updateNotification((Integer) msg.obj);
+				break;
+			case MessageTypes.FILE_ALREADY_DOWNLOADED:
+				if (msg.obj != null) {
+					Log.e("UpgradeDemoActivity", "地址:" + msg.obj);
+					UpgradeManager.getInstance().installApk(mContext,
+							(String) msg.obj);
+				}
+				Toast.makeText(mContext, "文件已经下载完毕", 3000).show();
+				break;
+			case MessageTypes.DOWN_SUCCESS:
+				if (msg.obj != null) {
+					Log.e("UpgradeDemoActivity", "地址:" + msg.obj);
+					UpgradeManager.getInstance().installApk(mContext,
+							(String) msg.obj);
+				}
+				mNotificationManager.cancel(mNotificationId);
+				Toast.makeText(mContext, "下载成功", 3000).show();
+				break;
+			case MessageTypes.DOWN_FAIL:
+				Toast.makeText(mContext, "下载失败", 3000).show();
+				mNotificationManager.cancel(mNotificationId);
+				break;
+			case MessageTypes.NO_NEED_TO_UPGRADE:
+				Toast.makeText(mContext, "不需要更新", 3000).show();
+				ServiceManager.getSharedPreferences().edit().putString(XML_KEY_TIME, sDateFormat.format(new java.util.Date())).commit();
+				break;
+			case MessageTypes.NEED_TO_UPGRADE:
+				Toast.makeText(mContext, "需要更新", 3000).show();
+				showNoticeDialog((Update) msg.obj);
+				ServiceManager.getSharedPreferences().edit().putString(XML_KEY_TIME, sDateFormat.format(new java.util.Date())).commit();
+				break;
+			case MessageTypes.ERROR:
+				Toast.makeText(mContext, "有异常", 3000).show();
+				switch ((Integer) msg.obj) {
+				case MessageTypes.ERROR_NO_SDCARD:
+					Toast.makeText(mContext, "没有SD卡", 3000).show();
+					break;
+				case MessageTypes.ERROR_IO_ERROR:
+					Toast.makeText(mContext, "IO异常", 3000).show();
+					break;
+				case MessageTypes.ERROR_PARSE_JSON_ERROR:
+					Toast.makeText(mContext, "JSON解析异常", 3000).show();
+					break;
+				case MessageTypes.ERROR_HTTP_DATA_ERROR:
+					Toast.makeText(mContext, "网络数据交互异常", 3000).show();
+					break;
+				case MessageTypes.ERROR_FILE_ERROR:
+					Toast.makeText(mContext, "文件操作异常", 3000).show();
+					break;
+				}
+				break;
+			}
+			super.handleMessage(msg);
+		};
+		
+	};
+	
+	private void showNoticeDialog(final Update update) {
+		if (update == null) {
+			return;
+		}
+		AlertDialog.Builder builder = new Builder(this);
+		builder.setTitle("软件版本更新");
+		builder.setMessage(update.getVersionInfo());
+		builder.setPositiveButton("立即更新",
+				new DialogInterface.OnClickListener() {
+					@Override
+					public void onClick(DialogInterface dialog, int which) {
+						dialog.dismiss();
+						DownloadManager.getInstance().downloadApk(update, true,
+								PATH, mHandler);
+					}
+				});
+		builder.setNegativeButton("以后再说",
+				new DialogInterface.OnClickListener() {
+
+					@Override
+					public void onClick(DialogInterface dialog, int which) {
+						dialog.dismiss();
+
+					}
+				});
+		noticeDialog = builder.create();
+		noticeDialog.show();
+	}
+
+	private void updateNotification(int progress) {
+		mNotification.contentView.setProgressBar(R.id.app_upgrade_progressbar,
+				100, progress, false);
+		mNotification.contentView.setTextViewText(
+				R.id.app_upgrade_progresstext, progress + "%");
+		mNotificationManager.notify(mNotificationId, mNotification);
+	}
+	
+	private void initNotification(){
+		mNotification = new Notification(android.R.drawable.stat_sys_download, "开始下载", System
+                .currentTimeMillis());
+		mNotification.flags = Notification.FLAG_ONGOING_EVENT;
+		mNotification.contentView = new RemoteViews(getApplication()
+				.getPackageName(), R.layout.app_upgrade_notification);
+		Intent completingIntent = new Intent();
+		completingIntent.setClass(this, HomeScreen.class);
+		mPendingIntent = PendingIntent.getActivity(this,
+				0, completingIntent, 0);
+		mNotification.contentIntent = mPendingIntent;
+		mNotification.contentView.setProgressBar(R.id.app_upgrade_progressbar,
+				100, 0, false);
+		mNotification.contentView.setTextViewText(
+				R.id.app_upgrade_progresstext, 0 + "%");
+		mNotificationManager = (NotificationManager) getSystemService(NOTIFICATION_SERVICE);
+	}
+	public void checkUpdate(){
+		String saveTime =ServiceManager.getSharedPreferences().getString(XML_KEY_TIME, null);
+		if(saveTime != null && sDateFormat.format(new java.util.Date()).equals(saveTime)){
+			ScheduleApplication.LogD(getClass(), "不需要检测新版本");
+			return;
+		} else {
+			ScheduleApplication.LogD(getClass(), "开始检测新版本");
+			UpgradeManager.getInstance().checkAppUpdate(
+					HomeScreen.this, URL, UpgradeManager.A_SCHEDULE,
+					mHandler);
+		}
 	}
 }
