@@ -568,27 +568,29 @@ public class FriendScreen extends Screen
 
 									Cursor cursor = database.queryFriend(Integer
 											.parseInt(user_id));
-									values = new ContentValues();
-									values.put(
-											DatabaseHelper.ASCHEDULE_FRIEND_TYPE,
-											Constant.FriendType.friend_yes);
-									values.put(DatabaseHelper.ASCHEDULE_FRIEND_NUM,
-											tel);
-									values.put(
-											DatabaseHelper.ASCHEDULE_FRIEND_NICK,
-											nick);
-									values.put(
-											DatabaseHelper.ASCHEDULE_FRIEND_PHOTO_URL,
-											photo_url);
-									if (cursor.moveToNext()) {
-										database.updateFriend(user_id, values);
-									} else {
+									if(cursor!=null){
+										values = new ContentValues();
 										values.put(
-												DatabaseHelper.ASCHEDULE_FRIEND_ID,
-												user_id);
-										database.addFriend(values);
+												DatabaseHelper.ASCHEDULE_FRIEND_TYPE,
+												Constant.FriendType.friend_yes);
+										values.put(DatabaseHelper.ASCHEDULE_FRIEND_NUM,
+												tel);
+										values.put(
+												DatabaseHelper.ASCHEDULE_FRIEND_NICK,
+												nick);
+										values.put(
+												DatabaseHelper.ASCHEDULE_FRIEND_PHOTO_URL,
+												photo_url);
+										if (cursor.moveToNext()) {
+											database.updateFriend(user_id, values);
+										} else {
+											values.put(
+													DatabaseHelper.ASCHEDULE_FRIEND_ID,
+													user_id);
+											database.addFriend(values);
+										}
+										cursor.close();
 									}
-									cursor.close();
 								}
 								
 							}

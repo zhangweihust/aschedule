@@ -437,11 +437,13 @@ public class LoginScreen extends Screen implements OnClickListener {
 
         if (username.length() == 0) {
             ServiceManager.ToastShow("用户名不能为空!");
+            loginflag = false;
             return;
         }
 
         if (password.length() == 0) {
             ServiceManager.ToastShow("密码不能为空");
+            loginflag = false;
             return;
         }
 
