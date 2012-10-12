@@ -17,6 +17,7 @@ import com.archermind.schedule.Dialog.TimeSelectorDialog.OnOkButtonClickListener
 import com.archermind.schedule.Utils.Constant;
 import com.archermind.schedule.Utils.DateTimeUtils;
 import com.archermind.schedule.Views.WheelView;
+import com.archermind.schedule.Views.WheelView.OnWheelChangedListener;
 import com.archermind.schedule.Views.WheelView.OnWheelScrollListener;
 
 public class SimpleTimeSelectorDialog implements OnClickListener {
@@ -91,6 +92,7 @@ public class SimpleTimeSelectorDialog implements OnClickListener {
 				wheel.setRealLabel("月");
 				wheel.setCurrentItem(Constant.MONTH - 1);
 				wheel.addScrollingListener(scrolledListener);
+				wheel.addChangingListener(changedListener);
 				wheelView_month = wheel;
 				break;
 			case R.id.wheelView_day :
@@ -137,7 +139,23 @@ public class SimpleTimeSelectorDialog implements OnClickListener {
 		}
 	};
 
+	OnWheelChangedListener changedListener = new OnWheelChangedListener() {
+
+		public void onChanged(WheelView wheel, int oldValue, int newValue) {
+			// TODO Auto-generated method stub
+			updateStatus();
+		}
+	
+	};
+	
 	private void updateStatus() {
+		try {
+			String text = wheelView_month.getAdapter() != null ? wheelView_month
+					.getAdapter().getItem(wheelView_month.getCurrentItem())
+					: null;
+			Constant.VARY_MONTH = Integer.valueOf(text);
+		} catch (Exception e) {
+		}
 		wheelView_day.setAdapter(new NumericWheelAdapter(1, SpecialCalendar
 				.getDaysOfMonth(SpecialCalendar.isLeapYear(Constant.VARY_YEAR),
 						Constant.VARY_MONTH),
