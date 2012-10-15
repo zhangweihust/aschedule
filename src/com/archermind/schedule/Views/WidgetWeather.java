@@ -20,6 +20,9 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
+import android.net.NetworkInfo.State;
 import android.text.TextUtils;
 import android.util.Log;
 import android.view.View;
@@ -329,7 +332,26 @@ public class WidgetWeather extends AppWidgetProvider {
                         String.valueOf(DateTimeUtils.getToday(Calendar.PM, timeInMillis)), "0"
                 }, null, null, DatabaseHelper.COLUMN_SCHEDULE_START_TIME + " ASC");
     }
+    
+    private boolean isNetworkAvailable(Context context) {   
+        ConnectivityManager cm = (ConnectivityManager) context   
+                .getSystemService(Context.CONNECTIVITY_SERVICE);   
+        if (cm == null) {   
+        } else {
+            NetworkInfo[] info = cm.getAllNetworkInfo();   
+            if (info != null) {   
+                for (int i = 0; i < info.length; i++) {   
+                    if (info[i].getState() == NetworkInfo.State.CONNECTED) {   
+                        return true;   
+                    }   
+                }   
+            }   
+        }   
+        return false;   
+    } 
 
+
+    
     public void onReceive(Context context, Intent intent) {
         String action = intent.getAction();
         ScheduleApplication.LogD(WidgetWeather.class, "onReceive :" + intent.getAction());
@@ -338,15 +360,15 @@ public class WidgetWeather extends AppWidgetProvider {
 
         if (action.equals(Intent.ACTION_TIME_CHANGED) || action.equals(Intent.ACTION_DATE_CHANGED)
                 || action.equals(Intent.ACTION_TIMEZONE_CHANGED)
-                || action.equals("com.archermind.TimeTickService.tick")) {
+                || action.equals("com.archermind.TimeTickService.tick") || action.equals(ConnectivityManager.CONNECTIVITY_ACTION)) {
 
             for (int i = 0; i < appWidgetIds.length; i++) {
 
                 updateAppWidget(context, gm, appWidgetIds[i], TIMECHANGE);
             }
         }
-
-        if (action.equals("com.archermind.action.PLACECHANGED")) {
+        
+        if (action.equals("com.archermind.action.PLACECHANGED") || (action.equals(ConnectivityManager.CONNECTIVITY_ACTION) && isNetworkAvailable(context))) {
 
             getWeatherFromWeb(context);
 

@@ -94,17 +94,21 @@ public class FriendsDyamicScreen extends Screen
 					eventService.onUpdateEvent(new EventArgs(
 							EventTypes.SERVICE_TIP_OFF));
 					loading.setVisibility(View.GONE);
-					mAdapter.setList(dataArrayList);
+					dataArrayList.clear();
+                  cursorToArrayList((Cursor)msg.obj);
+                  mAdapter.notifyDataSetChanged();
 					onLoad();
 					break;
 				case ON_LoadMore :
 					loading.setVisibility(View.GONE);
-					mAdapter.setList(dataArrayList);
+					cursorToArrayList((Cursor)msg.obj);
+	              mAdapter.notifyDataSetChanged();
 					onLoad();
 					break;
 				case ON_LoadData :
 					loading.setVisibility(View.GONE);
-					mAdapter.setList(dataArrayList);
+					cursorToArrayList((Cursor)msg.obj);
+	              mAdapter.notifyDataSetChanged();
 					onLoad();
 					break;
 				case RefreshLayout_Gone :
@@ -131,9 +135,7 @@ public class FriendsDyamicScreen extends Screen
 		list = (XListView) findViewById(R.id.list);
 		list.setOnItemClickListener(this);
 		dataArrayList = new ArrayList<ScheduleBean>();
-		mAdapter = new DynamicScheduleAdapter(FriendsDyamicScreen.this,
-				dataArrayList, list);
-		mAdapter.setList(dataArrayList);
+		mAdapter = new DynamicScheduleAdapter(FriendsDyamicScreen.this, dataArrayList, list);
 		list.setAdapter(mAdapter);
 		loading = (RelativeLayout) findViewById(R.id.loading);
 		bindLayout = (LinearLayout) findViewById(R.id.bindTel);
@@ -175,7 +177,7 @@ public class FriendsDyamicScreen extends Screen
 			if (!dataArrayList.isEmpty()) {
 
 				dataArrayList.clear();
-				mAdapter.setList(dataArrayList);
+				mAdapter.notifyDataSetChanged();
 			}
 			loginLayout.setVisibility(View.VISIBLE);
 			list.setPullRefreshEnable(false);
@@ -248,10 +250,14 @@ public class FriendsDyamicScreen extends Screen
 							c.close();
 						} else {
 							mHandler.sendEmptyMessage(RefreshLayout_Gone);
-							cursorToArrayList(c);
 						}
 					}
-					mHandler.sendEmptyMessage(ON_Refresh);
+					Message msg = new Message();
+                  msg.what = ON_Refresh;
+                  msg.obj = c;
+                  Bundle bundle = new Bundle();
+                  msg.setData(bundle);
+                  mHandler.sendMessage(msg);
 				}
 			}).start();
 		}
@@ -267,8 +273,12 @@ public class FriendsDyamicScreen extends Screen
 					c = ServiceManager.getDbManager().queryShareSchedules(
 							bean.getTime(), LOAD_DATA_SIZE);
 					if (c != null && c.getCount() != 0) {
-						cursorToArrayList(c);
-						mHandler.sendEmptyMessage(ON_LoadMore);
+					   Message msg = new Message();
+                    msg.what = ON_LoadMore;
+                    msg.obj = c;
+                    Bundle bundle = new Bundle();
+                    msg.setData(bundle);
+                    mHandler.sendMessage(msg); 
 						return;
 					} else {
 						c.close();
@@ -296,10 +306,14 @@ public class FriendsDyamicScreen extends Screen
 				c.close();
 			} else {
 				mHandler.sendEmptyMessage(RefreshLayout_Gone);
-				cursorToArrayList(c);
 			}
 		}
-		mHandler.sendEmptyMessage(ON_LoadData);
+		 Message msg = new Message();
+        msg.what = ON_LoadData;
+        msg.obj = c;
+        Bundle bundle = new Bundle();
+        msg.setData(bundle);
+        mHandler.sendMessage(msg);
 	}
 
 	private void initPopWindow(Context context, final int t_id) {
@@ -365,12 +379,8 @@ public class FriendsDyamicScreen extends Screen
 	}
 
 	private void cursorToArrayList(Cursor c) {
-		if (c != null && c.getCount() > 0) {
-
+		if (c != null && c.getCount() >= 0) {
 			ScheduleBean bean;
-			if (dataArrayList != null) {// 清除掉原有的内容
-				dataArrayList.clear();
-			}
 			for (c.moveToFirst(); !c.isAfterLast(); c.moveToNext()) {
 				bean = new ScheduleBean();
 				bean.setContent(c.getString(c
@@ -389,8 +399,8 @@ public class FriendsDyamicScreen extends Screen
 						.getColumnIndex(DatabaseHelper.COLUMN_SCHEDULE_DEFAULT)) == 1);
 				dataArrayList.add(bean);
 			}
+			c.close();
 		}
-		c.close();
 	}
 
 	@Override
@@ -512,7 +522,7 @@ public class FriendsDyamicScreen extends Screen
 						if (!dataArrayList.isEmpty()) {
 
 							dataArrayList.clear();
-							mAdapter.setList(dataArrayList);
+							mAdapter.notifyDataSetChanged();
 						}
 						loginLayout.setVisibility(View.VISIBLE);
 						list.setPullRefreshEnable(false);

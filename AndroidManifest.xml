@@ -29,7 +29,6 @@
         <activity android:name=".Screens.PasswActivity" />
         <activity android:name=".Screens.ScheduleAllScreen" />
         <activity android:name=".Screens.ScheduleInfoScreen" />
-        <activity android:name=".Screens.ScheduleScreen" />
         <activity android:name=".Screens.ScheduleTypeScreen" />
         <activity android:name=".Screens.ScheduleAddScreen" />
         <activity
@@ -119,6 +118,7 @@
                 <action android:name="android.intent.action.TIMEZONE_CHANGED" />
                 <action android:name="android.intent.action.DATE_CHANGED" />
                 <action android:name="android.intent.action.TIME_SET" />
+                <action android:name="android.net.conn.CONNECTIVITY_CHANGE" />
                 <!-- 下面这个消息是模拟 android.intent.action.TIME_TICK -->
                 <action android:name="com.archermind.TimeTickService.tick" />
             </intent-filter>

@@ -14,6 +14,7 @@ import android.graphics.drawable.BitmapDrawable;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
+import android.util.Log;
 import android.view.Gravity;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
@@ -76,7 +77,7 @@ public class MyDynamicScreen extends Screen implements IXListViewListener, OnIte
     private int end = 10;
 
     private int start = 0;
-
+  
     private List<ScheduleBean> dataArrayList;
 
     private DynamicScheduleAdapter mAdapter;
@@ -91,17 +92,21 @@ public class MyDynamicScreen extends Screen implements IXListViewListener, OnIte
                     eventService.onUpdateEvent(new EventArgs(EventTypes.SERVICE_TIP_OFF));
                     loading.setVisibility(View.GONE);
                     Toast.makeText(getApplicationContext(), "最新记录加载完毕", Toast.LENGTH_SHORT).show();
-                    mAdapter.setList(dataArrayList);
+                    dataArrayList.clear();
+                    cursorToArrayList((Cursor)msg.obj);
+                    mAdapter.notifyDataSetChanged();
                     onLoad();
                     break;
                 case ON_LoadMore:
                     loading.setVisibility(View.GONE);
-                    mAdapter.setList(dataArrayList);
+                    cursorToArrayList((Cursor)msg.obj);
+                    mAdapter.notifyDataSetChanged();
                     onLoad();
                     break;
                 case ON_LoadData:
                     loading.setVisibility(View.GONE);
-                    mAdapter.setList(dataArrayList);
+                    cursorToArrayList((Cursor)msg.obj);
+                    mAdapter.notifyDataSetChanged();
                     onLoad();
                     break;
                 case RefreshLayout_Gone:
@@ -128,7 +133,7 @@ public class MyDynamicScreen extends Screen implements IXListViewListener, OnIte
         list.setOnItemClickListener(this);
         dataArrayList = new ArrayList<ScheduleBean>();
         mAdapter = new DynamicScheduleAdapter(MyDynamicScreen.this, dataArrayList, list);
-        mAdapter.setList(dataArrayList);
+        mAdapter.notifyDataSetChanged();
         list.setAdapter(mAdapter);
         loading = (RelativeLayout)findViewById(R.id.loading);
         bindLayout = (LinearLayout)findViewById(R.id.bindTel);
@@ -165,9 +170,8 @@ public class MyDynamicScreen extends Screen implements IXListViewListener, OnIte
             ScheduleApplication.LogD(getClass(),
                     " onCreate 未登录 userid " + ServiceManager.getUserId());
             if (!dataArrayList.isEmpty()) {
-
                 dataArrayList.clear();
-                mAdapter.setList(dataArrayList);
+                mAdapter.notifyDataSetChanged();
             }
             loginLayout.setVisibility(View.VISIBLE);
             list.setPullRefreshEnable(false);
@@ -227,18 +231,21 @@ public class MyDynamicScreen extends Screen implements IXListViewListener, OnIte
                 @Override
                 public void run() {
                     SyncDataUtil.getSchedulesFromWeb(String.valueOf(ServiceManager.getUserId()));
-                    dataArrayList.clear();
                     c = ServiceManager.getDbManager().queryLocalSchedules(start, end);
                     if (c != null) {
                         if (c.getCount() == 0) {
                             mHandler.sendEmptyMessage(RefreshLayout_Visible);
                             c.close();
-                        } else {
-                            mHandler.sendEmptyMessage(RefreshLayout_Gone);
-                            cursorToArrayList(c);
-                        }
-                    }
-                    mHandler.sendEmptyMessage(ON_Refresh);
+                        	} else {
+    							mHandler.sendEmptyMessage(RefreshLayout_Gone);
+    						}
+                    	}
+                    Message msg = new Message();
+                    msg.what = ON_Refresh;
+                    msg.obj = c;
+                    Bundle bundle = new Bundle();
+                    msg.setData(bundle);
+                    mHandler.sendMessage(msg);
                 }
             }).start();
         }
@@ -254,8 +261,12 @@ public class MyDynamicScreen extends Screen implements IXListViewListener, OnIte
                     c = ServiceManager.getDbManager().queryLocalSchedules(bean.getTime(),
                             LOAD_DATA_SIZE);
                     if (c.getCount() != 0) {
-                        cursorToArrayList(c);
-                        mHandler.sendEmptyMessage(ON_LoadMore);
+                    		Message msg = new Message();
+                        msg.what = ON_LoadMore;
+                        msg.obj = c;
+                        Bundle bundle = new Bundle();
+                        msg.setData(bundle);
+                        mHandler.sendMessage(msg); 
                         return;
                     }
                 }
@@ -279,10 +290,14 @@ public class MyDynamicScreen extends Screen implements IXListViewListener, OnIte
                 c.close();
             } else {
                 mHandler.sendEmptyMessage(RefreshLayout_Gone);
-                cursorToArrayList(c);
             }
         }
-        mHandler.sendEmptyMessage(ON_LoadData);
+        Message msg = new Message();
+        msg.what = ON_LoadData;
+        msg.obj = c;
+        Bundle bundle = new Bundle();
+        msg.setData(bundle);
+        mHandler.sendMessage(msg);
     }
 
     private void initPopWindow(Context context, final int t_id) {
@@ -343,7 +358,7 @@ public class MyDynamicScreen extends Screen implements IXListViewListener, OnIte
     }
 
     private void cursorToArrayList(Cursor c) {
-        if (c != null && c.getCount() > 0) {
+        if (c != null && c.getCount() >= 0) {
             ScheduleBean bean;
             for (c.moveToFirst(); !c.isAfterLast(); c.moveToNext()) {
                 bean = new ScheduleBean();
@@ -355,8 +370,8 @@ public class MyDynamicScreen extends Screen implements IXListViewListener, OnIte
                 bean.setUser_id(c.getInt(c.getColumnIndex(DatabaseHelper.COLUMN_SCHEDULE_USER_ID)));
                 dataArrayList.add(bean);
             }
+           c.close();
         }
-        c.close();
     }
 
     @Override
@@ -438,7 +453,7 @@ public class MyDynamicScreen extends Screen implements IXListViewListener, OnIte
 
                         if (!dataArrayList.isEmpty()) {// 程序登出，清除数据
                             dataArrayList.clear();
-                            mAdapter.setList(dataArrayList);
+                            mAdapter.notifyDataSetChanged();
                         }
                         loginLayout.setVisibility(View.VISIBLE);
                         list.setPullRefreshEnable(false);
@@ -451,7 +466,6 @@ public class MyDynamicScreen extends Screen implements IXListViewListener, OnIte
                 this.runOnUiThread(new Runnable() {
                     public void run() {
                         if (ServiceManager.getUserId() != 0) {
-
                             onRefresh();
                         }
                     }

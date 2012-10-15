@@ -16,6 +16,7 @@ import java.util.regex.Pattern;
 import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
+import android.os.Debug;
 import android.os.Handler;
 import android.os.Message;
 import android.util.Log;
@@ -592,6 +593,7 @@ public class ServerInterface {
 					text = cursor
 							.getString(cursor
 									.getColumnIndex(DatabaseHelper.COLUMN_SCHEDULE_OPER_FLAG));
+					
 					System.out
 							.println("+++++++++++++++++++"
 									+ cursor.getString(cursor
@@ -599,7 +601,6 @@ public class ServerInterface {
 					map.put("action",
 							cursor.getString(cursor
 									.getColumnIndex(DatabaseHelper.COLUMN_SCHEDULE_OPER_FLAG)));
-
 					if (text != null && text.equals("A")) {
 						Cursor cursor1 = ServiceManager.getDbManager()
 								.queryMaxTid();
@@ -635,7 +636,7 @@ public class ServerInterface {
 							flag++;
 						} else {
 							result = -1;
-							break;
+							continue;
 						}
 
 					} else if (text != null && text.equals("M")) {
@@ -663,7 +664,7 @@ public class ServerInterface {
 
 						} else {
 							result = -1;
-							break;
+							continue;
 						}
 					} else if (text != null && text.equals("D")) {
 						String ret = HttpUtils
@@ -685,7 +686,7 @@ public class ServerInterface {
 
 						} else {
 							result = -1;
-							break;
+							continue;
 						}
 					}
 				} while (cursor.moveToNext());

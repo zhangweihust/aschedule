@@ -8,8 +8,10 @@ import android.appwidget.AppWidgetProvider;
 import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
+import android.net.ConnectivityManager;
 import android.widget.RemoteViews;
 
 import com.archermind.schedule.R;
@@ -35,7 +37,6 @@ public class WidgetProvider extends AppWidgetProvider {
 
 		databaseHelper = new DatabaseHelper(context);
 		database = databaseHelper.getWritableDatabase();
-
 		for (int i = 0; i < N; i++) {
 			int appWidgetId = appWidgetIds[i];
 			updateAppWidget(context, appWidgetManager, appWidgetId);

@@ -45,17 +45,12 @@ public class DynamicScheduleAdapter extends BaseAdapter {
 		mContext = context;
 		mXList = xlist;
 		asyncScheduleLoader = new AsyncScheduleLoader();
-
+		this.list = list;
 	}
 
 	@Override
 	public int getCount() {
 		return list.size();
-	}
-
-	public void setList(List<ScheduleBean> list) {
-		this.list = list;
-		this.notifyDataSetChanged();
 	}
 
 	@Override
