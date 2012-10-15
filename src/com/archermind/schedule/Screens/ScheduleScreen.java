@@ -224,7 +224,9 @@ public class ScheduleScreen extends Screen
 						break;
 					case LOCAL_SCHEDULE_UPDATE_OVER :
 						gridView.setAdapter(calV);
-						//hsa.setData(listdata);
+						if (isUp == true && listdata != null) {
+							hsa.setData(listdata);
+						}
 						gototoday.setVisibility(View.INVISIBLE);
 						schedule_headview_prompt
 								.setText(getHeadViewText(curSelectedDate));
@@ -460,6 +462,7 @@ public class ScheduleScreen extends Screen
 		list2.stopLoadMore();
 		list2.setRefreshTime(DateTimeUtils.time2String("yyyy-MM-dd hh:mm:ss",
 				System.currentTimeMillis()));
+		gototoday.setVisibility(View.INVISIBLE);
 	}
 
 	@Override
@@ -959,8 +962,8 @@ public class ScheduleScreen extends Screen
 				ScheduleApplication.LogD(ScheduleScreen.class,
 						"LOCAL_SCHEDULE_UPDATE");
 
-				listdata = calendarData.getMonthSchedule(curScrollYear,
-						curScrollMonth);
+				listdata = calendarData.getMonthSchedule(listScrollYear,
+						listScrollMonth);
 				handler.sendEmptyMessage(LOCAL_SCHEDULE_UPDATE_OVER);
 
 				// ScheduleScreen.this.runOnUiThread(new Runnable(){
@@ -998,6 +1001,7 @@ public class ScheduleScreen extends Screen
 			/* 当前显示中包含今天的日程，要让回今天按钮消失 */
 			gototoday.setVisibility(View.INVISIBLE);
 		} else {
+			gototoday.setVisibility(View.INVISIBLE);
 			/* 当前显示中不包含今天的日程,但是所有已加载的日程中包含今天的日程，显示回今天按钮 */
 			if (hsa.containTodaySchedule(0, hsa.getCount(),
 					getDateByMillisTime(System.currentTimeMillis()))) {
