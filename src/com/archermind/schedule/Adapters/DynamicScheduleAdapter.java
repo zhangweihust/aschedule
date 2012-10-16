@@ -90,6 +90,7 @@ public class DynamicScheduleAdapter extends BaseAdapter {
 					.getTag(R.layout.dynamic_schedule_item);
 		}
 
+		try {
 		final ScheduleBean data = list.get(position);
 		if (data != null) {
 			item.content.setText(data.getContent());
@@ -190,6 +191,10 @@ public class DynamicScheduleAdapter extends BaseAdapter {
 			EventArgs args = new EventArgs();
 			args.putExtra("time", time);
 			convertView.setTag(args);
+		}
+		} catch (Exception e) {
+			ScheduleApplication.LogD(getClass(), "catch Exception");
+			e.printStackTrace();
 		}
 		return convertView;
 	}
