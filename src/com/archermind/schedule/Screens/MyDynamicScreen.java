@@ -365,7 +365,7 @@ public class MyDynamicScreen extends Screen implements IXListViewListener, OnIte
                 bean.setContent(c.getString(c
                         .getColumnIndex(DatabaseHelper.COLUMN_SCHEDULE_CONTENT)));
                 bean.setT_id(c.getInt(c.getColumnIndex(DatabaseHelper.COLUMN_SCHEDULE_T_ID)));
-                bean.setTime(c.getLong(c.getColumnIndex(DatabaseHelper.COLUMN_SCHEDULE_UPDATE_TIME)));
+				bean.setTime(c.getLong(c.getColumnIndex(DatabaseHelper.COLUMN_SCHEDULE_START_TIME)));
                 bean.setType(c.getInt(c.getColumnIndex(DatabaseHelper.COLUMN_SCHEDULE_TYPE)));
                 bean.setUser_id(c.getInt(c.getColumnIndex(DatabaseHelper.COLUMN_SCHEDULE_USER_ID)));
                 dataArrayList.add(bean);

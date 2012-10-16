@@ -140,6 +140,7 @@ public class CalendarAdapter extends BaseAdapter {
 	@Override
 	public View getView(int position, View convertView, ViewGroup parent) {
 
+		try {
 		if (convertView == null) {
 			convertView = LayoutInflater.from(context).inflate(
 					R.layout.calendar, null);
@@ -219,6 +220,10 @@ public class CalendarAdapter extends BaseAdapter {
 						R.color.selector));
 				setOldPosition(position);
 			}
+		}
+		} catch (Exception e) {
+			ScheduleApplication.LogD(getClass(), "catch Exception");
+			e.printStackTrace();
 		}
 
 		return convertView;

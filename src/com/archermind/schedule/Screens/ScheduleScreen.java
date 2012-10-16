@@ -719,6 +719,7 @@ public class ScheduleScreen extends Screen
 			@Override
 			public void onItemClick(AdapterView<?> arg0, View view,
 					int position, long arg3) {
+				try {
 				// 点击任何一个item，得到这个item的日期（排除点击的是周日到周六（点击不响应））
 				int startPosition = calV.getStartPositon();
 				int endPosition = calV.getEndPosition();
@@ -768,6 +769,10 @@ public class ScheduleScreen extends Screen
 						// }
 					}
 					gototoday.setVisibility(View.INVISIBLE);
+				}
+				} catch (Exception e) {
+					ScheduleApplication.LogD(getClass(), "catch Exception");
+					e.printStackTrace();
 				}
 			}
 		});
@@ -1036,6 +1041,8 @@ public class ScheduleScreen extends Screen
 	}
 
 	public String getHeadViewText(String date) {
+		String strtext = "";
+		try {
 		// String strtext = "";
 		// int[] schedulecount = calendarData.getSchDateTagFlag();
 		// int i = 0;
@@ -1122,13 +1129,17 @@ public class ScheduleScreen extends Screen
 				+ " count is " + count);
 
 		// database.close();
-		String strtext = "";
+
 		if (count > 0) {
 
 			strtext = "" + dataTime + " 有 " + count + " 条日程!";
 		} else {
 
 			strtext = "" + dataTime + " 没有日程!";
+		}
+		} catch (Exception e) {
+			ScheduleApplication.LogD(getClass(), "catch Exception");
+			e.printStackTrace();
 		}
 
 		return strtext;

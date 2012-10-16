@@ -7,6 +7,7 @@ import java.util.Date;
 import java.util.List;
 
 import com.archermind.schedule.R;
+import com.archermind.schedule.ScheduleApplication;
 import com.archermind.schedule.Calendar.CalendarData;
 import com.archermind.schedule.Calendar.LunarCalendar;
 import com.archermind.schedule.Events.EventArgs;
@@ -54,7 +55,7 @@ public class HistoryScheduleAdapter extends BaseAdapter {
 	@Override
 	public View getView(int position, View convertView, ViewGroup parent) {
 		// TODO Auto-generated method stub
-
+		try {
 		ScheduleItem item;
 		// String str = "";
 		String holiday = "";
@@ -189,6 +190,10 @@ public class HistoryScheduleAdapter extends BaseAdapter {
 		args.putExtra("id", data.id);
 		args.putExtra("time", data.time);
 		convertView.setTag(args);
+		} catch (Exception e) {
+			ScheduleApplication.LogD(getClass(), "catch Exception");
+			e.printStackTrace();
+		}
 
 		return convertView;
 	}

@@ -226,6 +226,7 @@ public class CalendarData {
 			return false;
 
 		boolean loadSuccess = false;
+		try {
 		int monthPos = (year - BASE_YEAR) * 12;
 		Cursor cursor = database.queryLunarDatesOnYear(String.valueOf(year));
 		if (cursor != null) {
@@ -243,6 +244,10 @@ public class CalendarData {
 				loadSuccess = true;
 			}
 			cursor.close();
+			}
+		} catch (Exception e) {
+			ScheduleApplication.LogD(getClass(), "catch Exception");
+			e.printStackTrace();
 		}
 		return loadSuccess;
 	}
@@ -304,6 +309,7 @@ public class CalendarData {
 
     // 将一个月中的每一天的值添加入数组dayNuber中
     private synchronized void getweek(int year, int month, int flagType) {
+    	try {
     	//LostTime.cast("getweek 1");
         String date = year + "." + month;// 表示查询哪个月
 
@@ -421,9 +427,14 @@ public class CalendarData {
 //			ServiceManager.getDbManager().insertCalendarMap(
 //					contentvalues);
 //		}
+		} catch (Exception e) {
+			ScheduleApplication.LogD(getClass(), "catch Exception");
+			e.printStackTrace();
+		}
     }
 
 	public synchronized List<ScheduleData> getMonthSchedule(int year, int month) {
+		try {
 		database.openwithnoservice();
 		int i;
 		int days = SpecialCalendar.getDaysOfMonth(
@@ -489,6 +500,10 @@ public class CalendarData {
 			}
 		}
 		database.close();
+		} catch (Exception e) {
+			ScheduleApplication.LogD(getClass(), "catch Exception");
+			e.printStackTrace();
+		}
 		return scheduleList;
 	}
 

@@ -25,6 +25,7 @@ public class TimeSelectorDialog implements OnClickListener {
 	private WheelView wheelView_year;
 	private WheelView wheelView_hour;
 	private WheelView wheelView_min;
+	private boolean initFinished = false;
 	private boolean wheelScrolled = false;
 	private Dialog timeSelectorDialog;
 	private Context context;
@@ -62,7 +63,9 @@ public class TimeSelectorDialog implements OnClickListener {
 
 		wheelView_cancel.setOnClickListener(this);
 		wheelView_ok.setOnClickListener(this);
-
+		
+		initFinished = true;
+		updateStatus();
 	}
 
 	public void setCurrentItem(long time) {
@@ -89,6 +92,7 @@ public class TimeSelectorDialog implements OnClickListener {
 				wheel.setRealLabel("年");
 				wheel.setCurrentItem(Constant.YEAR - 1901);
 				wheel.addScrollingListener(scrolledListener);
+				wheel.addChangingListener(changedListener);
 				wheelView_year = wheel;
 				break;
 			case R.id.wheelView_month :
@@ -170,20 +174,29 @@ public class TimeSelectorDialog implements OnClickListener {
 	};
 
 	private void updateStatus() {
+		if (initFinished == false)
+			return ;
+		
 		try {
-			String text = wheelView_month.getAdapter() != null ? wheelView_month
+			String text = wheelView_year.getAdapter() != null ? wheelView_year
+					.getAdapter().getItem(wheelView_year.getCurrentItem())
+					: null;
+			Constant.VARY_YEAR = Integer.valueOf(text);
+			
+			text = wheelView_month.getAdapter() != null ? wheelView_month
 					.getAdapter().getItem(wheelView_month.getCurrentItem())
 					: null;
 			Constant.VARY_MONTH = Integer.valueOf(text);
+
+			wheelView_day.setAdapter(new NumericWheelAdapter(1, SpecialCalendar
+					.getDaysOfMonth(SpecialCalendar.isLeapYear(Constant.VARY_YEAR),
+							Constant.VARY_MONTH),
+					NumericWheelAdapter.DEFAULT_CALENDER));
+			wheelView_day.setCurrentItem(wheelView_day.getCurrentItem());
+			wheelView_day.setItemsLayout(null);
+			wheelView_day.setLabelLayout(null);
 		} catch (Exception e) {
 		}
-		wheelView_day.setAdapter(new NumericWheelAdapter(1, SpecialCalendar
-				.getDaysOfMonth(SpecialCalendar.isLeapYear(Constant.VARY_YEAR),
-						Constant.VARY_MONTH),
-				NumericWheelAdapter.DEFAULT_CALENDER));
-		wheelView_day.setCurrentItem(wheelView_day.getCurrentItem());
-		wheelView_day.setItemsLayout(null);
-		wheelView_day.setLabelLayout(null);
 	}
 
 	public void show() {
@@ -193,6 +206,7 @@ public class TimeSelectorDialog implements OnClickListener {
 
 	public void dismiss() {
 		timeSelectorDialog.dismiss();
+		initFinished = false;
 	}
 
 	@Override
