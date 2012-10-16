@@ -93,7 +93,8 @@ public class DynamicScheduleAdapter extends BaseAdapter {
 		final ScheduleBean data = list.get(position);
 		if (data != null) {
 			item.content.setText(data.getContent());
-			long time = data.getTime()*1000+1;
+			//long time = data.getTime()*1000+1;
+			long time = data.getTime();
 			item.time.setText(DateTimeUtils.time2String("hh:mm", time));
 			item.date.setText(DateTimeUtils.time2String("yyyy.MM.dd", time));
 			String amORpm = DateTimeUtils.time2String("a", time);

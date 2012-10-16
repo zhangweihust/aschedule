@@ -118,7 +118,17 @@ public class AlarmPopwindow implements OnClickListener {
 			remind_root_view = layoutInflater.inflate(
 					R.layout.schedule_alarm_remind, null);
 			alarmPopupWindow = new PopupWindow(remind_root_view,
-					LayoutParams.FILL_PARENT, LayoutParams.FILL_PARENT);
+					LayoutParams.FILL_PARENT, LayoutParams.FILL_PARENT) {
+				public void dismiss() {
+					if (stage_remind_flag == true && mStageRemind == true) {
+						if (startTime > endTime) {
+							Toast.makeText(mContext, "结束时间不能晚于开始时间，请重新设置！", 1).show();
+							return ;
+						}
+					}
+					super.dismiss();
+				}
+			};
 
 		}
 		alarmPopupWindow
@@ -612,14 +622,8 @@ public class AlarmPopwindow implements OnClickListener {
 			endTime = c.getTimeInMillis();
 			endTime = getStageTime(endTime);
 
-			if (startTime > endTime) {
-
-				Toast.makeText(mContext, "结束时间不能晚于开始时间，请重新设置！", 1).show();
-			} else {
-
-				stage_remind_end_date.setText(DateTimeUtils.time2String(
-						"yyyy-MM-dd", endTime));
-			}
+			stage_remind_end_date.setText(DateTimeUtils.time2String(
+					"yyyy-MM-dd", endTime));
 		}
 	}
 

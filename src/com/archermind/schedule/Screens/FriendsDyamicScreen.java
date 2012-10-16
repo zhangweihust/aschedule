@@ -392,7 +392,7 @@ public class FriendsDyamicScreen extends Screen
 				bean.setUser_id(c.getInt(c
 						.getColumnIndex(DatabaseHelper.COLUMN_SCHEDULE_USER_ID)));
 				bean.setTime(c.getLong(c
-						.getColumnIndex(DatabaseHelper.COLUMN_SCHEDULE_UPDATE_TIME)));
+						.getColumnIndex(DatabaseHelper.COLUMN_SCHEDULE_START_TIME)));
 				bean.setType(c.getInt(c
 						.getColumnIndex(DatabaseHelper.COLUMN_SCHEDULE_TYPE)));
 				bean.setDefault_data(c.getInt(c
