@@ -10,6 +10,8 @@ import com.archermind.schedule.R;
 import com.archermind.schedule.Events.EventArgs;
 import com.archermind.schedule.Events.EventTypes;
 import com.archermind.schedule.Services.ServiceManager;
+import com.archermind.schedule.Utils.Constant;
+import com.archermind.schedule.Utils.SharedPreferenceUtil;
 
 public class ContactSyncAlertScreen extends Activity implements OnClickListener {
 
@@ -34,6 +36,7 @@ public class ContactSyncAlertScreen extends Activity implements OnClickListener 
 		// TODO Auto-generated method stub
 		switch (v.getId()) {
 			case R.id.contactsyncalert_sync :
+				SharedPreferenceUtil.setValue("sync", Constant.CONTACT_SYNC_ING);
 				new Thread() {
 					public void run() {
 						/* 要获取用户名 */
@@ -41,9 +44,11 @@ public class ContactSyncAlertScreen extends Activity implements OnClickListener 
 								String.valueOf(ServiceManager.getUserId()))) {
 							ServiceManager.getEventservice().onUpdateEvent(
 									new EventArgs(EventTypes.CONTACT_SYNC_SUCCESS));
+							SharedPreferenceUtil.setValue("sync", Constant.CONTACT_SYNC_SUCCESS);
 						} else {
 							ServiceManager.getEventservice().onUpdateEvent(
 									new EventArgs(EventTypes.CONTACT_SYNC_FAILED));
+							SharedPreferenceUtil.setValue("sync", Constant.CONTACT_SYNC_FAILED);
 						}
 					};
 				}.start();
@@ -51,6 +56,7 @@ public class ContactSyncAlertScreen extends Activity implements OnClickListener 
 			case R.id.contactsyncalert_cancel :
 				ServiceManager.getEventservice().onUpdateEvent(
 						new EventArgs(EventTypes.CONTACT_SYNC_CANCEL));
+				SharedPreferenceUtil.setValue("sync", Constant.CONTACT_SYNC_CANCEL);
 				break;
 			default :
 				break;

@@ -94,28 +94,34 @@ public class WidgetWeather extends AppWidgetProvider {
     public void onUpdate(Context context, AppWidgetManager appWidgetManager, int[] appWidgetIds) {
 
         Log.i(WidgetWeather.class.getCanonicalName(), "onUpdate");
-        Intent it = new Intent(ACTION_TIME_TICK);
-        context.startService(it);
+        
+        try {
+        	Intent it = new Intent(ACTION_TIME_TICK);
+            context.startService(it);
 
-        final int N = appWidgetIds.length;
+            final int N = appWidgetIds.length;
 
-        databaseHelper = new DatabaseHelper(context);
-        database = databaseHelper.getWritableDatabase();
+            databaseHelper = new DatabaseHelper(context);
+            database = databaseHelper.getWritableDatabase();
 
-        for (int i = 0; i < N; i++) {
-            int appWidgetId = appWidgetIds[i];
-            updateAppWidget(context, appWidgetManager, appWidgetId);
-        }
+            for (int i = 0; i < N; i++) {
+                int appWidgetId = appWidgetIds[i];
+                updateAppWidget(context, appWidgetManager, appWidgetId);
+            }
 
-        if (database != null) {
-            database.close();
-        }
+            if (database != null) {
+                database.close();
+            }
 
-        if (databaseHelper != null) {
+            if (databaseHelper != null) {
 
-            databaseHelper.close();
-        }
+                databaseHelper.close();
+            }
 
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+        
         super.onUpdate(context, appWidgetManager, appWidgetIds);
     }
 

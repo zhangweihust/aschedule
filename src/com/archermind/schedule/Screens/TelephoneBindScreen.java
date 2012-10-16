@@ -117,7 +117,8 @@ public class TelephoneBindScreen extends Screen implements OnClickListener {
             telephone_bind_get_verification.setVisibility(View.INVISIBLE);
 
         } else {
-
+        	Toast.makeText(getApplicationContext(), "检测到您的手机号发生变化,请重新绑定!",
+                    Toast.LENGTH_LONG).show();
             telephone_bind_is_bind.setVisibility(View.GONE);
             telephone_bind_get_verification.setVisibility(View.VISIBLE);
         }

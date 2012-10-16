@@ -49,6 +49,11 @@ public class Constant {
 		public final static String USER_DEVICE_INFO_URL = "http://arc.archermind.com/ci/index.php/aschedule/setClientInfo";
 		public final static String USER_ACTIVITY_INFO_URL = "http://arc.archermind.com/ci/index.php/aschedule/setUserActionInfo";
 	}
+	
+	public final static int CONTACT_SYNC_SUCCESS = 0;
+	public final static int CONTACT_SYNC_FAILED = 1;
+	public final static int CONTACT_SYNC_CANCEL = 2;
+	public final static int CONTACT_SYNC_ING = 3;
 
 	public static boolean refrash = false;
 }
