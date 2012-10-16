@@ -18,6 +18,7 @@ import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.ProgressDialog;
 import android.content.ContentResolver;
+import android.content.ContentValues;
 import android.content.DialogInterface;
 import android.content.DialogInterface.OnDismissListener;
 import android.content.Intent;
@@ -108,6 +109,8 @@ public class AccountSettingScreen extends Screen implements OnClickListener {
 	private String headImagePath = null;
 
 	private boolean logoutflag = false;
+	
+	private Uri imageFilePath;
 
 	private Handler mHandler = new Handler() {
 
@@ -401,8 +404,13 @@ public class AccountSettingScreen extends Screen implements OnClickListener {
 					public void onClick(DialogInterface dialog, int whichButton) {
 						dialog.dismiss();
 						Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
-						intent.putExtra(MediaStore.EXTRA_OUTPUT, Uri.fromFile(new File(Environment
-								.getExternalStorageDirectory(), "headImage.jpg")));
+						ContentValues values = new ContentValues(3);   
+						values.put(MediaStore.Images.Media.DISPLAY_NAME, "head");   
+						values.put(MediaStore.Images.Media.DESCRIPTION, "this is description");   
+						values.put(MediaStore.Images.Media.MIME_TYPE, "image/jpeg");   
+						imageFilePath = AccountSettingScreen.this.getContentResolver().insert(MediaStore.Images.Media.EXTERNAL_CONTENT_URI, values);   
+		              intent.putExtra(MediaStore.EXTRA_OUTPUT, imageFilePath); //这样就将文件的存储方式和uri指定到了Camera应用中   
+		                   
 						startActivityForResult(intent, 2);
 						ScheduleApplication.LogD(getClass(), "拍照");
 					}
@@ -433,10 +441,8 @@ public class AccountSettingScreen extends Screen implements OnClickListener {
 			case 2 :
 				if (resultCode == Activity.RESULT_OK) {
 					ScheduleApplication.LogD(getClass(), "1 拍照返回的数据 ");
-					File temp = new File(Environment.getExternalStorageDirectory()
-							+ "/headImage.jpg");
-					uri = Uri.fromFile(temp);
-					startPhotoZoom(uri);
+					
+					startPhotoZoom(imageFilePath);
 				} else {
 
 					ScheduleApplication.LogD(getClass(), "1 拍照返回的数据 取消拍照 ");
