@@ -1,20 +1,19 @@
 package com.archermind.schedule.Screens;
 
-import android.R.integer;
 import android.os.Bundle;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Toast;
-
 import com.archermind.schedule.R;
+import com.archermind.schedule.ScheduleApplication;
 import com.archermind.schedule.Events.EventArgs;
 import com.archermind.schedule.Events.IEventHandler;
 import com.archermind.schedule.Model.UserInfoData;
 import com.archermind.schedule.Services.ServiceManager;
 import com.archermind.schedule.Utils.ServerInterface;
-import com.weibo.net.Utility;
+
 
 public class FeedbackScreen extends Screen
 		implements
@@ -48,55 +47,59 @@ public class FeedbackScreen extends Screen
 
 	@Override
 	public void onClick(View v) {
-		switch (v.getId()) {
-
-			case R.id.title_feedback_button_out :
-
-				finish();
-				break;
-
-			case R.id.title_feedback_button_send :
-
-				String telephone = ServiceManager
-						.getSPUserInfo(UserInfoData.TEL);
-				String userid = ServiceManager
-						.getSPUserInfo(UserInfoData.USER_ID);
-				String suggestion = etContentSend.getText().toString().trim();
-
-				ServerInterface sfInterface = new ServerInterface();
-
-				if (suggestion.length() > 160) {
-
-					Toast.makeText(getApplicationContext(), "字数超过160，请减少字数", 1)
-							.show();
-
-				} else if (suggestion.length() == 0) {
-
-					Toast.makeText(getApplicationContext(), "请输入反馈内容", 1)
-							.show();
-
-				} else {
-
-					int result = sfInterface.suggestionfeedback(userid,
-							telephone, suggestion);
-
-					if (0 == result) {
-
-						Toast.makeText(getApplicationContext(), "反馈成功", 1)
-								.show();
-						finish();
-
+		try {
+			switch (v.getId()) {
+				
+				case R.id.title_feedback_button_out :
+					
+					finish();
+					break;
+					
+				case R.id.title_feedback_button_send :
+					
+					String telephone = ServiceManager
+					.getSPUserInfo(UserInfoData.TEL);
+					String userid = ServiceManager
+							.getSPUserInfo(UserInfoData.USER_ID);
+					String suggestion = etContentSend.getText().toString().trim();
+					
+					ServerInterface sfInterface = new ServerInterface();
+					
+					if (suggestion.length() > 160) {
+						
+						Toast.makeText(getApplicationContext(), "字数超过160，请减少字数", 1)
+						.show();
+						
+					} else if (suggestion.length() == 0) {
+						
+						Toast.makeText(getApplicationContext(), "请输入反馈内容", 1)
+						.show();
+						
 					} else {
-
-						Toast.makeText(getApplicationContext(), "反馈失败，请稍后重试", 1)
-								.show();
+						
+						int result = sfInterface.suggestionfeedback(userid,
+								telephone, suggestion);
+						
+						if (0 == result) {
+							
+							Toast.makeText(getApplicationContext(), "反馈成功", 1)
+							.show();
+							finish();
+							
+						} else {
+							
+							Toast.makeText(getApplicationContext(), "反馈失败，请稍后重试", 1)
+							.show();
+						}
 					}
-				}
-
-				break;
-
-			default :
-				break;
+					
+					break;
+					
+				default :
+					break;
+			}
+		} catch (Exception e) {
+			ScheduleApplication.logException(getClass(),e);
 		}
 	}
 }

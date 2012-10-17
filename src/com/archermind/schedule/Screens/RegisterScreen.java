@@ -89,58 +89,62 @@ public class RegisterScreen extends Screen implements OnClickListener {
         handler = new Handler() {
             @Override
             public void handleMessage(Message msg) {                
-                super.handleMessage(msg);                
-                if (mpDialog != null) {
-                    mpDialog.dismiss();
-                }
-
-                if (msg != null && msg.obj != null) {
-                    String retValue = (String)msg.obj;
-                    String prompt = "";
-
-                    ScheduleApplication.LogD(RegisterScreen.class, "retValue = " + retValue);
-
-                    if (retValue.contains("user_id")) {
-                        prompt = "注册成功";
-                        writeUserinfo(retValue, HttpUtils.GetCookie());
-                        ScheduleApplication.LogD(RegisterScreen.class,
-                                "服务器返回信息写入SharedPrefences成功! ret = " + retValue);
-                        startActivity(new Intent(RegisterScreen.this, TelephoneBindScreen.class));
-
-                        eventService.onUpdateEvent(new EventArgs(EventTypes.LOGIN_SUCCESS));
-                        finish();
-                    } else {
-                        int ret = Integer.parseInt(retValue);
-                        switch (ret) {
-                            case REGISTER_FAILED_USERORPSWD_NULL:
-                                prompt = "用户名或密码为空";
-                                break;
-                            case REGISTER_FAILED_ACCOUNT_EXISTS:
-                                prompt = "账号或昵称已存在";
-                                break;
-                            case REGISTER_FAILED_BLOG_BINDED:
-                                prompt = "微博等账号已绑定";
-                                break;
-                            case REGISTER_FAILED_EMIAL_ERROR:
-                                prompt = "注册的邮箱不合法";
-                                break;
-                            case REGISTER_FAILED_PSWD_ERROR:
-                                prompt = "密码不合法";
-                                break;
-                            case REGISTER_FAILED_NICK_ERROR:
-                                prompt = "昵称含特殊字符，不合法";
-                                break;
-                            default:
-                                prompt = retValue;
-                                break;
-                        }
-                        prompt = "注册失败 : " + prompt;
-                    }
-
-                    ServiceManager.ToastShow(prompt);
-                }
-
-                registerflag = false;
+                super.handleMessage(msg);
+                try {
+                	if (mpDialog != null) {
+                		mpDialog.dismiss();
+                	}
+                	
+                	if (msg != null && msg.obj != null) {
+                		String retValue = (String)msg.obj;
+                		String prompt = "";
+                		
+                		ScheduleApplication.LogD(RegisterScreen.class, "retValue = " + retValue);
+                		
+                		if (retValue.contains("user_id")) {
+                			prompt = "注册成功";
+                			writeUserinfo(retValue, HttpUtils.GetCookie());
+                			ScheduleApplication.LogD(RegisterScreen.class,
+                					"服务器返回信息写入SharedPrefences成功! ret = " + retValue);
+                			startActivity(new Intent(RegisterScreen.this, TelephoneBindScreen.class));
+                			
+                			eventService.onUpdateEvent(new EventArgs(EventTypes.LOGIN_SUCCESS));
+                			finish();
+                		} else {
+                			int ret = Integer.parseInt(retValue);
+                			switch (ret) {
+                				case REGISTER_FAILED_USERORPSWD_NULL:
+                					prompt = "用户名或密码为空";
+                					break;
+                				case REGISTER_FAILED_ACCOUNT_EXISTS:
+                					prompt = "账号或昵称已存在";
+                					break;
+                				case REGISTER_FAILED_BLOG_BINDED:
+                					prompt = "微博等账号已绑定";
+                					break;
+                				case REGISTER_FAILED_EMIAL_ERROR:
+                					prompt = "注册的邮箱不合法";
+                					break;
+                				case REGISTER_FAILED_PSWD_ERROR:
+                					prompt = "密码不合法";
+                					break;
+                				case REGISTER_FAILED_NICK_ERROR:
+                					prompt = "昵称含特殊字符，不合法";
+                					break;
+                				default:
+                					prompt = retValue;
+                					break;
+                			}
+                			prompt = "注册失败 : " + prompt;
+                		}
+                		
+                		ServiceManager.ToastShow(prompt);
+                	}
+                	
+                	registerflag = false;
+				} catch (Exception e) {
+					ScheduleApplication.logException(getClass(),e);
+				}
             }
         };
 
@@ -163,23 +167,26 @@ public class RegisterScreen extends Screen implements OnClickListener {
     }
 
     public void onClick(View v) {
-        // TODO Auto-generated method stub
-        if (!registerflag) {
-            switch (v.getId()) {
-                case R.id.register_goback:
-                    onBackPressed();
-                    break;
-                case R.id.register_submit:
-                   
-                    Register();
-                    break;
-                case R.id.register_photoselect:
-                    break;
-
-                default:
-                    break;
-            }
-        }
+        try {
+        	if (!registerflag) {
+        		switch (v.getId()) {
+        			case R.id.register_goback:
+        				onBackPressed();
+        				break;
+        			case R.id.register_submit:
+        				
+        				Register();
+        				break;
+        			case R.id.register_photoselect:
+        				break;
+        				
+        			default:
+        				break;
+        		}
+        	}
+		} catch (Exception e) {
+			ScheduleApplication.logException(getClass(),e);
+		}
     }
 
     @Override
@@ -282,8 +289,7 @@ public class RegisterScreen extends Screen implements OnClickListener {
                 }
             }
         } catch (JSONException e) {
-            // TODO Auto-generated catch block
-            e.printStackTrace();
+        	ScheduleApplication.LogE(RegisterScreen.class,e.toString());
         }
     }
 

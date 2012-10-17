@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import com.archermind.schedule.R;
+import com.archermind.schedule.ScheduleApplication;
 import com.archermind.schedule.Model.EventTypeItem;
 
 import android.content.Context;
@@ -48,19 +49,23 @@ public class EventTypeItemAdapter extends BaseAdapter {
 	@Override
 	public View getView(int position, View convertView, ViewGroup parent) {
 		ViewHolder viewHolder;
-		if (convertView == null) {
-			convertView = inflater.inflate(R.layout.schedule_new_item, null);
-			viewHolder = new ViewHolder();
-			viewHolder.title = (TextView) convertView.findViewById(R.id.title);
-			viewHolder.image = (ImageView) convertView.findViewById(R.id.image);
-			convertView.setTag(viewHolder);
-		} else {
-			viewHolder = (ViewHolder) convertView.getTag();
+		try {
+			if (convertView == null) {
+				convertView = inflater.inflate(R.layout.schedule_new_item, null);
+				viewHolder = new ViewHolder();
+				viewHolder.title = (TextView) convertView.findViewById(R.id.title);
+				viewHolder.image = (ImageView) convertView.findViewById(R.id.image);
+				convertView.setTag(viewHolder);
+			} else {
+				viewHolder = (ViewHolder) convertView.getTag();
+			}
+			EventTypeItem eventItem = eventItems.get(position);
+			viewHolder.title.setText(eventItem.getTitle());
+			// Log.i("eventitemAdapter", "--------imageid="+eventItem.getImageId());
+			viewHolder.image.setImageResource(eventItem.getImageId());
+		} catch (Exception e) {
+			ScheduleApplication.logException(getClass(), e);
 		}
-		EventTypeItem eventItem = eventItems.get(position);
-		viewHolder.title.setText(eventItem.getTitle());
-		// Log.i("eventitemAdapter", "--------imageid="+eventItem.getImageId());
-		viewHolder.image.setImageResource(eventItem.getImageId());
 		return convertView;
 	}
 

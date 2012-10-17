@@ -89,40 +89,44 @@ public class FriendsDyamicScreen extends Screen
 	Handler mHandler = new Handler() {
 		public void handleMessage(Message msg) {
 			super.handleMessage(msg);
-			switch (msg.what) {
-				case ON_Refresh :
-					eventService.onUpdateEvent(new EventArgs(
-							EventTypes.SERVICE_TIP_OFF));
-					loading.setVisibility(View.GONE);
-					dataArrayList.clear();
-                  cursorToArrayList((Cursor)msg.obj);
-                  mAdapter.notifyDataSetChanged();
-					onLoad();
-					break;
-				case ON_LoadMore :
-					loading.setVisibility(View.GONE);
-					cursorToArrayList((Cursor)msg.obj);
-	              mAdapter.notifyDataSetChanged();
-					onLoad();
-					break;
-				case ON_LoadData :
-					loading.setVisibility(View.GONE);
-					cursorToArrayList((Cursor)msg.obj);
-	              mAdapter.notifyDataSetChanged();
-					onLoad();
-					break;
-				case RefreshLayout_Gone :
-					refreshLayout.setVisibility(View.GONE);
-					break;
-				case RefreshLayout_Visible :
-					refreshLayout.setVisibility(View.VISIBLE);
-					break;
-
-			}
-			if (!dataArrayList.isEmpty()) {
-				list.setXListViewListener(FriendsDyamicScreen.this);
-				list.setPullRefreshEnable(true);
-				list.setPullLoadEnable(true);
+			try {
+				switch (msg.what) {
+					case ON_Refresh :
+						eventService.onUpdateEvent(new EventArgs(
+								EventTypes.SERVICE_TIP_OFF));
+						loading.setVisibility(View.GONE);
+						dataArrayList.clear();
+						cursorToArrayList((Cursor)msg.obj);
+						mAdapter.notifyDataSetChanged();
+						onLoad();
+						break;
+					case ON_LoadMore :
+						loading.setVisibility(View.GONE);
+						cursorToArrayList((Cursor)msg.obj);
+						mAdapter.notifyDataSetChanged();
+						onLoad();
+						break;
+					case ON_LoadData :
+						loading.setVisibility(View.GONE);
+						cursorToArrayList((Cursor)msg.obj);
+						mAdapter.notifyDataSetChanged();
+						onLoad();
+						break;
+					case RefreshLayout_Gone :
+						refreshLayout.setVisibility(View.GONE);
+						break;
+					case RefreshLayout_Visible :
+						refreshLayout.setVisibility(View.VISIBLE);
+						break;
+						
+				}
+				if (!dataArrayList.isEmpty()) {
+					list.setXListViewListener(FriendsDyamicScreen.this);
+					list.setPullRefreshEnable(true);
+					list.setPullLoadEnable(true);
+				}
+			} catch (Exception e) {
+				ScheduleApplication.logException(getClass(),e);
 			}
 		}
 	};
@@ -268,30 +272,34 @@ public class FriendsDyamicScreen extends Screen
 		new Thread(new Runnable() {
 			@Override
 			public void run() {
-				if (dataArrayList.size() != 0) {
-					ScheduleBean bean = dataArrayList.get(dataArrayList.size() - 1);
-					c = ServiceManager.getDbManager().queryShareSchedules(
-							bean.getTime(), LOAD_DATA_SIZE);
-					if (c != null && c.getCount() != 0) {
-					   Message msg = new Message();
-                    msg.what = ON_LoadMore;
-                    msg.obj = c;
-                    Bundle bundle = new Bundle();
-                    msg.setData(bundle);
-                    mHandler.sendMessage(msg); 
-						return;
-					} else {
-						c.close();
+				try {
+					if (dataArrayList.size() != 0) {
+						ScheduleBean bean = dataArrayList.get(dataArrayList.size() - 1);
+						c = ServiceManager.getDbManager().queryShareSchedules(
+								bean.getTime(), LOAD_DATA_SIZE);
+						if (c != null && c.getCount() != 0) {
+							Message msg = new Message();
+							msg.what = ON_LoadMore;
+							msg.obj = c;
+							Bundle bundle = new Bundle();
+							msg.setData(bundle);
+							mHandler.sendMessage(msg); 
+							return;
+						} else {
+							c.close();
+						}
 					}
+					FriendsDyamicScreen.this.runOnUiThread(new Runnable() {
+						@Override
+						public void run() {
+							Toast.makeText(FriendsDyamicScreen.this, "历史记录加载完毕",
+									Toast.LENGTH_SHORT).show();
+							onLoad();
+						}
+					});
+				} catch (Exception e) {
+					ScheduleApplication.logException(getClass(),e);
 				}
-				FriendsDyamicScreen.this.runOnUiThread(new Runnable() {
-					@Override
-					public void run() {
-						Toast.makeText(FriendsDyamicScreen.this, "历史记录加载完毕",
-								Toast.LENGTH_SHORT).show();
-						onLoad();
-					}
-				});
 			}
 		}).start();
 	}
@@ -478,58 +486,62 @@ public class FriendsDyamicScreen extends Screen
 
 	@Override
 	public boolean onEvent(Object sender, EventArgs e) {
-		switch (e.getType()) {
-
-			case LOGIN_SUCCESS :
-				this.runOnUiThread(new Runnable() {
-					@Override
-					public void run() {
-
-						if (ServiceManager.getBindFlag()) {
+		try {
+			switch (e.getType()) {
+				
+				case LOGIN_SUCCESS :
+					this.runOnUiThread(new Runnable() {
+						@Override
+						public void run() {
+							
+							if (ServiceManager.getBindFlag()) {
+								loginLayout.setVisibility(View.GONE);
+								bindLayout.setVisibility(View.GONE);
+								new Thread(new Runnable() {
+									@Override
+									public void run() {
+										
+										loadSchedules();
+									}
+								}).start();
+							} else {
+								loginLayout.setVisibility(View.GONE);
+								bindLayout.setVisibility(View.VISIBLE);
+							}
+						}
+					});
+					break;
+					
+				case TELEPHONE_BIND_SUCCESS :
+					this.runOnUiThread(new Runnable() {
+						@Override
+						public void run() {
 							loginLayout.setVisibility(View.GONE);
 							bindLayout.setVisibility(View.GONE);
-							new Thread(new Runnable() {
-								@Override
-								public void run() {
-
-									loadSchedules();
-								}
-							}).start();
-						} else {
-							loginLayout.setVisibility(View.GONE);
-							bindLayout.setVisibility(View.VISIBLE);
+							loadSchedules();
 						}
-					}
-				});
-				break;
-
-			case TELEPHONE_BIND_SUCCESS :
-				this.runOnUiThread(new Runnable() {
-					@Override
-					public void run() {
-						loginLayout.setVisibility(View.GONE);
-						bindLayout.setVisibility(View.GONE);
-						loadSchedules();
-					}
-				});
-				break;
-
-			case LOGOUT_SUCCESS :
-				this.runOnUiThread(new Runnable() {
-					@Override
-					public void run() {
-
-						if (!dataArrayList.isEmpty()) {
-
-							dataArrayList.clear();
-							mAdapter.notifyDataSetChanged();
+					});
+					break;
+					
+				case LOGOUT_SUCCESS :
+					this.runOnUiThread(new Runnable() {
+						@Override
+						public void run() {
+							
+							if (!dataArrayList.isEmpty()) {
+								
+								dataArrayList.clear();
+								mAdapter.notifyDataSetChanged();
+							}
+							loginLayout.setVisibility(View.VISIBLE);
+							list.setPullRefreshEnable(false);
+							list.setPullLoadEnable(false);
 						}
-						loginLayout.setVisibility(View.VISIBLE);
-						list.setPullRefreshEnable(false);
-						list.setPullLoadEnable(false);
-					}
-				});
-				break;
+					});
+					break;
+			}
+		} catch (Exception e2) {
+			ScheduleApplication.logException(getClass(),e2);
 		}
 		return true;
 	}

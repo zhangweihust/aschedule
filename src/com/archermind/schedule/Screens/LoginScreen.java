@@ -123,101 +123,108 @@ public class LoginScreen extends Screen implements OnClickListener {
             @Override
             public void handleMessage(Message msg) {
                 super.handleMessage(msg);
-                
-                if (mpDialog!=null) {
-                    mpDialog.dismiss();
-                }
-                
-                if (msg != null && msg.obj != null) {
-                    String retValue = (String)msg.obj;
-                    String prompt = "";
-                    String imsi = DeviceInfo.getDeviceIMSI();
-                    if (imsi == null) {
-                        imsi = "";
-                    }
-                    ScheduleApplication.LogD(LoginScreen.class, "retValue = " + retValue);
-                    if (retValue.contains("user_id")) {
-                        ServiceManager.ToastShow("登录成功");
-                        RegisterScreen.writeUserinfo(retValue, HttpUtils.GetCookie());
-
-                        ScheduleApplication.LogD(getClass(), "imsi = " + imsi
-                                + "ServiceManager.getSPUserInfo(UserInfoData.TEL) = "
-                                + ServiceManager.getSPUserInfo(UserInfoData.TEL));
-
-                        if (ServiceManager.getSPUserInfo(UserInfoData.TEL).equals("")
-                                || ServiceManager.getSPUserInfo(UserInfoData.TEL).equals("null")) {
-                            ServiceManager.ToastShow("您的帐号尚未绑定手机号,请进行绑定!");
-                            startActivity(new Intent(LoginScreen.this, TelephoneBindScreen.class));
-                        } else if (!imsi.equals(ServiceManager.getSPUserInfo(UserInfoData.IMSI))) /* IMSI发生变化 */
-                        {
-                            ServiceManager.setBindFlag(false);
-                            ServiceManager.ToastShow("检测到您的手机号发生变化,请重新绑定!");
-                            startActivity(new Intent(LoginScreen.this, TelephoneBindScreen.class));
-                        } else {
-                            startActivity(new Intent(LoginScreen.this, AccountSettingScreen.class));
-                        }
-                        eventService.onUpdateEvent(new EventArgs(EventTypes.LOGIN_SUCCESS));
-                        finish();
-
-                    } else {
-                        int ret = Integer.parseInt(retValue);
-                        switch (ret) {
-
-                            case LOGIN_FAILED_EMAILORPSWD_NULL:
-                                prompt = "：邮箱或密码为空";
-                                break;
-
-                            case LOGIN_FAILED_EMAILORPSWD_ERROR:
-                                prompt = "：邮箱或密码错误";
-                                break;
-
-                            case -101:// 程序中偶尔出现
-
-                                prompt = "请10秒后重试！";
-                                break;
-
-                            default:
-                                prompt = "请稍候重试！";
-                                break;
-                        }
-                        prompt = "登录失败 " + prompt;
-
-                        ServiceManager.ToastShow(prompt);
-                    }
-                }
-                loginflag = false;
+                try {
+					
+                	if (mpDialog!=null) {
+                		mpDialog.dismiss();
+                	}
+                	
+                	if (msg != null && msg.obj != null) {
+                		String retValue = (String)msg.obj;
+                		String prompt = "";
+                		String imsi = DeviceInfo.getDeviceIMSI();
+                		if (imsi == null) {
+                			imsi = "";
+                		}
+                		ScheduleApplication.LogD(LoginScreen.class, "retValue = " + retValue);
+                		if (retValue.contains("user_id")) {
+                			ServiceManager.ToastShow("登录成功");
+                			RegisterScreen.writeUserinfo(retValue, HttpUtils.GetCookie());
+                			
+                			ScheduleApplication.LogD(getClass(), "imsi = " + imsi
+                					+ "ServiceManager.getSPUserInfo(UserInfoData.TEL) = "
+                					+ ServiceManager.getSPUserInfo(UserInfoData.TEL));
+                			
+                			if (ServiceManager.getSPUserInfo(UserInfoData.TEL).equals("")
+                					|| ServiceManager.getSPUserInfo(UserInfoData.TEL).equals("null")) {
+                				ServiceManager.ToastShow("您的帐号尚未绑定手机号,请进行绑定!");
+                				startActivity(new Intent(LoginScreen.this, TelephoneBindScreen.class));
+                			} else if (!imsi.equals(ServiceManager.getSPUserInfo(UserInfoData.IMSI))) /* IMSI发生变化 */
+                			{
+                				ServiceManager.setBindFlag(false);
+                				ServiceManager.ToastShow("检测到您的手机号发生变化,请重新绑定!");
+                				startActivity(new Intent(LoginScreen.this, TelephoneBindScreen.class));
+                			} else {
+                				startActivity(new Intent(LoginScreen.this, AccountSettingScreen.class));
+                			}
+                			eventService.onUpdateEvent(new EventArgs(EventTypes.LOGIN_SUCCESS));
+                			finish();
+                			
+                		} else {
+                			int ret = Integer.parseInt(retValue);
+                			switch (ret) {
+                				
+                				case LOGIN_FAILED_EMAILORPSWD_NULL:
+                					prompt = "：邮箱或密码为空";
+                					break;
+                					
+                				case LOGIN_FAILED_EMAILORPSWD_ERROR:
+                					prompt = "：邮箱或密码错误";
+                					break;
+                					
+                				case -101:// 程序中偶尔出现
+                					
+                					prompt = "请10秒后重试！";
+                					break;
+                					
+                				default:
+                					prompt = "请稍候重试！";
+                					break;
+                			}
+                			prompt = "登录失败 " + prompt;
+                			
+                			ServiceManager.ToastShow(prompt);
+                		}
+                	}
+                	loginflag = false;
+				} catch (Exception e) {
+					ScheduleApplication.logException(getClass(),e);
+				}
             }
         };
     }
 
     public void onClick(View v) {
-
-        if (!loginflag) {
-            loginflag = true;
-            switch (v.getId()) {
-                case R.id.login_goback:
-                    onBackPressed();
-                    break;
-                case R.id.login_sina:
-
-                    loginSina();
-                    break;
-                case R.id.login_tencent:
-
-                    loginTencent();
-                    break;
-                case R.id.login_renren:
-
-                    loginRenren();
-                    break;
-                case R.id.login_submit:
-                    loginSubmit();
-                    break;
-
-                default:
-                    break;
-            }
-        }
+    	try {
+    		if (!loginflag) {
+    			loginflag = true;
+    			switch (v.getId()) {
+    				case R.id.login_goback:
+    					onBackPressed();
+    					break;
+    				case R.id.login_sina:
+    					
+    					loginSina();
+    					break;
+    				case R.id.login_tencent:
+    					
+    					loginTencent();
+    					break;
+    				case R.id.login_renren:
+    					
+    					loginRenren();
+    					break;
+    				case R.id.login_submit:
+    					loginSubmit();
+    					break;
+    					
+    				default:
+    					break;
+    			}
+    		}
+		} catch (Exception e) {
+			ScheduleApplication.logException(getClass(),e);
+		}
     }
 
     private void loginSina() {
@@ -350,52 +357,44 @@ public class LoginScreen extends Screen implements OnClickListener {
      * 腾讯的返回操作 通过读取OAuthV1AuthorizeWebView返回的Intent，获取用户授权后的验证码
      */
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-        if (requestCode == 1) {
-            if (resultCode == OAuthV1AuthorizeWebView.RESULT_CODE) {
+		if (requestCode == 1) {
+			if (resultCode == OAuthV1AuthorizeWebView.RESULT_CODE) {
 
-                // 从返回的Intent中获取验证码
-                oAuth = (OAuthV1)data.getExtras().getSerializable("oauth");
+				// 从返回的Intent中获取验证码
+				oAuth = (OAuthV1) data.getExtras().getSerializable("oauth");
 
-                try {
+				try {
 
-                    oAuth = OAuthV1Client.accessToken(oAuth);
+					oAuth = OAuthV1Client.accessToken(oAuth);
 
-                    UserAPI userAPI = new UserAPI(OAuthConstants.OAUTH_VERSION_1);
+					UserAPI userAPI = new UserAPI(OAuthConstants.OAUTH_VERSION_1);
+					String response = userAPI.info(oAuth, "json");// 获取用户信息
+					JSONObject jsonObject = new JSONObject(response).getJSONObject("data");
+					String openid = null;
+					openid = jsonObject.getString("openid");
 
-                    try {
+					if (openid.length() > 5) {
 
-                        String response = userAPI.info(oAuth, "json");// 获取用户信息
-                        JSONObject jsonObject = new JSONObject(response).getJSONObject("data");
-                        String openid = null;
-                        openid = jsonObject.getString("openid");
+						binAccount(openid, TAG_TENGXUN);
 
-                        if (openid.length() > 5) {
+					} else {
 
-                            binAccount(openid, TAG_TENGXUN);
+						ServiceManager.ToastShow("腾讯授权失败");
+					}
+					Log.i("tenxun", openid);
 
-                        } else {
+					/*
+					 * 注意：此时oauth中的Oauth_token和Oauth_token_secret将发生变化，用新获取到的
+					 * 已授权的access_token和access_token_secret替换之前存储的未授权的request_token
+					 * 和request_token_secret.
+					 */
+				} catch (Exception e) {
+					ScheduleApplication.logException(getClass(),e);
+				}
 
-                            ServiceManager.ToastShow("腾讯授权失败");
-                        }
-
-                        Log.i("tenxun", openid);
-
-                    } catch (Exception e) {
-                        e.printStackTrace();
-                    }
-
-                    /*
-                     * 注意：此时oauth中的Oauth_token和Oauth_token_secret将发生变化，用新获取到的
-                     * 已授权的access_token和access_token_secret替换之前存储的未授权的request_token
-                     * 和request_token_secret.
-                     */
-                } catch (Exception e) {
-                    e.printStackTrace();
-                }
-
-                OAuthV1Client.getQHttpClient().shutdownConnection();// 腾讯微博关闭连接
-            }
-        }
+				OAuthV1Client.getQHttpClient().shutdownConnection();// 腾讯微博关闭连接
+			}
+		}
     }
 
     // uid 表示要绑定的帐号的id，tag 表示哪一种帐号：新浪，人人，腾讯

@@ -12,6 +12,7 @@ import android.net.Uri;
 import android.provider.ContactsContract;
 import android.util.Log;
 
+import com.archermind.schedule.ScheduleApplication;
 import com.archermind.schedule.Events.EventArgs;
 import com.archermind.schedule.Events.EventTypes;
 import com.archermind.schedule.Services.EventService;
@@ -34,7 +35,7 @@ public class DatabaseManager {
 			try {
 				FileUtils.unzipFirstEntryToFile(context.getAssets().open(LunarDatesDatabaseHelper.SRC_FILE), dest);
 			} catch (IOException e) {
-				e.printStackTrace();
+				ScheduleApplication.logException(getClass(), e);
 			}
 		}
 		this.context = context;
@@ -57,10 +58,14 @@ public class DatabaseManager {
 	}
 
 	public void close() {
-		lunarDatesDatabaseHelper.close();
-		lunarDatesDatabase.close();
-		databaseHelper.close();
-		database.close();
+		try {
+			lunarDatesDatabaseHelper.close();
+			lunarDatesDatabase.close();
+			databaseHelper.close();
+			database.close();
+		} catch (Exception e) {
+			ScheduleApplication.logException(getClass(), e);
+		}
 	}
 
 	public long insertLocalSchedules(ContentValues values) {
