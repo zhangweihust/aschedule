@@ -534,6 +534,7 @@ public class FriendScreen extends Screen
     					try {
     						String[] stringArray = jsonString.split("####");
     						List<String> tempList = new ArrayList<String>();
+    						List<String> tempFriendList = new ArrayList<String>();
     						ContentValues values = null;
     						for (int i = 0; i < stringArray.length; i++) {
     							if (i == 0) {
@@ -557,7 +558,10 @@ public class FriendScreen extends Screen
     								
     								String[] friendes = friends_list.split(",");
     								for (int j = 0; j < friendes.length; j++) {
-    									friendList.add(friendes[j]);
+    									if(!friendList.contains(friendes[j])){
+    										friendList.add(friendes[j]);
+    										tempFriendList.add(friendes[j]);
+    									}
     								}
     								
     								String[] shields = shield_list.split(",");
@@ -577,9 +581,10 @@ public class FriendScreen extends Screen
     									continue;
     								}
     								Friend friend = new Friend();
-    								if (friendList.contains(user_id)) {// 更新好友信息
+    								if (tempFriendList.contains(user_id)) {// 更新好友信息
     									ScheduleApplication.LogD(getClass(), "我的好友:"
     											+ nick);
+    									tempFriendList.remove(user_id);
     									friend.setId(user_id);
     									friend.setTelephone(tel);
     									friend.setType(Constant.FriendType.friend_yes);

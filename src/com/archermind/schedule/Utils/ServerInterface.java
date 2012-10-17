@@ -421,6 +421,7 @@ public class ServerInterface {
 
 	// 接受邀请
 	public int acceptFriend(String user_id, String duser_id) {
+		ScheduleApplication.LogD(getClass(), "********************acceptFriend*********************");
 		Map<String, String> map = new HashMap<String, String>();
 		map.put("user_id", user_id);
 		map.put("duser_id", duser_id);
