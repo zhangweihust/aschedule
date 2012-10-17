@@ -324,9 +324,13 @@ public class HomeScreen extends TabActivity
 	}
 
 	public static void switchActivity() {
-		mContext.startActivity(new Intent(mContext, MenuScreen.class));
-		((Activity) mContext).overridePendingTransition(R.anim.right_in,
-				R.anim.right_out);
+		try {
+			mContext.startActivity(new Intent(mContext, MenuScreen.class));
+			((Activity) mContext).overridePendingTransition(R.anim.right_in,
+					R.anim.right_out);
+		} catch (Exception e) {
+			ScheduleApplication.logException(HomeScreen.class,e);
+		}
 	}
 
 	@Override
@@ -383,42 +387,46 @@ public class HomeScreen extends TabActivity
 
 	@Override
 	public boolean onEvent(Object sender, EventArgs e) {
-
-		switch (e.getType()) {
-
-			case SERVICE_TIP_ON : {
-
-				HomeScreen.this.runOnUiThread(new Runnable() {
-					@Override
-					public void run() {
-
-						tipsImageView.setVisibility(View.VISIBLE);
-					}
-				});
+		try {
+			switch (e.getType()) {
+				
+				case SERVICE_TIP_ON : {
+					
+					HomeScreen.this.runOnUiThread(new Runnable() {
+						@Override
+						public void run() {
+							
+							tipsImageView.setVisibility(View.VISIBLE);
+						}
+					});
+				}
+				break;
+				
+				case SERVICE_TIP_OFF : {
+					
+					HomeScreen.this.runOnUiThread(new Runnable() {
+						@Override
+						public void run() {
+							
+							tipsImageView.setVisibility(View.GONE);
+						}
+					});
+				}
+				break;
+				
+				case IMSI_CHANGED :
+					ServiceManager.ToastShow("检测到您的手机号发生变化,请重新绑定!");
+					startActivity(new Intent(HomeScreen.this,
+							TelephoneBindScreen.class));
+					ServiceManager.getContact().checkSync(mContext);
+					
+					break;
+				default :
+					break;
 			}
-				break;
-
-			case SERVICE_TIP_OFF : {
-
-				HomeScreen.this.runOnUiThread(new Runnable() {
-					@Override
-					public void run() {
-
-						tipsImageView.setVisibility(View.GONE);
-					}
-				});
-			}
-				break;
-
-			case IMSI_CHANGED :
-				ServiceManager.ToastShow("检测到您的手机号发生变化,请重新绑定!");
-				startActivity(new Intent(HomeScreen.this,
-						TelephoneBindScreen.class));
-				ServiceManager.getContact().checkSync(mContext);
-
-				break;
-			default :
-				break;
+			
+		} catch (Exception e2) {
+			ScheduleApplication.logException(getClass(),e2);
 		}
 
 		return false;
@@ -432,60 +440,64 @@ public class HomeScreen extends TabActivity
 	
 	private Handler mHandler = new Handler() {
 		public void handleMessage(Message msg) {
-			switch (msg.what) {
-			case MessageTypes.DOWN_DATA_CHANGED:
-				updateNotification((Integer) msg.obj);
-				break;
-			case MessageTypes.FILE_ALREADY_DOWNLOADED:
-				if (msg.obj != null) {
-					Log.e("UpgradeDemoActivity", "地址:" + msg.obj);
-					UpgradeManager.getInstance().installApk(mContext,
-							(String) msg.obj);
+			try {
+				switch (msg.what) {
+					case MessageTypes.DOWN_DATA_CHANGED:
+						updateNotification((Integer) msg.obj);
+						break;
+					case MessageTypes.FILE_ALREADY_DOWNLOADED:
+						if (msg.obj != null) {
+							Log.e("UpgradeDemoActivity", "地址:" + msg.obj);
+							UpgradeManager.getInstance().installApk(mContext,
+									(String) msg.obj);
+						}
+						ScheduleApplication.LogD(getClass(), "文件已经下载完毕");
+						break;
+					case MessageTypes.DOWN_SUCCESS:
+						if (msg.obj != null) {
+							Log.e("UpgradeDemoActivity", "地址:" + msg.obj);
+							UpgradeManager.getInstance().installApk(mContext,
+									(String) msg.obj);
+						}
+						mNotificationManager.cancel(mNotificationId);
+						ScheduleApplication.LogD(getClass(), "下载成功");
+						break;
+					case MessageTypes.DOWN_FAIL:
+						ScheduleApplication.LogD(getClass(), "下载失败");
+						mNotificationManager.cancel(mNotificationId);
+						break;
+					case MessageTypes.NO_NEED_TO_UPGRADE:
+						ScheduleApplication.LogD(getClass(), "不需要更新");
+						sharedPreferences.edit().putString(XML_KEY_TIME, sDateFormat.format(new java.util.Date())).commit();
+						break;
+					case MessageTypes.NEED_TO_UPGRADE:
+						ScheduleApplication.LogD(getClass(), "需要更新");
+						showNoticeDialog((Update) msg.obj);
+						sharedPreferences.edit().putString(XML_KEY_TIME, sDateFormat.format(new java.util.Date())).commit();
+						break;
+					case MessageTypes.ERROR:
+						ScheduleApplication.LogD(getClass(), "有异常");
+						switch ((Integer) msg.obj) {
+							case MessageTypes.ERROR_NO_SDCARD:
+								ScheduleApplication.LogD(getClass(), "没有SD卡");
+								break;
+							case MessageTypes.ERROR_IO_ERROR:
+								ScheduleApplication.LogD(getClass(), "IO异常");
+								break;
+							case MessageTypes.ERROR_PARSE_JSON_ERROR:
+								ScheduleApplication.LogD(getClass(), "JSON解析异常");
+								break;
+							case MessageTypes.ERROR_HTTP_DATA_ERROR:
+								ScheduleApplication.LogD(getClass(), "网络数据交互异常");
+								break;
+							case MessageTypes.ERROR_FILE_ERROR:
+								ScheduleApplication.LogD(getClass(), "文件操作异常");
+								break;
+						}
+						break;
 				}
-				ScheduleApplication.LogD(getClass(), "文件已经下载完毕");
-				break;
-			case MessageTypes.DOWN_SUCCESS:
-				if (msg.obj != null) {
-					Log.e("UpgradeDemoActivity", "地址:" + msg.obj);
-					UpgradeManager.getInstance().installApk(mContext,
-							(String) msg.obj);
-				}
-				mNotificationManager.cancel(mNotificationId);
-				ScheduleApplication.LogD(getClass(), "下载成功");
-				break;
-			case MessageTypes.DOWN_FAIL:
-				ScheduleApplication.LogD(getClass(), "下载失败");
-				mNotificationManager.cancel(mNotificationId);
-				break;
-			case MessageTypes.NO_NEED_TO_UPGRADE:
-				ScheduleApplication.LogD(getClass(), "不需要更新");
-				sharedPreferences.edit().putString(XML_KEY_TIME, sDateFormat.format(new java.util.Date())).commit();
-				break;
-			case MessageTypes.NEED_TO_UPGRADE:
-				ScheduleApplication.LogD(getClass(), "需要更新");
-				showNoticeDialog((Update) msg.obj);
-				sharedPreferences.edit().putString(XML_KEY_TIME, sDateFormat.format(new java.util.Date())).commit();
-				break;
-			case MessageTypes.ERROR:
-				ScheduleApplication.LogD(getClass(), "有异常");
-				switch ((Integer) msg.obj) {
-				case MessageTypes.ERROR_NO_SDCARD:
-					ScheduleApplication.LogD(getClass(), "没有SD卡");
-					break;
-				case MessageTypes.ERROR_IO_ERROR:
-					ScheduleApplication.LogD(getClass(), "IO异常");
-					break;
-				case MessageTypes.ERROR_PARSE_JSON_ERROR:
-					ScheduleApplication.LogD(getClass(), "JSON解析异常");
-					break;
-				case MessageTypes.ERROR_HTTP_DATA_ERROR:
-					ScheduleApplication.LogD(getClass(), "网络数据交互异常");
-					break;
-				case MessageTypes.ERROR_FILE_ERROR:
-					ScheduleApplication.LogD(getClass(), "文件操作异常");
-					break;
-				}
-				break;
+			} catch (Exception e) {
+				ScheduleApplication.logException(getClass(),e);
 			}
 			super.handleMessage(msg);
 		};

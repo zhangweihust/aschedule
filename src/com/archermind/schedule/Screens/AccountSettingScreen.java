@@ -117,82 +117,86 @@ public class AccountSettingScreen extends Screen implements OnClickListener {
 		@Override
 		public void handleMessage(Message msg) {
 			super.handleMessage(msg);
-			// 处理图片上传过程发送的消息
-			switch (msg.what) {
-
-				case MessageTypes.ERROR_MESSAGE :
-
-					ScheduleApplication.LogD(AccountSettingScreen.class, " 请求失败！ "
-							+ (String) msg.obj);
-					if (((String) msg.obj).contains("相册名称已经存在")) {
-
+			try {
+				// 处理图片上传过程发送的消息
+				switch (msg.what) {
+					
+					case MessageTypes.ERROR_MESSAGE :
+						
+						ScheduleApplication.LogD(AccountSettingScreen.class, " 请求失败！ "
+								+ (String) msg.obj);
+						if (((String) msg.obj).contains("相册名称已经存在")) {
+							
+							mAlbumObj.requestAlbumidInfo(mUserName);
+						}
+						break;
+						
+						// 创建相册成功
+					case MessageTypes.MESSAGE_CREATEALBUM :
+						
+						ScheduleApplication.LogD(AccountSettingScreen.class, "创建相册成功");
 						mAlbumObj.requestAlbumidInfo(mUserName);
-					}
-					break;
-
-				// 创建相册成功
-				case MessageTypes.MESSAGE_CREATEALBUM :
-
-					ScheduleApplication.LogD(AccountSettingScreen.class, "创建相册成功");
-					mAlbumObj.requestAlbumidInfo(mUserName);
-					break;
-
-				// 获取相册的信息包括id的值
-				case MessageTypes.MESSAGE_GETALBUM :
-
-					ScheduleApplication.LogD(getClass(), "获取相册详细信息成功");
-					int albumid = -1;
-					albumid = AlbumInfoUtil.getAlbumIdByName(mAlbumObj, msg.obj, ALBUMNAME_AVATAR);
-
-					if (albumid == 0) {
-
-						mAlbumObj.createAlbum(mUserName, ALBUMNAME_AVATAR);
-					} else {
-
-						ScheduleApplication.LogD(AccountSettingScreen.class, "获取相册详细信息成功");
-
-						ArrayList<String> picPath = new ArrayList<String>();
-						picPath.add(headImagePath);
-						ArrayList<String> picNames = new ArrayList<String>();
-						picNames.add(headImagePath.substring(headImagePath.lastIndexOf("/") + 1));
-
-						mAlbumObj.uploadPicFiles(picPath, picNames, albumid);
-
-						ScheduleApplication.LogD(AccountSettingScreen.class, "albumid：" + albumid);
-					}
-					break;
-
-				case MessageTypes.MESSAGE_UPLOADPIC :
-					// 上传头像文件成功，开始执行插入数据库操作
-					ScheduleApplication.LogD(AccountSettingScreen.class, "图片上传成功");
-					String filename = headImagePath.substring(headImagePath.lastIndexOf("/") + 1);
-
-					mUpPhotoUrl = mUpPhotoUrl + "&username=" + mUserName + "&filename=" + filename
-							+ "&album=" + ALBUMNAME_AVATAR;
-
-					if (0 == ServiceManager.getServerInterface().uploadPhoto(
-							String.valueOf(ServiceManager.getUserId()), mUpPhotoUrl)) {
-
-						ScheduleApplication.LogD(AccountSettingScreen.class, "上传图片url成功 url = "
-								+ mUpPhotoUrl);
-						ServiceManager.setAvator_url(mUpPhotoUrl);
-						Toast.makeText(getApplicationContext(), "上传图片成功！", Toast.LENGTH_LONG)
-								.show();
-
-						String uri = getUriFormWeb();
-						headImage.setImageUrl(uri, R.drawable.friend_item_img,
-								R.drawable.friend_item_img);
-
-					} else {
-
-						ScheduleApplication.LogD(AccountSettingScreen.class, "上传图片url失败");
-						Toast.makeText(getApplicationContext(), "上传图片失败！", Toast.LENGTH_LONG)
-								.show();
-					}
-
-					break;
-				default :
-					break;
+						break;
+						
+						// 获取相册的信息包括id的值
+					case MessageTypes.MESSAGE_GETALBUM :
+						
+						ScheduleApplication.LogD(getClass(), "获取相册详细信息成功");
+						int albumid = -1;
+						albumid = AlbumInfoUtil.getAlbumIdByName(mAlbumObj, msg.obj, ALBUMNAME_AVATAR);
+						
+						if (albumid == 0) {
+							
+							mAlbumObj.createAlbum(mUserName, ALBUMNAME_AVATAR);
+						} else {
+							
+							ScheduleApplication.LogD(AccountSettingScreen.class, "获取相册详细信息成功");
+							
+							ArrayList<String> picPath = new ArrayList<String>();
+							picPath.add(headImagePath);
+							ArrayList<String> picNames = new ArrayList<String>();
+							picNames.add(headImagePath.substring(headImagePath.lastIndexOf("/") + 1));
+							
+							mAlbumObj.uploadPicFiles(picPath, picNames, albumid);
+							
+							ScheduleApplication.LogD(AccountSettingScreen.class, "albumid：" + albumid);
+						}
+						break;
+						
+					case MessageTypes.MESSAGE_UPLOADPIC :
+						// 上传头像文件成功，开始执行插入数据库操作
+						ScheduleApplication.LogD(AccountSettingScreen.class, "图片上传成功");
+						String filename = headImagePath.substring(headImagePath.lastIndexOf("/") + 1);
+						
+						mUpPhotoUrl = mUpPhotoUrl + "&username=" + mUserName + "&filename=" + filename
+								+ "&album=" + ALBUMNAME_AVATAR;
+						
+						if (0 == ServiceManager.getServerInterface().uploadPhoto(
+								String.valueOf(ServiceManager.getUserId()), mUpPhotoUrl)) {
+							
+							ScheduleApplication.LogD(AccountSettingScreen.class, "上传图片url成功 url = "
+									+ mUpPhotoUrl);
+							ServiceManager.setAvator_url(mUpPhotoUrl);
+							Toast.makeText(getApplicationContext(), "上传图片成功！", Toast.LENGTH_LONG)
+							.show();
+							
+							String uri = getUriFormWeb();
+							headImage.setImageUrl(uri, R.drawable.friend_item_img,
+									R.drawable.friend_item_img);
+							
+						} else {
+							
+							ScheduleApplication.LogD(AccountSettingScreen.class, "上传图片url失败");
+							Toast.makeText(getApplicationContext(), "上传图片失败！", Toast.LENGTH_LONG)
+							.show();
+						}
+						
+						break;
+					default :
+						break;
+				}
+			} catch (Exception e) {
+				ScheduleApplication.logException(getClass(),e);
 			}
 		}
 	};
@@ -282,68 +286,72 @@ public class AccountSettingScreen extends Screen implements OnClickListener {
 
 		handler = new Handler() {
 			public void handleMessage(Message msg) {
-				if (mpDialog != null) {
-					mpDialog.dismiss();
+				try {
+					if (mpDialog != null) {
+						mpDialog.dismiss();
+					}
+					switch (msg.what) {
+						case LOGOUT_FAILED :
+							// String res = "";
+							// switch (msg.arg1) {
+							// case -1:
+							// finish();
+							// res += "密码错误";
+							// break;
+							//
+							// case -600:
+							// res += "没有登录";
+							// finish();
+							// break;
+							// default:
+							// res += "未知";
+							// break;
+							// }
+							// res += " 返回";
+							// Toast.makeText(getApplicationContext(), res,
+							// Toast.LENGTH_SHORT).show();
+							Toast.makeText(getApplicationContext(),
+									R.string.check_new_version_no_network, Toast.LENGTH_SHORT).show();
+							break;
+							
+						case LOGOUT_SUCCESS :
+							ServiceManager.ToastShow("注销成功");
+							ServiceManager.setUserId(0);
+							Intent it = new Intent(AccountSettingScreen.this, LoginScreen.class);
+							startActivity(it);
+							finish();
+							break;
+					}
+					logoutflag = false;
+				} catch (Exception e) {
+					ScheduleApplication.logException(getClass(),e);
 				}
-				switch (msg.what) {
-					case LOGOUT_FAILED :
-						// String res = "";
-						// switch (msg.arg1) {
-						// case -1:
-						// finish();
-						// res += "密码错误";
-						// break;
-						//
-						// case -600:
-						// res += "没有登录";
-						// finish();
-						// break;
-						// default:
-						// res += "未知";
-						// break;
-						// }
-						// res += " 返回";
-						// Toast.makeText(getApplicationContext(), res,
-						// Toast.LENGTH_SHORT).show();
-						Toast.makeText(getApplicationContext(),
-								R.string.check_new_version_no_network, Toast.LENGTH_SHORT).show();
-						break;
-
-					case LOGOUT_SUCCESS :
-						ServiceManager.ToastShow("注销成功");
-						ServiceManager.setUserId(0);
-						Intent it = new Intent(AccountSettingScreen.this, LoginScreen.class);
-						startActivity(it);
-						finish();
-						break;
-				}
-				logoutflag = false;
 			};
 		};
 	}
 
 	public void onClick(View v) {
-		// TODO Auto-generated method stub
-		switch (v.getId()) {
-			case R.id.login_nick_set :
-				modifyNickDialog.show();
-				break;
-			case R.id.headimageset :
-				ShowPickDialog();
-				break;
-			case R.id.bindTelephone :
-				Intent it = new Intent(AccountSettingScreen.this, TelephoneBindScreen.class);
-				startActivity(it);
-				break;
-			case R.id.logout :
-				if (!logoutflag) {
-					logoutflag = true;
-					mpDialog.show();
-					new Thread() {
-						public void run() {
-							int ret = Integer.parseInt(ServiceManager.getServerInterface().logout(
-									String.valueOf(ServiceManager.getUserId())));
-							if (ret == -101) {
+		try {
+			switch (v.getId()) {
+				case R.id.login_nick_set :
+					modifyNickDialog.show();
+					break;
+				case R.id.headimageset :
+					ShowPickDialog();
+					break;
+				case R.id.bindTelephone :
+					Intent it = new Intent(AccountSettingScreen.this, TelephoneBindScreen.class);
+					startActivity(it);
+					break;
+				case R.id.logout :
+					if (!logoutflag) {
+						logoutflag = true;
+						mpDialog.show();
+						new Thread() {
+							public void run() {
+								int ret = Integer.parseInt(ServiceManager.getServerInterface().logout(
+										String.valueOf(ServiceManager.getUserId())));
+								if (ret == -101) {
 //								ScheduleApplication
 //										.LogD(getClass(),
 //												"ret = "
@@ -355,35 +363,38 @@ public class AccountSettingScreen extends Screen implements OnClickListener {
 //								msg.what = LOGOUT_FAILED;
 //								msg.arg1 = ret;
 //								handler.sendMessage(msg);
-								handler.sendEmptyMessage(LOGOUT_FAILED);
-							} else {
-								ScheduleApplication.LogD(getClass(),"logout success, ret = "+ret);
-								ServiceManager.setCookie("");
-								handler.sendEmptyMessage(LOGOUT_SUCCESS);
-								eventService
-										.onUpdateEvent(new EventArgs(EventTypes.LOGOUT_SUCCESS));
-							}
-						};
-					}.start();
-				}
-				break;
-
-			case R.id.title_bar_setting_btn :
-				Intent intent = new Intent(this, MenuScreen.class);
-				startActivity(intent);
-				finish();
-				break;
+									handler.sendEmptyMessage(LOGOUT_FAILED);
+								} else {
+									ScheduleApplication.LogD(getClass(),"logout success, ret = "+ret);
+									ServiceManager.setCookie("");
+									handler.sendEmptyMessage(LOGOUT_SUCCESS);
+									eventService
+									.onUpdateEvent(new EventArgs(EventTypes.LOGOUT_SUCCESS));
+								}
+							};
+						}.start();
+					}
+					break;
+					
+				case R.id.title_bar_setting_btn :
+					Intent intent = new Intent(this, MenuScreen.class);
+					startActivity(intent);
+					finish();
+					break;
+			}
+		} catch (Exception e) {
+			ScheduleApplication.logException(getClass(),e);
 		}
 	}
 
-	private String getFilepathFromUri(Uri uri) {
-		ContentResolver mContentResolver = getContentResolver();
-		Cursor cursor = mContentResolver.query(uri, null, null, null, null);
-		cursor.moveToFirst();
-		String filepath = cursor.getString(1);
-		cursor.close();
-		return filepath;
-	}
+//	private String getFilepathFromUri(Uri uri) {
+//		ContentResolver mContentResolver = getContentResolver();
+//		Cursor cursor = mContentResolver.query(uri, null, null, null, null);
+//		cursor.moveToFirst();
+//		String filepath = cursor.getString(1);
+//		cursor.close();
+//		return filepath;
+//	}
 
 	/**
 	 * 选择提示对话框
@@ -573,30 +584,33 @@ public class AccountSettingScreen extends Screen implements OnClickListener {
 	}
 
 	private void setPicToView(Intent picdata) {
-
-		Bundle extras = picdata.getExtras();
-		if (extras != null) {
-
-			// 显示头像
-			Bitmap photo = extras.getParcelable("data");
-			photo = toRoundCorner(photo, 15);
-			Drawable drawable = new BitmapDrawable(photo);
-			ByteArrayOutputStream stream = new ByteArrayOutputStream();
-			photo.compress(Bitmap.CompressFormat.PNG, 60, stream);
-			byte[] b = stream.toByteArray();
-			writePhoto(b);
-			// headImage.setImageDrawable(drawable);// 显示头像
-			ScheduleApplication.LogD(getClass(), " setPicToView ");
-			// 给用户创建相册用于上传头像
-			ServiceManager.getServerInterface().InitAmtCloud(this);
-			AmtApplication.setAmtUserName(mUserName);
-
-			AmtUserObj userObj = new AmtUserObj(handler);
-			mAlbumObj = new AmtAlbumObj();
-			mAlbumObj.setHandler(mHandler);
-			mAlbumObj.createAlbum(mUserName, ALBUMNAME_AVATAR);
-
-			ScheduleApplication.LogD(getClass(), "开始上传图像");
+		try {
+			Bundle extras = picdata.getExtras();
+			if (extras != null) {
+				
+				// 显示头像
+				Bitmap photo = extras.getParcelable("data");
+				photo = toRoundCorner(photo, 15);
+				Drawable drawable = new BitmapDrawable(photo);
+				ByteArrayOutputStream stream = new ByteArrayOutputStream();
+				photo.compress(Bitmap.CompressFormat.PNG, 60, stream);
+				byte[] b = stream.toByteArray();
+				writePhoto(b);
+				// headImage.setImageDrawable(drawable);// 显示头像
+				ScheduleApplication.LogD(getClass(), " setPicToView ");
+				// 给用户创建相册用于上传头像
+				ServiceManager.getServerInterface().InitAmtCloud(this);
+				AmtApplication.setAmtUserName(mUserName);
+				
+				AmtUserObj userObj = new AmtUserObj(handler);
+				mAlbumObj = new AmtAlbumObj();
+				mAlbumObj.setHandler(mHandler);
+				mAlbumObj.createAlbum(mUserName, ALBUMNAME_AVATAR);
+				
+				ScheduleApplication.LogD(getClass(), "开始上传图像");
+			}
+		} catch (Exception e) {
+			ScheduleApplication.logException(getClass(),e);
 		}
 	}
 

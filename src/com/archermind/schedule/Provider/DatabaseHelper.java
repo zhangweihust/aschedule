@@ -4,6 +4,7 @@ import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import com.archermind.schedule.R;
+import com.archermind.schedule.ScheduleApplication;
 import com.archermind.schedule.Utils.FileUtils;
 import android.content.Context;
 import android.database.sqlite.SQLiteDatabase;
@@ -228,12 +229,16 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 	}
 
 	private void createTabs(SQLiteDatabase db) {
-		db.execSQL(CRETAE_TAB_LOCAL_SCHEDULE);
-		db.execSQL(CRETAE_TAB_SHARE_SCHEDULE);
-		db.execSQL(CREATE_CONTACT_TABLE);
-		db.execSQL(CREATE_FRIEND_TABLE);
-		db.execSQL(CREATE_TABLE_WEATHER);
-//		db.execSQL(CREATE_TABLE_CALENDAR_MAP);
+		try {
+			db.execSQL(CRETAE_TAB_LOCAL_SCHEDULE);
+			db.execSQL(CRETAE_TAB_SHARE_SCHEDULE);
+			db.execSQL(CREATE_CONTACT_TABLE);
+			db.execSQL(CREATE_FRIEND_TABLE);
+			db.execSQL(CREATE_TABLE_WEATHER);
+//			db.execSQL(CREATE_TABLE_CALENDAR_MAP);
+		} catch (Exception e) {
+			ScheduleApplication.logException(getClass(), e);
+		}
 	}
 
 }

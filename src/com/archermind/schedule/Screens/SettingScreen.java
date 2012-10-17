@@ -12,6 +12,7 @@ import android.widget.Button;
 import android.widget.LinearLayout;
 
 import com.archermind.schedule.R;
+import com.archermind.schedule.ScheduleApplication;
 import com.archermind.schedule.Model.UserInfoData;
 import com.archermind.schedule.Services.ServiceManager;
 import com.archermind.schedule.Views.SettingSlipSwitch;
@@ -51,23 +52,26 @@ public class SettingScreen extends Screen implements OnClickListener {
 
 	@Override
 	public void onClick(View v) {
-
-		switch (v.getId()) {
-
-			case R.id.setting_remind :
-
-				doPickSmsRingtone();
-				break;
-
-			case R.id.title_bar_setting_btn :
-
-				finish();
-				break;
-
-			default :
-
-				break;
-
+		try {
+			switch (v.getId()) {
+				
+				case R.id.setting_remind :
+					
+					doPickSmsRingtone();
+					break;
+					
+				case R.id.title_bar_setting_btn :
+					
+					finish();
+					break;
+					
+				default :
+					
+					break;
+					
+			}
+		} catch (Exception e) {
+			ScheduleApplication.logException(getClass(),e);
 		}
 	}
 

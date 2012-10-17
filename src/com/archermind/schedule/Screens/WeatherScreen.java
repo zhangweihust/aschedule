@@ -12,6 +12,7 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import com.archermind.schedule.R;
+import com.archermind.schedule.ScheduleApplication;
 import com.archermind.schedule.Dialog.WeatherDialog;
 import com.archermind.schedule.Dialog.WeatherDialog.OnCancelButtonClickListener;
 import com.archermind.schedule.Provider.DatabaseHelper;
@@ -89,9 +90,8 @@ public class WeatherScreen extends Screen
 
 		@Override
 		protected Void doInBackground(Void... params) {
-		
-			getWeatherData(sp.getString("province", "北京"),
-					sp.getString("city", "北京"));
+		    	getWeatherData(sp.getString("province", "北京"),
+		    			sp.getString("city", "北京"));
 			return null;
 		}
 

@@ -198,50 +198,58 @@ public class EditScheduleScreen extends Screen implements OnClickListener {
 
 	public void readDb() {
 		Log.d(TAG, "readDb");
-		Cursor c = ServiceManager.getDbManager().queryScheduleById(schedule_id);
-
-		if (c.moveToFirst()) {
-			scheduleText = c.getString(c
-					.getColumnIndex(DatabaseHelper.COLUMN_SCHEDULE_CONTENT));
-
-			scheduleTime = c.getLong(c
-					.getColumnIndex(DatabaseHelper.COLUMN_SCHEDULE_START_TIME));
-
-			mShare = c.getInt(c
-					.getColumnIndex(DatabaseHelper.COLUMN_SCHEDULE_SHARE)) == 1;
-
-			mType = c.getInt(c
-					.getColumnIndex(DatabaseHelper.COLUMN_SCHEDULE_TYPE));
-
-			mRemind = c
-					.getInt(c
-							.getColumnIndex(DatabaseHelper.COLUMN_SCHEDULE_NOTICE_FLAG)) == 1;
-			remindCycle = c
-					.getString(c
-							.getColumnIndex(DatabaseHelper.COLUMN_SCHEDULE_NOTICE_PERIOD));
-			flagAlarm = c.getLong(c
-					.getColumnIndex(DatabaseHelper.COLUMN_SCHEDULE_ALARM_FLAG));
-			weekType = c
-					.getString(c
-							.getColumnIndex(DatabaseHelper.COLUMN_SCHEDULE_NOTICE_WEEK));
-			mStageRemind = c
-					.getInt(c
-							.getColumnIndex(DatabaseHelper.COLUMN_SCHEDULE_NOTICE_STAGE_FLAG)) == 1;
-
-			startTime = c.getLong(c
-					.getColumnIndex(DatabaseHelper.COLUMN_SCHEDULE_START_TIME));
-
-			Log.i(TAG,
-					" read form database startTime = "
-							+ DateTimeUtils.time2String("yyyy-MM-dd-HH-mm",
-									startTime));
-
-			endTime = Long
-					.parseLong(c.getString(c
-							.getColumnIndex(DatabaseHelper.COLUMN_SCHEDULE_NOTICE_END)));
-
+		Cursor c =null;
+		try {
+			c = ServiceManager.getDbManager().queryScheduleById(schedule_id);
+			
+			if (c.moveToFirst()) {
+				scheduleText = c.getString(c
+						.getColumnIndex(DatabaseHelper.COLUMN_SCHEDULE_CONTENT));
+				
+				scheduleTime = c.getLong(c
+						.getColumnIndex(DatabaseHelper.COLUMN_SCHEDULE_START_TIME));
+				
+				mShare = c.getInt(c
+						.getColumnIndex(DatabaseHelper.COLUMN_SCHEDULE_SHARE)) == 1;
+				
+				mType = c.getInt(c
+						.getColumnIndex(DatabaseHelper.COLUMN_SCHEDULE_TYPE));
+				
+				mRemind = c
+						.getInt(c
+								.getColumnIndex(DatabaseHelper.COLUMN_SCHEDULE_NOTICE_FLAG)) == 1;
+				remindCycle = c
+						.getString(c
+								.getColumnIndex(DatabaseHelper.COLUMN_SCHEDULE_NOTICE_PERIOD));
+				flagAlarm = c.getLong(c
+						.getColumnIndex(DatabaseHelper.COLUMN_SCHEDULE_ALARM_FLAG));
+				weekType = c
+						.getString(c
+								.getColumnIndex(DatabaseHelper.COLUMN_SCHEDULE_NOTICE_WEEK));
+				mStageRemind = c
+						.getInt(c
+								.getColumnIndex(DatabaseHelper.COLUMN_SCHEDULE_NOTICE_STAGE_FLAG)) == 1;
+				
+				startTime = c.getLong(c
+						.getColumnIndex(DatabaseHelper.COLUMN_SCHEDULE_START_TIME));
+				
+				Log.i(TAG,
+						" read form database startTime = "
+								+ DateTimeUtils.time2String("yyyy-MM-dd-HH-mm",
+										startTime));
+				
+				endTime = Long
+						.parseLong(c.getString(c
+								.getColumnIndex(DatabaseHelper.COLUMN_SCHEDULE_NOTICE_END)));
+				
+			}
+		} catch (Exception e) {
+			ScheduleApplication.logException(getClass(),e);
+		}finally{
+			if(c!=null){
+				c.close();
+			}
 		}
-		c.close();
 
 	}
 
@@ -264,72 +272,75 @@ public class EditScheduleScreen extends Screen implements OnClickListener {
 
 	@Override
 	public void onClick(View v) {
-		// TODO Auto-generated method stub
-		if (v.getId() == backBtn.getId()) {
-			oper_flag = DatabaseHelper.SCHEDULE_OPER_NOTHING;
-			this.finish();
-
-		} else if (v.getId() == saveBtn.getId()) {
-			oper_flag = DatabaseHelper.SCHEDULE_OPER_MODIFY;
-			scheduleText = schedule_text.getText().toString();
-			// 日程内容为空，则提示用户
-			if ("".equals(scheduleText.toString().trim())) {
-				Toast.makeText(EditScheduleScreen.this, "内容不能为空",
-						Toast.LENGTH_SHORT).show();
-			} else {
-				// 删除之前的闹钟
-				// cancelAlarm();
-
-				// 更新到数据库
-				updateScheduleToDb();
+		try {
+			if (v.getId() == backBtn.getId()) {
+				oper_flag = DatabaseHelper.SCHEDULE_OPER_NOTHING;
 				this.finish();
-			}
-
-		} else if (v.getId() == share.getId()) {
-			if (mShare == false && ServiceManager.getUserId() == 0) {
-				Toast.makeText(EditScheduleScreen.this, "请登录以后再分享日程",
-						Toast.LENGTH_SHORT).show();
-				return;
-			}
-			// 判断时间是否可以分享，如果大于当前时间则可以分享
-			if (mSelectTime < System.currentTimeMillis()) {
-				// 提示不能分享；
-				Toast.makeText(EditScheduleScreen.this, "不能分享过去事件",
-						Toast.LENGTH_SHORT).show();
-			} else {
-				if (mShare == false) {
-					mShare = true;
-					shareImg.setImageResource(R.drawable.schedule_new_share_select);
-
-				} else if (mShare == true) {
-					mShare = false;
-					shareImg.setImageResource(R.drawable.schedule_new_share);
+				
+			} else if (v.getId() == saveBtn.getId()) {
+				oper_flag = DatabaseHelper.SCHEDULE_OPER_MODIFY;
+				scheduleText = schedule_text.getText().toString();
+				// 日程内容为空，则提示用户
+				if ("".equals(scheduleText.toString().trim())) {
+					Toast.makeText(EditScheduleScreen.this, "内容不能为空",
+							Toast.LENGTH_SHORT).show();
+				} else {
+					// 删除之前的闹钟
+					// cancelAlarm();
+					
+					// 更新到数据库
+					updateScheduleToDb();
+					this.finish();
 				}
+				
+			} else if (v.getId() == share.getId()) {
+				if (mShare == false && ServiceManager.getUserId() == 0) {
+					Toast.makeText(EditScheduleScreen.this, "请登录以后再分享日程",
+							Toast.LENGTH_SHORT).show();
+					return;
+				}
+				// 判断时间是否可以分享，如果大于当前时间则可以分享
+				if (mSelectTime < System.currentTimeMillis()) {
+					// 提示不能分享；
+					Toast.makeText(EditScheduleScreen.this, "不能分享过去事件",
+							Toast.LENGTH_SHORT).show();
+				} else {
+					if (mShare == false) {
+						mShare = true;
+						shareImg.setImageResource(R.drawable.schedule_new_share_select);
+						
+					} else if (mShare == true) {
+						mShare = false;
+						shareImg.setImageResource(R.drawable.schedule_new_share);
+					}
+				}
+			} else if (v.getId() == remind.getId()) {
+				
+				alarmPopwindow.show(v);
+				
+			} else if (v.getId() == event.getId()) {
+				
+				if (eventTypeDialog.isShowing()) {
+					Log.d("eventTypeDialog", "---------showing");
+					eventTypeDialog.cancel();
+				} else {
+					int y = schedule_top.getHeight()
+							+ event_addtion_linear.getHeight() + screenHeight / 8
+							/ 2 - screenHeight / 2;
+					eventTypeDialog.setPosition(0, y);
+					eventTypeDialog.setCanceledOnTouchOutside(true);
+					eventTypeDialog.show();
+					
+				}
+				
+			} else if (v.getId() == dateView.getId()) {
+				// 启动时间选择器
+				timeselectordialog.setCurrentItem(startTime);
+				timeselectordialog.show();
+				
 			}
-		} else if (v.getId() == remind.getId()) {
-
-			alarmPopwindow.show(v);
-
-		} else if (v.getId() == event.getId()) {
-
-			if (eventTypeDialog.isShowing()) {
-				Log.d("eventTypeDialog", "---------showing");
-				eventTypeDialog.cancel();
-			} else {
-				int y = schedule_top.getHeight()
-						+ event_addtion_linear.getHeight() + screenHeight / 8
-						/ 2 - screenHeight / 2;
-				eventTypeDialog.setPosition(0, y);
-				eventTypeDialog.setCanceledOnTouchOutside(true);
-				eventTypeDialog.show();
-
-			}
-
-		} else if (v.getId() == dateView.getId()) {
-			// 启动时间选择器
-			timeselectordialog.setCurrentItem(startTime);
-			timeselectordialog.show();
-
+		} catch (Exception e) {
+			ScheduleApplication.logException(getClass(),e);
 		}
 
 	}
@@ -341,104 +352,108 @@ public class EditScheduleScreen extends Screen implements OnClickListener {
 
 			@Override
 			public void run() {
-				ContentValues cv = new ContentValues();
-
-				mStageRemind = alarmPopwindow.getStageRemind();
-				mStageRemind = alarmPopwindow.getStageRemind();
-				if (mStageRemind) {
-
-					startTime = alarmPopwindow.getStartTime();
-					Log.i(TAG,
-							" insert database startTime = "
-									+ DateTimeUtils.time2String(
-											"yyyy-MM-dd-HH-mm", startTime));
-					endTime = alarmPopwindow.getEndTime();
-
-				} else {
-					if (mSelectTime != 0) {
-						startTime = mSelectTime;
-					}
-
-					Calendar mCalendar = Calendar.getInstance();
-					mCalendar.set(Calendar.YEAR, 2049);
-					endTime = mCalendar.getTimeInMillis();
-				}
-				mRemind = alarmPopwindow.getRemind();
-
-				weekType = alarmPopwindow.getWeekValue();
-				remindCycle = alarmPopwindow.getRepeatType();
-				mType = eventTypeDialog.getEventType();
-				cv.put(DatabaseHelper.COLUMN_SCHEDULE_USER_ID,
-						ServiceManager.getUserId());
-				cv.put(DatabaseHelper.COLUMN_SCHEDULE_TYPE, mType);
-				cv.put(DatabaseHelper.COLUMN_SCHEDULE_SHARE, mShare);
-				cv.put(DatabaseHelper.COLUMN_SCHEDULE_OPER_FLAG, oper_flag);
-				cv.put(DatabaseHelper.COLUMN_SCHEDULE_START_TIME, startTime);
-
-				Calendar beginTime = Calendar.getInstance(Locale.CHINA);
-				beginTime.setTimeInMillis(startTime);
-				beginTime.set(Calendar.HOUR_OF_DAY, 0);
-				beginTime.set(Calendar.MINUTE, 0);
-				beginTime.set(Calendar.SECOND, 0);
-				beginTime.set(Calendar.MILLISECOND, 0);
-				cv.put(DatabaseHelper.COLUMN_SCHEDULE_NOTICE_BEGIN,
-						beginTime.getTimeInMillis());
-
-				cv.put(DatabaseHelper.COLUMN_SCHEDULE_NOTICE_FLAG, mRemind);
-				cv.put(DatabaseHelper.COLUMN_SCHEDULE_NOTICE_PERIOD,
-						remindCycle);
-				cv.put(DatabaseHelper.COLUMN_SCHEDULE_NOTICE_STAGE_FLAG,
-						mStageRemind);
-				// 主贴
-				cv.put(DatabaseHelper.COLUMN_SCHEDULE_ORDER, 0);
-				cv.put(DatabaseHelper.COLUMN_SCHEDULE_NOTICE_END, endTime);
-				cv.put(DatabaseHelper.COLUMN_SCHEDULE_NOTICE_WEEK, weekType);
-				if (DatabaseHelper.SCHEDULE_NOTICE_PERIOD_MODE_MONTH
-						.equals(remindCycle)) {
-					monthday = DateTimeUtils.time2String("d", startTime);
-				}
-
-				cv.put(DatabaseHelper.COLUMN_SCHEDULE_NOTICE_MONTHDAY, monthday);
-				if (DatabaseHelper.SCHEDULE_NOTICE_PERIOD_MODE_YEAR
-						.equals(remindCycle)) {
-					yearday = DateTimeUtils.time2String("M.d", startTime);
-				}
-				cv.put(DatabaseHelper.COLUMN_SCHEDULE_NOTICE_YEARDAY, yearday);
-				cv.put(DatabaseHelper.COLUMN_SCHEDULE_CONTENT, scheduleText);
-
-				// 将修改的数据插入到数据库中
-				ServiceManager.getDbManager().updateScheduleById(schedule_id,
-						cv);
-
-				if (mRemind) {
-					long time = DateTimeUtils.getNextAlarmTime(mStageRemind,
-							startTime, endTime, startTime, remindCycle,
-							weekType);
-					System.out.println("result:"
-							+ DateTimeUtils.time2String("yyyy-MM-dd HH:mm:ss",
-									time));
-					if (time != 0) {
-						DateTimeUtils.sendAlarm(time, flagAlarm, schedule_id);
-						ScheduleApplication.LogD(
-								EditScheduleScreen.class,
-								" set alarm = "
+				try {
+					ContentValues cv = new ContentValues();
+					
+					mStageRemind = alarmPopwindow.getStageRemind();
+					mStageRemind = alarmPopwindow.getStageRemind();
+					if (mStageRemind) {
+						
+						startTime = alarmPopwindow.getStartTime();
+						Log.i(TAG,
+								" insert database startTime = "
 										+ DateTimeUtils.time2String(
-												"yyyy-MM-dd-HH-mm", time));
+												"yyyy-MM-dd-HH-mm", startTime));
+						endTime = alarmPopwindow.getEndTime();
+						
+					} else {
+						if (mSelectTime != 0) {
+							startTime = mSelectTime;
+						}
+						
+						Calendar mCalendar = Calendar.getInstance();
+						mCalendar.set(Calendar.YEAR, 2049);
+						endTime = mCalendar.getTimeInMillis();
+					}
+					mRemind = alarmPopwindow.getRemind();
+					
+					weekType = alarmPopwindow.getWeekValue();
+					remindCycle = alarmPopwindow.getRepeatType();
+					mType = eventTypeDialog.getEventType();
+					cv.put(DatabaseHelper.COLUMN_SCHEDULE_USER_ID,
+							ServiceManager.getUserId());
+					cv.put(DatabaseHelper.COLUMN_SCHEDULE_TYPE, mType);
+					cv.put(DatabaseHelper.COLUMN_SCHEDULE_SHARE, mShare);
+					cv.put(DatabaseHelper.COLUMN_SCHEDULE_OPER_FLAG, oper_flag);
+					cv.put(DatabaseHelper.COLUMN_SCHEDULE_START_TIME, startTime);
+					
+					Calendar beginTime = Calendar.getInstance(Locale.CHINA);
+					beginTime.setTimeInMillis(startTime);
+					beginTime.set(Calendar.HOUR_OF_DAY, 0);
+					beginTime.set(Calendar.MINUTE, 0);
+					beginTime.set(Calendar.SECOND, 0);
+					beginTime.set(Calendar.MILLISECOND, 0);
+					cv.put(DatabaseHelper.COLUMN_SCHEDULE_NOTICE_BEGIN,
+							beginTime.getTimeInMillis());
+					
+					cv.put(DatabaseHelper.COLUMN_SCHEDULE_NOTICE_FLAG, mRemind);
+					cv.put(DatabaseHelper.COLUMN_SCHEDULE_NOTICE_PERIOD,
+							remindCycle);
+					cv.put(DatabaseHelper.COLUMN_SCHEDULE_NOTICE_STAGE_FLAG,
+							mStageRemind);
+					// 主贴
+					cv.put(DatabaseHelper.COLUMN_SCHEDULE_ORDER, 0);
+					cv.put(DatabaseHelper.COLUMN_SCHEDULE_NOTICE_END, endTime);
+					cv.put(DatabaseHelper.COLUMN_SCHEDULE_NOTICE_WEEK, weekType);
+					if (DatabaseHelper.SCHEDULE_NOTICE_PERIOD_MODE_MONTH
+							.equals(remindCycle)) {
+						monthday = DateTimeUtils.time2String("d", startTime);
+					}
+					
+					cv.put(DatabaseHelper.COLUMN_SCHEDULE_NOTICE_MONTHDAY, monthday);
+					if (DatabaseHelper.SCHEDULE_NOTICE_PERIOD_MODE_YEAR
+							.equals(remindCycle)) {
+						yearday = DateTimeUtils.time2String("M.d", startTime);
+					}
+					cv.put(DatabaseHelper.COLUMN_SCHEDULE_NOTICE_YEARDAY, yearday);
+					cv.put(DatabaseHelper.COLUMN_SCHEDULE_CONTENT, scheduleText);
+					
+					// 将修改的数据插入到数据库中
+					ServiceManager.getDbManager().updateScheduleById(schedule_id,
+							cv);
+					
+					if (mRemind) {
+						long time = DateTimeUtils.getNextAlarmTime(mStageRemind,
+								startTime, endTime, startTime, remindCycle,
+								weekType);
+						System.out.println("result:"
+								+ DateTimeUtils.time2String("yyyy-MM-dd HH:mm:ss",
+										time));
+						if (time != 0) {
+							DateTimeUtils.sendAlarm(time, flagAlarm, schedule_id);
+							ScheduleApplication.LogD(
+									EditScheduleScreen.class,
+									" set alarm = "
+											+ DateTimeUtils.time2String(
+													"yyyy-MM-dd-HH-mm", time));
+						} else {
+							DateTimeUtils.cancelAlarm(schedule_id);
+						}
 					} else {
 						DateTimeUtils.cancelAlarm(schedule_id);
 					}
-				} else {
-					DateTimeUtils.cancelAlarm(schedule_id);
-				}
-
-				si.uploadSchedule("0", "1");
-
+					
+					si.uploadSchedule("0", "1");
+					
 //				Intent intent = new Intent();
 //				intent.setAction("android.appwidget.action.LOCAL_SCHEDULE_UPDATE");
 //				EditScheduleScreen.this.sendBroadcast(intent);
-
-
-				ServiceManager.sendBroadcastForUpdateSchedule(EditScheduleScreen.this);
+					
+					
+					ServiceManager.sendBroadcastForUpdateSchedule(EditScheduleScreen.this);
+				} catch (Exception e) {
+					ScheduleApplication.logException(getClass(),e);
+				}
 				
 			}
 		}).start();
@@ -535,29 +550,31 @@ public class EditScheduleScreen extends Screen implements OnClickListener {
 	}
 
 	private void setEventTypeImg(int mType) {
-		switch (mType) {
-			case -1 :
-				eventImg.setImageResource(R.drawable.schedule_new_add_event);
-				break;
-
-			case 1 :
-				eventImg.setImageResource(R.drawable.schedule_new_active);
-				break;
-			case 2 :
-				eventImg.setImageResource(R.drawable.schedule_new_appointment);
-				break;
-			case 3 :
-				eventImg.setImageResource(R.drawable.schedule_new_travel);
-				break;
-			case 4 :
-				eventImg.setImageResource(R.drawable.schedule_new_entertainment);
-				break;
-			case 5 :
-				eventImg.setImageResource(R.drawable.schedule_new_eat);
-				break;
-			case 6 :
-				eventImg.setImageResource(R.drawable.schedule_new_work);
-				break;
+		if(eventImg!=null){
+			switch (mType) {
+				case -1 :
+					eventImg.setImageResource(R.drawable.schedule_new_add_event);
+					break;
+					
+				case 1 :
+					eventImg.setImageResource(R.drawable.schedule_new_active);
+					break;
+				case 2 :
+					eventImg.setImageResource(R.drawable.schedule_new_appointment);
+					break;
+				case 3 :
+					eventImg.setImageResource(R.drawable.schedule_new_travel);
+					break;
+				case 4 :
+					eventImg.setImageResource(R.drawable.schedule_new_entertainment);
+					break;
+				case 5 :
+					eventImg.setImageResource(R.drawable.schedule_new_eat);
+					break;
+				case 6 :
+					eventImg.setImageResource(R.drawable.schedule_new_work);
+					break;
+			}
 		}
 	}
 }

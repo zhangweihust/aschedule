@@ -66,31 +66,29 @@ public class DynamicScheduleAdapter extends BaseAdapter {
 	@Override
 	public View getView(final int position, View convertView, ViewGroup parent) {
 		ScheduleItem item;
-
-		if (convertView == null) {
-			Log.i(TAG, "scheduleCallback" + "create View is " + position);
-			View view = inflater.inflate(R.layout.dynamic_schedule_item, null);
-			item = new ScheduleItem();
-			item.date = (TextView) view.findViewById(R.id.date);
-			item.time = (TextView) view.findViewById(R.id.time);
-			item.name = (TextView) view.findViewById(R.id.name);
-			item.location = (TextView) view.findViewById(R.id.location);
-			item.content = (TextView) view.findViewById(R.id.content);
-			item.typeView = (ImageView) view.findViewById(R.id.type);
-			item.avatar = (SmartImageView) view.findViewById(R.id.avatar);
-			item.avatarLayout = view.findViewById(R.id.avatar_layout);
-			item.commentsLayout = (LinearLayout) view
-					.findViewById(R.id.feed_comments_thread);
-			view.setTag(R.layout.dynamic_schedule_item, item);
-			convertView = view;
-
-		} else {
-
-			item = (ScheduleItem) convertView
-					.getTag(R.layout.dynamic_schedule_item);
-		}
-
 		try {
+			if (convertView == null) {
+				Log.i(TAG, "scheduleCallback" + "create View is " + position);
+				View view = inflater.inflate(R.layout.dynamic_schedule_item, null);
+				item = new ScheduleItem();
+				item.date = (TextView) view.findViewById(R.id.date);
+				item.time = (TextView) view.findViewById(R.id.time);
+				item.name = (TextView) view.findViewById(R.id.name);
+				item.location = (TextView) view.findViewById(R.id.location);
+				item.content = (TextView) view.findViewById(R.id.content);
+				item.typeView = (ImageView) view.findViewById(R.id.type);
+				item.avatar = (SmartImageView) view.findViewById(R.id.avatar);
+				item.avatarLayout = view.findViewById(R.id.avatar_layout);
+				item.commentsLayout = (LinearLayout) view
+						.findViewById(R.id.feed_comments_thread);
+				view.setTag(R.layout.dynamic_schedule_item, item);
+				convertView = view;
+				
+			} else {
+				
+				item = (ScheduleItem) convertView
+						.getTag(R.layout.dynamic_schedule_item);
+			}
 		final ScheduleBean data = list.get(position);
 		if (data != null) {
 			item.content.setText(data.getContent());
@@ -193,8 +191,7 @@ public class DynamicScheduleAdapter extends BaseAdapter {
 			convertView.setTag(args);
 		}
 		} catch (Exception e) {
-			ScheduleApplication.LogD(getClass(), "catch Exception");
-			e.printStackTrace();
+			ScheduleApplication.logException(getClass(), e);
 		}
 		return convertView;
 	}

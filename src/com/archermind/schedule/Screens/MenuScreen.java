@@ -15,6 +15,7 @@ import android.widget.ProgressBar;
 import android.widget.Toast;
 
 import com.archermind.schedule.R;
+import com.archermind.schedule.ScheduleApplication;
 import com.archermind.schedule.Model.UserInfoData;
 import com.archermind.schedule.Services.ServiceManager;
 import com.archermind.schedule.Utils.DeviceInfo;
@@ -72,87 +73,94 @@ public class MenuScreen extends Activity implements OnClickListener {
 
         handler = new Handler() {
             public void handleMessage(Message msg) {
-                Intent it;
-                if (mpDialog != null) {
-                    mpDialog.dismiss();
-                }
-                switch (msg.what) {
-                    case LOGIN_STATUS_FAILED:
-                        it = new Intent(MenuScreen.this, LoginScreen.class);
-                        break;
-
-                    case LOGIN_STATUS_SUCCESS:
-                        it = new Intent(MenuScreen.this, AccountSettingScreen.class);
-                        break;
-
-                    case LOGIN_STATUS_UNBIND:
-                        ServiceManager.setBindFlag(false);
-                        String imsi = DeviceInfo.getDeviceIMSI();// 号码发生变更，和绑定做统一处理
-                        if (!imsi.equals(ServiceManager.getSPUserInfo(UserInfoData.IMSI))) {
-                            Toast.makeText(getApplicationContext(), "检测到您的手机号发生变化,请重新绑定!",
-                                    Toast.LENGTH_LONG).show();
-                        } else {
-                            ServiceManager.ToastShow("您的帐号尚未绑定手机号,请进行绑定!");
-                        }
-                        it = new Intent(MenuScreen.this, TelephoneBindScreen.class);
-                        break;
-
-                    default:
-                        it = new Intent(MenuScreen.this, LoginScreen.class);
-                        break;
-                }
-                startActivity(it);
-                account_btn_flag = false;
-                overridePendingTransition(R.anim.right_in, R.anim.right_out);
+            	try {
+            		Intent it;
+            		if (mpDialog != null) {
+            			mpDialog.dismiss();
+            		}
+            		switch (msg.what) {
+            			case LOGIN_STATUS_FAILED:
+            				it = new Intent(MenuScreen.this, LoginScreen.class);
+            				break;
+            				
+            			case LOGIN_STATUS_SUCCESS:
+            				it = new Intent(MenuScreen.this, AccountSettingScreen.class);
+            				break;
+            				
+            			case LOGIN_STATUS_UNBIND:
+            				ServiceManager.setBindFlag(false);
+            				String imsi = DeviceInfo.getDeviceIMSI();// 号码发生变更，和绑定做统一处理
+            				if (!imsi.equals(ServiceManager.getSPUserInfo(UserInfoData.IMSI))) {
+            					Toast.makeText(getApplicationContext(), "检测到您的手机号发生变化,请重新绑定!",
+            							Toast.LENGTH_LONG).show();
+            				} else {
+            					ServiceManager.ToastShow("您的帐号尚未绑定手机号,请进行绑定!");
+            				}
+            				it = new Intent(MenuScreen.this, TelephoneBindScreen.class);
+            				break;
+            				
+            			default:
+            				it = new Intent(MenuScreen.this, LoginScreen.class);
+            				break;
+            		}
+            		startActivity(it);
+            		account_btn_flag = false;
+            		overridePendingTransition(R.anim.right_in, R.anim.right_out);
+				} catch (Exception e) {
+					ScheduleApplication.logException(getClass(),e);
+				}
             };
         };
     }
 
     public void onClick(View v) {
-        // TODO Auto-generated method stub
-        switch (v.getId()) {
-            case R.id.gotonext:
-                // MenuScreen.this.finish();
-                // overridePendingTransition(R.anim.left_in,R.anim.left_out);
-                onBackPressed();
-                break;
-            case R.id.menu_account_btn:
-
-                mpDialog.show();
-                if (!account_btn_flag) {
-                    account_btn_flag = true;
-                    new Thread() {
-                        public void run() {
-                            if (ServiceManager.isUserLogining(ServiceManager.getUserId())) {
-                                if (ServiceManager.getBindFlag()) {
-                                    handler.sendEmptyMessage(LOGIN_STATUS_SUCCESS);
-                                } else {
-                                    handler.sendEmptyMessage(LOGIN_STATUS_UNBIND);
-                                }
-                            } else {
-                                handler.sendEmptyMessage(LOGIN_STATUS_FAILED);
-                            }
-                        };
-                    }.start();
-                }
-                break;
-
-            case R.id.menu_weather_btn:
-                startActivity(new Intent(MenuScreen.this, WeatherScreen.class));
-                break;
-            case R.id.menu_setting_btn:
-                startActivity(new Intent(MenuScreen.this, SettingScreen.class));
-                break;
-            case R.id.menu_feedback_btn:
-                startActivity(new Intent(MenuScreen.this, FeedbackScreen.class));
-                break;
-            case R.id.menu_about_btn:
-                startActivity(new Intent(MenuScreen.this, AboutScreen.class));
-                break;
-
-            default:
-                break;
-        }
+        try {
+        	switch (v.getId()) {
+        		case R.id.gotonext:
+        			// MenuScreen.this.finish();
+        			// overridePendingTransition(R.anim.left_in,R.anim.left_out);
+        			onBackPressed();
+        			break;
+        		case R.id.menu_account_btn:
+        			
+        			mpDialog.show();
+        			if (!account_btn_flag) {
+        				account_btn_flag = true;
+        				new Thread() {
+        					public void run() {
+        						if (ServiceManager.isUserLogining(ServiceManager.getUserId())) {
+        							if (ServiceManager.getBindFlag()) {
+        								handler.sendEmptyMessage(LOGIN_STATUS_SUCCESS);
+        							} else {
+        								handler.sendEmptyMessage(LOGIN_STATUS_UNBIND);
+        							}
+        						} else {
+        							handler.sendEmptyMessage(LOGIN_STATUS_FAILED);
+        						}
+        					};
+        				}.start();
+        			}
+        			break;
+        			
+        		case R.id.menu_weather_btn:
+        			startActivity(new Intent(MenuScreen.this, WeatherScreen.class));
+        			break;
+        		case R.id.menu_setting_btn:
+        			startActivity(new Intent(MenuScreen.this, SettingScreen.class));
+        			break;
+        		case R.id.menu_feedback_btn:
+        			startActivity(new Intent(MenuScreen.this, FeedbackScreen.class));
+        			break;
+        		case R.id.menu_about_btn:
+        			startActivity(new Intent(MenuScreen.this, AboutScreen.class));
+        			break;
+        			
+        		default:
+        			break;
+        	}
+		} catch (Exception e) {
+			ScheduleApplication.logException(getClass(),e);
+		}
     }
 
     @Override

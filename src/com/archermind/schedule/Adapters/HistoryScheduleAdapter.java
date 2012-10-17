@@ -191,26 +191,29 @@ public class HistoryScheduleAdapter extends BaseAdapter {
 		args.putExtra("time", data.time);
 		convertView.setTag(args);
 		} catch (Exception e) {
-			ScheduleApplication.LogD(getClass(), "catch Exception");
-			e.printStackTrace();
+			ScheduleApplication.logException(getClass(), e);
 		}
 
 		return convertView;
 	}
 
 	public void addPreData(List<ScheduleData> prescheduledata) {
-		int i = 0;
-		int size = prescheduledata.size();
-		if (size <= 0) {
-			return;
-		}
-		if (existsPrompt) {
-			schedulelist.clear();
-			existsPrompt = false;
-		}
-		while (i < size) {
-			schedulelist.add(i, prescheduledata.get(i));
-			i++;
+		try {
+			int i = 0;
+			int size = prescheduledata.size();
+			if (size <= 0) {
+				return;
+			}
+			if (existsPrompt) {
+				schedulelist.clear();
+				existsPrompt = false;
+			}
+			while (i < size) {
+				schedulelist.add(i, prescheduledata.get(i));
+				i++;
+			}
+		} catch (Exception e) {
+			ScheduleApplication.logException(getClass(), e);
 		}
 		// notifyDataSetChanged();
 	}

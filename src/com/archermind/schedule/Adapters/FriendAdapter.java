@@ -21,6 +21,7 @@ import android.widget.ListView;
 import android.widget.TextView;
 
 import com.archermind.schedule.R;
+import com.archermind.schedule.ScheduleApplication;
 import com.archermind.schedule.Adapters.FriendContactAdapter.ContentListElement;
 import com.archermind.schedule.Adapters.FriendContactAdapter.ListElement;
 import com.archermind.schedule.Image.SmartImageView;
@@ -93,38 +94,41 @@ public class FriendAdapter extends BaseAdapter implements OnClickListener {
 
 	@Override
 	public View getView(int position, View convertView, ViewGroup parent) {
-		// TODO Auto-generated method stub
-		HolderView holderView = null;
-		if (convertView == null) {
-			holderView = new HolderView();
-			convertView = layoutInflater.inflate(R.layout.friend_item, null);
-			holderView.friend_layout = (LinearLayout) convertView
-					.findViewById(R.id.friend_layout);
-			holderView.friend_layout.setOnClickListener(this);
-			holderView.friend_layout.setBackgroundColor(0xebeaea);
-			holderView.headImg = (SmartImageView) convertView
-					.findViewById(R.id.head_image);
-			holderView.name = (TextView) convertView.findViewById(R.id.name);
-			convertView.setTag(holderView);
-		} else {
-			holderView = (HolderView) convertView.getTag();
-		}
-		Friend friend = friends.get(position);
-		if (friend != null) {
-			String nick = friend.getNick();
-			if (nick != null && !nick.equals("")) {
-				if (friend.getName() == null) {
-					holderView.name.setText(nick);
-				} else {
-					holderView.name.setText(nick+ "(" + friend.getName() + ")");
-				}
+		try {
+			HolderView holderView = null;
+			if (convertView == null) {
+				holderView = new HolderView();
+				convertView = layoutInflater.inflate(R.layout.friend_item, null);
+				holderView.friend_layout = (LinearLayout) convertView
+						.findViewById(R.id.friend_layout);
+				holderView.friend_layout.setOnClickListener(this);
+				holderView.friend_layout.setBackgroundColor(0xebeaea);
+				holderView.headImg = (SmartImageView) convertView
+						.findViewById(R.id.head_image);
+				holderView.name = (TextView) convertView.findViewById(R.id.name);
+				convertView.setTag(holderView);
 			} else {
-				holderView.name.setText(friend.getTelephone());
+				holderView = (HolderView) convertView.getTag();
 			}
-			holderView.headImg.setImageUrl(friend.getHeadImagePath(),
-					R.drawable.friend_item_img, R.drawable.friend_item_img);
-			holderView.friend_layout.setTag(friend);
-
+			Friend friend = friends.get(position);
+			if (friend != null) {
+				String nick = friend.getNick();
+				if (nick != null && !nick.equals("")) {
+					if (friend.getName() == null) {
+						holderView.name.setText(nick);
+					} else {
+						holderView.name.setText(nick+ "(" + friend.getName() + ")");
+					}
+				} else {
+					holderView.name.setText(friend.getTelephone());
+				}
+				holderView.headImg.setImageUrl(friend.getHeadImagePath(),
+						R.drawable.friend_item_img, R.drawable.friend_item_img);
+				holderView.friend_layout.setTag(friend);
+				
+			}
+		} catch (Exception e) {
+			ScheduleApplication.logException(getClass(), e);
 		}
 		return convertView;
 	}
@@ -137,40 +141,43 @@ public class FriendAdapter extends BaseAdapter implements OnClickListener {
 
 	@Override
 	public void onClick(View v) {
-		// TODO Auto-generated method stub
-		Friend friend = (Friend) v.getTag();
-		switch (v.getId()) {
-			case R.id.friend_layout :
-				showDialog(friend);
-				break;
-			case R.id.friend_shield :
-				dialog.dismiss();
-				if (0 == serverInterface.shieldFriend(
-						String.valueOf(ServiceManager.getUserId()),
-						friend.getId())) {
-					database.ignoreFriend(friend.getId());
-				}
-				break;
-			case R.id.friend_delete :
-				dialog.dismiss();
-				if (0 == serverInterface.removeFriend(
-						String.valueOf(ServiceManager.getUserId()),
-						friend.getId())) {
-					friends.remove(friend);
-					refresh();
-					database.deleteFriend(friend.getId());
-					database.updateContactType(
-							database.queryContactIdByTel(friend.getTelephone()),
-							Constant.FriendType.friend_contact_use,
-							friend.getId());
-
-					FriendContactAdapter.ContentListElement element = friendContactAdapter.new ContentListElement();
-					friend.setType(Constant.FriendType.friend_contact_use);
-					element.setFriend(friend);
-					friendContactAdapter.addFristFriendContactUse(element);
-					friendContactAdapter.refresh();
-				}
-				break;
+		try {
+			Friend friend = (Friend) v.getTag();
+			switch (v.getId()) {
+				case R.id.friend_layout :
+					showDialog(friend);
+					break;
+				case R.id.friend_shield :
+					dialog.dismiss();
+					if (0 == serverInterface.shieldFriend(
+							String.valueOf(ServiceManager.getUserId()),
+							friend.getId())) {
+						database.ignoreFriend(friend.getId());
+					}
+					break;
+				case R.id.friend_delete :
+					dialog.dismiss();
+					if (0 == serverInterface.removeFriend(
+							String.valueOf(ServiceManager.getUserId()),
+							friend.getId())) {
+						friends.remove(friend);
+						refresh();
+						database.deleteFriend(friend.getId());
+						database.updateContactType(
+								database.queryContactIdByTel(friend.getTelephone()),
+								Constant.FriendType.friend_contact_use,
+								friend.getId());
+						
+						FriendContactAdapter.ContentListElement element = friendContactAdapter.new ContentListElement();
+						friend.setType(Constant.FriendType.friend_contact_use);
+						element.setFriend(friend);
+						friendContactAdapter.addFristFriendContactUse(element);
+						friendContactAdapter.refresh();
+					}
+					break;
+			}
+		} catch (Exception e) {
+			ScheduleApplication.logException(getClass(), e);
 		}
 	}
 

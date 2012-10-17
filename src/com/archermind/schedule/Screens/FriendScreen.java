@@ -161,66 +161,71 @@ public class FriendScreen extends Screen
 				.get(Constant.FriendType.FRIEND_CONTACT_KEY);
 
 		Friend addFriend = null;
-		if (friendId != null && !"".equals(friendId)) {
-			Cursor cursor = database.queryFriend(Integer.parseInt(friendId));
-			if (cursor.moveToNext()) {
-				String telephone = cursor.getString(cursor
-						.getColumnIndex(DatabaseHelper.ASCHEDULE_FRIEND_NUM));
-				String name = cursor.getString(cursor
-						.getColumnIndex(DatabaseHelper.ASCHEDULE_FRIEND_NAME));
-				String nick = cursor.getString(cursor
-						.getColumnIndex(DatabaseHelper.ASCHEDULE_FRIEND_NICK));
-				String headImagePath = cursor
-						.getString(cursor
-								.getColumnIndex(DatabaseHelper.ASCHEDULE_FRIEND_PHOTO_URL));
-				addFriend = new Friend();
-				addFriend.setId(friendId);
-				addFriend.setTelephone(telephone);
-				addFriend.setName(name);
-				addFriend.setNick(nick);
-				addFriend.setHeadImagePath(headImagePath);
-				addFriend.setType(Constant.FriendType.friend_yes);
-				friends.add(addFriend);
-				contact_use.remove(addFriend);
+		try {
+			if (friendId != null && !"".equals(friendId)) {
+				Cursor cursor = database.queryFriend(Integer.parseInt(friendId));
+				if (cursor.moveToNext()) {
+					String telephone = cursor.getString(cursor
+							.getColumnIndex(DatabaseHelper.ASCHEDULE_FRIEND_NUM));
+					String name = cursor.getString(cursor
+							.getColumnIndex(DatabaseHelper.ASCHEDULE_FRIEND_NAME));
+					String nick = cursor.getString(cursor
+							.getColumnIndex(DatabaseHelper.ASCHEDULE_FRIEND_NICK));
+					String headImagePath = cursor
+							.getString(cursor
+									.getColumnIndex(DatabaseHelper.ASCHEDULE_FRIEND_PHOTO_URL));
+					addFriend = new Friend();
+					addFriend.setId(friendId);
+					addFriend.setTelephone(telephone);
+					addFriend.setName(name);
+					addFriend.setNick(nick);
+					addFriend.setHeadImagePath(headImagePath);
+					addFriend.setType(Constant.FriendType.friend_yes);
+					friends.add(addFriend);
+					contact_use.remove(addFriend);
+				}
+				cursor.close();
 			}
-			cursor.close();
+			
+			friends.addAll(ignores);
+			FriendAdapter friendAdapter = new FriendAdapter(this, friends,
+					friend_listView);
+			friend_listView.setAdapter(friendAdapter);
+			ListViewUtil.setListViewHeightBasedOnChildren(friend_listView);
+			
+			FriendContactAdapter friendContactAdapter = new FriendContactAdapter(
+					this, friend_contact_listView);
+			friendContactAdapter.addTitleHeaderItem(getResources().getString(
+					R.string.contact_use_show));
+			ArrayList<ListElement> elements = new ArrayList<ListElement>();
+			for (Friend friend : contact_use) {
+				FriendContactAdapter.ContentListElement element = friendContactAdapter.new ContentListElement();
+				element.setFriend(friend);
+				elements.add(element);
+			}
+			friendContactAdapter.addList(elements);
+			
+			friendContactAdapter.setFriendContactUseIndex(friendContactAdapter
+					.getCount());
+			friendContactAdapter.addTitleHeaderItem(getResources().getString(
+					R.string.contact_show));
+			elements = new ArrayList<ListElement>();
+			for (Friend friend : contact) {
+				FriendContactAdapter.ContentListElement element2 = friendContactAdapter.new ContentListElement();
+				element2.setFriend(friend);
+				elements.add(element2);
+			}
+			friendContactAdapter.addList(elements);
+			
+			friend_contact_listView.setAdapter(friendContactAdapter);
+			ListViewUtil.setListViewHeightBasedOnChildren(friend_contact_listView);
+			
+			friendAdapter.setOtherAdapter(friendContactAdapter);
+			friendContactAdapter.setOtherAdapter(friendAdapter);
+			
+		} catch (Exception e) {
+			ScheduleApplication.logException(getClass(),e);
 		}
-
-		friends.addAll(ignores);
-		FriendAdapter friendAdapter = new FriendAdapter(this, friends,
-				friend_listView);
-		friend_listView.setAdapter(friendAdapter);
-		ListViewUtil.setListViewHeightBasedOnChildren(friend_listView);
-
-		FriendContactAdapter friendContactAdapter = new FriendContactAdapter(
-				this, friend_contact_listView);
-		friendContactAdapter.addTitleHeaderItem(getResources().getString(
-				R.string.contact_use_show));
-		ArrayList<ListElement> elements = new ArrayList<ListElement>();
-		for (Friend friend : contact_use) {
-			FriendContactAdapter.ContentListElement element = friendContactAdapter.new ContentListElement();
-			element.setFriend(friend);
-			elements.add(element);
-		}
-		friendContactAdapter.addList(elements);
-
-		friendContactAdapter.setFriendContactUseIndex(friendContactAdapter
-				.getCount());
-		friendContactAdapter.addTitleHeaderItem(getResources().getString(
-				R.string.contact_show));
-		elements = new ArrayList<ListElement>();
-		for (Friend friend : contact) {
-			FriendContactAdapter.ContentListElement element2 = friendContactAdapter.new ContentListElement();
-			element2.setFriend(friend);
-			elements.add(element2);
-		}
-		friendContactAdapter.addList(elements);
-
-		friend_contact_listView.setAdapter(friendContactAdapter);
-		ListViewUtil.setListViewHeightBasedOnChildren(friend_contact_listView);
-
-		friendAdapter.setOtherAdapter(friendContactAdapter);
-		friendContactAdapter.setOtherAdapter(friendAdapter);
 	}
 
 	@Override
@@ -231,55 +236,58 @@ public class FriendScreen extends Screen
 
 	@Override
 	public void onClick(View v) {
-		// TODO Auto-generated method stub
-		switch (v.getId()) {
-			case R.id.myfriendlayout :
-			case R.id.friend_button_state :
-				if (friend_listView.getVisibility() == View.VISIBLE) {
-					view.setVisibility(View.VISIBLE);
-					friend_listView.setVisibility(View.GONE);
-					friend_button_state
-							.setBackgroundResource(R.drawable.friend_group_shrink);
-				} else {
-					view.setVisibility(View.GONE);
-					friend_listView.setVisibility(View.VISIBLE);
-					friend_button_state
-							.setBackgroundResource(R.drawable.friend_group_expand);
-				}
-				break;
-			case R.id.mycontactfriendlayout :
-			case R.id.friend_contact_button_state :
-				if (friend_contact_listView.getVisibility() == View.VISIBLE) {
-					friend_contact_listView.setVisibility(View.GONE);
-					friend_contact_button_state
-							.setBackgroundResource(R.drawable.friend_group_shrink);
-				} else {
-					friend_contact_listView.setVisibility(View.VISIBLE);
-					friend_contact_button_state
-							.setBackgroundResource(R.drawable.friend_group_expand);
-				}
-				break;
-
-			case R.id.bindfriend :
-				Intent it = new Intent(FriendScreen.this,
-						TelephoneBindScreen.class);
-				startActivity(it);
-				break;
-
-			case R.id.loginfriend :
-				Intent itlogin = new Intent(FriendScreen.this,
-						LoginScreen.class);
-				startActivity(itlogin);
-				break;
-			case R.id.sych_contact :
-				sychContactLayout.setVisibility(View.GONE);
-				loading.setVisibility(View.VISIBLE);
-				SharedPreferenceUtil.setValue("sync", Constant.CONTACT_SYNC_ING);
-				Intent sych_contact = new Intent(FriendScreen.this,
-						ContactSyncAlertScreen.class);
-				startActivity(sych_contact);
-				break;
-
+		try {
+			switch (v.getId()) {
+				case R.id.myfriendlayout :
+				case R.id.friend_button_state :
+					if (friend_listView.getVisibility() == View.VISIBLE) {
+						view.setVisibility(View.VISIBLE);
+						friend_listView.setVisibility(View.GONE);
+						friend_button_state
+						.setBackgroundResource(R.drawable.friend_group_shrink);
+					} else {
+						view.setVisibility(View.GONE);
+						friend_listView.setVisibility(View.VISIBLE);
+						friend_button_state
+						.setBackgroundResource(R.drawable.friend_group_expand);
+					}
+					break;
+				case R.id.mycontactfriendlayout :
+				case R.id.friend_contact_button_state :
+					if (friend_contact_listView.getVisibility() == View.VISIBLE) {
+						friend_contact_listView.setVisibility(View.GONE);
+						friend_contact_button_state
+						.setBackgroundResource(R.drawable.friend_group_shrink);
+					} else {
+						friend_contact_listView.setVisibility(View.VISIBLE);
+						friend_contact_button_state
+						.setBackgroundResource(R.drawable.friend_group_expand);
+					}
+					break;
+					
+				case R.id.bindfriend :
+					Intent it = new Intent(FriendScreen.this,
+							TelephoneBindScreen.class);
+					startActivity(it);
+					break;
+					
+				case R.id.loginfriend :
+					Intent itlogin = new Intent(FriendScreen.this,
+							LoginScreen.class);
+					startActivity(itlogin);
+					break;
+				case R.id.sych_contact :
+					sychContactLayout.setVisibility(View.GONE);
+					loading.setVisibility(View.VISIBLE);
+					SharedPreferenceUtil.setValue("sync", Constant.CONTACT_SYNC_ING);
+					Intent sych_contact = new Intent(FriendScreen.this,
+							ContactSyncAlertScreen.class);
+					startActivity(sych_contact);
+					break;
+					
+			}
+		} catch (Exception e) {
+			ScheduleApplication.logException(getClass(),e);
 		}
 	}
 
@@ -333,39 +341,43 @@ public class FriendScreen extends Screen
 
 	@Override
 	public boolean onEvent(Object sender, EventArgs e) {
-		friendId = (String) e.getExtra("friend_id");
-		switch (e.getType()) {
-			case CONTACT_SYNC_SUCCESS :
-				getData();
-				break;
-			case CONTACT_SYNC_FAILED :
-				handler.sendEmptyMessage(CONTACT_SYNC_ERROR);
-				break;
-			case CONTACT_SYNC_CANCEL :
-				handler.sendEmptyMessage(CONTACT_SYNC_CANCEL);
-				break;
-			case ADD_FRIEND :
-				FriendScreen.this.runOnUiThread(new Runnable() {
-					@Override
-					public void run() {
-						initAdapter();
-					}
-				});
-				break;
-			case LOGIN_SUCCESS :
-				this.runOnUiThread(new Runnable() {
-					@Override
-					public void run() {
-						if (ServiceManager.getBindFlag()) {
-							ServiceManager.getContact().checkSync(
-									FriendScreen.this);
+		try {
+			friendId = (String) e.getExtra("friend_id");
+			switch (e.getType()) {
+				case CONTACT_SYNC_SUCCESS :
+					getData();
+					break;
+				case CONTACT_SYNC_FAILED :
+					handler.sendEmptyMessage(CONTACT_SYNC_ERROR);
+					break;
+				case CONTACT_SYNC_CANCEL :
+					handler.sendEmptyMessage(CONTACT_SYNC_CANCEL);
+					break;
+				case ADD_FRIEND :
+					FriendScreen.this.runOnUiThread(new Runnable() {
+						@Override
+						public void run() {
+							initAdapter();
 						}
-					}
-				});
-				break;
-			case TELEPHONE_BIND_SUCCESS :
-				ServiceManager.getContact().checkSync(FriendScreen.this);
-				break;
+					});
+					break;
+				case LOGIN_SUCCESS :
+					this.runOnUiThread(new Runnable() {
+						@Override
+						public void run() {
+							if (ServiceManager.getBindFlag()) {
+								ServiceManager.getContact().checkSync(
+										FriendScreen.this);
+							}
+						}
+					});
+					break;
+				case TELEPHONE_BIND_SUCCESS :
+					ServiceManager.getContact().checkSync(FriendScreen.this);
+					break;
+			}
+		} catch (Exception e2) {
+			ScheduleApplication.logException(getClass(),e2);
 		}
 		return true;
 	}
@@ -759,7 +771,7 @@ public class FriendScreen extends Screen
     			}
     		}
 		} catch (Exception e) {
-			e.printStackTrace();
+			ScheduleApplication.logException(getClass(),e);
 		}
 
 		hashMap.put(Constant.FriendType.FRIEND_YES_KEY, friends);

@@ -87,40 +87,44 @@ public class MyDynamicScreen extends Screen implements IXListViewListener, OnIte
     Handler mHandler = new Handler() {
         public void handleMessage(Message msg) {
             super.handleMessage(msg);
-            switch (msg.what) {
-                case ON_Refresh:
-                    eventService.onUpdateEvent(new EventArgs(EventTypes.SERVICE_TIP_OFF));
-                    loading.setVisibility(View.GONE);
-                    Toast.makeText(getApplicationContext(), "最新记录加载完毕", Toast.LENGTH_SHORT).show();
-                    dataArrayList.clear();
-                    cursorToArrayList((Cursor)msg.obj);
-                    mAdapter.notifyDataSetChanged();
-                    onLoad();
-                    break;
-                case ON_LoadMore:
-                    loading.setVisibility(View.GONE);
-                    cursorToArrayList((Cursor)msg.obj);
-                    mAdapter.notifyDataSetChanged();
-                    onLoad();
-                    break;
-                case ON_LoadData:
-                    loading.setVisibility(View.GONE);
-                    cursorToArrayList((Cursor)msg.obj);
-                    mAdapter.notifyDataSetChanged();
-                    onLoad();
-                    break;
-                case RefreshLayout_Gone:
-                    refreshLayout.setVisibility(View.GONE);
-                    break;
-                case RefreshLayout_Visible:
-                    refreshLayout.setVisibility(View.VISIBLE);
-                    break;
-            }
-            if (!dataArrayList.isEmpty()) {
-                list.setXListViewListener(MyDynamicScreen.this);
-                list.setPullRefreshEnable(true);
-                list.setPullLoadEnable(true);
-            }
+            try {
+            	switch (msg.what) {
+            		case ON_Refresh:
+            			eventService.onUpdateEvent(new EventArgs(EventTypes.SERVICE_TIP_OFF));
+            			loading.setVisibility(View.GONE);
+            			Toast.makeText(getApplicationContext(), "最新记录加载完毕", Toast.LENGTH_SHORT).show();
+            			dataArrayList.clear();
+            			cursorToArrayList((Cursor)msg.obj);
+            			mAdapter.notifyDataSetChanged();
+            			onLoad();
+            			break;
+            		case ON_LoadMore:
+            			loading.setVisibility(View.GONE);
+            			cursorToArrayList((Cursor)msg.obj);
+            			mAdapter.notifyDataSetChanged();
+            			onLoad();
+            			break;
+            		case ON_LoadData:
+            			loading.setVisibility(View.GONE);
+            			cursorToArrayList((Cursor)msg.obj);
+            			mAdapter.notifyDataSetChanged();
+            			onLoad();
+            			break;
+            		case RefreshLayout_Gone:
+            			refreshLayout.setVisibility(View.GONE);
+            			break;
+            		case RefreshLayout_Visible:
+            			refreshLayout.setVisibility(View.VISIBLE);
+            			break;
+            	}
+            	if (!dataArrayList.isEmpty()) {
+            		list.setXListViewListener(MyDynamicScreen.this);
+            		list.setPullRefreshEnable(true);
+            		list.setPullLoadEnable(true);
+            	}
+			} catch (Exception e) {
+				ScheduleApplication.logException(getClass(),e);
+			}
         }
     };
 
@@ -412,68 +416,72 @@ public class MyDynamicScreen extends Screen implements IXListViewListener, OnIte
 
     @Override
     public boolean onEvent(Object sender, EventArgs e) {
-        switch (e.getType()) {
-
-            case LOGIN_SUCCESS:
-                this.runOnUiThread(new Runnable() {
-                    @Override
-                    public void run() {
-                        if (ServiceManager.getBindFlag()) {
-                            loginLayout.setVisibility(View.GONE);
-                            bindLayout.setVisibility(View.GONE);
-                            new Thread(new Runnable() {
-                                @Override
-                                public void run() {
-                                    loadSchedules();
-                                }
-                            }).start();
-                        } else {
-                            loginLayout.setVisibility(View.GONE);
-                            bindLayout.setVisibility(View.VISIBLE);
-                        }
-                    }
-                });
-                break;
-
-            case TELEPHONE_BIND_SUCCESS:
-                this.runOnUiThread(new Runnable() {
-                    @Override
-                    public void run() {
-                        loginLayout.setVisibility(View.GONE);
-                        bindLayout.setVisibility(View.GONE);
-                        loadSchedules();
-                    }
-                });
-                break;
-
-            case LOGOUT_SUCCESS:
-                this.runOnUiThread(new Runnable() {
-                    @Override
-                    public void run() {
-
-                        if (!dataArrayList.isEmpty()) {// 程序登出，清除数据
-                            dataArrayList.clear();
-                            mAdapter.notifyDataSetChanged();
-                        }
-                        loginLayout.setVisibility(View.VISIBLE);
-                        list.setPullRefreshEnable(false);
-                        list.setPullLoadEnable(false);
-                    }
-                });
-                break;
-
-            case LOCAL_MYDYAMIC_SCHEDULE_UPDATE: {
-                this.runOnUiThread(new Runnable() {
-                    public void run() {
-                        if (ServiceManager.getUserId() != 0) {
-                            onRefresh();
-                        }
-                    }
-                });
-            }
-                break;
-
-        }
+    	try {
+    		switch (e.getType()) {
+    			
+    			case LOGIN_SUCCESS:
+    				this.runOnUiThread(new Runnable() {
+    					@Override
+    					public void run() {
+    						if (ServiceManager.getBindFlag()) {
+    							loginLayout.setVisibility(View.GONE);
+    							bindLayout.setVisibility(View.GONE);
+    							new Thread(new Runnable() {
+    								@Override
+    								public void run() {
+    									loadSchedules();
+    								}
+    							}).start();
+    						} else {
+    							loginLayout.setVisibility(View.GONE);
+    							bindLayout.setVisibility(View.VISIBLE);
+    						}
+    					}
+    				});
+    				break;
+    				
+    			case TELEPHONE_BIND_SUCCESS:
+    				this.runOnUiThread(new Runnable() {
+    					@Override
+    					public void run() {
+    						loginLayout.setVisibility(View.GONE);
+    						bindLayout.setVisibility(View.GONE);
+    						loadSchedules();
+    					}
+    				});
+    				break;
+    				
+    			case LOGOUT_SUCCESS:
+    				this.runOnUiThread(new Runnable() {
+    					@Override
+    					public void run() {
+    						
+    						if (!dataArrayList.isEmpty()) {// 程序登出，清除数据
+    							dataArrayList.clear();
+    							mAdapter.notifyDataSetChanged();
+    						}
+    						loginLayout.setVisibility(View.VISIBLE);
+    						list.setPullRefreshEnable(false);
+    						list.setPullLoadEnable(false);
+    					}
+    				});
+    				break;
+    				
+    			case LOCAL_MYDYAMIC_SCHEDULE_UPDATE: {
+    				this.runOnUiThread(new Runnable() {
+    					public void run() {
+    						if (ServiceManager.getUserId() != 0) {
+    							onRefresh();
+    						}
+    					}
+    				});
+    			}
+    			break;
+    			
+    		}
+		} catch (Exception e2) {
+			ScheduleApplication.logException(getClass(),e2);
+		}
         return true;
     }
 }

@@ -5,6 +5,7 @@ import java.util.List;
 import java.util.Map;
 
 import com.archermind.schedule.R;
+import com.archermind.schedule.ScheduleApplication;
 import com.archermind.schedule.Image.SmartImageView;
 import com.archermind.schedule.Model.Friend;
 import com.archermind.schedule.Provider.DatabaseHelper;
@@ -199,43 +200,47 @@ public class FriendContactAdapter extends BaseAdapter
 		@Override
 		public View getViewForListElement(LayoutInflater layoutInflater,
 				Context context, View view) {
-			ContentHolderView contentHolderView = null;
-			// if(view == null){
-			contentHolderView = new ContentHolderView();
-			view = layoutInflater.inflate(getLayoutId(), null);
-			contentHolderView.headImg = (SmartImageView) view
-					.findViewById(R.id.head_image);
-			contentHolderView.name = (TextView) view.findViewById(R.id.name);
-			contentHolderView.friend_button2 = (Button) view
-					.findViewById(R.id.friend_button2);
-			contentHolderView.friend_button2.setVisibility(View.VISIBLE);
-			contentHolderView.friend_button2
-					.setOnClickListener(FriendContactAdapter.this);
-			view.setTag(contentHolderView);
-			// }else{
-			// contentHolderView = (ContentHolderView) view.getTag();
-			// }
-			if (friend != null) {
-				if (Constant.FriendType.friend_contact_use == friend.getType()) {
-					if(friend.getName() == null){
-						contentHolderView.name.setText(friend.getNick());
-					}else {
-						contentHolderView.name.setText(friend.getNick()+ "(" + friend.getName() + ")");
+			try {
+				ContentHolderView contentHolderView = null;
+				// if(view == null){
+				contentHolderView = new ContentHolderView();
+				view = layoutInflater.inflate(getLayoutId(), null);
+				contentHolderView.headImg = (SmartImageView) view
+						.findViewById(R.id.head_image);
+				contentHolderView.name = (TextView) view.findViewById(R.id.name);
+				contentHolderView.friend_button2 = (Button) view
+						.findViewById(R.id.friend_button2);
+				contentHolderView.friend_button2.setVisibility(View.VISIBLE);
+				contentHolderView.friend_button2
+				.setOnClickListener(FriendContactAdapter.this);
+				view.setTag(contentHolderView);
+				// }else{
+				// contentHolderView = (ContentHolderView) view.getTag();
+				// }
+				if (friend != null) {
+					if (Constant.FriendType.friend_contact_use == friend.getType()) {
+						if(friend.getName() == null){
+							contentHolderView.name.setText(friend.getNick());
+						}else {
+							contentHolderView.name.setText(friend.getNick()+ "(" + friend.getName() + ")");
+						}
+						contentHolderView.friend_button2.setText(context
+								.getResources().getString(R.string.friend_add));
+						contentHolderView.friend_button2.setTag(this);
+						contentHolderView.headImg.setImageUrl(
+								friend.getHeadImagePath(),
+								R.drawable.friend_item_img,
+								R.drawable.friend_item_img);
+					} else if (Constant.FriendType.friend_contact == friend
+							.getType()) {
+						contentHolderView.name.setText(friend.getName());
+						contentHolderView.friend_button2.setText(context
+								.getResources().getString(R.string.friend_invite));
+						contentHolderView.friend_button2.setTag(this);
 					}
-					contentHolderView.friend_button2.setText(context
-							.getResources().getString(R.string.friend_add));
-					contentHolderView.friend_button2.setTag(this);
-					contentHolderView.headImg.setImageUrl(
-							friend.getHeadImagePath(),
-							R.drawable.friend_item_img,
-							R.drawable.friend_item_img);
-				} else if (Constant.FriendType.friend_contact == friend
-						.getType()) {
-					contentHolderView.name.setText(friend.getName());
-					contentHolderView.friend_button2.setText(context
-							.getResources().getString(R.string.friend_invite));
-					contentHolderView.friend_button2.setTag(this);
 				}
+			} catch (Exception e) {
+				ScheduleApplication.logException(getClass(), e);
 			}
 			return view;
 		}
@@ -273,39 +278,42 @@ public class FriendContactAdapter extends BaseAdapter
 
 	@Override
 	public void onClick(View v) {
-		// TODO Auto-generated method stub
-		ContentListElement element = (ContentListElement) v.getTag();
-		Friend friend = element.getFriend();
-		switch (friend.getType()) {
-			case Constant.FriendType.friend_contact_use :
-				int result = serverInterface.inviteFriend(
-						String.valueOf(ServiceManager.getUserId()),
-						friend.getId());
-				String info = "";
-				if (0 == result || -3 == result) {
-					info = "发送好友请求成功";
-				} else if (-2 == result) {
-					info ="对方已经是好友";
-					removeFriendContactUse(element);
-					notifyDataSetChanged();
-					ListViewUtil.setListViewHeightBasedOnChildren(getListView());
-					database.updateContactType(
+		try {
+			ContentListElement element = (ContentListElement) v.getTag();
+			Friend friend = element.getFriend();
+			switch (friend.getType()) {
+				case Constant.FriendType.friend_contact_use :
+					int result = serverInterface.inviteFriend(
+							String.valueOf(ServiceManager.getUserId()),
+							friend.getId());
+					String info = "";
+					if (0 == result || -3 == result) {
+						info = "发送好友请求成功";
+					} else if (-2 == result) {
+						info ="对方已经是好友";
+						removeFriendContactUse(element);
+						notifyDataSetChanged();
+						ListViewUtil.setListViewHeightBasedOnChildren(getListView());
+						database.updateContactType(
 								database.queryContactIdByTel(friend.getTelephone()),
 								Constant.FriendType.friend_yes,
 								friend.getId());
 						
-					friendAdapter.getFriends().add(friend);
-					friendAdapter.notifyDataSetChanged();
-					ListViewUtil.setListViewHeightBasedOnChildren(friendAdapter.getListView());
-				} else {
-					info = "添加好友失败";
-				}
-				Toast.makeText(context, info, Toast.LENGTH_LONG).show();
-				break;
-			case Constant.FriendType.friend_contact :
+						friendAdapter.getFriends().add(friend);
+						friendAdapter.notifyDataSetChanged();
+						ListViewUtil.setListViewHeightBasedOnChildren(friendAdapter.getListView());
+					} else {
+						info = "添加好友失败";
+					}
+					Toast.makeText(context, info, Toast.LENGTH_LONG).show();
+					break;
+				case Constant.FriendType.friend_contact :
 //				goToShare();
-				sendSMS(friend.getTelephone());
-				break;
+					sendSMS(friend.getTelephone());
+					break;
+			}
+		} catch (Exception e) {
+			ScheduleApplication.logException(getClass(), e);
 		}
 
 	}

@@ -227,68 +227,71 @@ public class NewScheduleScreen extends Screen implements OnClickListener {
 
 	@Override
 	public void onClick(View v) {
-		// TODO Auto-generated method stub
-		if (v.getId() == backBtn.getId()) {
-
-			checkQuit();
-
-		} else if (v.getId() == saveBtn.getId()) {
-
-			oper_flag = DatabaseHelper.SCHEDULE_OPER_ADD;
-			scheduleText = schedule_text.getText().toString();
-			// 日程内容为空，则提示用户
-			if ("".equals(scheduleText.toString().trim())) {
-				Toast.makeText(NewScheduleScreen.this, "内容不能为空",
-						Toast.LENGTH_SHORT).show();
-			} else {
-
-				// 将日程保存到数据库中
-				saveScheduleToDb();
-				this.finish();
+		try {
+			if (v.getId() == backBtn.getId()) {
+				
+				checkQuit();
+				
+			} else if (v.getId() == saveBtn.getId()) {
+				
+				oper_flag = DatabaseHelper.SCHEDULE_OPER_ADD;
+				scheduleText = schedule_text.getText().toString();
+				// 日程内容为空，则提示用户
+				if ("".equals(scheduleText.toString().trim())) {
+					Toast.makeText(NewScheduleScreen.this, "内容不能为空",
+							Toast.LENGTH_SHORT).show();
+				} else {
+					
+					// 将日程保存到数据库中
+					saveScheduleToDb();
+					this.finish();
+				}
+				
+			} else if (v.getId() == share.getId()) {
+				if (mShare == false && ServiceManager.getUserId() == 0) {
+					Toast.makeText(NewScheduleScreen.this, "请登录以后再分享日程",
+							Toast.LENGTH_SHORT).show();
+					return;
+				}
+				
+				// 判断时间是否可以分享，如果大于当前时间则可以分享
+				if (mShare == false) {
+					mShare = true;
+					shareImg.setImageResource(R.drawable.schedule_new_share_select);
+					
+				} else {
+					mShare = false;
+					shareImg.setImageResource(R.drawable.schedule_new_share);
+				}
+				
+			} else if (v.getId() == remind.getId()) {
+				
+				alarmPopwindow.show(v);
+				
+			} else if (v.getId() == event.getId()) {
+				if (eventTypeDialog.isShowing()) {
+					
+					Log.d("eventTypeDialog", "---------showing");
+					eventTypeDialog.cancel();
+					
+				} else {
+					
+					int y = schedule_top.getHeight()
+							+ event_addtion_linear.getHeight() + screenHeight / 8
+							/ 2 - screenHeight / 2;
+					eventTypeDialog.setPosition(0, y);
+					eventTypeDialog.setCanceledOnTouchOutside(true);
+					eventTypeDialog.show();
+				}
+				
+			} else if (v.getId() == dateView.getId()) {
+				
+				// 启动时间选择器
+				timeselectordialog.setCurrentItem(startTime);
+				timeselectordialog.show();
 			}
-
-		} else if (v.getId() == share.getId()) {
-			if (mShare == false && ServiceManager.getUserId() == 0) {
-				Toast.makeText(NewScheduleScreen.this, "请登录以后再分享日程",
-						Toast.LENGTH_SHORT).show();
-				return;
-			}
-
-			// 判断时间是否可以分享，如果大于当前时间则可以分享
-			if (mShare == false) {
-				mShare = true;
-				shareImg.setImageResource(R.drawable.schedule_new_share_select);
-
-			} else {
-				mShare = false;
-				shareImg.setImageResource(R.drawable.schedule_new_share);
-			}
-
-		} else if (v.getId() == remind.getId()) {
-
-			alarmPopwindow.show(v);
-
-		} else if (v.getId() == event.getId()) {
-			if (eventTypeDialog.isShowing()) {
-
-				Log.d("eventTypeDialog", "---------showing");
-				eventTypeDialog.cancel();
-
-			} else {
-
-				int y = schedule_top.getHeight()
-						+ event_addtion_linear.getHeight() + screenHeight / 8
-						/ 2 - screenHeight / 2;
-				eventTypeDialog.setPosition(0, y);
-				eventTypeDialog.setCanceledOnTouchOutside(true);
-				eventTypeDialog.show();
-			}
-
-		} else if (v.getId() == dateView.getId()) {
-
-			// 启动时间选择器
-			timeselectordialog.setCurrentItem(startTime);
-			timeselectordialog.show();
+		} catch (Exception e) {
+			ScheduleApplication.logException(getClass(),e);
 		}
 	}
 

@@ -10,8 +10,6 @@ import android.text.SpannableString;
 import android.text.Spanned;
 import android.text.style.RelativeSizeSpan;
 import android.text.style.StyleSpan;
-import android.util.Log;
-import android.util.TimeUtils;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -41,7 +39,7 @@ public class CalendarAdapter extends BaseAdapter {
 	//
 	// private int[] schDateTagFlag = null; //存储当月所有的日程日期
 	//
-	private int height;
+//	private int height;
 	private int old_position = -1;
 
 	private int height1;
@@ -59,64 +57,66 @@ public class CalendarAdapter extends BaseAdapter {
 
 	}
 
-	public CalendarAdapter(Context context, int height,
-			CalendarData calendarData) {
+	public CalendarAdapter(Context context, int height, CalendarData calendarData) {
+		try {
+			Date date = new Date();
+			SimpleDateFormat sdf = new SimpleDateFormat("yyyy-M-d");
+			String currentDate = sdf.format(date); // 当前日期
+			currentDay = currentDate.split("-")[2];
+			selectedDay = currentDay;
+			this.context = context;
+//			this.height = height;
+			this.calendarData = calendarData;
+			this.dayNumber = calendarData.getDayNumber();
+			// this.schDateTagFlag = calendarData.getSchDateTagFlag();
+			this.isCurrentMonth = String.valueOf(date.getYear() + 1900).equals(
+					calendarData.getShowYear())
+					&& String.valueOf(date.getMonth() + 1).equals(calendarData.getShowMonth());
 
-		Date date = new Date();
-		SimpleDateFormat sdf = new SimpleDateFormat("yyyy-M-d");
-		String currentDate = sdf.format(date); // 当前日期
-		currentDay = currentDate.split("-")[2];
-		selectedDay = currentDay;
-		this.context = context;
-		this.height = height;
-		this.calendarData = calendarData;
-		this.dayNumber = calendarData.getDayNumber();
-		// this.schDateTagFlag = calendarData.getSchDateTagFlag();
-		this.isCurrentMonth = String.valueOf(date.getYear()+1900).equals(
-				calendarData.getShowYear())
-				&& String.valueOf(date.getMonth()+1).equals(
-						calendarData.getShowMonth()); 
-
-		if (height % 6 == 0) {
-			height1 = height2 = height / 6;
-		} else {
-			height1 = height / 6;
-			height2 = height / 6 + height % 6;
+			if (height % 6 == 0) {
+				height1 = height2 = height / 6;
+			} else {
+				height1 = height / 6;
+				height2 = height / 6 + height % 6;
+			}
+		} catch (Exception e) {
+			ScheduleApplication.logException(getClass(), e);
 		}
 
 	}
-	
-	public CalendarAdapter(Context context, int height,
-			CalendarData calendarData, String selDay) {
-		Date date = new Date();
-		SimpleDateFormat sdf = new SimpleDateFormat("yyyy-M-d");
-		String currentDate = sdf.format(date); // 当前日期
-		currentDay = currentDate.split("-")[2];
-		
-		ScheduleApplication.LogD(getClass(), "selectDay ="+selDay);
-		long time = DateTimeUtils.time2Long("yyyy.MM.dd", selDay);
-		ScheduleApplication.LogD(getClass(), "time ="+time);
- 		String selday = DateTimeUtils.time2String("d",time ) ;
- 		ScheduleApplication.LogD(getClass(), "currenday ="+selday);
- 		selectedDay = selday;
-		this.context = context;
-		this.height = height;
-		this.calendarData = calendarData;
-		this.dayNumber = calendarData.getDayNumber();
-		// this.schDateTagFlag = calendarData.getSchDateTagFlag();
-		
-		this.isCurrentMonth = String.valueOf(date.getYear()+1900).equals(
-				calendarData.getShowYear())
-				&& String.valueOf(date.getMonth()+1).equals(
-						calendarData.getShowMonth()); 
 
-		if (height % 6 == 0) {
-			height1 = height2 = height / 6;
-		} else {
-			height1 = height / 6;
-			height2 = height / 6 + height % 6;
+	public CalendarAdapter(Context context, int height, CalendarData calendarData, String selDay) {
+		try {
+			Date date = new Date();
+			SimpleDateFormat sdf = new SimpleDateFormat("yyyy-M-d");
+			String currentDate = sdf.format(date); // 当前日期
+			currentDay = currentDate.split("-")[2];
+
+			ScheduleApplication.LogD(getClass(), "selectDay =" + selDay);
+			long time = DateTimeUtils.time2Long("yyyy.MM.dd", selDay);
+			ScheduleApplication.LogD(getClass(), "time =" + time);
+			String selday = DateTimeUtils.time2String("d", time);
+			ScheduleApplication.LogD(getClass(), "currenday =" + selday);
+			selectedDay = selday;
+			this.context = context;
+//			this.height = height;
+			this.calendarData = calendarData;
+			this.dayNumber = calendarData.getDayNumber();
+			// this.schDateTagFlag = calendarData.getSchDateTagFlag();
+
+			this.isCurrentMonth = String.valueOf(date.getYear() + 1900).equals(
+					calendarData.getShowYear())
+					&& String.valueOf(date.getMonth() + 1).equals(calendarData.getShowMonth());
+
+			if (height % 6 == 0) {
+				height1 = height2 = height / 6;
+			} else {
+				height1 = height / 6;
+				height2 = height / 6 + height % 6;
+			}
+		} catch (Exception e) {
+			ScheduleApplication.logException(getClass(), e);
 		}
-
 	}
 
 	@Override
@@ -141,89 +141,82 @@ public class CalendarAdapter extends BaseAdapter {
 	public View getView(int position, View convertView, ViewGroup parent) {
 
 		try {
-		if (convertView == null) {
-			convertView = LayoutInflater.from(context).inflate(
-					R.layout.calendar, null);
-		}
-		RelativeLayout layout = (RelativeLayout) convertView
-				.findViewById(R.id.calendar_layout);
-		TextView calendar_number = (TextView) convertView
-				.findViewById(R.id.calendar_number);
-		if (position < 7) {
-			calendar_number.setHeight(height2);
-		} else {
-			calendar_number.setHeight(height1);
-		}
-		TextView calendar_schedule_number = (TextView) convertView
-				.findViewById(R.id.calendar_schedule_number);
-		ImageView holiday = (ImageView) convertView
-				.findViewById(R.id.calendar_holiday);
-		String d = dayNumber[position].split("\\.")[0];
-		String dv = dayNumber[position].split("\\.")[1];
-		String temp = dv;
-		int length = dayNumber[position].length();
-		if (dv.contains(LunarCalendar.suffix)) {
-			length -= 1;
-			dv = dv.substring(0, dv.indexOf(LunarCalendar.suffix));
-			holiday.setImageResource(R.drawable.other_holiday);
-		}
-		// Typeface typeface = Typeface.createFromAsset(context.getAssets(),
-		// "fonts/Helvetica.ttf");
-		// textView.setTypeface(typeface);
-		SpannableString sp = new SpannableString(d + "\n" + dv);
-		sp.setSpan(new StyleSpan(android.graphics.Typeface.BOLD), 0,
-				d.length(), Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
-		sp.setSpan(new RelativeSizeSpan(1.2f), 0, d.length(),
-				Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
-		if (dv != null || dv != "") {
-			sp.setSpan(new RelativeSizeSpan(0.75f), d.length() + 1, /*
-																	 * dayNumber[
-																	 * position
-																	 * ].
-																	 * length()
-																	 */length,
+			if (convertView == null) {
+				convertView = LayoutInflater.from(context).inflate(R.layout.calendar, null);
+			}
+			RelativeLayout layout = (RelativeLayout) convertView.findViewById(R.id.calendar_layout);
+			TextView calendar_number = (TextView) convertView.findViewById(R.id.calendar_number);
+			if (position < 7) {
+				calendar_number.setHeight(height2);
+			} else {
+				calendar_number.setHeight(height1);
+			}
+			TextView calendar_schedule_number = (TextView) convertView
+					.findViewById(R.id.calendar_schedule_number);
+			ImageView holiday = (ImageView) convertView.findViewById(R.id.calendar_holiday);
+			String d = dayNumber[position].split("\\.")[0];
+			String dv = dayNumber[position].split("\\.")[1];
+			String temp = dv;
+			int length = dayNumber[position].length();
+			if (dv.contains(LunarCalendar.suffix)) {
+				length -= 1;
+				dv = dv.substring(0, dv.indexOf(LunarCalendar.suffix));
+				holiday.setImageResource(R.drawable.other_holiday);
+			}
+			// Typeface typeface = Typeface.createFromAsset(context.getAssets(),
+			// "fonts/Helvetica.ttf");
+			// textView.setTypeface(typeface);
+			SpannableString sp = new SpannableString(d + "\n" + dv);
+			sp.setSpan(new StyleSpan(android.graphics.Typeface.BOLD), 0, d.length(),
 					Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
-		}
-		// sp.setSpan(new ForegroundColorSpan(Color.MAGENTA), 14, 16,
-		// Spanned.SPAN_EXCLUSIVE_EXCLUSIVE)
-		calendar_number.setText(sp);
-		calendar_number.setTextColor(Color.GRAY);
+			sp.setSpan(new RelativeSizeSpan(1.2f), 0, d.length(), Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
+			if (dv != null || dv != "") {
+				sp.setSpan(new RelativeSizeSpan(0.75f), d.length() + 1, /*
+																		 * dayNumber
+																		 * [
+																		 * position
+																		 * ].
+																		 * length
+																		 * ()
+																		 */length,
+						Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
+			}
+			// sp.setSpan(new ForegroundColorSpan(Color.MAGENTA), 14, 16,
+			// Spanned.SPAN_EXCLUSIVE_EXCLUSIVE)
+			calendar_number.setText(sp);
+			calendar_number.setTextColor(Color.GRAY);
 
-		if (position < calendarData.getDaysOfMonth()
-				+ calendarData.getDayOfWeek() + calendarData.getDaysOfWeek()
-				&& position >= calendarData.getDayOfWeek()
-						+ calendarData.getDaysOfWeek()) {
-			if (temp.contains(LunarCalendar.suffix)) {
-				holiday.setImageResource(R.drawable.current_holiday);
-			}
-			// 当前月信息显示
-			calendar_number.setTextColor(Color.BLACK);// 当月字体设黑
+			if (position < calendarData.getDaysOfMonth() + calendarData.getDayOfWeek()
+					+ calendarData.getDaysOfWeek()
+					&& position >= calendarData.getDayOfWeek() + calendarData.getDaysOfWeek()) {
+				if (temp.contains(LunarCalendar.suffix)) {
+					holiday.setImageResource(R.drawable.current_holiday);
+				}
+				// 当前月信息显示
+				calendar_number.setTextColor(Color.BLACK);// 当月字体设黑
 
-			if (calendarData.getMarkcount()[Integer.parseInt(d)] > 0) {
-				// 设置日程标记背景
-				calendar_schedule_number.setVisibility(View.VISIBLE);
-				calendar_schedule_number
-						.setText(calendarData.getMarkcount()[Integer
-								.parseInt(d)] + "");
-				calendar_schedule_number
-						.setBackgroundResource(R.drawable.calendar_schedule_number_bg);
-				holiday.setImageDrawable(null);
+				if (calendarData.getMarkcount()[Integer.parseInt(d)] > 0) {
+					// 设置日程标记背景
+					calendar_schedule_number.setVisibility(View.VISIBLE);
+					calendar_schedule_number.setText(calendarData.getMarkcount()[Integer
+							.parseInt(d)] + "");
+					calendar_schedule_number
+							.setBackgroundResource(R.drawable.calendar_schedule_number_bg);
+					holiday.setImageDrawable(null);
+				}
+				if (d.equals(currentDay) && isCurrentMonth) {
+					// 设置当天的背景
+					calendar_number.setTextColor(context.getResources().getColor(
+							R.color.current_day));
+				}
+
+				if (d.equals(selectedDay)) {
+					layout.setBackgroundColor(context.getResources().getColor(R.color.selector));
+					setOldPosition(position);
+				}
 			}
-			if (d.equals(currentDay) && isCurrentMonth) {
-				// 设置当天的背景
-				calendar_number.setTextColor(context.getResources().getColor(
-						R.color.current_day));
-			}
-			
-			if (d.equals(selectedDay)) {
-				layout.setBackgroundColor(context.getResources().getColor(
-						R.color.selector));
-				setOldPosition(position);
-			}
-		}
 		} catch (Exception e) {
-			ScheduleApplication.LogD(getClass(), "catch Exception");
-			e.printStackTrace();
+			ScheduleApplication.logException(getClass(), e);
 		}
 
 		return convertView;
@@ -235,10 +228,8 @@ public class CalendarAdapter extends BaseAdapter {
 			Date d = sdf.parse(date);
 			time = d.getTime();
 		} catch (ParseException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			ScheduleApplication.logException(getClass(), e);
 		}
-
 		return time;
 	}
 

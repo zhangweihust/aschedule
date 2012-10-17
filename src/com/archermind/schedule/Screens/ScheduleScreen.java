@@ -209,30 +209,34 @@ public class ScheduleScreen extends Screen
 		handler = new Handler() {
 
 			public void handleMessage(Message msg) {
-				switch (msg.what) {
-					case LOAD_DATA_OVER:
-						hsa.setData(listdata);
-						onLoad();
-						break;
-
-					case LOAD_OVERD_GOTO_TODAY :
-						// hsa.setData(listdata);
-						gototodaypos();
-						schedule_headview_prompt
-								.setText(getHeadViewText(getDateByMillisTime(System
-										.currentTimeMillis())));
-						break;
-					case LOCAL_SCHEDULE_UPDATE_OVER :
-						gridView.setAdapter(calV);
-						if (isUp == true && listdata != null) {
+				try {
+					switch (msg.what) {
+						case LOAD_DATA_OVER:
 							hsa.setData(listdata);
-						}
-						gototoday.setVisibility(View.INVISIBLE);
-						schedule_headview_prompt
-								.setText(getHeadViewText(curSelectedDate));
-						break;
+							onLoad();
+							break;
+							
+						case LOAD_OVERD_GOTO_TODAY :
+							// hsa.setData(listdata);
+							gototodaypos();
+							schedule_headview_prompt
+							.setText(getHeadViewText(getDateByMillisTime(System
+									.currentTimeMillis())));
+							break;
+						case LOCAL_SCHEDULE_UPDATE_OVER :
+							gridView.setAdapter(calV);
+							if (isUp == true && listdata != null) {
+								hsa.setData(listdata);
+							}
+							gototoday.setVisibility(View.INVISIBLE);
+							schedule_headview_prompt
+							.setText(getHeadViewText(curSelectedDate));
+							break;
+					}
+					super.handleMessage(msg);
+				} catch (Exception e) {
+					ScheduleApplication.logException(getClass(),e);
 				}
-				super.handleMessage(msg);
 			}
 		};
 
@@ -502,64 +506,68 @@ public class ScheduleScreen extends Screen
 	@Override
 	public boolean onFling(MotionEvent e1, MotionEvent e2, float velocityX,
 			float velocityY) {
-		System.out
-				.println("e1.getX() - e2.getX() = " + (e1.getX() - e2.getX()));
-		System.out.println("velocityX = " + velocityX + "     velocityY = "
-				+ velocityY);
-		int gvFlag = 0; // 每次添加gridview到viewflipper中时给的标记
-		if (e1.getX() - e2.getX() > 100) {
-
-			long pretime = System.currentTimeMillis();
-			// 向左滑动
-			addGridView(); // 添加一个gridview
-			jumpMonth++; // 下一个月
-
-			calendarData = new CalendarData(ScheduleScreen.this, jumpMonth,
-					jumpYear, year_c, month_c, day_c, Constant.flagType);
-			ScheduleApplication.LogD(getClass(),
-					"获取数据花费时间是：" + (System.currentTimeMillis() - pretime));
-			calV = new CalendarAdapter(this, flipper.getHeight(), calendarData);
-			gridView.setAdapter(calV);
-			ScheduleApplication.LogD(getClass(),
-					"设置到view里面的时间：" + (System.currentTimeMillis() - pretime));
-			// flipper.addView(gridView);
-			gvFlag++;
-			flipper.addView(gridView, gvFlag);
-			this.flipper.setInAnimation(AnimationUtils.loadAnimation(this,
-					R.anim.push_left_in));
-			this.flipper.setOutAnimation(AnimationUtils.loadAnimation(this,
-					R.anim.push_left_out));
-			this.flipper.showNext();
-			flipper.removeViewAt(0);
-
-			setScheduleData();
-
-			ScheduleApplication.LogD(getClass(),
-					"总共的时间" + (System.currentTimeMillis() - pretime));
-
-			return true;
-		} else if (e1.getX() - e2.getX() < -100) {
-			// 向右滑动
-			addGridView(); // 添加一个gridview
-			jumpMonth--; // 上一个月
-			calendarData = new CalendarData(ScheduleScreen.this, jumpMonth,
-					jumpYear, year_c, month_c, day_c, Constant.flagType);
-			calV = new CalendarAdapter(this, flipper.getHeight(), calendarData);
-			gridView.setAdapter(calV);
-			gvFlag++;
-			// flipper.addView(gridView);
-			flipper.addView(gridView, gvFlag);
-
-			this.flipper.setInAnimation(AnimationUtils.loadAnimation(this,
-					R.anim.push_right_in));
-			this.flipper.setOutAnimation(AnimationUtils.loadAnimation(this,
-					R.anim.push_right_out));
-			this.flipper.showPrevious();
-			flipper.removeViewAt(0);
-
-			setScheduleData();
-
-			return true;
+		try {
+			System.out
+			.println("e1.getX() - e2.getX() = " + (e1.getX() - e2.getX()));
+			System.out.println("velocityX = " + velocityX + "     velocityY = "
+					+ velocityY);
+			int gvFlag = 0; // 每次添加gridview到viewflipper中时给的标记
+			if (e1.getX() - e2.getX() > 100) {
+				
+				long pretime = System.currentTimeMillis();
+				// 向左滑动
+				addGridView(); // 添加一个gridview
+				jumpMonth++; // 下一个月
+				
+				calendarData = new CalendarData(ScheduleScreen.this, jumpMonth,
+						jumpYear, year_c, month_c, day_c, Constant.flagType);
+				ScheduleApplication.LogD(getClass(),
+						"获取数据花费时间是：" + (System.currentTimeMillis() - pretime));
+				calV = new CalendarAdapter(this, flipper.getHeight(), calendarData);
+				gridView.setAdapter(calV);
+				ScheduleApplication.LogD(getClass(),
+						"设置到view里面的时间：" + (System.currentTimeMillis() - pretime));
+				// flipper.addView(gridView);
+				gvFlag++;
+				flipper.addView(gridView, gvFlag);
+				this.flipper.setInAnimation(AnimationUtils.loadAnimation(this,
+						R.anim.push_left_in));
+				this.flipper.setOutAnimation(AnimationUtils.loadAnimation(this,
+						R.anim.push_left_out));
+				this.flipper.showNext();
+				flipper.removeViewAt(0);
+				
+				setScheduleData();
+				
+				ScheduleApplication.LogD(getClass(),
+						"总共的时间" + (System.currentTimeMillis() - pretime));
+				
+				return true;
+			} else if (e1.getX() - e2.getX() < -100) {
+				// 向右滑动
+				addGridView(); // 添加一个gridview
+				jumpMonth--; // 上一个月
+				calendarData = new CalendarData(ScheduleScreen.this, jumpMonth,
+						jumpYear, year_c, month_c, day_c, Constant.flagType);
+				calV = new CalendarAdapter(this, flipper.getHeight(), calendarData);
+				gridView.setAdapter(calV);
+				gvFlag++;
+				// flipper.addView(gridView);
+				flipper.addView(gridView, gvFlag);
+				
+				this.flipper.setInAnimation(AnimationUtils.loadAnimation(this,
+						R.anim.push_right_in));
+				this.flipper.setOutAnimation(AnimationUtils.loadAnimation(this,
+						R.anim.push_right_out));
+				this.flipper.showPrevious();
+				flipper.removeViewAt(0);
+				
+				setScheduleData();
+				
+				return true;
+			}
+		} catch (Exception e) {
+			ScheduleApplication.logException(getClass(),e);
 		}
 		return false;
 	}
@@ -771,8 +779,7 @@ public class ScheduleScreen extends Screen
 					gototoday.setVisibility(View.INVISIBLE);
 				}
 				} catch (Exception e) {
-					ScheduleApplication.LogD(getClass(), "catch Exception");
-					e.printStackTrace();
+					ScheduleApplication.logException(getClass(),e);
 				}
 			}
 		});
@@ -805,138 +812,141 @@ public class ScheduleScreen extends Screen
 	}
 	@Override
 	public void onClick(View v) {
-		// TODO Auto-generated method stub
-		int gvFlag = 0;
-		switch (v.getId()) {
-
-			case R.id.schedule_headview_prompt :
-				new Thread() {
-					public void run() {
-	
-						if (listScrollYear != curScrollYear 
-								|| listScrollMonth != curScrollMonth
-								|| listdata == null) {
-							listdata = calendarData.getMonthSchedule(curScrollYear,
-									curScrollMonth);
-							listScrollYear = curScrollYear;
-							listScrollMonth = curScrollMonth;
+		try {
+			int gvFlag = 0;
+			switch (v.getId()) {
+				
+				case R.id.schedule_headview_prompt :
+					new Thread() {
+						public void run() {
 							
-						}
-						handler.sendEmptyMessage(LOAD_DATA_OVER);
-	
-					};
-				}.start();
-				showListSchedule();
-				break;
-
-			case R.id.previous_year :// 点击上一个月
-
-				addGridView(); // 添加一个gridview
-				jumpMonth--; // 下一年
-				calendarData = new CalendarData(ScheduleScreen.this, jumpMonth,
-						jumpYear, year_c, month_c, day_c, Constant.flagType);
-				calV = new CalendarAdapter(this, flipper.getHeight(),
-						calendarData);
-				gridView.setAdapter(calV);
-				// flipper.addView(gridView);
-				
-				gvFlag++;
-				flipper.addView(gridView, gvFlag);
-				this.flipper.setInAnimation(AnimationUtils.loadAnimation(this,
-						R.anim.push_left_in));
-				this.flipper.setOutAnimation(AnimationUtils.loadAnimation(this,
-						R.anim.push_left_out));
-				this.flipper.showNext();
-				flipper.removeViewAt(0);
-
-
-				setScheduleData();
-
-
-				break;
-
-			case R.id.next_year :// 点击下一个月
-
-				addGridView(); // 添加一个gridview
-				jumpMonth++; // 上一年
-				calendarData = new CalendarData(ScheduleScreen.this, jumpMonth,
-						jumpYear, year_c, month_c, day_c, Constant.flagType);
-				calV = new CalendarAdapter(this, flipper.getHeight(),
-						calendarData);
-				gridView.setAdapter(calV);
-				gvFlag++;
-				
-				// flipper.addView(gridView);
-				flipper.addView(gridView, gvFlag);
-
-				this.flipper.setInAnimation(AnimationUtils.loadAnimation(this,
-						R.anim.push_right_in));
-				this.flipper.setOutAnimation(AnimationUtils.loadAnimation(this,
-						R.anim.push_right_out));
-				this.flipper.showPrevious();
-				flipper.removeViewAt(0);
-
-				setScheduleData();
-				
-
-				break;
-			case R.id.current_day :
-
-				int xMonth = jumpMonth;
-				int xYear = jumpYear;
-				jumpMonth = 0;
-				jumpYear = 0;
-				addGridView(); // 添加一个gridview
-				Date date = new Date();
-				SimpleDateFormat sdf = new SimpleDateFormat("yyyy-M-d");
-				String currentDate = sdf.format(date); // 当前日期
-				this.year = year_c = Integer
-						.parseInt(currentDate.split("-")[0]);
-				this.month = month_c = Integer
-						.parseInt(currentDate.split("-")[1]);
-				this.day = day_c = Integer.parseInt(currentDate.split("-")[2]);
-				calendarData = new CalendarData(ScheduleScreen.this, jumpMonth,
-						jumpYear, year_c, month_c, day_c, Constant.flagType);
-				calV = new CalendarAdapter(this, flipper.getHeight(),
-						calendarData);
-				gridView.setAdapter(calV);
-				gvFlag++;
-				flipper.addView(gridView, gvFlag);
-				if (xMonth == 0 && xYear == 0) {
-					// nothing to do
-				} else if ((xYear == 0 && xMonth > 0) || xYear > 0) {
-					this.flipper.setInAnimation(AnimationUtils.loadAnimation(
-							this, R.anim.push_left_in));
-					this.flipper.setOutAnimation(AnimationUtils.loadAnimation(
-							this, R.anim.push_left_out));
+							if (listScrollYear != curScrollYear 
+									|| listScrollMonth != curScrollMonth
+									|| listdata == null) {
+								listdata = calendarData.getMonthSchedule(curScrollYear,
+										curScrollMonth);
+								listScrollYear = curScrollYear;
+								listScrollMonth = curScrollMonth;
+								
+							}
+							handler.sendEmptyMessage(LOAD_DATA_OVER);
+							
+						};
+					}.start();
+					showListSchedule();
+					break;
+					
+				case R.id.previous_year :// 点击上一个月
+					
+					addGridView(); // 添加一个gridview
+					jumpMonth--; // 下一年
+					calendarData = new CalendarData(ScheduleScreen.this, jumpMonth,
+							jumpYear, year_c, month_c, day_c, Constant.flagType);
+					calV = new CalendarAdapter(this, flipper.getHeight(),
+							calendarData);
+					gridView.setAdapter(calV);
+					// flipper.addView(gridView);
+					
+					gvFlag++;
+					flipper.addView(gridView, gvFlag);
+					this.flipper.setInAnimation(AnimationUtils.loadAnimation(this,
+							R.anim.push_left_in));
+					this.flipper.setOutAnimation(AnimationUtils.loadAnimation(this,
+							R.anim.push_left_out));
 					this.flipper.showNext();
-				} else {
-					this.flipper.setInAnimation(AnimationUtils.loadAnimation(
-							this, R.anim.push_right_in));
-					this.flipper.setOutAnimation(AnimationUtils.loadAnimation(
-							this, R.anim.push_right_out));
+					flipper.removeViewAt(0);
+					
+					
+					setScheduleData();
+					
+					
+					break;
+					
+				case R.id.next_year :// 点击下一个月
+					
+					addGridView(); // 添加一个gridview
+					jumpMonth++; // 上一年
+					calendarData = new CalendarData(ScheduleScreen.this, jumpMonth,
+							jumpYear, year_c, month_c, day_c, Constant.flagType);
+					calV = new CalendarAdapter(this, flipper.getHeight(),
+							calendarData);
+					gridView.setAdapter(calV);
+					gvFlag++;
+					
+					// flipper.addView(gridView);
+					flipper.addView(gridView, gvFlag);
+					
+					this.flipper.setInAnimation(AnimationUtils.loadAnimation(this,
+							R.anim.push_right_in));
+					this.flipper.setOutAnimation(AnimationUtils.loadAnimation(this,
+							R.anim.push_right_out));
 					this.flipper.showPrevious();
-				}
-				flipper.removeViewAt(0);
-
-
-						// handler.post(new Runnable() {
-						//
-						// @Override
-						// public void run() {
-						// // TODO Auto-generated method stub
-						// handler.sendEmptyMessage(LOAD_OVERD_GOTO_TODAY);
-						// }
-						// });
-				setScheduleData();
-
-				// 点击回到今天，把值设置到今天
-				curSelectedDate = getDateByMillisTime(System
-						.currentTimeMillis());
-				curDay = DateTimeUtils.time2String("dd",
-						System.currentTimeMillis());
-
-				break;
+					flipper.removeViewAt(0);
+					
+					setScheduleData();
+					
+					
+					break;
+				case R.id.current_day :
+					
+					int xMonth = jumpMonth;
+					int xYear = jumpYear;
+					jumpMonth = 0;
+					jumpYear = 0;
+					addGridView(); // 添加一个gridview
+					Date date = new Date();
+					SimpleDateFormat sdf = new SimpleDateFormat("yyyy-M-d");
+					String currentDate = sdf.format(date); // 当前日期
+					this.year = year_c = Integer
+							.parseInt(currentDate.split("-")[0]);
+					this.month = month_c = Integer
+							.parseInt(currentDate.split("-")[1]);
+					this.day = day_c = Integer.parseInt(currentDate.split("-")[2]);
+					calendarData = new CalendarData(ScheduleScreen.this, jumpMonth,
+							jumpYear, year_c, month_c, day_c, Constant.flagType);
+					calV = new CalendarAdapter(this, flipper.getHeight(),
+							calendarData);
+					gridView.setAdapter(calV);
+					gvFlag++;
+					flipper.addView(gridView, gvFlag);
+					if (xMonth == 0 && xYear == 0) {
+						// nothing to do
+					} else if ((xYear == 0 && xMonth > 0) || xYear > 0) {
+						this.flipper.setInAnimation(AnimationUtils.loadAnimation(
+								this, R.anim.push_left_in));
+						this.flipper.setOutAnimation(AnimationUtils.loadAnimation(
+								this, R.anim.push_left_out));
+						this.flipper.showNext();
+					} else {
+						this.flipper.setInAnimation(AnimationUtils.loadAnimation(
+								this, R.anim.push_right_in));
+						this.flipper.setOutAnimation(AnimationUtils.loadAnimation(
+								this, R.anim.push_right_out));
+						this.flipper.showPrevious();
+					}
+					flipper.removeViewAt(0);
+					
+					
+					// handler.post(new Runnable() {
+					//
+					// @Override
+					// public void run() {
+					// // TODO Auto-generated method stub
+					// handler.sendEmptyMessage(LOAD_OVERD_GOTO_TODAY);
+					// }
+					// });
+					setScheduleData();
+					
+					// 点击回到今天，把值设置到今天
+					curSelectedDate = getDateByMillisTime(System
+							.currentTimeMillis());
+					curDay = DateTimeUtils.time2String("dd",
+							System.currentTimeMillis());
+					
+					break;
+			}
+		} catch (Exception e) {
+			ScheduleApplication.logException(getClass(),e);
 		}
 	}
 
