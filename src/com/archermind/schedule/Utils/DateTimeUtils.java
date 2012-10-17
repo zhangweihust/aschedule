@@ -152,43 +152,141 @@ public class DateTimeUtils {
 	 */
 	public static long getNextAlarmTime(boolean isStage, long startStage,
 			long endStage, long setTime, String mode, String week) {
-		Calendar tmpTime = Calendar.getInstance(Locale.CHINA);
-		tmpTime.setTimeInMillis(endStage);
-		tmpTime.add(Calendar.DAY_OF_MONTH, 1);
-		endStage = tmpTime.getTimeInMillis();
-		Calendar time = Calendar.getInstance(Locale.CHINA);
-		long currentTime = System.currentTimeMillis();
-		System.out
-				.println("currentTime:"
-						+ DateTimeUtils.time2String("yyyy-MM-dd hh:mm:ss",
-								currentTime));
-		if (isStage) {// 设置了闹钟的区间段，开始时间startStage，结束时间endStage
-			if (currentTime < startStage) {
-				time.setTimeInMillis(setTime);// 取得闹钟设置的时刻，并换算为时间段开始的那一天
-				time.set(Calendar.YEAR, Integer.parseInt(DateTimeUtils
-						.time2String("yyyy", startStage)));
-				time.set(Calendar.MONTH, Integer.parseInt(DateTimeUtils
-						.time2String("MM", startStage)) - 1);
-				time.set(Calendar.DAY_OF_MONTH, Integer.parseInt(DateTimeUtils
-						.time2String("dd", startStage)));
-				if (DatabaseHelper.SCHEDULE_NOTICE_PERIOD_MODE_NONE
-						.equals(mode)) {// 闹钟没有重复
-					return time.getTimeInMillis();
-				} else if (DatabaseHelper.SCHEDULE_NOTICE_PERIOD_MODE_DAY
-						.equals(mode)) {// 闹钟按天重复
-					return time.getTimeInMillis();
-				} else if (DatabaseHelper.SCHEDULE_NOTICE_PERIOD_MODE_YEAR
-						.equals(mode)) {// 闹钟按年重复
-					return time.getTimeInMillis();
-				} else if (DatabaseHelper.SCHEDULE_NOTICE_PERIOD_MODE_MONTH
-						.equals(mode)) {// 闹钟按月重复
-					return time.getTimeInMillis();
-				} else if (DatabaseHelper.SCHEDULE_NOTICE_PERIOD_MODE_WEEK
-						.equals(mode)) {// 闹钟按周重复
-					int weekDay = getWeekDay(time);
-					if (week.contains(String.valueOf(weekDay))) {// 周重复里面包含了阶段第一天
+		try {
+			Calendar tmpTime = Calendar.getInstance(Locale.CHINA);
+			tmpTime.setTimeInMillis(endStage);
+			tmpTime.add(Calendar.DAY_OF_MONTH, 1);
+			endStage = tmpTime.getTimeInMillis();
+			Calendar time = Calendar.getInstance(Locale.CHINA);
+			long currentTime = System.currentTimeMillis();
+			System.out
+					.println("currentTime:"
+							+ DateTimeUtils.time2String("yyyy-MM-dd hh:mm:ss",
+									currentTime));
+			if (isStage) {// 设置了闹钟的区间段，开始时间startStage，结束时间endStage
+				if (currentTime < startStage) {
+					time.setTimeInMillis(setTime);// 取得闹钟设置的时刻，并换算为时间段开始的那一天
+					time.set(Calendar.YEAR, Integer.parseInt(DateTimeUtils
+							.time2String("yyyy", startStage)));
+					time.set(Calendar.MONTH, Integer.parseInt(DateTimeUtils
+							.time2String("MM", startStage)) - 1);
+					time.set(Calendar.DAY_OF_MONTH, Integer.parseInt(DateTimeUtils
+							.time2String("dd", startStage)));
+					if (DatabaseHelper.SCHEDULE_NOTICE_PERIOD_MODE_NONE
+							.equals(mode)) {// 闹钟没有重复
 						return time.getTimeInMillis();
-					} else {
+					} else if (DatabaseHelper.SCHEDULE_NOTICE_PERIOD_MODE_DAY
+							.equals(mode)) {// 闹钟按天重复
+						return time.getTimeInMillis();
+					} else if (DatabaseHelper.SCHEDULE_NOTICE_PERIOD_MODE_YEAR
+							.equals(mode)) {// 闹钟按年重复
+						return time.getTimeInMillis();
+					} else if (DatabaseHelper.SCHEDULE_NOTICE_PERIOD_MODE_MONTH
+							.equals(mode)) {// 闹钟按月重复
+						return time.getTimeInMillis();
+					} else if (DatabaseHelper.SCHEDULE_NOTICE_PERIOD_MODE_WEEK
+							.equals(mode)) {// 闹钟按周重复
+						int weekDay = getWeekDay(time);
+						if (week.contains(String.valueOf(weekDay))) {// 周重复里面包含了阶段第一天
+							return time.getTimeInMillis();
+						} else {
+							boolean flag = true;
+							while (flag) {// 循环往后遍历每一天
+								time.add(Calendar.DAY_OF_MONTH, 1);
+								weekDay = getWeekDay(time);
+								if (week.contains(String.valueOf(weekDay))) {
+									flag = false;
+									if (time.getTimeInMillis() > endStage) {// 最近的一个周几已经超出范围
+										return 0;
+									} else {
+										return time.getTimeInMillis();
+									}
+								} else {
+									if (time.getTimeInMillis() > endStage) {// 遍历的已经超出范围
+										return 0;
+									}
+								}
+							}
+						}
+					}
+				} else if (startStage < currentTime && currentTime < endStage) {// 当前事件在时间阶段内
+					time.setTimeInMillis(setTime);// 取得闹钟设置的时刻，并换算为时间段开始的那一天
+					time.set(Calendar.YEAR, Integer.parseInt(DateTimeUtils
+							.time2String("yyyy", currentTime)));
+					time.set(Calendar.MONTH, Integer.parseInt(DateTimeUtils
+							.time2String("MM", currentTime)) - 1);
+					time.set(Calendar.DAY_OF_MONTH, Integer.parseInt(DateTimeUtils
+							.time2String("dd", currentTime)));
+					String tmp = DateTimeUtils.time2String("yyyy-MM-dd HH:mm:ss",
+							time.getTimeInMillis());
+					if (DatabaseHelper.SCHEDULE_NOTICE_PERIOD_MODE_NONE
+							.equals(mode)) {// 闹钟没有重复
+						if (time.getTimeInMillis() > currentTime) {// 今天的闹钟时间还没有错过
+							return time.getTimeInMillis();
+						} else {
+							time.add(Calendar.DAY_OF_MONTH, 1);
+							tmp = DateTimeUtils.time2String("yyyy-MM-dd HH:mm:ss",
+									time.getTimeInMillis());
+							if (time.getTimeInMillis() > endStage) {// 往后移动一天超出范围
+								return 0;
+							} else {
+								return time.getTimeInMillis();
+							}
+						}
+					} else if (DatabaseHelper.SCHEDULE_NOTICE_PERIOD_MODE_DAY
+							.equals(mode)) {
+						if (time.getTimeInMillis() > currentTime) {// 今天的闹钟时间还没有错过
+							return time.getTimeInMillis();
+						} else {
+							time.add(Calendar.DAY_OF_MONTH, 1);
+							tmp = DateTimeUtils.time2String("yyyy-MM-dd HH:mm:ss",
+									time.getTimeInMillis());
+							if (time.getTimeInMillis() > endStage) {// 往后移动一天超出范围
+								return 0;
+							} else {
+								return time.getTimeInMillis();
+							}
+						}
+					} else if (DatabaseHelper.SCHEDULE_NOTICE_PERIOD_MODE_YEAR
+							.equals(mode)) {
+						time.set(Calendar.MONTH, Integer.parseInt(DateTimeUtils
+								.time2String("MM", startStage)) - 1);
+						time.set(Calendar.DAY_OF_MONTH, Integer
+								.parseInt(DateTimeUtils.time2String("dd",
+										startStage)));
+						if (time.getTimeInMillis() > currentTime) {
+							return time.getTimeInMillis();
+						} else {
+							time.add(Calendar.YEAR, 1);
+							if (time.getTimeInMillis() > endStage) {// 一年后的时间超出了范围
+								return 0;
+							} else {
+								return time.getTimeInMillis();
+							}
+						}
+					} else if (DatabaseHelper.SCHEDULE_NOTICE_PERIOD_MODE_MONTH
+							.equals(mode)) {
+						time.set(Calendar.DAY_OF_MONTH, Integer
+								.parseInt(DateTimeUtils.time2String("dd",
+										startStage)));
+						if (time.getTimeInMillis() > currentTime) {
+							return time.getTimeInMillis();
+						} else {
+							time.add(Calendar.MONTH, 1);
+							if (time.getTimeInMillis() > endStage) {// 一个月后的时间超出了范围
+								return 0;
+							} else {
+								return time.getTimeInMillis();
+							}
+						}
+					} else if (DatabaseHelper.SCHEDULE_NOTICE_PERIOD_MODE_WEEK
+							.equals(mode)) {
+						int weekDay = getWeekDay(time);
+						if (week.contains(String.valueOf(weekDay))) {// 周重复里面包含了阶段第一天
+							if (time.getTimeInMillis() > currentTime) {
+								return time.getTimeInMillis();
+							}
+						}
 						boolean flag = true;
 						while (flag) {// 循环往后遍历每一天
 							time.add(Calendar.DAY_OF_MONTH, 1);
@@ -206,231 +304,141 @@ public class DateTimeUtils {
 								}
 							}
 						}
+
 					}
+				} else if (currentTime > endStage) {// 当前时间已经超出范围，说明已经过期日志
+					return 0;
 				}
-			} else if (startStage < currentTime && currentTime < endStage) {// 当前事件在时间阶段内
+			} else {// 没有设置阶段提醒的
 				time.setTimeInMillis(setTime);// 取得闹钟设置的时刻，并换算为时间段开始的那一天
-				time.set(Calendar.YEAR, Integer.parseInt(DateTimeUtils
-						.time2String("yyyy", currentTime)));
-				time.set(Calendar.MONTH, Integer.parseInt(DateTimeUtils
-						.time2String("MM", currentTime)) - 1);
-				time.set(Calendar.DAY_OF_MONTH, Integer.parseInt(DateTimeUtils
-						.time2String("dd", currentTime)));
 				String tmp = DateTimeUtils.time2String("yyyy-MM-dd HH:mm:ss",
 						time.getTimeInMillis());
-				if (DatabaseHelper.SCHEDULE_NOTICE_PERIOD_MODE_NONE
-						.equals(mode)) {// 闹钟没有重复
-					if (time.getTimeInMillis() > currentTime) {// 今天的闹钟时间还没有错过
+				tmp = DateTimeUtils.time2String("yyyy-MM-dd HH:mm:ss", currentTime);
+				if (DatabaseHelper.SCHEDULE_NOTICE_PERIOD_MODE_NONE.equals(mode)) {// 闹钟没有重复
+					if (time.getTimeInMillis() > currentTime) {// 闹钟设置时间大于当前时间，可以设置
 						return time.getTimeInMillis();
 					} else {
-						time.add(Calendar.DAY_OF_MONTH, 1);
-						tmp = DateTimeUtils.time2String("yyyy-MM-dd HH:mm:ss",
-								time.getTimeInMillis());
-						if (time.getTimeInMillis() > endStage) {// 往后移动一天超出范围
-							return 0;
-						} else {
-							return time.getTimeInMillis();
-						}
+						return 0;
 					}
 				} else if (DatabaseHelper.SCHEDULE_NOTICE_PERIOD_MODE_DAY
 						.equals(mode)) {
-					if (time.getTimeInMillis() > currentTime) {// 今天的闹钟时间还没有错过
+					if (time.getTimeInMillis() > currentTime) {// 闹钟设置时间大于当前时间，可以设置
 						return time.getTimeInMillis();
-					} else {
-						time.add(Calendar.DAY_OF_MONTH, 1);
-						tmp = DateTimeUtils.time2String("yyyy-MM-dd HH:mm:ss",
-								time.getTimeInMillis());
-						if (time.getTimeInMillis() > endStage) {// 往后移动一天超出范围
-							return 0;
-						} else {
+					} else {// 闹钟设置时间小于当前时间，那么取当前时间设置闹钟
+						time.set(Calendar.YEAR, Integer.parseInt(DateTimeUtils
+								.time2String("yyyy", currentTime)));
+						time.set(Calendar.MONTH, Integer.parseInt(DateTimeUtils
+								.time2String("MM", currentTime)) - 1);
+						time.set(Calendar.DAY_OF_MONTH, Integer
+								.parseInt(DateTimeUtils.time2String("dd",
+										currentTime)));
+						if (time.getTimeInMillis() > currentTime) {// 今天的闹钟时间没有绰过
+							return time.getTimeInMillis();
+						} else {// 错过了今天，设置明天
+							time.add(Calendar.DAY_OF_MONTH, 1);
 							return time.getTimeInMillis();
 						}
 					}
 				} else if (DatabaseHelper.SCHEDULE_NOTICE_PERIOD_MODE_YEAR
 						.equals(mode)) {
-					time.set(Calendar.MONTH, Integer.parseInt(DateTimeUtils
-							.time2String("MM", startStage)) - 1);
-					time.set(Calendar.DAY_OF_MONTH, Integer
-							.parseInt(DateTimeUtils.time2String("dd",
-									startStage)));
-					if (time.getTimeInMillis() > currentTime) {
+					if (time.getTimeInMillis() > currentTime) {// 闹钟设置时间大于当前时间，可以设置
 						return time.getTimeInMillis();
 					} else {
-						time.add(Calendar.YEAR, 1);
-						if (time.getTimeInMillis() > endStage) {// 一年后的时间超出了范围
-							return 0;
+						time.set(Calendar.YEAR, Integer.parseInt(DateTimeUtils
+								.time2String("yyyy", currentTime)));
+						if (time.getTimeInMillis() > currentTime) {
+							return time.getTimeInMillis();
 						} else {
+							time.add(Calendar.YEAR, 1);
 							return time.getTimeInMillis();
 						}
 					}
 				} else if (DatabaseHelper.SCHEDULE_NOTICE_PERIOD_MODE_MONTH
 						.equals(mode)) {
-					time.set(Calendar.DAY_OF_MONTH, Integer
-							.parseInt(DateTimeUtils.time2String("dd",
-									startStage)));
-					if (time.getTimeInMillis() > currentTime) {
+					if (time.getTimeInMillis() > currentTime) {// 闹钟设置时间大于当前时间，可以设置
 						return time.getTimeInMillis();
 					} else {
-						time.add(Calendar.MONTH, 1);
-						if (time.getTimeInMillis() > endStage) {// 一个月后的时间超出了范围
-							return 0;
+						time.set(Calendar.YEAR, Integer.parseInt(DateTimeUtils
+								.time2String("yyyy", currentTime)));
+						time.set(Calendar.MONTH, Integer.parseInt(DateTimeUtils
+								.time2String("MM", currentTime)) - 1);
+						if (time.getTimeInMillis() > currentTime) {
+							return time.getTimeInMillis();
 						} else {
+							time.add(Calendar.MONTH, 1);
 							return time.getTimeInMillis();
 						}
 					}
 				} else if (DatabaseHelper.SCHEDULE_NOTICE_PERIOD_MODE_WEEK
 						.equals(mode)) {
 					int weekDay = getWeekDay(time);
-					if (week.contains(String.valueOf(weekDay))) {// 周重复里面包含了阶段第一天
-						if (time.getTimeInMillis() > currentTime) {
+					if (time.getTimeInMillis() > currentTime) {// 闹钟设置时间大于当前时间，可以设置
+						boolean flag = true;
+						if (week.contains(String.valueOf(weekDay))) {
 							return time.getTimeInMillis();
 						}
-					}
-					boolean flag = true;
-					while (flag) {// 循环往后遍历每一天
-						time.add(Calendar.DAY_OF_MONTH, 1);
-						weekDay = getWeekDay(time);
-						if (week.contains(String.valueOf(weekDay))) {
-							flag = false;
-							if (time.getTimeInMillis() > endStage) {// 最近的一个周几已经超出范围
-								return 0;
-							} else {
+						while (flag) {// 循环往后遍历每一天
+							time.add(Calendar.DAY_OF_MONTH, 1);
+							weekDay = getWeekDay(time);
+							if (week.contains(String.valueOf(weekDay))) {
 								return time.getTimeInMillis();
 							}
-						} else {
-							if (time.getTimeInMillis() > endStage) {// 遍历的已经超出范围
-								return 0;
+						}
+
+					} else {// 今天的闹钟错过了，设置下一次的闹钟
+						boolean flag = true;
+						time.set(Calendar.YEAR, Integer.parseInt(DateTimeUtils
+								.time2String("yyyy", currentTime)));
+						time.set(Calendar.MONTH, Integer.parseInt(DateTimeUtils
+								.time2String("MM", currentTime)) - 1);
+						time.set(Calendar.DAY_OF_MONTH, Integer
+								.parseInt(DateTimeUtils.time2String("dd",
+										currentTime)));
+						if (time.getTimeInMillis() > currentTime) {// 今天的闹钟时间没有绰过
+							if (week.contains(String.valueOf(getWeekDay(time)))) {
+								return time.getTimeInMillis();
+							}
+						}
+						while (flag) {// 循环往后遍历每一天
+							time.add(Calendar.DAY_OF_MONTH, 1);
+							weekDay = getWeekDay(time);
+							if (week.contains(String.valueOf(weekDay))) {
+								return time.getTimeInMillis();
 							}
 						}
 					}
-
-				}
-			} else if (currentTime > endStage) {// 当前时间已经超出范围，说明已经过期日志
-				return 0;
-			}
-		} else {// 没有设置阶段提醒的
-			time.setTimeInMillis(setTime);// 取得闹钟设置的时刻，并换算为时间段开始的那一天
-			String tmp = DateTimeUtils.time2String("yyyy-MM-dd HH:mm:ss",
-					time.getTimeInMillis());
-			tmp = DateTimeUtils.time2String("yyyy-MM-dd HH:mm:ss", currentTime);
-			if (DatabaseHelper.SCHEDULE_NOTICE_PERIOD_MODE_NONE.equals(mode)) {// 闹钟没有重复
-				if (time.getTimeInMillis() > currentTime) {// 闹钟设置时间大于当前时间，可以设置
-					return time.getTimeInMillis();
-				} else {
-					return 0;
-				}
-			} else if (DatabaseHelper.SCHEDULE_NOTICE_PERIOD_MODE_DAY
-					.equals(mode)) {
-				if (time.getTimeInMillis() > currentTime) {// 闹钟设置时间大于当前时间，可以设置
-					return time.getTimeInMillis();
-				} else {// 闹钟设置时间小于当前时间，那么取当前时间设置闹钟
-					time.set(Calendar.YEAR, Integer.parseInt(DateTimeUtils
-							.time2String("yyyy", currentTime)));
-					time.set(Calendar.MONTH, Integer.parseInt(DateTimeUtils
-							.time2String("MM", currentTime)) - 1);
-					time.set(Calendar.DAY_OF_MONTH, Integer
-							.parseInt(DateTimeUtils.time2String("dd",
-									currentTime)));
-					if (time.getTimeInMillis() > currentTime) {// 今天的闹钟时间没有绰过
-						return time.getTimeInMillis();
-					} else {// 错过了今天，设置明天
-						time.add(Calendar.DAY_OF_MONTH, 1);
-						return time.getTimeInMillis();
-					}
-				}
-			} else if (DatabaseHelper.SCHEDULE_NOTICE_PERIOD_MODE_YEAR
-					.equals(mode)) {
-				if (time.getTimeInMillis() > currentTime) {// 闹钟设置时间大于当前时间，可以设置
-					return time.getTimeInMillis();
-				} else {
-					time.set(Calendar.YEAR, Integer.parseInt(DateTimeUtils
-							.time2String("yyyy", currentTime)));
-					if (time.getTimeInMillis() > currentTime) {
-						return time.getTimeInMillis();
-					} else {
-						time.add(Calendar.YEAR, 1);
-						return time.getTimeInMillis();
-					}
-				}
-			} else if (DatabaseHelper.SCHEDULE_NOTICE_PERIOD_MODE_MONTH
-					.equals(mode)) {
-				if (time.getTimeInMillis() > currentTime) {// 闹钟设置时间大于当前时间，可以设置
-					return time.getTimeInMillis();
-				} else {
-					time.set(Calendar.YEAR, Integer.parseInt(DateTimeUtils
-							.time2String("yyyy", currentTime)));
-					time.set(Calendar.MONTH, Integer.parseInt(DateTimeUtils
-							.time2String("MM", currentTime)) - 1);
-					if (time.getTimeInMillis() > currentTime) {
-						return time.getTimeInMillis();
-					} else {
-						time.add(Calendar.MONTH, 1);
-						return time.getTimeInMillis();
-					}
-				}
-			} else if (DatabaseHelper.SCHEDULE_NOTICE_PERIOD_MODE_WEEK
-					.equals(mode)) {
-				int weekDay = getWeekDay(time);
-				if (time.getTimeInMillis() > currentTime) {// 闹钟设置时间大于当前时间，可以设置
-					boolean flag = true;
-					if (week.contains(String.valueOf(weekDay))) {
-						return time.getTimeInMillis();
-					}
-					while (flag) {// 循环往后遍历每一天
-						time.add(Calendar.DAY_OF_MONTH, 1);
-						weekDay = getWeekDay(time);
-						if (week.contains(String.valueOf(weekDay))) {
-							return time.getTimeInMillis();
-						}
-					}
-
-				} else {// 今天的闹钟错过了，设置下一次的闹钟
-					boolean flag = true;
-					time.set(Calendar.YEAR, Integer.parseInt(DateTimeUtils
-							.time2String("yyyy", currentTime)));
-					time.set(Calendar.MONTH, Integer.parseInt(DateTimeUtils
-							.time2String("MM", currentTime)) - 1);
-					time.set(Calendar.DAY_OF_MONTH, Integer
-							.parseInt(DateTimeUtils.time2String("dd",
-									currentTime)));
-					if (time.getTimeInMillis() > currentTime) {// 今天的闹钟时间没有绰过
-						if (week.contains(String.valueOf(getWeekDay(time)))) {
-							return time.getTimeInMillis();
-						}
-					}
-					while (flag) {// 循环往后遍历每一天
-						time.add(Calendar.DAY_OF_MONTH, 1);
-						weekDay = getWeekDay(time);
-						if (week.contains(String.valueOf(weekDay))) {
-							return time.getTimeInMillis();
-						}
-					}
 				}
 			}
+		} catch (Exception e) {
+			ScheduleApplication.logException(DateTimeUtils.class, e);
 		}
 		return 0;
 	}
 
 	public static void cancelAlarm(long schedule_id) {
-		Cursor c = ServiceManager.getDbManager().queryScheduleById(schedule_id);
-		if (c != null && c.getCount() > 0) {
-			c.moveToFirst();
-			long flagAlarm = c.getLong(c
-					.getColumnIndex(DatabaseHelper.COLUMN_SCHEDULE_ALARM_FLAG));
-			Intent alarmIntent = new Intent(ScheduleApplication.getContext(),
-					AlarmRecevier.class);
-			alarmIntent.setAction("" + flagAlarm);
-			alarmIntent.putExtra("schedule_id", schedule_id);
-			ScheduleApplication.LogD(DateTimeUtils.class, "cancel schedule_id:"
-					+ schedule_id + " flagAlarm:" + flagAlarm);
-			AlarmManager am = (AlarmManager) ScheduleApplication.getContext()
-					.getSystemService(Context.ALARM_SERVICE);
-			PendingIntent pi = PendingIntent.getBroadcast(
-					ScheduleApplication.getContext(), 1, alarmIntent,
-					PendingIntent.FLAG_NO_CREATE);
-			am.cancel(pi);
+		try {
+			Cursor c = ServiceManager.getDbManager().queryScheduleById(schedule_id);
+			if (c != null && c.getCount() > 0) {
+				c.moveToFirst();
+				long flagAlarm = c.getLong(c
+						.getColumnIndex(DatabaseHelper.COLUMN_SCHEDULE_ALARM_FLAG));
+				Intent alarmIntent = new Intent(ScheduleApplication.getContext(),
+						AlarmRecevier.class);
+				alarmIntent.setAction("" + flagAlarm);
+				alarmIntent.putExtra("schedule_id", schedule_id);
+				ScheduleApplication.LogD(DateTimeUtils.class, "cancel schedule_id:"
+						+ schedule_id + " flagAlarm:" + flagAlarm);
+				AlarmManager am = (AlarmManager) ScheduleApplication.getContext()
+						.getSystemService(Context.ALARM_SERVICE);
+				PendingIntent pi = PendingIntent.getBroadcast(
+						ScheduleApplication.getContext(), 1, alarmIntent,
+						PendingIntent.FLAG_NO_CREATE);
+				am.cancel(pi);
+			}
+			c.close();
+		} catch (Exception e) {
+			ScheduleApplication.logException(DateTimeUtils.class, e);
 		}
-		c.close();
 	}
 
 	public static void sendAlarm(long time, long flagAlarm, long schedule_id) {

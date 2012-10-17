@@ -13,6 +13,7 @@ import android.view.Window;
 import android.view.WindowManager;
 import android.widget.Button;
 import com.archermind.schedule.R;
+import com.archermind.schedule.ScheduleApplication;
 import com.archermind.schedule.Events.EventArgs;
 import com.archermind.schedule.Events.EventTypes;
 import com.archermind.schedule.Provider.DatabaseHelper;
@@ -106,16 +107,20 @@ public class ScheduleOperateDialog implements OnClickListener {
 		new Thread(new Runnable() {
 			@Override
 			public void run() {
-				ContentValues contentvalues = new ContentValues();
-				contentvalues.put(DatabaseHelper.COLUMN_SCHEDULE_OPER_FLAG,
-						DatabaseHelper.SCHEDULE_OPER_DELETE);
-				ServiceManager.getDbManager().updateScheduleById(
-						(Integer) args.getExtra("id"), contentvalues);
-				DateTimeUtils.cancelAlarm((Integer) args.getExtra("id"));
-				ServiceManager.getServerInterface().uploadSchedule("0", "1");
-				ServiceManager.getEventservice().onUpdateEvent(
-						new EventArgs(EventTypes.LOCAL_SCHEDULE_UPDATE));
-				ServiceManager.sendBroadcastForUpdateSchedule(context);
+				try {
+					ContentValues contentvalues = new ContentValues();
+					contentvalues.put(DatabaseHelper.COLUMN_SCHEDULE_OPER_FLAG,
+							DatabaseHelper.SCHEDULE_OPER_DELETE);
+					ServiceManager.getDbManager().updateScheduleById(
+							(Integer) args.getExtra("id"), contentvalues);
+					DateTimeUtils.cancelAlarm((Integer) args.getExtra("id"));
+					ServiceManager.getServerInterface().uploadSchedule("0", "1");
+					ServiceManager.getEventservice().onUpdateEvent(
+							new EventArgs(EventTypes.LOCAL_SCHEDULE_UPDATE));
+					ServiceManager.sendBroadcastForUpdateSchedule(context);
+				} catch (Exception e) {
+					ScheduleApplication.logException(ScheduleOperateDialog.class, e);
+				}
 			}
 		}).start();
 	}

@@ -296,10 +296,14 @@ public class CitySettingDialog implements OnClickListener {
 	private int getProvincesId(String string) {
 		// Log.i("my", "String==========" + string);
 		int pro_position = 0;
-		for (int i = 0; i < provinces.length; i++) {
-			if (string.equals(provinces[i])) {
-				pro_position = i;
+		try {
+			for (int i = 0; i < provinces.length; i++) {
+				if (string.equals(provinces[i])) {
+					pro_position = i;
+				}
 			}
+		} catch (Exception e) {
+			ScheduleApplication.logException(CitySettingDialog.class, e);
 		}
 		return pro_position;
 	}

@@ -95,16 +95,20 @@ public class ServerInterface {
 	public boolean isEmail(String email) {
 		String emailPattern = "[a-zA-Z0-9][a-zA-Z0-9._-]{2,30}[a-zA-Z0-9]@[a-zA-Z0-9]{2,31}.[a-zA-Z0-9]{3,4}";
 		boolean result = Pattern.matches(emailPattern, email);
-		Pattern p1 = Pattern.compile("[\u4E00-\u9FB0]");
-		Matcher m = p1.matcher(email);
-		while (m.find()) {
-			return false;
-		}
-		String regEx = "[`~!#$%^&*()+=|{}':;',\\[\\]<>/?~！#￥%……&*（）——+|{}【】‘；：”“’。，、？]";
-		Pattern p2 = Pattern.compile(regEx);
-		Matcher m2 = p2.matcher(email);
-		while (m2.find()) {
-			return false;
+		try {
+			Pattern p1 = Pattern.compile("[\u4E00-\u9FB0]");
+			Matcher m = p1.matcher(email);
+			while (m.find()) {
+				return false;
+			}
+			String regEx = "[`~!#$%^&*()+=|{}':;',\\[\\]<>/?~！#￥%……&*（）——+|{}【】‘；：”“’。，、？]";
+			Pattern p2 = Pattern.compile(regEx);
+			Matcher m2 = p2.matcher(email);
+			while (m2.find()) {
+				return false;
+			}
+		} catch (Exception e) {
+			ScheduleApplication.logException(ServerInterface.class, e);
 		}
 		return result;
 	}
@@ -113,6 +117,9 @@ public class ServerInterface {
 	 * 判断密码合法性 长度与复杂度判断,特殊字符过滤 true : 合法 false: 非法
 	 ***************************************/
 	public boolean isPswdValid(String pass) {
+		if(pass == null){
+			return false;
+		}
 		if (pass.length() < 6
 				|| (pass.length() > 15)
 				|| !(Pattern.matches(".*[0-9]+.*", pass) && Pattern.matches(
@@ -127,13 +134,17 @@ public class ServerInterface {
 	 * 判断isNickName合法性 长度小于10，且没有特殊字符
 	 ***************************************/
 	public boolean isNickName(String nickName) {
-		if (nickName.length() == 0 || nickName.length() > 10) {
-			return false;
+		try {
+			String regEx = "[`~!@#$%^&*()+=|{}':;',\\[\\]<>/?~！@#￥%……&*（）——+|{}【】‘；：”“’。，、？]";
+			Pattern p2 = Pattern.compile(regEx);
+			Matcher m2 = p2.matcher(nickName);
+			while (m2.find()) {
+				return false;
+			}
+		} catch (Exception e) {
+			ScheduleApplication.logException(ServerInterface.class, e);
 		}
-		String regEx = "[`~!@#$%^&*()+=|{}':;',\\[\\]<>/?~！@#￥%……&*（）——+|{}【】‘；：”“’。，、？]";
-		Pattern p2 = Pattern.compile(regEx);
-		Matcher m2 = p2.matcher(nickName);
-		while (m2.find()) {
+		if (nickName.length() == 0 || nickName.length() > 10) {
 			return false;
 		}
 		return true;
@@ -190,34 +201,38 @@ public class ServerInterface {
 	public String register(String username, String password, String nickname,
 			String imsi, String tel, String photo_id, String info, String type,
 			String user_acc) {
-		username = username.replace(" ", "");
-		password = password.replace(" ", "");
-		nickname = nickname.replace(" ", "");
+		String ret = "";
+		try {
+			username = username.replace(" ", "");
+			password = password.replace(" ", "");
+			nickname = nickname.replace(" ", "");
 
-		if (username.length() == 0 || password.length() == 0) {
-			return String.valueOf(ERROR_ACCOUNT_OR_PASSWORD_EMPTY);// 帐号或密码为空
-		}
-		if (!isEmail(username)) {
-			return String.valueOf(ERROR_EMAIL_INVALID);
-		}
-		if (!isPswdValid(password)) {
-			return String.valueOf(ERROR_PASSWORD_INVALID);
-		}
-		if (!isNickName(nickname)) {
-			return String.valueOf(ERROR_NICKNAME_INVALID);
-		}
+			if (username.length() == 0 || password.length() == 0) {
+				return String.valueOf(ERROR_ACCOUNT_OR_PASSWORD_EMPTY);// 帐号或密码为空
+			}
+			if (!isEmail(username)) {
+				return String.valueOf(ERROR_EMAIL_INVALID);
+			}
+			if (!isPswdValid(password)) {
+				return String.valueOf(ERROR_PASSWORD_INVALID);
+			}
+			if (!isNickName(nickname)) {
+				return String.valueOf(ERROR_NICKNAME_INVALID);
+			}
 
-		String passwordCrypt = ServiceManager.enCrypt(password);
-		Map<String, String> map = new HashMap<String, String>();
-		map.put("user", username);
-		map.put("password", passwordCrypt);
-		map.put("nick", nickname);
-		map.put("type", type);
-		map.put("user_acc", user_acc);
+			String passwordCrypt = ServiceManager.enCrypt(password);
+			Map<String, String> map = new HashMap<String, String>();
+			map.put("user", username);
+			map.put("password", passwordCrypt);
+			map.put("nick", nickname);
+			map.put("type", type);
+			map.put("user_acc", user_acc);
 
-		String ret = HttpUtils.doPost(map,
-				"http://arc.archermind.com/ci/index.php/aschedule/register");
-
+			ret = HttpUtils.doPost(map,
+					"http://arc.archermind.com/ci/index.php/aschedule/register");
+		} catch (Exception e) {
+			ScheduleApplication.logException(ServerInterface.class, e);
+		}
 		return ret;
 	}
 
@@ -227,9 +242,11 @@ public class ServerInterface {
 	 */
 	public int modifyPassword(String username, String oldpassword,
 			String newpassword) {
-		username = username.replace(" ", "");
-		oldpassword = oldpassword.replace(" ", "");
-		newpassword = newpassword.replace(" ", "");
+		if (username != null && oldpassword != null && newpassword != null) {
+			username = username.replace(" ", "");
+			oldpassword = oldpassword.replace(" ", "");
+			newpassword = newpassword.replace(" ", "");
+		}
 		// 查询数据库判断旧密码是否正确，查询的时候如果异常返回-2
 		if (!isPswdValid(newpassword)) {
 			return ERROR_PASSWORD_INVALID;
@@ -544,155 +561,159 @@ public class ServerInterface {
 		int result = 0;
 		int tid = 0;
 		int flag = 0;
-		Cursor cursor = ServiceManager.getDbManager().queryLocalSchedules();
-		if (cursor != null) {
-			if (cursor.moveToFirst()) {
-				do {
+		try {
+			Cursor cursor = ServiceManager.getDbManager().queryLocalSchedules();
+			if (cursor != null) {
+				if (cursor.moveToFirst()) {
+					do {
 
-					Map<String, String> map = new HashMap<String, String>();
-					map.put("user_id",
-							Integer.toString(cursor.getInt(cursor
-									.getColumnIndex(DatabaseHelper.COLUMN_SCHEDULE_USER_ID))));
-					map.put("share",
-							Integer.toString(cursor.getInt(cursor
-									.getColumnIndex(DatabaseHelper.COLUMN_SCHEDULE_SHARE))));
-					map.put("type",
-							Integer.toString(cursor.getInt(cursor
-									.getColumnIndex(DatabaseHelper.COLUMN_SCHEDULE_TYPE))));
-					map.put("start_time",
-							cursor.getString(cursor
-									.getColumnIndex(DatabaseHelper.COLUMN_SCHEDULE_START_TIME)));
-					// map.put("first_flag",
-					// cursor.getString(cursor
-					// .getColumnIndex(DatabaseHelper.COLUMN_SCHEDULE_FIRST_FLAG)));
-					// map.put("city", "武汉");
-					// notice_time 改为是否有闹钟的标识
-					map.put("notice_time",
-							Integer.toString(cursor.getInt(cursor
-									.getColumnIndex(DatabaseHelper.COLUMN_SCHEDULE_NOTICE_FLAG))));
-					map.put("notice_period",
-							cursor.getString(cursor
-									.getColumnIndex(DatabaseHelper.COLUMN_SCHEDULE_NOTICE_PERIOD)));
-					map.put("notice_week",
-							cursor.getString(cursor
-									.getColumnIndex(DatabaseHelper.COLUMN_SCHEDULE_NOTICE_WEEK)));
-					map.put("notice_end",
-							cursor.getString(cursor
-									.getColumnIndex(DatabaseHelper.COLUMN_SCHEDULE_NOTICE_END)));
-					map.put("content",
-							cursor.getString(cursor
-									.getColumnIndex(DatabaseHelper.COLUMN_SCHEDULE_CONTENT)));
-					map.put("tid",
-							Integer.toString(cursor.getInt(cursor
-									.getColumnIndex(DatabaseHelper.COLUMN_SCHEDULE_T_ID))));
+						Map<String, String> map = new HashMap<String, String>();
+						map.put("user_id",
+								Integer.toString(cursor.getInt(cursor
+										.getColumnIndex(DatabaseHelper.COLUMN_SCHEDULE_USER_ID))));
+						map.put("share",
+								Integer.toString(cursor.getInt(cursor
+										.getColumnIndex(DatabaseHelper.COLUMN_SCHEDULE_SHARE))));
+						map.put("type",
+								Integer.toString(cursor.getInt(cursor
+										.getColumnIndex(DatabaseHelper.COLUMN_SCHEDULE_TYPE))));
+						map.put("start_time",
+								cursor.getString(cursor
+										.getColumnIndex(DatabaseHelper.COLUMN_SCHEDULE_START_TIME)));
+						// map.put("first_flag",
+						// cursor.getString(cursor
+						// .getColumnIndex(DatabaseHelper.COLUMN_SCHEDULE_FIRST_FLAG)));
+						// map.put("city", "武汉");
+						// notice_time 改为是否有闹钟的标识
+						map.put("notice_time",
+								Integer.toString(cursor.getInt(cursor
+										.getColumnIndex(DatabaseHelper.COLUMN_SCHEDULE_NOTICE_FLAG))));
+						map.put("notice_period",
+								cursor.getString(cursor
+										.getColumnIndex(DatabaseHelper.COLUMN_SCHEDULE_NOTICE_PERIOD)));
+						map.put("notice_week",
+								cursor.getString(cursor
+										.getColumnIndex(DatabaseHelper.COLUMN_SCHEDULE_NOTICE_WEEK)));
+						map.put("notice_end",
+								cursor.getString(cursor
+										.getColumnIndex(DatabaseHelper.COLUMN_SCHEDULE_NOTICE_END)));
+						map.put("content",
+								cursor.getString(cursor
+										.getColumnIndex(DatabaseHelper.COLUMN_SCHEDULE_CONTENT)));
+						map.put("tid",
+								Integer.toString(cursor.getInt(cursor
+										.getColumnIndex(DatabaseHelper.COLUMN_SCHEDULE_T_ID))));
 
-					// 回帖。。。。
-					map.put("num", num);
-					map.put("host", host);
-					String text = "";
-					text = cursor
-							.getString(cursor
-									.getColumnIndex(DatabaseHelper.COLUMN_SCHEDULE_OPER_FLAG));
-					
-					System.out
-							.println("+++++++++++++++++++"
-									+ cursor.getString(cursor
-											.getColumnIndex(DatabaseHelper.COLUMN_SCHEDULE_OPER_FLAG)));
-					map.put("action",
-							cursor.getString(cursor
-									.getColumnIndex(DatabaseHelper.COLUMN_SCHEDULE_OPER_FLAG)));
-					if (text != null && text.equals("A")) {
-						Cursor cursor1 = ServiceManager.getDbManager()
-								.queryMaxTid();
+						// 回帖。。。。
+						map.put("num", num);
+						map.put("host", host);
+						String text = "";
+						text = cursor
+								.getString(cursor
+										.getColumnIndex(DatabaseHelper.COLUMN_SCHEDULE_OPER_FLAG));
+						
+						System.out
+								.println("+++++++++++++++++++"
+										+ cursor.getString(cursor
+												.getColumnIndex(DatabaseHelper.COLUMN_SCHEDULE_OPER_FLAG)));
+						map.put("action",
+								cursor.getString(cursor
+										.getColumnIndex(DatabaseHelper.COLUMN_SCHEDULE_OPER_FLAG)));
+						if (text != null && text.equals("A")) {
+							Cursor cursor1 = ServiceManager.getDbManager()
+									.queryMaxTid();
 
-						if (cursor1 != null) {
-							if (cursor1.moveToFirst())
-								tid = cursor1.getInt(0);
-							// tid =tid +flag;
+							if (cursor1 != null) {
+								if (cursor1.moveToFirst())
+									tid = cursor1.getInt(0);
+								// tid =tid +flag;
+							}
+							map.put("tid", Integer.toString(tid));
+							System.out.println("++++++++++++++ tid=" + tid);
+							cursor1.close();
+							String ret = HttpUtils
+									.doPost(map,
+											"http://arc.archermind.com/ci/index.php/aschedule/uploadSchedule");
+							// ContentValues cv = new ContentValues();
+							try {
+								result = Integer.parseInt(ret);
+							} catch (Exception e) {
+								result = -1;
+							}
+							if (result > 0) {
+								ContentValues cv = new ContentValues();
+								cv.put(DatabaseHelper.COLUMN_SCHEDULE_T_ID, ret);
+								cv.put(DatabaseHelper.COLUMN_SCHEDULE_OPER_FLAG,
+										"N");
+								ServiceManager
+										.getDbManager()
+										.updateScheduleById(
+												cursor.getInt(cursor
+														.getColumnIndex(DatabaseHelper.COLUMN_SCHEDULE_ID)),
+												cv);
+								flag++;
+							} else {
+								result = -1;
+								continue;
+							}
+
+						} else if (text != null && text.equals("M")) {
+							String ret = HttpUtils
+									.doPost(map,
+											"http://arc.archermind.com/ci/index.php/aschedule/uploadSchedule");
+							try {
+								result = Integer.parseInt(ret);
+							} catch (Exception e) {
+								result = -1;
+							}
+							if (result >= 0) {
+
+								ContentValues cv = new ContentValues();
+								cv.put(DatabaseHelper.COLUMN_SCHEDULE_UPDATE_TIME,
+										System.currentTimeMillis());
+								cv.put(DatabaseHelper.COLUMN_SCHEDULE_OPER_FLAG,
+										"N");
+								ServiceManager
+										.getDbManager()
+										.updateScheduleById(
+												cursor.getInt(cursor
+														.getColumnIndex(DatabaseHelper.COLUMN_SCHEDULE_USER_ID)),
+												cv);
+
+							} else {
+								result = -1;
+								continue;
+							}
+						} else if (text != null && text.equals("D")) {
+							String ret = HttpUtils
+									.doPost(map,
+											"http://arc.archermind.com/ci/index.php/aschedule/uploadSchedule");
+							try {
+								result = Integer.parseInt(ret);
+							} catch (Exception e) {
+								result = -1;
+							}
+							if (result >= 0) {
+
+								// 删除当前记录
+								ServiceManager
+										.getDbManager()
+										.deleteScheduleById(
+												cursor.getInt(cursor
+														.getColumnIndex(DatabaseHelper.COLUMN_SCHEDULE_ID)));
+
+							} else {
+								result = -1;
+								continue;
+							}
 						}
-						map.put("tid", Integer.toString(tid));
-						System.out.println("++++++++++++++ tid=" + tid);
-						cursor1.close();
-						String ret = HttpUtils
-								.doPost(map,
-										"http://arc.archermind.com/ci/index.php/aschedule/uploadSchedule");
-						// ContentValues cv = new ContentValues();
-						try {
-							result = Integer.parseInt(ret);
-						} catch (Exception e) {
-							result = -1;
-						}
-						if (result > 0) {
-							ContentValues cv = new ContentValues();
-							cv.put(DatabaseHelper.COLUMN_SCHEDULE_T_ID, ret);
-							cv.put(DatabaseHelper.COLUMN_SCHEDULE_OPER_FLAG,
-									"N");
-							ServiceManager
-									.getDbManager()
-									.updateScheduleById(
-											cursor.getInt(cursor
-													.getColumnIndex(DatabaseHelper.COLUMN_SCHEDULE_ID)),
-											cv);
-							flag++;
-						} else {
-							result = -1;
-							continue;
-						}
-
-					} else if (text != null && text.equals("M")) {
-						String ret = HttpUtils
-								.doPost(map,
-										"http://arc.archermind.com/ci/index.php/aschedule/uploadSchedule");
-						try {
-							result = Integer.parseInt(ret);
-						} catch (Exception e) {
-							result = -1;
-						}
-						if (result >= 0) {
-
-							ContentValues cv = new ContentValues();
-							cv.put(DatabaseHelper.COLUMN_SCHEDULE_UPDATE_TIME,
-									System.currentTimeMillis());
-							cv.put(DatabaseHelper.COLUMN_SCHEDULE_OPER_FLAG,
-									"N");
-							ServiceManager
-									.getDbManager()
-									.updateScheduleById(
-											cursor.getInt(cursor
-													.getColumnIndex(DatabaseHelper.COLUMN_SCHEDULE_USER_ID)),
-											cv);
-
-						} else {
-							result = -1;
-							continue;
-						}
-					} else if (text != null && text.equals("D")) {
-						String ret = HttpUtils
-								.doPost(map,
-										"http://arc.archermind.com/ci/index.php/aschedule/uploadSchedule");
-						try {
-							result = Integer.parseInt(ret);
-						} catch (Exception e) {
-							result = -1;
-						}
-						if (result >= 0) {
-
-							// 删除当前记录
-							ServiceManager
-									.getDbManager()
-									.deleteScheduleById(
-											cursor.getInt(cursor
-													.getColumnIndex(DatabaseHelper.COLUMN_SCHEDULE_ID)));
-
-						} else {
-							result = -1;
-							continue;
-						}
-					}
-				} while (cursor.moveToNext());
+					} while (cursor.moveToNext());
+				}
 			}
+			cursor.close();
+		} catch (Exception e) {
+			ScheduleApplication.logException(ServerInterface.class, e);
 		}
-		cursor.close();
 		return result;
 	}
 
@@ -783,101 +804,101 @@ public class ServerInterface {
 	// 读取日历数据
 	public static String readCalendars(String userName, String userPassword,
 			DateTime starttime, DateTime endtime) {
+		String res = "";
 		String s = "http://www.google.com/calendar/feeds/default";
 		URL url = null;
 		try {
 			url = new URL(s);
-		} catch (MalformedURLException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-		CalendarService myService = null;
-		myService = new CalendarService("dcsCalendarServer");
-		// CalendarService myService = new CalendarService("Calendar");
-		try {
-			myService.setUserCredentials(userName, userPassword);
-		} catch (AuthenticationException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-		// CalendarFeed resultFeed = myService.getFeed(url,CalendarFeed.class);
-		CalendarFeed feeds = null;
-		try {
-			feeds = myService.getFeed(url, CalendarFeed.class);
-		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		} catch (ServiceException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-		List<CalendarEntry> entrys = feeds.getEntries();
-		List<String> list = new ArrayList<String>(entrys.size());
-		for (CalendarEntry entry : entrys) {
-			// 标题
-			String title = entry.getTitle().getPlainText();
-			// 日历时区
-			String tz = entry.getTimeZone().getValue();
-			// 显示颜色
-			String color = entry.getColor().getValue(); // 访问级别
-			String level = entry.getAccessLevel().getValue();
-			// 创建者
-			List<Person> authors = entry.getAuthors();
-			String author = "";
-			for (Person p : authors) {
-				author += p.getName() + ",";
+			CalendarService myService = null;
+			myService = new CalendarService("dcsCalendarServer");
+			// CalendarService myService = new CalendarService("Calendar");
+			try {
+				myService.setUserCredentials(userName, userPassword);
+			} catch (AuthenticationException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
 			}
-			list.add(entry.getTitle().getPlainText());
-		}
-		// 仅简单的返回 标题，其余数据被忽略
-		String[] state = new String[list.size()];
-		state = list.toArray(state);
-		// DateTime starttime;
-		// starttime = createtime(2012, 7, 4, 11, 30, 30);
-		// System.out.println("++++++++++++++++++++++++"+starttime);
-		// DateTime endtime;
-		// endtime = createtime(2012, 7, 24, 11, 30, 30);
-		// System.out.println("++++++++++++++++++++++++"+endtime);
-		if (endtime == null) {
-			endtime = getInstanceTime();
-		}
-		List<CalendarEventEntry> entrys1 = null;
-		try {
-			entrys1 = dateRangeQuery(myService, starttime, endtime);
-		} catch (MalformedURLException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-		String res = "";
-		for (CalendarEventEntry entry1 : entrys1) {
-			// 活动事件名称
-			String title = entry1.getTitle().getPlainText();
-			System.out.println("++++++++++++++++++++++++" + title);
-			// 活动描述
-			String memo = entry1.getTextContent().getContent().getPlainText();
-			System.out.println("++++++++++++++++++++++++" + memo);
-			// 活动地点：
-			List<Where> wList = entry1.getLocations();
-			String where = "";
-			for (Where w : wList) {
-				where += "," + w.getValueString();
+			// CalendarFeed resultFeed = myService.getFeed(url,CalendarFeed.class);
+			CalendarFeed feeds = null;
+			try {
+				feeds = myService.getFeed(url, CalendarFeed.class);
+			} catch (IOException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			} catch (ServiceException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
 			}
-			// 活动时间；
-			When when = entry1.getTimes().get(0);
-			String time = when.getStartTime() + "～" + when.getEndTime();
-			System.out.println("++++++++++++++++++++++++" + time);
-			// 参与者
-			List<EventWho> whos = entry1.getParticipants();
-			String who = "";
-			for (EventWho p : whos) {
-				who += p.getValueString();
-				System.out.println(who);
+			List<CalendarEntry> entrys = feeds.getEntries();
+			List<String> list = new ArrayList<String>(entrys.size());
+			for (CalendarEntry entry : entrys) {
+				// 标题
+				String title = entry.getTitle().getPlainText();
+				// 日历时区
+				String tz = entry.getTimeZone().getValue();
+				// 显示颜色
+				String color = entry.getColor().getValue(); // 访问级别
+				String level = entry.getAccessLevel().getValue();
+				// 创建者
+				List<Person> authors = entry.getAuthors();
+				String author = "";
+				for (Person p : authors) {
+					author += p.getName() + ",";
+				}
+				list.add(entry.getTitle().getPlainText());
 			}
-			if (res.length() == 0) {
-				res = time + " " + title + " " + memo + "\r\n";
-			} else {
-				res = res + time + " " + title + " " + memo + "\r\n";
+			// 仅简单的返回 标题，其余数据被忽略
+			String[] state = new String[list.size()];
+			state = list.toArray(state);
+			// DateTime starttime;
+			// starttime = createtime(2012, 7, 4, 11, 30, 30);
+			// System.out.println("++++++++++++++++++++++++"+starttime);
+			// DateTime endtime;
+			// endtime = createtime(2012, 7, 24, 11, 30, 30);
+			// System.out.println("++++++++++++++++++++++++"+endtime);
+			if (endtime == null) {
+				endtime = getInstanceTime();
 			}
+			List<CalendarEventEntry> entrys1 = null;
+			try {
+				entrys1 = dateRangeQuery(myService, starttime, endtime);
+			} catch (MalformedURLException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+			
+			for (CalendarEventEntry entry1 : entrys1) {
+				// 活动事件名称
+				String title = entry1.getTitle().getPlainText();
+				System.out.println("++++++++++++++++++++++++" + title);
+				// 活动描述
+				String memo = entry1.getTextContent().getContent().getPlainText();
+				System.out.println("++++++++++++++++++++++++" + memo);
+				// 活动地点：
+				List<Where> wList = entry1.getLocations();
+				String where = "";
+				for (Where w : wList) {
+					where += "," + w.getValueString();
+				}
+				// 活动时间；
+				When when = entry1.getTimes().get(0);
+				String time = when.getStartTime() + "～" + when.getEndTime();
+				System.out.println("++++++++++++++++++++++++" + time);
+				// 参与者
+				List<EventWho> whos = entry1.getParticipants();
+				String who = "";
+				for (EventWho p : whos) {
+					who += p.getValueString();
+					System.out.println(who);
+				}
+				if (res.length() == 0) {
+					res = time + " " + title + " " + memo + "\r\n";
+				} else {
+					res = res + time + " " + title + " " + memo + "\r\n";
+				}
+			}
+		} catch (Exception e) {
+			ScheduleApplication.logException(ServerInterface.class, e);
 		}
 		System.out.println(res);
 		return res;

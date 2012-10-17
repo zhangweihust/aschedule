@@ -23,7 +23,9 @@ public class CookieCrypt {
 	private byte[] desKey;
 
 	public CookieCrypt(String desKey) {
-		this.desKey = desKey.getBytes();
+		if(desKey != null){
+			this.desKey = desKey.getBytes();
+		}
 	}
 
 	/**

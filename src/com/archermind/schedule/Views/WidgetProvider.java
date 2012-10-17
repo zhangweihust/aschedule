@@ -94,42 +94,46 @@ public class WidgetProvider extends AppWidgetProvider {
 						System.currentTimeMillis()));
 		views.removeAllViews(R.id.schedule_list);
 
-		Cursor c = queryTodayLocalSchedules(System.currentTimeMillis());
-		if (c != null) {
+		try {
+			Cursor c = queryTodayLocalSchedules(System.currentTimeMillis());
+			if (c != null) {
 
-			if (c.getCount() > 0) {
-				RemoteViews view;
-				String content, time;
-				int i = 0;
-				ScheduleApplication.LogD(WidgetProvider.class, "c.getCount() :"
-						+ c.getCount());
-				for (c.moveToFirst(); !c.isAfterLast(); c.moveToNext()) {
-					ScheduleApplication.LogD(WidgetProvider.class,
-							"updateAppWidget :" + appWidgetId);
-					if (i >= 5) {
+				if (c.getCount() > 0) {
+					RemoteViews view;
+					String content, time;
+					int i = 0;
+					ScheduleApplication.LogD(WidgetProvider.class, "c.getCount() :"
+							+ c.getCount());
+					for (c.moveToFirst(); !c.isAfterLast(); c.moveToNext()) {
+						ScheduleApplication.LogD(WidgetProvider.class,
+								"updateAppWidget :" + appWidgetId);
+						if (i >= 5) {
+							view = new RemoteViews(context.getPackageName(),
+									R.layout.widget_item);
+							view.setTextViewText(R.id.schedule_title, "点击查看更多...");
+							views.addView(R.id.schedule_list, view);
+							break;
+						}
 						view = new RemoteViews(context.getPackageName(),
 								R.layout.widget_item);
-						view.setTextViewText(R.id.schedule_title, "点击查看更多...");
+						content = c
+								.getString(c
+										.getColumnIndex(DatabaseHelper.COLUMN_SCHEDULE_CONTENT));
+						time = DateTimeUtils
+								.time2String(
+										"hh:mm",
+										c.getLong(c
+												.getColumnIndex(DatabaseHelper.COLUMN_SCHEDULE_START_TIME)));
+						view.setTextViewText(R.id.schedule_title, time + "-"
+								+ content);
 						views.addView(R.id.schedule_list, view);
-						break;
+						i++;
 					}
-					view = new RemoteViews(context.getPackageName(),
-							R.layout.widget_item);
-					content = c
-							.getString(c
-									.getColumnIndex(DatabaseHelper.COLUMN_SCHEDULE_CONTENT));
-					time = DateTimeUtils
-							.time2String(
-									"hh:mm",
-									c.getLong(c
-											.getColumnIndex(DatabaseHelper.COLUMN_SCHEDULE_START_TIME)));
-					view.setTextViewText(R.id.schedule_title, time + "-"
-							+ content);
-					views.addView(R.id.schedule_list, view);
-					i++;
 				}
+				c.close();
 			}
-			c.close();
+		} catch (Exception e) {
+			ScheduleApplication.logException(WidgetProvider.class, e);
 		}
 		// Tell the widget manager to update
 		appWidgetManager.updateAppWidget(appWidgetId, views);

@@ -25,6 +25,7 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.archermind.schedule.R;
+import com.archermind.schedule.ScheduleApplication;
 import com.archermind.schedule.Screens.WeatherScreen;
 import com.archermind.schedule.Utils.DateTimeUtils;
 
@@ -191,136 +192,140 @@ public class WeatherDialog implements OnClickListener {
 
     public void displayWeather(Map<String, String> cityInfoMap, Map<String, Integer> weathermap,
             Map<String, String> itemsmap) {
-        // 获取四天的日期
-        Calendar mCalendar = Calendar.getInstance();
+    	try {
+    		// 获取四天的日期
+            Calendar mCalendar = Calendar.getInstance();
 
-        for (int i = 0; i < date.length; i++) {
-            date[i] = DateTimeUtils.time2String("M月d日", mCalendar.getTimeInMillis());
-            week[i] = DateTimeUtils.time2String("E", mCalendar.getTimeInMillis());
-            mCalendar.add(Calendar.DAY_OF_MONTH, 1);
-        }
+            for (int i = 0; i < date.length; i++) {
+                date[i] = DateTimeUtils.time2String("M月d日", mCalendar.getTimeInMillis());
+                week[i] = DateTimeUtils.time2String("E", mCalendar.getTimeInMillis());
+                mCalendar.add(Calendar.DAY_OF_MONTH, 1);
+            }
 
-        // 设置城市信息
-        if ("北京".equals(cityInfoMap.get("city")) || "上海".equals(cityInfoMap.get("city"))
-                || "重庆".equals(cityInfoMap.get("city")) || "天津".equals(cityInfoMap.get("city"))) {
-            cityInfoTv.setText(cityInfoMap.get("city") + "市");
+            // 设置城市信息
+            if ("北京".equals(cityInfoMap.get("city")) || "上海".equals(cityInfoMap.get("city"))
+                    || "重庆".equals(cityInfoMap.get("city")) || "天津".equals(cityInfoMap.get("city"))) {
+                cityInfoTv.setText(cityInfoMap.get("city") + "市");
 
-        } else {
-            cityInfoTv.setText(cityInfoMap.get("province") + "省" + cityInfoMap.get("city") + "市");
-        }
+            } else {
+                cityInfoTv.setText(cityInfoMap.get("province") + "省" + cityInfoMap.get("city") + "市");
+            }
 
-        // 设置今天当前温度
-        Log.i(TAG, "-------st1-" + itemsmap.get("st1"));
-        if (itemsmap.get("st1") != null) {
-            todayCurTemp.setText(itemsmap.get("st1") + "℃");
-        } else {
-            todayCurTemp.setText(itemsmap.get("st1"));
-        }
+            // 设置今天当前温度
+            Log.i(TAG, "-------st1-" + itemsmap.get("st1"));
+            if (itemsmap.get("st1") != null) {
+                todayCurTemp.setText(itemsmap.get("st1") + "℃");
+            } else {
+                todayCurTemp.setText(itemsmap.get("st1"));
+            }
 
-        todayTemp.setText(itemsmap.get("temp1"));
-        todayDate.setText(date[0]);
-        todayWeek.setText(week[0]);
+            todayTemp.setText(itemsmap.get("temp1"));
+            todayDate.setText(date[0]);
+            todayWeek.setText(week[0]);
 
-        mWeather1 = itemsmap.get("weather1");
+            mWeather1 = itemsmap.get("weather1");
 
-        if (mWeather1 == null) {
-            mWeather1 = "  ";
-        } else {
-            mWeather1 = getweatherMap(mWeather1, weathermap);
-        }
+            if (mWeather1 == null) {
+                mWeather1 = "  ";
+            } else {
+                mWeather1 = getweatherMap(mWeather1, weathermap);
+            }
 
-        todayWeather.setText(mWeather1);
-        Log.i(TAG, "-------weather1-" + mWeather1);
-        Log.i(TAG, "-------weather1-" + weathermap.get(mWeather1));
-        if (itemsmap.get("weather1") != null && !itemsmap.get("weather1").equals("")) {
-            todayImg.setImageResource(weathermap.get(mWeather1));
-        }
+            todayWeather.setText(mWeather1);
+            Log.i(TAG, "-------weather1-" + mWeather1);
+            Log.i(TAG, "-------weather1-" + weathermap.get(mWeather1));
+            if (itemsmap.get("weather1") != null && !itemsmap.get("weather1").equals("")) {
+                todayImg.setImageResource(weathermap.get(mWeather1));
+            }
 
-        // 设置一天后
-        if (itemsmap.get("temp2") != null && !itemsmap.get("temp2").equals("")) {
-            mTemp2 = itemsmap.get("temp2").split("~");
-            maxtemp2 = mTemp2[0] + "~";
-            mintemp2 = mTemp2[1];
-        } else {
-            maxtemp2 = " ";
-            mintemp2 = " ";
-        }
+            // 设置一天后
+            if (itemsmap.get("temp2") != null && !itemsmap.get("temp2").equals("")) {
+                mTemp2 = itemsmap.get("temp2").split("~");
+                maxtemp2 = mTemp2[0] + "~";
+                mintemp2 = mTemp2[1];
+            } else {
+                maxtemp2 = " ";
+                mintemp2 = " ";
+            }
 
-        oneDAfterMinTemp.setText(maxtemp2);
-        oneDAfterMaxTemp.setText(mintemp2);
+            oneDAfterMinTemp.setText(maxtemp2);
+            oneDAfterMaxTemp.setText(mintemp2);
 
-        mWeather2 = itemsmap.get("weather2");
-        if (mWeather2 == null) {
-            mWeather2 = "  ";
-        } else {
-            mWeather2 = getweatherMap(mWeather2, weathermap);
-        }
-        oneDAfterWeather.setText(mWeather2);
-        Log.i(TAG, "------weather2-" + mWeather2);
-        Log.i(TAG, "-------weather2-" + weathermap.get(mWeather2));
-        if (itemsmap.get("weather2") != null && !itemsmap.get("weather2").equals("")) {
-            oneDAfterImg.setImageResource(weathermap.get(mWeather2));
-        }
+            mWeather2 = itemsmap.get("weather2");
+            if (mWeather2 == null) {
+                mWeather2 = "  ";
+            } else {
+                mWeather2 = getweatherMap(mWeather2, weathermap);
+            }
+            oneDAfterWeather.setText(mWeather2);
+            Log.i(TAG, "------weather2-" + mWeather2);
+            Log.i(TAG, "-------weather2-" + weathermap.get(mWeather2));
+            if (itemsmap.get("weather2") != null && !itemsmap.get("weather2").equals("")) {
+                oneDAfterImg.setImageResource(weathermap.get(mWeather2));
+            }
 
-        // 设置两天后
+            // 设置两天后
 
-        if (itemsmap.get("temp3") != null && !itemsmap.get("temp3").equals("")) {
-            mTemp3 = itemsmap.get("temp3").split("~");
-            maxtemp3 = mTemp3[0] + "~";
-            mintemp3 = mTemp3[1];
-        } else {
-            maxtemp3 = " ";
-            mintemp3 = " ";
-        }
-        twoDAfterMinTemp.setText(maxtemp3);
-        twoDAfterMaxTemp.setText(mintemp3);
-        mWeather3 = itemsmap.get("weather3");
-        if (mWeather3 == null) {
-            mWeather3 = "  ";
-        } else {
-            mWeather3 = getweatherMap(mWeather3, weathermap);
-        }
-        twoDAfterWeather.setText(mWeather3);
-        Log.i(TAG, "-------weather3---" + mWeather3);
-        Log.i(TAG, "-------weather3-" + weathermap.get(mWeather3));
-        if (itemsmap.get("weather3") != null && !itemsmap.get("weather3").equals("")) {
-            twoDAfterImg.setImageResource(weathermap.get(mWeather3));
-        }
+            if (itemsmap.get("temp3") != null && !itemsmap.get("temp3").equals("")) {
+                mTemp3 = itemsmap.get("temp3").split("~");
+                maxtemp3 = mTemp3[0] + "~";
+                mintemp3 = mTemp3[1];
+            } else {
+                maxtemp3 = " ";
+                mintemp3 = " ";
+            }
+            twoDAfterMinTemp.setText(maxtemp3);
+            twoDAfterMaxTemp.setText(mintemp3);
+            mWeather3 = itemsmap.get("weather3");
+            if (mWeather3 == null) {
+                mWeather3 = "  ";
+            } else {
+                mWeather3 = getweatherMap(mWeather3, weathermap);
+            }
+            twoDAfterWeather.setText(mWeather3);
+            Log.i(TAG, "-------weather3---" + mWeather3);
+            Log.i(TAG, "-------weather3-" + weathermap.get(mWeather3));
+            if (itemsmap.get("weather3") != null && !itemsmap.get("weather3").equals("")) {
+                twoDAfterImg.setImageResource(weathermap.get(mWeather3));
+            }
 
-        // 设置三天后
-        if (itemsmap.get("temp4") != null && !itemsmap.get("temp4").equals("")) {
-            mTemp4 = itemsmap.get("temp4").split("~");
-            maxtemp4 = mTemp4[0] + "~";
-            mintemp4 = mTemp4[1];
-        } else {
-            maxtemp4 = "  ";
-            mintemp4 = "  ";
-        }
+            // 设置三天后
+            if (itemsmap.get("temp4") != null && !itemsmap.get("temp4").equals("")) {
+                mTemp4 = itemsmap.get("temp4").split("~");
+                maxtemp4 = mTemp4[0] + "~";
+                mintemp4 = mTemp4[1];
+            } else {
+                maxtemp4 = "  ";
+                mintemp4 = "  ";
+            }
 
-        threeDAfterMinTemp.setText(maxtemp4);
-        threeDAfterMaxTemp.setText(mintemp4);
-        mWeather4 = itemsmap.get("weather4");
-        if (mWeather4 == null) {
-            mWeather4 = "  ";
-        } else {
-            mWeather4 = getweatherMap(mWeather4, weathermap);
-        }
-        threeDAfterWeather.setText(mWeather4);
-        Log.i(TAG, "----weather4---" + mWeather4);
-        Log.i(TAG, "-------weather4-" + weathermap.get(mWeather4));
-        if (itemsmap.get("weather4") != null && !itemsmap.get("weather4").equals("")) {
-            threeDAfterImg.setImageResource(weathermap.get(mWeather4));
-        }
+            threeDAfterMinTemp.setText(maxtemp4);
+            threeDAfterMaxTemp.setText(mintemp4);
+            mWeather4 = itemsmap.get("weather4");
+            if (mWeather4 == null) {
+                mWeather4 = "  ";
+            } else {
+                mWeather4 = getweatherMap(mWeather4, weathermap);
+            }
+            threeDAfterWeather.setText(mWeather4);
+            Log.i(TAG, "----weather4---" + mWeather4);
+            Log.i(TAG, "-------weather4-" + weathermap.get(mWeather4));
+            if (itemsmap.get("weather4") != null && !itemsmap.get("weather4").equals("")) {
+                threeDAfterImg.setImageResource(weathermap.get(mWeather4));
+            }
 
-        // 设置后三天的日期
-        oneDAfterDate.setText(date[1]);
-        twoDAfterDate.setText(date[2]);
-        threeDAfterDate.setText(date[3]);
+            // 设置后三天的日期
+            oneDAfterDate.setText(date[1]);
+            twoDAfterDate.setText(date[2]);
+            threeDAfterDate.setText(date[3]);
 
-        // 设置星期
-        oneDAfterWeek.setText(week[1]);
-        twoDAfterWeek.setText(week[2]);
-        threeDAfterWeek.setText(week[3]);
+            // 设置星期
+            oneDAfterWeek.setText(week[1]);
+            twoDAfterWeek.setText(week[2]);
+            threeDAfterWeek.setText(week[3]);
+		} catch (Exception e) {
+			ScheduleApplication.logException(WeatherDialog.class, e);
+		}
     }
 
     public void dismiss() {

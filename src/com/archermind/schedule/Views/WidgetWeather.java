@@ -119,7 +119,7 @@ public class WidgetWeather extends AppWidgetProvider {
             }
 
 		} catch (Exception e) {
-			e.printStackTrace();
+			ScheduleApplication.logException(WidgetWeather.class, e);
 		}
         
         super.onUpdate(context, appWidgetManager, appWidgetIds);

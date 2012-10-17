@@ -11,6 +11,7 @@ import android.view.animation.AnticipateOvershootInterpolator;
 import android.widget.Button;
 
 import com.archermind.schedule.R;
+import com.archermind.schedule.ScheduleApplication;
 import com.archermind.schedule.Adapters.NumericWheelAdapter;
 import com.archermind.schedule.Calendar.SpecialCalendar;
 import com.archermind.schedule.Utils.Constant;
@@ -196,6 +197,7 @@ public class TimeSelectorDialog implements OnClickListener {
 			wheelView_day.setItemsLayout(null);
 			wheelView_day.setLabelLayout(null);
 		} catch (Exception e) {
+			ScheduleApplication.logException(SimpleTimeSelectorDialog.class, e);
 		}
 	}
 

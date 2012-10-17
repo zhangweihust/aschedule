@@ -17,44 +17,48 @@ public class Contact {
 	private static boolean isSyncing = false;
 	/* 检测是否需要将联系人与服务器进行同步 */
 	public boolean checkIfNeedSync() {
-		ScheduleApplication.LogD(getClass(), "检测是否需要将联系人与服务器进行同步");
-		Cursor AscheduleContact = ServiceManager.getDbManager()
-				.getAScheduleContacts();
-		int contactid = 0;
-		String number = "";
-		if (AscheduleContact.getCount() <= 0) {
-			AscheduleContact.close();
-			ScheduleApplication.LogD(getClass(), "应用的联系人为空，需要重新同步");
-			return true;
-		}
-
-		Cursor LocalContact = ServiceManager.getDbManager().getLocalContacts();
-		if (LocalContact.getCount() != AscheduleContact.getCount()) {
-			ScheduleApplication.LogD(getClass(), "应用的联系人与系统的联系人数量不一致，需要重新同步 LocalContact.getCount() =" 
-					+ LocalContact.getCount() + "  AscheduleContact.getCount() = " + AscheduleContact.getCount());
-			AscheduleContact.close();
-			LocalContact.close();
-			return true;
-		}
-
-		while (LocalContact.moveToNext()) {
-			contactid = Integer
-					.parseInt(LocalContact.getString(LocalContact
-							.getColumnIndex(ContactsContract.CommonDataKinds.Phone.CONTACT_ID)));
-			number = LocalContact
-					.getString(LocalContact
-							.getColumnIndex(ContactsContract.CommonDataKinds.Phone.NUMBER));
-			if (!ServiceManager.getDbManager().hasData(contactid, number)) {
+		try {
+			ScheduleApplication.LogD(getClass(), "检测是否需要将联系人与服务器进行同步");
+			Cursor AscheduleContact = ServiceManager.getDbManager()
+					.getAScheduleContacts();
+			int contactid = 0;
+			String number = "";
+			if (AscheduleContact.getCount() <= 0) {
 				AscheduleContact.close();
-				LocalContact.close();
-				ScheduleApplication.LogD(getClass(),
-						"应用的联系人中的数据内容与系统联系人不一致，需要重新同步");
+				ScheduleApplication.LogD(getClass(), "应用的联系人为空，需要重新同步");
 				return true;
 			}
+
+			Cursor LocalContact = ServiceManager.getDbManager().getLocalContacts();
+			if (LocalContact.getCount() != AscheduleContact.getCount()) {
+				ScheduleApplication.LogD(getClass(), "应用的联系人与系统的联系人数量不一致，需要重新同步 LocalContact.getCount() =" 
+						+ LocalContact.getCount() + "  AscheduleContact.getCount() = " + AscheduleContact.getCount());
+				AscheduleContact.close();
+				LocalContact.close();
+				return true;
+			}
+
+			while (LocalContact.moveToNext()) {
+				contactid = Integer
+						.parseInt(LocalContact.getString(LocalContact
+								.getColumnIndex(ContactsContract.CommonDataKinds.Phone.CONTACT_ID)));
+				number = LocalContact
+						.getString(LocalContact
+								.getColumnIndex(ContactsContract.CommonDataKinds.Phone.NUMBER));
+				if (!ServiceManager.getDbManager().hasData(contactid, number)) {
+					AscheduleContact.close();
+					LocalContact.close();
+					ScheduleApplication.LogD(getClass(),
+							"应用的联系人中的数据内容与系统联系人不一致，需要重新同步");
+					return true;
+				}
+			}
+			ScheduleApplication.LogD(getClass(), "应用的联系人中的数据与系统联系人一致，不需要重新同步");
+			AscheduleContact.close();
+			LocalContact.close();
+		} catch (Exception e) {
+			ScheduleApplication.logException(Contact.class, e);
 		}
-		ScheduleApplication.LogD(getClass(), "应用的联系人中的数据与系统联系人一致，不需要重新同步");
-		AscheduleContact.close();
-		LocalContact.close();
 		return false;
 	}
     
@@ -66,41 +70,45 @@ public class Contact {
 					ScheduleApplication.LogD(getClass(), "正在同步中....");
 					return;
 				}
-				if (NetworkUtils.getNetworkState(context) != NetworkUtils.NETWORN_NONE) {
-					/* 还要判断用户是否已登录 */
-					if (ServiceManager.isUserLogining(ServiceManager
-							.getUserId())) {
-						if (ServiceManager.getBindFlag()) {// 判断用户是否绑定
-							if (checkIfNeedSync()) {
-								ScheduleApplication.LogD(getClass(),
-										"需要同步，弹出用户确认同步对话框");
-								Intent it = new Intent(context,
-										ContactSyncAlertScreen.class);
-								context.startActivity(it);
+				try {
+					if (NetworkUtils.getNetworkState(context) != NetworkUtils.NETWORN_NONE) {
+						/* 还要判断用户是否已登录 */
+						if (ServiceManager.isUserLogining(ServiceManager
+								.getUserId())) {
+							if (ServiceManager.getBindFlag()) {// 判断用户是否绑定
+								if (checkIfNeedSync()) {
+									ScheduleApplication.LogD(getClass(),
+											"需要同步，弹出用户确认同步对话框");
+									Intent it = new Intent(context,
+											ContactSyncAlertScreen.class);
+									context.startActivity(it);
+								} else {
+									ScheduleApplication.LogD(getClass(),
+											"联系人数据一致，不需要同步");
+									ServiceManager
+											.getEventservice()
+											.onUpdateEvent(
+													new EventArgs(
+															EventTypes.CONTACT_SYNC_CANCEL));
+								}
 							} else {
-								ScheduleApplication.LogD(getClass(),
-										"联系人数据一致，不需要同步");
-								ServiceManager
-										.getEventservice()
-										.onUpdateEvent(
-												new EventArgs(
-														EventTypes.CONTACT_SYNC_CANCEL));
+								ScheduleApplication.LogD(getClass(), "用户未绑定，不需要同步");
+								ServiceManager.getEventservice().onUpdateEvent(
+										new EventArgs(
+												EventTypes.CONTACT_SYNC_CANCEL));
 							}
 						} else {
-							ScheduleApplication.LogD(getClass(), "用户未绑定，不需要同步");
+							ScheduleApplication.LogD(getClass(), "用户还未登录，不需要同步");
 							ServiceManager.getEventservice().onUpdateEvent(
-									new EventArgs(
-											EventTypes.CONTACT_SYNC_CANCEL));
+									new EventArgs(EventTypes.CONTACT_SYNC_CANCEL));
 						}
 					} else {
-						ScheduleApplication.LogD(getClass(), "用户还未登录，不需要同步");
+						ScheduleApplication.LogD(getClass(), "没有网络，不需要同步");
 						ServiceManager.getEventservice().onUpdateEvent(
 								new EventArgs(EventTypes.CONTACT_SYNC_CANCEL));
 					}
-				} else {
-					ScheduleApplication.LogD(getClass(), "没有网络，不需要同步");
-					ServiceManager.getEventservice().onUpdateEvent(
-							new EventArgs(EventTypes.CONTACT_SYNC_CANCEL));
+				} catch (Exception e) {
+					ScheduleApplication.logException(Contact.class, e);
 				}
 			};
 		}.start();
