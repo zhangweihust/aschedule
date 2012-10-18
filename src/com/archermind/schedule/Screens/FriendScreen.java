@@ -667,7 +667,9 @@ public class FriendScreen extends Screen
 
     		} 
     		if(!getFriendsOK){
-    			Cursor cursor = database.queryFriendYes();
+    			Toast.makeText(getApplicationContext(), "好友信息列表获取失败，请查看网络是否连接!",
+                        Toast.LENGTH_LONG).show();
+/*    			Cursor cursor = database.queryFriendYes();
     			if(cursor!=null && cursor.moveToFirst()){
     				while (!cursor.isAfterLast()) {
     					String id = cursor.getString(cursor
@@ -773,7 +775,7 @@ public class FriendScreen extends Screen
     			}
     			if (cursor!=null) {
     				cursor.close();
-    			}
+    			}*/
     		}
 		} catch (Exception e) {
 			ScheduleApplication.logException(getClass(),e);
