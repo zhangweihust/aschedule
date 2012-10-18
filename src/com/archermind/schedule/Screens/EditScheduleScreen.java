@@ -3,12 +3,15 @@ package com.archermind.schedule.Screens;
 import java.util.Calendar;
 import java.util.Locale;
 
+import android.app.AlertDialog;
 import android.content.ContentValues;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.database.Cursor;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.Display;
+import android.view.KeyEvent;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.Button;
@@ -274,8 +277,8 @@ public class EditScheduleScreen extends Screen implements OnClickListener {
 	public void onClick(View v) {
 		try {
 			if (v.getId() == backBtn.getId()) {
-				oper_flag = DatabaseHelper.SCHEDULE_OPER_NOTHING;
-				this.finish();
+				
+				checkQuit();
 				
 			} else if (v.getId() == saveBtn.getId()) {
 				oper_flag = DatabaseHelper.SCHEDULE_OPER_MODIFY;
@@ -345,6 +348,46 @@ public class EditScheduleScreen extends Screen implements OnClickListener {
 
 	}
 
+	private void checkQuit() {
+
+//		if (!"".equals(schedule_text.getText().toString().trim())) {
+
+			new AlertDialog.Builder(EditScheduleScreen.this)
+					.setMessage("是否放弃修改？")
+					.setNegativeButton("取消",
+							new DialogInterface.OnClickListener() {
+
+								public void onClick(DialogInterface dialog,
+										int whichButton) {
+
+									dialog.dismiss();
+								}
+							})
+					.setPositiveButton("确认",
+							new DialogInterface.OnClickListener() {
+
+								public void onClick(DialogInterface dialog,
+										int whichButton) {
+									oper_flag = DatabaseHelper.SCHEDULE_OPER_NOTHING;
+									finish();
+									
+								}
+							}).show();
+//		} else {
+//
+//			finish();
+//		}
+	}
+
+	public boolean onKeyDown(int keyCode, KeyEvent event) {
+
+		if (keyCode == KeyEvent.KEYCODE_BACK) {
+
+			checkQuit();
+		}
+		return super.onKeyDown(keyCode, event);
+	}
+	
 	// 更新数据库
 	public void updateScheduleToDb() {
 

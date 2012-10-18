@@ -313,6 +313,7 @@ public class HistoryScheduleAdapter extends BaseAdapter {
 
 	public int getTodayPosition(String date) {
 		int i = 0;
+		try {
 		int size = schedulelist.size();
 		String today = "";
 		SimpleDateFormat sdf = new SimpleDateFormat("yyyy.MM.dd");
@@ -323,6 +324,9 @@ public class HistoryScheduleAdapter extends BaseAdapter {
 			if (today.equals(date)) {
 				break;
 			}
+		}
+		} catch (Exception e) {
+			ScheduleApplication.logException(getClass(), e);
 		}
 
 		return i;

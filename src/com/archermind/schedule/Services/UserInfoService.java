@@ -43,6 +43,7 @@ public class UserInfoService{
 	class UserInfoThread extends Thread{
 		@Override
 		public void run(){
+			try {
 			System.out.println("===userinfothread== run");
 			Context context = ScheduleApplication.getContext();
 			SharedPreferences sp = context.getSharedPreferences(DeviceInfoThread.PREF, 0);
@@ -66,6 +67,9 @@ public class UserInfoService{
 		    	editor.commit();		    
 		    }
 		    startTime = System.currentTimeMillis();
+			} catch (Exception e) {
+				ScheduleApplication.logException(getClass(), e);
+			}
 		}
 	}
 

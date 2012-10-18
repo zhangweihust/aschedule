@@ -36,6 +36,8 @@ import android.widget.Toast;
 import com.archermind.schedule.R;
 import com.archermind.schedule.ScheduleApplication;
 import com.archermind.schedule.Adapters.DynamicScheduleAdapter;
+import com.archermind.schedule.Dialog.MyDynamicOperateDialog;
+import com.archermind.schedule.Dialog.ScheduleOperateDialog;
 import com.archermind.schedule.Events.EventArgs;
 import com.archermind.schedule.Events.EventTypes;
 import com.archermind.schedule.Events.IEventHandler;
@@ -73,6 +75,8 @@ public class MyDynamicScreen extends Screen implements IXListViewListener, OnIte
     protected static final int RefreshLayout_Gone = 0x104;
 
     protected static final int RefreshLayout_Visible = 0x105;
+    
+    public static final int ON_REPLY = 0x106;
 
     private int end = 10;
 
@@ -116,6 +120,9 @@ public class MyDynamicScreen extends Screen implements IXListViewListener, OnIte
             		case RefreshLayout_Visible:
             			refreshLayout.setVisibility(View.VISIBLE);
             			break;
+                case ON_REPLY:
+                	initPopWindow(MyDynamicScreen.this, msg.getData().getInt("t_id", 0));
+                    break;
             	}
             	if (!dataArrayList.isEmpty()) {
             		list.setXListViewListener(MyDynamicScreen.this);
@@ -383,11 +390,19 @@ public class MyDynamicScreen extends Screen implements IXListViewListener, OnIte
 
         try {
             if (dataArrayList.size() != 0 && !dataArrayList.get(position - 1).isDefault_data()) {
-                initPopWindow(MyDynamicScreen.this, dataArrayList.get(position - 1).getT_id());
+                //initPopWindow(MyDynamicScreen.this, dataArrayList.get(position - 1).getT_id());
+        		EventArgs args = new EventArgs();
+        		args.putExtra("t_id", dataArrayList.get(position - 1).getT_id());
+
+        		MyDynamicOperateDialog myDialog = new MyDynamicOperateDialog(
+        				ServiceManager.getHomeScreen(), args, mHandler);
+        		myDialog.show(getWindow().getAttributes().width);
+        		
             }
         } catch (Exception e) {
             ScheduleApplication.LogD(getClass(), "onItemClick error");
-        }
+			ScheduleApplication.logException(getClass(),e);
+		}
     }
 
     public boolean saveScheduleToDb(final String content, final int t_id) {

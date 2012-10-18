@@ -48,7 +48,7 @@ public class AlarmRecevier extends BroadcastReceiver {
 
 	@Override
 	public void onReceive(Context context, Intent intent) {
-
+		try {
 		mContext = context;
 		schedule_id = intent.getLongExtra("schedule_id", 1);
 		long alarmTime = intent.getLongExtra("alarmtime", 1);
@@ -99,7 +99,7 @@ public class AlarmRecevier extends BroadcastReceiver {
 
 		new Thread() {
 			public void run() {
-
+				try {
 				DatabaseManager dbManager = new DatabaseManager(mContext);
 				dbManager.openwithnoservice();
 				long nextTime = 0;
@@ -160,7 +160,13 @@ public class AlarmRecevier extends BroadcastReceiver {
 				}
 
 				dbManager.close();
+				} catch (Exception e) {
+					ScheduleApplication.logException(getClass(), e);
+				}
 			}
 		}.start();
+		} catch (Exception e) {
+			ScheduleApplication.logException(getClass(), e);
+		}
 	}
 }

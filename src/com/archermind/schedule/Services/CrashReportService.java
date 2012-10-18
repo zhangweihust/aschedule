@@ -19,8 +19,12 @@ public class CrashReportService extends Service {
 		super.onCreate();
 		ScheduleApplication.LogD(CrashReportService.class,
 				"CrashReportService onCreate");
+		try {
 		SendCrashReportsTask task = new SendCrashReportsTask(this);
 		task.execute();
+		} catch (Exception e) {
+			ScheduleApplication.logException(getClass(), e);
+		}
 	}
 
 	@Override

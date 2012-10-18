@@ -34,6 +34,7 @@ public class BootRecevier extends BroadcastReceiver {
 
 		new Thread() {
 			public void run() {
+				try {
 				DatabaseManager dbManager = new DatabaseManager(mContext);
 				dbManager.openwithnoservice();
 
@@ -80,6 +81,9 @@ public class BootRecevier extends BroadcastReceiver {
 				}
 
 				dbManager.close();
+				} catch (Exception e) {
+					ScheduleApplication.logException(getClass(), e);
+				}
 			}
 		}.start();
 	}

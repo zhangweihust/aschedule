@@ -11,6 +11,7 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.archermind.schedule.R;
+import com.archermind.schedule.ScheduleApplication;
 import com.archermind.schedule.Image.SmartImageView;
 import com.archermind.schedule.Model.Friend;
 import com.archermind.schedule.Provider.DatabaseHelper;
@@ -50,6 +51,7 @@ public class AsyncScheduleLoader {
 		new Thread() {
 			@Override
 			public void run() {
+				try {
 				Cursor slaveCursors = ServiceManager.getDbManager()
 						.querySlaveShareSchedules(t_id);
 				Log.i(TAG, "loadSchedule" + t_id);
@@ -146,6 +148,9 @@ public class AsyncScheduleLoader {
 				Message message = handler.obtainMessage(0, layout);
 				handler.sendMessage(message);
 				slaveCursors.close();
+				} catch (Exception e) {
+					ScheduleApplication.logException(getClass(), e);
+				}
 			}
 		}.start();
 	}

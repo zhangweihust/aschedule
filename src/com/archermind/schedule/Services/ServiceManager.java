@@ -103,6 +103,7 @@ public class ServiceManager extends Service implements OnClickListener {
 
 	private Handler handler = new Handler() {
 		public void handleMessage(Message msg) {
+			try {
 			for (int i = 0; i < msg_adds.size(); i++) {
 				showDialog(msg_adds.get(i));
 			}
@@ -115,6 +116,9 @@ public class ServiceManager extends Service implements OnClickListener {
 			for (int i = 0; i < msg_refuses.size(); i++) {
 				serverInerface.refuseConfirm(String.valueOf(getUserId()),
 						msg_refuses.get(i));
+			}
+			} catch (Exception e) {
+				ScheduleApplication.logException(getClass(), e);
 			}
 		};
 	};
@@ -129,6 +133,7 @@ public class ServiceManager extends Service implements OnClickListener {
 	}
 
 	public void showDialog(String id) {
+		try {
 		if (homeScreen != null) {
 			if(dialog == null || !dialog.isShowing()){
 				dialog = new Dialog(homeScreen, R.style.WeatherDialog);
@@ -152,6 +157,9 @@ public class ServiceManager extends Service implements OnClickListener {
 				dialog.show();
 			}
 		}
+		} catch (Exception e) {
+			ScheduleApplication.logException(getClass(), e);
+		}
 	}
 
 	@Override
@@ -165,6 +173,7 @@ public class ServiceManager extends Service implements OnClickListener {
 		@Override
 		public void run() {
 			// TODO Auto-generated method stub
+			try {
 
 			if (mTaskTime != mGetDataTime) {
 				mTimer.cancel();
@@ -181,6 +190,9 @@ public class ServiceManager extends Service implements OnClickListener {
 			// eventService.onUpdateEvent(new
 			// EventArgs(EventTypes.CONTACT_SYNC_SUCCESS));
 			Log.i(TAG, "get data in service!the time is " + mTaskTime);
+			} catch (Exception e) {
+				ScheduleApplication.logException(getClass(), e);
+			}
 		}
 	}
 
@@ -188,6 +200,7 @@ public class ServiceManager extends Service implements OnClickListener {
 	public void onCreate() {
 		super.onCreate();
 
+		try {
 		timeDifference = calculateTimeDifference();
 		toast = Toast.makeText(getApplicationContext(), "service start",
 				Toast.LENGTH_SHORT);
@@ -219,6 +232,7 @@ public class ServiceManager extends Service implements OnClickListener {
 			@Override
 			public void run() {
 				// TODO Auto-generated method stub
+				try {
 				String imsi = getSPUserInfo(UserInfoData.IMSI);
 				String tel = getSPUserInfo(UserInfoData.TEL);
 				try {
@@ -236,9 +250,15 @@ public class ServiceManager extends Service implements OnClickListener {
 				} catch (Exception e) {
 					e.printStackTrace();
 				}
+				} catch (Exception e) {
+					ScheduleApplication.logException(getClass(), e);
+				}
 			}
 		}, 5000);
-
+		} catch (Exception e) {
+			ScheduleApplication.logException(getClass(), e);
+		}
+		
 		Log.i(TAG, "oncreate set time is " + mTaskTime);
 	}
 
@@ -251,17 +271,17 @@ public class ServiceManager extends Service implements OnClickListener {
 	}
 
 	public static boolean start() {
-
+		
 		if (ServiceManager.started) {
 			return true;
 		}
 
+		boolean success = true;
+		try {
 		// start Android service
 		ScheduleApplication.getContext().startService(
 				new Intent(ScheduleApplication.getContext(),
 						ServiceManager.class));
-
-		boolean success = true;
 
 		dbManager.open();
 		success &= eventService.start();
@@ -274,7 +294,9 @@ public class ServiceManager extends Service implements OnClickListener {
 		}
 
 		ServiceManager.started = true;
-
+		} catch (Exception e) {
+			ScheduleApplication.logException(ServiceManager.class, e);
+		}
 		return true;
 	}
 
@@ -283,11 +305,13 @@ public class ServiceManager extends Service implements OnClickListener {
 			return true;
 		}
 
+		boolean success = true;
+		try {
 		// stops Android service
 		ScheduleApplication.getContext().stopService(
 				new Intent(ScheduleApplication.getContext(),
 						ServiceManager.class));
-		boolean success = true;
+		
 		success &= eventService.stop();
 		success &= userInfoService.stop();
 		success &= exceptionService.stop();
@@ -297,6 +321,9 @@ public class ServiceManager extends Service implements OnClickListener {
 					"Failed to stop services");
 		}
 		ServiceManager.started = false;
+		} catch (Exception e) {
+			ScheduleApplication.logException(ServiceManager.class, e);
+		}
 		return success;
 	}
 
@@ -408,6 +435,7 @@ public class ServiceManager extends Service implements OnClickListener {
 	}
 
 	private void makeFriendFromInet() {
+		try {
 		msg_adds.clear();
 		msg_refuses.clear();
 		msg_accepets.clear();
@@ -475,11 +503,15 @@ public class ServiceManager extends Service implements OnClickListener {
 				}
 			}
 		}
+		} catch (Exception e) {
+			ScheduleApplication.logException(getClass(), e);
+		}
 	}
 
 	@Override
 	public void onClick(View v) {
 		// TODO Auto-generated method stub
+		try {
 		String id = (String) v.getTag();
 		switch (v.getId()) {
 			case R.id.accept_friend :
@@ -502,10 +534,14 @@ public class ServiceManager extends Service implements OnClickListener {
 				break;
 		}
 		dialog.dismiss();
+		} catch (Exception e) {
+			ScheduleApplication.logException(getClass(), e);
+		}
 	}
 
 
 	private String getFriendInfoFromInet(String id) {
+		try {
 		if (NetworkUtils.getNetworkState(this) != NetworkUtils.NETWORN_NONE) {
 
 			String jsonString = ServiceManager.getServerInterface()
@@ -534,6 +570,9 @@ public class ServiceManager extends Service implements OnClickListener {
 			}
 
 		}
+		} catch (Exception e) {
+			ScheduleApplication.logException(getClass(), e);
+		}
 		return null;
 	}
 
@@ -557,6 +596,7 @@ public class ServiceManager extends Service implements OnClickListener {
 
 	public static boolean isUserLogining(int userid) {
 		boolean ret = false;
+		try {
 		if (NetworkUtils.getNetworkState(ScheduleApplication.getContext()) != NetworkUtils.NETWORN_NONE) {
 			/* 发送userid给服务器，服务器判断userid的用户是否登录 */
 		    ScheduleApplication.LogD(ServiceManager.class, "userid = "+userid);
@@ -565,7 +605,10 @@ public class ServiceManager extends Service implements OnClickListener {
 				ret = true;
 			}
 		}
-
+		} catch (Exception e) {
+			ScheduleApplication.logException(ServiceManager.class, e);
+		}
+		
 		return ret;
 	}
 

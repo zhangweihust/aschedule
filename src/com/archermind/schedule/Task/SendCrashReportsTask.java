@@ -58,6 +58,7 @@ public class SendCrashReportsTask extends AsyncTask<Void, Void, Integer> {
 	 * @param ctx
 	 */
 	private void sendCrashReportsToServer() {
+		try {
 		String[] crFiles = getCrashReportFiles();
 		if (crFiles != null && crFiles.length > 0) {
 			TreeSet<String> sortedFiles = new TreeSet<String>();
@@ -80,6 +81,9 @@ public class SendCrashReportsTask extends AsyncTask<Void, Void, Integer> {
 		}
 		if (mService != null)
 			mService.stopSelf();
+		} catch (Exception e) {
+			ScheduleApplication.logException(getClass(), e);
+		}
 	}
 
 	private boolean postReport(File file) {

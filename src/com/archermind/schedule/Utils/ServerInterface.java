@@ -713,7 +713,27 @@ public class ServerInterface {
 			}
 			cursor.close();
 		} catch (Exception e) {
-			ScheduleApplication.logException(ServerInterface.class, e);
+			ScheduleApplication.logException(ServerInterface.class,e);
+		}
+		return result;
+	}
+	public static int deleteScheduleByTid(int tid) {
+		Map<String, String> map = new HashMap<String, String>();
+		int result = 0;
+		map.put("tid", Integer.toString(tid));
+		map.put("action", "D");
+		String ret = HttpUtils
+				.doPost(map,
+						"http://arc.archermind.com/ci/index.php/aschedule/uploadSchedule");
+		try {
+			result = Integer.parseInt(ret);
+		} catch (Exception e) {
+			result = -1;
+		}
+		if (result >= 0) {
+			ServiceManager.getDbManager().deleteScheduleByTid(tid);
+		} else {
+			result = -1;
 		}
 		return result;
 	}

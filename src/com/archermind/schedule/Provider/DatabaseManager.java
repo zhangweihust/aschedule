@@ -101,6 +101,15 @@ public class DatabaseManager {
 				DatabaseHelper.COLUMN_SCHEDULE_T_ID + " =? ",
 				new String[]{t_id});
 	}
+	
+	public void deleteShareScheduleByTid(String t_id) {
+		
+		eventService.onUpdateEvent(new EventArgs(
+				EventTypes.LOCAL_MYDYAMIC_SCHEDULE_UPDATE));
+		database.delete(DatabaseHelper.TAB_SHARE_SCHEDULE,
+				DatabaseHelper.COLUMN_SCHEDULE_T_ID + " =? ",
+				new String[]{t_id});
+	}
 
 	public Cursor queryLocalSchedules() {
 		return database.query(DatabaseHelper.TAB_LOCAL_SCHEDULE, null, null,
@@ -520,11 +529,25 @@ public class DatabaseManager {
 				new String[]{String.valueOf(id)}, null, null, null);
 
 	}
+	
+	public Cursor queryScheduleByTid(long tid) {
+		return database.query(DatabaseHelper.TAB_LOCAL_SCHEDULE, null,
+				DatabaseHelper.COLUMN_SCHEDULE_T_ID + " = ?",
+				new String[]{String.valueOf(tid)}, null, null, null);
+
+	}
 
 	public boolean deleteScheduleById(int id) {
 		return database.delete(DatabaseHelper.TAB_LOCAL_SCHEDULE,
 				DatabaseHelper.COLUMN_SCHEDULE_ID + " =? ",
 				new String[]{String.valueOf(id)}) > 0;
+
+	}
+	
+	public boolean deleteScheduleByTid(int tid) {
+		return database.delete(DatabaseHelper.TAB_LOCAL_SCHEDULE,
+				DatabaseHelper.COLUMN_SCHEDULE_T_ID + " =? ",
+				new String[]{String.valueOf(tid)}) > 0;
 
 	}
 

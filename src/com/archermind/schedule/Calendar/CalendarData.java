@@ -97,6 +97,7 @@ public class CalendarData {
 	public CalendarData(int jumpMonth, int jumpYear, int year_c, int month_c,
 			int day_c, int flagType) {
 
+		try {
 		database = ServiceManager.getDbManager();
 		Date date = new Date();
 		sysDate = sdf.format(date); // 当前日期
@@ -130,10 +131,14 @@ public class CalendarData {
 		currentDay = String.valueOf(day_c); // 得到当前日期是哪天
 		getCalendar(Integer.parseInt(currentYear),
 				Integer.parseInt(currentMonth), flagType);
+		} catch (Exception e) {
+			ScheduleApplication.logException(getClass(), e);
+		}
 	}
 
 	public CalendarData(final Context context, int jumpMonth, int jumpYear,
 			int year_c, int month_c, int day_c, int flagType) {
+		try {
 		mContext = context;
 		database = new DatabaseManager(context);
 		database.openwithnoservice();
@@ -191,7 +196,9 @@ public class CalendarData {
 //	}}) {
 //	
 //};t.start();
-
+		} catch (Exception e) {
+			ScheduleApplication.logException(getClass(), e);
+		}
 	}
 
 	public long getMillisTimeByDate(String date) {
@@ -246,8 +253,7 @@ public class CalendarData {
 			cursor.close();
 			}
 		} catch (Exception e) {
-			ScheduleApplication.LogD(getClass(), "catch Exception");
-			e.printStackTrace();
+			ScheduleApplication.logException(getClass(), e);
 		}
 		return loadSuccess;
 	}
@@ -428,8 +434,7 @@ public class CalendarData {
 //					contentvalues);
 //		}
 		} catch (Exception e) {
-			ScheduleApplication.LogD(getClass(), "catch Exception");
-			e.printStackTrace();
+			ScheduleApplication.logException(getClass(), e);
 		}
     }
 
@@ -501,8 +506,7 @@ public class CalendarData {
 		}
 		database.close();
 		} catch (Exception e) {
-			ScheduleApplication.LogD(getClass(), "catch Exception");
-			e.printStackTrace();
+			ScheduleApplication.logException(getClass(), e);
 		}
 		return scheduleList;
 	}
