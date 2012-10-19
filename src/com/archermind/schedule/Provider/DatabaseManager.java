@@ -112,7 +112,13 @@ public class DatabaseManager {
 	}
 
 	public Cursor queryLocalSchedules() {
-		return database.query(DatabaseHelper.TAB_LOCAL_SCHEDULE, null, null,
+		return database.query(DatabaseHelper.TAB_LOCAL_SCHEDULE, null, 
+				DatabaseHelper.COLUMN_SCHEDULE_OPER_FLAG
+				+ " = 'A' OR "
+				+ DatabaseHelper.COLUMN_SCHEDULE_OPER_FLAG
+				+" = 'M' OR " 
+				+ DatabaseHelper.COLUMN_SCHEDULE_OPER_FLAG
+				+"= 'D' ",
 				null, null, null, null);
 	}
 

@@ -655,7 +655,8 @@ public class ServerInterface {
 								flag++;
 							} else {
 								result = -1;
-								continue;
+								ServiceManager.ToastShow("同步用户动态失败，请检查网络设置。");
+								return result;
 							}
 
 						} else if (text != null && text.equals("M")) {
@@ -683,7 +684,8 @@ public class ServerInterface {
 
 							} else {
 								result = -1;
-								continue;
+								ServiceManager.ToastShow("同步用户动态失败，请检查网络设置。");
+								return result;
 							}
 						} else if (text != null && text.equals("D")) {
 							String ret = HttpUtils
@@ -705,7 +707,8 @@ public class ServerInterface {
 
 							} else {
 								result = -1;
-								continue;
+								ServiceManager.ToastShow("同步用户动态失败，请检查网络设置。");
+								return result;
 							}
 						}
 					} while (cursor.moveToNext());
