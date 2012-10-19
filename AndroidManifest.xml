@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="com.archermind.schedule"
-    android:versionCode="121009"
-    android:versionName="12.10.09" >
+    android:versionCode="121019"
+    android:versionName="12.10.19" >
     <uses-sdk android:minSdkVersion="7" />
 
     <application
