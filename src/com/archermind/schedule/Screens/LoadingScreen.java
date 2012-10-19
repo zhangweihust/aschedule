@@ -43,20 +43,20 @@ public class LoadingScreen extends Screen {
         // 获得动画对象
         mAnimaition = (AnimationDrawable)mImageView.getBackground();
 
-        new Thread() {
-            public void run() {
-
-                try {
-                    Thread.sleep(2 * 1000);
-                } catch (InterruptedException e) {
-                    // TODO Auto-generated catch block
-                    e.printStackTrace();
-                }
-
-                handler.sendEmptyMessage(1);
-            }
-        }.start();
-
+//        new Thread() {
+//            public void run() {
+//
+//                try {
+//                    Thread.sleep(2 * 1000);
+//                } catch (InterruptedException e) {
+//                    // TODO Auto-generated catch block
+//                    e.printStackTrace();
+//                }
+//
+//                handler.sendEmptyMessage(1);
+//            }
+//        }.start();
+        
         // 下面这一段是当servicemanager被关闭的时候，自动重新启动的
         Intent myIntent = new Intent(this, AlarmServiceReceiver.class);
         PendingIntent sender = PendingIntent.getBroadcast(this, 0, myIntent, 0);
@@ -73,7 +73,7 @@ public class LoadingScreen extends Screen {
 //            
 //            ServiceManager.setUserId(0);
 //        }
-
+        handler.sendEmptyMessageDelayed(1, 2 * 1000);
     }
 
     /**
