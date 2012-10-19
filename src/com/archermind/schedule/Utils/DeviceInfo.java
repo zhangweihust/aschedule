@@ -116,7 +116,7 @@ public class DeviceInfo {
      * @return
      */
     public static String getDeviceCpuModel() {
-        String value = null;
+        String value = "";
         FileReader fr = null;
         BufferedReader localBufferedReader = null;
         String str1 = "/proc/cpuinfo";
@@ -150,7 +150,7 @@ public class DeviceInfo {
      * @return
      */
     public static String getDeviceCpuMaxFrequency() {
-        String value = null;
+        String value = "";
         ProcessBuilder cmd;
         try {
             String[] args = {
@@ -178,7 +178,7 @@ public class DeviceInfo {
      * @return
      */
     public static String getDeviceMemoryTotal() {
-        String value = null;
+        String value = "";
         String str1 = "/proc/meminfo";
         FileReader fr = null;
         BufferedReader localBufferedReader = null;
