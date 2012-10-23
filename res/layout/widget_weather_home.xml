@@ -144,7 +144,6 @@
                         android:id="@+id/widgetweathercontent"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="月亮下的对白，单纯的像小孩"
                         android:singleLine="true"
                         android:ellipsize="end"
                         android:textSize="10sp" />
