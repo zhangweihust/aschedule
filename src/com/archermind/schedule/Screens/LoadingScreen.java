@@ -24,9 +24,17 @@ public class LoadingScreen extends Screen {
 
     private ImageView mImageView;
 
-    private AnimationDrawable mAnimaition;
+    private AnimationDrawable mAnimation;
     
     private boolean flag = false;
+    
+    private boolean mIsShowAnimation = false;
+    
+    private boolean mIsCreated = false;
+    
+    private boolean mIsLoadingFinish = false;
+    
+    public final static int LOADING_FINISH = 1;
 
     public LoadingScreen() {
         super();
@@ -41,21 +49,9 @@ public class LoadingScreen extends Screen {
         // 设置动画背景
         mImageView.setBackgroundResource(R.anim.loading_show_hide);
         // 获得动画对象
-        mAnimaition = (AnimationDrawable)mImageView.getBackground();
-
-//        new Thread() {
-//            public void run() {
-//
-//                try {
-//                    Thread.sleep(2 * 1000);
-//                } catch (InterruptedException e) {
-//                    // TODO Auto-generated catch block
-//                    e.printStackTrace();
-//                }
-//
-//                handler.sendEmptyMessage(1);
-//            }
-//        }.start();
+        mAnimation = (AnimationDrawable)mImageView.getBackground();
+        
+        ServiceManager.setLoadingHandler(handler);
         
         // 下面这一段是当servicemanager被关闭的时候，自动重新启动的
         Intent myIntent = new Intent(this, AlarmServiceReceiver.class);
@@ -73,9 +69,27 @@ public class LoadingScreen extends Screen {
 //            
 //            ServiceManager.setUserId(0);
 //        }
-        handler.sendEmptyMessageDelayed(1, 2 * 1000);
+        
+        mIsCreated = true;
+        
+        if (mIsCreated && mIsLoadingFinish) {
+        	loadingFinish();
+        }
+
     }
 
+    private void loadingFinish() {
+        if (mAnimation.isRunning()) {
+            mAnimation.stop();
+        }
+        
+        if(!flag){
+        	 Intent it = new Intent(LoadingScreen.this, HomeScreen.class);
+             startActivity(it);
+             finish();
+        }
+    }
+    
     /**
      * 用Handler来更新UI
      */
@@ -84,17 +98,10 @@ public class LoadingScreen extends Screen {
         public void handleMessage(Message msg) {
 
             switch (msg.what) {
-
-                case 1:
-
-                    if (mAnimaition.isRunning()) {
-
-                        mAnimaition.stop();
-                    }
-                    if(!flag){
-                    	 Intent it = new Intent(LoadingScreen.this, HomeScreen.class);
-                         startActivity(it);
-                         finish();
+                case LOADING_FINISH:
+                	mIsLoadingFinish = true;
+                    if (mIsCreated && mIsLoadingFinish) {
+                    	loadingFinish();
                     }
                     break;
 
@@ -108,19 +115,12 @@ public class LoadingScreen extends Screen {
     protected void onDestroy() {
         super.onDestroy();
 
-        if (mAnimaition.isRunning()) {
+        if (mAnimation.isRunning()) {
 
-            mAnimaition.stop();
+            mAnimation.stop();
         }
     }
-
-    @Override
-    public void onWindowFocusChanged(boolean hasFocus) {
-        super.onWindowFocusChanged(hasFocus);
-
-        mAnimaition.start();
-    }
-
+    
     @Override
     public boolean dispatchKeyEvent(KeyEvent event) {
 
@@ -131,6 +131,16 @@ public class LoadingScreen extends Screen {
         	this.finish();
         }
         return super.dispatchKeyEvent(event);
+    }
+    
+    @Override
+    public void onWindowFocusChanged(boolean hasFocus) {
+        super.onWindowFocusChanged(hasFocus);
+        
+        if (mIsShowAnimation == false) {
+        	mIsShowAnimation = true;
+        	mAnimation.start();
+        }
     }
     
     @Override

@@ -38,6 +38,7 @@ import com.archermind.schedule.Model.UserInfoData;
 import com.archermind.schedule.Provider.DatabaseManager;
 import com.archermind.schedule.Screens.FriendsDyamicScreen;
 import com.archermind.schedule.Screens.HomeScreen;
+import com.archermind.schedule.Screens.LoadingScreen;
 import com.archermind.schedule.Utils.Constant;
 import com.archermind.schedule.Utils.Contact;
 import com.archermind.schedule.Utils.CookieCrypt;
@@ -87,6 +88,8 @@ public class ServiceManager extends Service implements OnClickListener {
 	private static long mGetDataTime = 5 * 60 * 1000;
 
 	private static long mTaskTime = 5 * 60 * 1000;
+	
+	private static Handler mLoadingHandler;
 
 	private String TAG = "ServiceManager";
 
@@ -125,6 +128,10 @@ public class ServiceManager extends Service implements OnClickListener {
 
 	private Dialog dialog;
 
+	public static void setLoadingHandler(Handler handler) {
+		mLoadingHandler = handler;
+	}
+	
 	public static void sendBroadcastForUpdateSchedule(Context context) {
 
 		Intent intent = new Intent();
@@ -213,14 +220,23 @@ public class ServiceManager extends Service implements OnClickListener {
 				UserInfoData.USER_SETTING, Context.MODE_WORLD_READABLE);
 		mSPEditorSetting = sharedPreferencesSetting.edit();
 
-        user_id = Integer.parseInt(sharedPreferences.getString(UserInfoData.USER_ID, "0"));
+		
+        new Thread() {
+            public void run() {
+                user_id = Integer.parseInt(sharedPreferences.getString(UserInfoData.USER_ID, "0"));
 
-        if (user_id != 0) {
+                if (user_id != 0) {
 
-            if (!isUserLogining(user_id)) {
-                user_id = 0;
+                    if (!isUserLogining(user_id)) {
+                        user_id = 0;
+                    }
+                }
+                
+        		if (mLoadingHandler != null) {
+        			mLoadingHandler.sendEmptyMessage(LoadingScreen.LOADING_FINISH);
+        		}
             }
-        }
+        }.start();
 		cookie = sharedPreferences.getString(UserInfoData.COOKIE, "");
 		avator_url = sharedPreferences.getString(UserInfoData.PHOTO_URL, "");
 		mTimer = new Timer();
