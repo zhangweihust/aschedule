@@ -412,6 +412,15 @@ public class DatabaseManager {
 		}
 		cursor.close();
 	}
+	
+	public void updateContactUse(String tel) {
+		ContentValues values = new ContentValues();
+		values.put(DatabaseHelper.ASCHEDULE_CONTACT_TYPE,
+				Constant.FriendType.friend_contact_use);
+		database.update(DatabaseHelper.ASCHEDULE_CONTACT, values,
+				DatabaseHelper.ASCHEDULE_CONTACT_NUM + " =? ",
+				new String[]{tel});
+	}
 
 	public Cursor queryContactUse() {
 		return database.query(DatabaseHelper.ASCHEDULE_CONTACT, null,

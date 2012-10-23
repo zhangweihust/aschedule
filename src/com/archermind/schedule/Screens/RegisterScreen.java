@@ -27,8 +27,10 @@ import com.archermind.schedule.Events.EventArgs;
 import com.archermind.schedule.Events.EventTypes;
 import com.archermind.schedule.Model.UserInfoData;
 import com.archermind.schedule.Services.ServiceManager;
+import com.archermind.schedule.Utils.Constant;
 import com.archermind.schedule.Utils.HttpUtils;
 import com.archermind.schedule.Utils.MyProgressDialog;
+import com.archermind.schedule.Utils.SharedPreferenceUtil;
 
 public class RegisterScreen extends Screen implements OnClickListener {
     private Button goback;
@@ -280,7 +282,7 @@ public class RegisterScreen extends Screen implements OnClickListener {
                 /* 保存userid和cookie */
                 ServiceManager.setUserId(jsonObject.getInt(UserInfoData.USER_ID));
                 ServiceManager.setCookie(cookie);
-
+                SharedPreferenceUtil.setValue("sync", Constant.CONTACT_SYNC_CANCEL);
                 if (jsonObject.getString(UserInfoData.TEL).equals("")
                         || jsonObject.getString(UserInfoData.TEL) == "null") {
                     ServiceManager.setBindFlag(false);

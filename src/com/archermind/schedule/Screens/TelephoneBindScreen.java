@@ -104,11 +104,7 @@ public class TelephoneBindScreen extends Screen implements OnClickListener {
         telephone_bind_goback.setOnClickListener(this);
         bind_again.setOnClickListener(this);
 
-        String imsi = DeviceInfo.getDeviceIMSI();// 号码发生变更，和绑定做统一处理
-        ScheduleApplication.LogD(getClass(), "imsi = " + imsi);
-
-        if (imsi.equals(ServiceManager.getSPUserInfo(UserInfoData.IMSI))
-                || ServiceManager.getBindFlag()) {
+        if (ServiceManager.getBindFlag()) {
             
             telephone_bind_is_bind.setVisibility(View.VISIBLE);
             String promptstr = "您的帐号 " + ServiceManager.getSPUserInfo(UserInfoData.EMAIL)

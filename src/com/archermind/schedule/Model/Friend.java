@@ -8,6 +8,7 @@ public class Friend {
 	private String name;
 	private String headImagePath;
 	private String nick;
+	private String from;
 	private int type = Constant.FriendType.friend_contact;
 
 	public Friend() {
@@ -67,6 +68,14 @@ public class Friend {
 
 	public void setNick(String nick) {
 		this.nick = nick;
+	}
+	
+	public String getFrom() {
+		return this.from;
+	}
+
+	public void setFrom(String from) {
+		this.from = from;
 	}
 
 	public String toString() {

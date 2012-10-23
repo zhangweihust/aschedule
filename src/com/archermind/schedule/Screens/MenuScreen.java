@@ -89,13 +89,6 @@ public class MenuScreen extends Activity implements OnClickListener {
             				
             			case LOGIN_STATUS_UNBIND:
             				ServiceManager.setBindFlag(false);
-            				String imsi = DeviceInfo.getDeviceIMSI();// 号码发生变更，和绑定做统一处理
-            				if (!imsi.equals(ServiceManager.getSPUserInfo(UserInfoData.IMSI))) {
-            					Toast.makeText(getApplicationContext(), "检测到您的手机号发生变化,请重新绑定!",
-            							Toast.LENGTH_LONG).show();
-            				} else {
-            					ServiceManager.ToastShow("您的帐号尚未绑定手机号,请进行绑定!");
-            				}
             				it = new Intent(MenuScreen.this, TelephoneBindScreen.class);
             				break;
             				

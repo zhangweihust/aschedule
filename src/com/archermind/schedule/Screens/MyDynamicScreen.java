@@ -190,10 +190,7 @@ public class MyDynamicScreen extends Screen implements IXListViewListener, OnIte
 
         } else {
 
-            String imsi = DeviceInfo.getDeviceIMSI();// 号码发生变更，和绑定做统一处理
-
-            if (ServiceManager.getBindFlag()
-                    && imsi.equals(ServiceManager.getSPUserInfo(UserInfoData.IMSI))) {
+            if (ServiceManager.getBindFlag()) {
                 ScheduleApplication.LogD(getClass(),
                         " onCreate 已登录且已绑定 userid " + ServiceManager.getUserId());
                 loginLayout.setVisibility(View.GONE);

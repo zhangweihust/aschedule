@@ -249,19 +249,12 @@ public class ServiceManager extends Service implements OnClickListener {
 			public void run() {
 				// TODO Auto-generated method stub
 				try {
-				String imsi = getSPUserInfo(UserInfoData.IMSI);
 				String tel = getSPUserInfo(UserInfoData.TEL);
 				try {
-					if ((imsi.equals("") || imsi.equals("null"))
-							&& (tel.equals("") || tel.equals("null"))) {
+					if (tel.equals("") || tel.equals("null")) {
 						setBindFlag(false);
 					} else {
-						if (imsi.equals(DeviceInfo.getDeviceIMSI())) {
-							setBindFlag(true);
-						} else {
-							eventService.onUpdateEvent(new EventArgs(
-									EventTypes.IMSI_CHANGED));
-						}
+						setBindFlag(true);
 					}
 				} catch (Exception e) {
 					e.printStackTrace();

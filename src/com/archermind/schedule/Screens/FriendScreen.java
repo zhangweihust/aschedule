@@ -306,6 +306,19 @@ public class FriendScreen extends Screen
 					sychContactLayout.setVisibility(View.VISIBLE);
 				}else{
 					sychContactLayout.setVisibility(View.GONE);
+					List<Friend> friends = hashMap.get(Constant.FriendType.FRIEND_YES_KEY);
+					if (NetworkUtils.getNetworkState(this) != NetworkUtils.NETWORN_NONE) {
+						if(friends != null && friends.size() > 0){
+							String from = friends.get(0).getFrom();
+							if(from != null && !"".equals(from)){
+								new Thread() {
+									public void run() {
+										getData();
+									};
+								}.start();
+							}
+						}
+					}
 				}
 				
 			} else {
@@ -495,10 +508,11 @@ public class FriendScreen extends Screen
 							friend.setName(database.queryNameByTel(tel));
 
 							friendContactUs.add(friend);
-							database.updateContactType(
-									database.queryContactIdByTel(tel),
-									Constant.FriendType.friend_contact_use,
-									user_id);
+//							database.updateContactType(
+//									database.queryContactIdByTel(tel),
+//									Constant.FriendType.friend_contact_use,
+//									user_id);
+							database.updateContactUse(tel);
 						}
 						return true;
 					} catch (JSONException e) {
@@ -653,10 +667,12 @@ public class FriendScreen extends Screen
     									friend.setHeadImagePath(headImagePath);
     									friend.setType(Constant.FriendType.friend_contact);
     									contact.add(friend);
+    									
     								}
     								cursor.close();
     							}
     						}
+    						
     					} catch (JSONException e) {
     						// TODO Auto-generated catch block
     						e.printStackTrace();
@@ -667,9 +683,7 @@ public class FriendScreen extends Screen
 
     		} 
     		if(!getFriendsOK){
-    			Toast.makeText(getApplicationContext(), "好友信息列表获取失败，请查看网络是否连接!",
-                        Toast.LENGTH_LONG).show();
-/*    			Cursor cursor = database.queryFriendYes();
+    			Cursor cursor = database.queryFriendYes();
     			if(cursor!=null && cursor.moveToFirst()){
     				while (!cursor.isAfterLast()) {
     					String id = cursor.getString(cursor
@@ -678,6 +692,8 @@ public class FriendScreen extends Screen
     							.getColumnIndex(DatabaseHelper.ASCHEDULE_FRIEND_NUM));
     					String name = cursor.getString(cursor
     							.getColumnIndex(DatabaseHelper.ASCHEDULE_FRIEND_NAME));
+    					String nick = cursor.getString(cursor
+    							.getColumnIndex(DatabaseHelper.ASCHEDULE_FRIEND_NICK));
     					String headImagePath = cursor
     							.getString(cursor
     									.getColumnIndex(DatabaseHelper.ASCHEDULE_FRIEND_PHOTO_URL));
@@ -685,9 +701,10 @@ public class FriendScreen extends Screen
     					friend.setId(id);
     					friend.setTelephone(telephone);
     					friend.setName(name);
+    					friend.setNick(nick);
+    					friend.setFrom("Data is from local database");
     					friend.setHeadImagePath(headImagePath);
     					friend.setType(Constant.FriendType.friend_yes);
-    					
     					friends.add(friend);
     					cursor.moveToNext();
     				}
@@ -724,6 +741,7 @@ public class FriendScreen extends Screen
     			}
 
     			cursor = database.queryContactUse();
+    			ArrayList<String> contactUseList = new ArrayList<String>();
     			if(cursor!=null && cursor.moveToFirst()){
     				while (!cursor.isAfterLast()) {
     					String id = cursor.getString(cursor
@@ -735,14 +753,17 @@ public class FriendScreen extends Screen
     					String headImagePath = cursor
     							.getString(cursor
     									.getColumnIndex(DatabaseHelper.ASCHEDULE_CONTACT_IMGPATH));
-    					Friend friend = new Friend();
-    					friend.setId(id);
-    					friend.setTelephone(telephone);
-    					friend.setName(name);
-    					friend.setHeadImagePath(headImagePath);
-    					friend.setType(Constant.FriendType.friend_contact_use);
-    					
-    					contact_use.add(friend);
+    					if(!contactUseList.contains(telephone)){
+    						contactUseList.add(telephone);
+    						Friend friend = new Friend();
+        					friend.setId(id);
+        					friend.setTelephone(telephone);
+        					friend.setName(name);
+        					friend.setHeadImagePath(headImagePath);
+        					friend.setType(Constant.FriendType.friend_contact_use);
+        					
+        					contact_use.add(friend);
+    					}
     					cursor.moveToNext();
     				}
     			}
@@ -751,6 +772,7 @@ public class FriendScreen extends Screen
     			}
     			
     			cursor = database.queryContact();
+    			ArrayList<String> contactList = new ArrayList<String>();
     			if(cursor!=null && cursor.moveToFirst()){
     				while (!cursor.isAfterLast()) {
     					String id = cursor.getString(cursor
@@ -762,20 +784,23 @@ public class FriendScreen extends Screen
     					String headImagePath = cursor
     							.getString(cursor
     									.getColumnIndex(DatabaseHelper.ASCHEDULE_CONTACT_IMGPATH));
-    					Friend friend = new Friend();
-    					friend.setId(id);
-    					friend.setTelephone(telephone);
-    					friend.setName(name);
-    					friend.setHeadImagePath(headImagePath);
-    					friend.setType(Constant.FriendType.friend_contact);
-    					
-    					contact.add(friend);
+    					if(!contactList.contains(telephone)){
+    						contactList.add(telephone);
+    						Friend friend = new Friend();
+        					friend.setId(id);
+        					friend.setTelephone(telephone);
+        					friend.setName(name);
+        					friend.setHeadImagePath(headImagePath);
+        					friend.setType(Constant.FriendType.friend_contact);
+        					
+        					contact.add(friend);
+    					}
     					cursor.moveToNext();
     				}
     			}
     			if (cursor!=null) {
     				cursor.close();
-    			}*/
+    			}
     		}
 		} catch (Exception e) {
 			ScheduleApplication.logException(getClass(),e);
